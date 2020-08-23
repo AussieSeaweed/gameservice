@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod, ABC
 from typing import List, Dict, Type, Optional, TYPE_CHECKING
 
-from gameservice.exceptions import TerminalGameError
+from gameservice.exceptions import TerminalGameError, NotTerminalGameError
 
 if TYPE_CHECKING:
     from gameservice.sequential.game.game import SequentialGame
@@ -36,7 +36,10 @@ class Logic(ABC):
     @property
     @abstractmethod
     def result(self) -> List[int]:
-        pass
+        if not self.terminal:
+            raise NotTerminalGameError
+
+        return []
 
 
 class TurnAlternationLogic(Logic, ABC):

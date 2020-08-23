@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from .game import SequentialGame
 
 
-class Board(ABC):
+class Environment(ABC):
     def __init__(self, game: SequentialGame):
         self.game: SequentialGame = game
 

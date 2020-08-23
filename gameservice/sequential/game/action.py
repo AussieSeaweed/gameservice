@@ -22,6 +22,7 @@ class Action(ABC):
     def valid(self, game: SequentialGame) -> bool:
         pass
 
+    @abstractmethod
     def apply(self, game: SequentialGame) -> None:
         if not self.valid(game):
             raise InvalidActionException

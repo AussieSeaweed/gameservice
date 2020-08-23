@@ -6,7 +6,7 @@ from gameservice.exceptions import InvalidNumPlayersException, InvalidActionExce
     NotTerminalGameError
 
 if TYPE_CHECKING:
-    from . import Board, Logic, Player
+    from . import Environment, Logic, Player
 
 
 class SequentialGame:
@@ -14,7 +14,7 @@ class SequentialGame:
     max_num_players: int
 
     player_type: Type[Player]
-    board_type: Type[Board]
+    environment_type: Type[Environment]
     logic_type: Type[Logic]
 
     def __init__(self, num_players: int):
@@ -30,7 +30,7 @@ class SequentialGame:
         self.num_players: int = num_players
 
         self.players: List[Optional[Player]] = [self._create_player(i) for i in range(num_players)]
-        self.board: Board = self._create_board()
+        self.environment: Environment = self._create_environment()
         self.logic: Logic = self._create_logic()
 
     """Protected methods"""
@@ -38,8 +38,8 @@ class SequentialGame:
     def _create_player(self, index: int) -> Player:
         return self.player_type(self, index)
 
-    def _create_board(self) -> Board:
-        return self.board_type(self)
+    def _create_environment(self) -> Environment:
+        return self.environment_type(self)
 
     def _create_logic(self) -> Logic:
         return self.logic_type(self)
@@ -61,8 +61,8 @@ class SequentialGame:
         return self.players[index].info(show_private) if self.remaining(index) else None
 
     @property
-    def board_info(self) -> Dict[str, Any]:
-        return self.board.info
+    def environment_info(self) -> Dict[str, Any]:
+        return self.environment.info
 
     @property
     def action_set_info(self) -> Dict[str, Optional[Dict[str, Any]]]:
