@@ -23,14 +23,14 @@ class TicTacToeEnvironment(Environment):
     @property
     def winning_cell_coords(self) -> Optional[List[List[int]]]:
         for i in range(3):
-            if self.board[i][0] == self.board[i][1] == self.board[i][2]:
+            if self.board[i][0] == self.board[i][1] == self.board[i][2] is not None:
                 return [[i, 0], [i, 1], [i, 2]]
-            elif self.board[0][i] == self.board[1][i] == self.board[2][i]:
+            elif self.board[0][i] == self.board[1][i] == self.board[2][i] is not None:
                 return [[0, i], [1, i], [2, i]]
 
-        if self.board[0][0] == self.board[1][1] == self.board[2][2]:
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] is not None:
             return [[0, 0], [1, 1], [2, 2]]
-        elif self.board[0][2] == self.board[1][1] == self.board[2][0]:
+        elif self.board[0][2] == self.board[1][1] == self.board[2][0] is not None:
             return [[0, 2], [1, 1], [2, 0]]
 
         return None
@@ -38,7 +38,5 @@ class TicTacToeEnvironment(Environment):
     @property
     def info(self) -> Dict[str, Any]:
         return {
-            **super().info,
-
             "board": self.board
         }

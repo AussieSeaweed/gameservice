@@ -76,7 +76,7 @@ class SequentialGame:
                 raise TerminalGameError
 
             self.logic.action_set[action_str](*args).apply(self)
-        except KeyError:
+        except (KeyError, TypeError):
             raise InvalidActionException
 
         self.logic.update()
