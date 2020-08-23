@@ -1,4 +1,5 @@
-from .game import SequentialGame
-from .player import Player
-from .board import Board
 from .action import Action
+from .board import Board
+from .game import SequentialGame
+from .logic import Logic, TurnAlternationLogic, TurnQueueLogic
+from .player import Player

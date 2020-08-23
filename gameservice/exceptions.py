@@ -14,5 +14,9 @@ class InvalidActionArgumentException(GameServiceException):
     """Raised when at least one provided action argument is invalid"""
 
 
-class TerminalError(GameServiceException):
+class TerminalGameError(GameServiceException):
     """Raised when the game is terminal"""
+
+
+class NotTerminalGameError(GameServiceException):
+    """Raised when the game is not terminal"""
