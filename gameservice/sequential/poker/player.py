@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, TYPE_CHECKING
+from typing import Any, Dict, List
 
 from ..game.player import Player
-
-if TYPE_CHECKING:
-    from .game import Poker
 
 
 class PokerPlayer(Player, ABC):
@@ -15,28 +12,27 @@ class PokerPlayer(Player, ABC):
             self.str: str = card_str
             self.private: bool = private
 
-    def __init__(self, game: Poker, index: int):
-        super().__init__(game, index)
+    def __init__(self, index: int, starting_stack: int):
+        super().__init__(index)
 
         self.cards: List[PokerPlayer.Card] = []
-        self.stack: int = game.starting_stack
+        self.stack: int = starting_stack
         self.bet: int = 0
 
-    def info(self, show_private: bool) -> Dict[str, Any]:
+    def get_info(self, show_private: bool) -> Dict[str, Any]:
         return {
-            **super().info(show_private),
+            **super().get_info(show_private),
 
             "cards": [card.str if not card.private or show_private else None for card in self.cards],
             "stack": self.stack,
             "bet": self.bet,
         }
 
-    @property
-    def card_str_list(self) -> List[str]:
+    def get_card_str_list(self) -> List[str]:
         return list(map(lambda card: card.card_str, self.cards))
 
     @abstractmethod
-    def hand_rank(self, board: List[str]) -> int:
+    def get_hand_rank(self, board: List[str]) -> int:
         """
         the Lower the rank the better the hand
 

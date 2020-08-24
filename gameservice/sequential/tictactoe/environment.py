@@ -7,8 +7,6 @@ from ..game.environment import Environment
 
 class TicTacToeEnvironment(Environment):
     def __init__(self):
-        super().__init__()
-
         self.board: List[List[Optional[int]]] = [[None, None, None],
                                                  [None, None, None],
                                                  [None, None, None]]

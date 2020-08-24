@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import List, TYPE_CHECKING
 
 from gameservice.exceptions import NotTerminalGameError
-from ..game.logic import TurnQueueLogic, ChanceLogic, NestedLogic
+from ..game.logic import TurnQueueLogic, NestedLogic
 from .action import NoLimitPut, Continue, Surrender, Deal, Peel, Distribute
 
 if TYPE_CHECKING:
@@ -22,13 +22,23 @@ class DealLogic(TurnQueueLogic):
     game: Poker
 
 
-class PeelLogic(ChanceLogic):
+class ShowdownLogic(TurnQueueLogic):
     """Type hinting"""
 
     game: Poker
 
 
-class ShowdownLogic(TurnQueueLogic):
+class PeelLogic(TurnQueueLogic):
+    """Type hinting"""
+
+    game: Poker
+
+
+class BettingLogic(TurnQueueLogic):
+    """Static member variables"""
+
+
+
     """Type hinting"""
 
     game: Poker

@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from .environment import PokerEnvironment
 from .logic import PokerLogic
 from .player import PokerPlayer
@@ -8,6 +6,7 @@ from ..game import SequentialGame
 
 class Poker(SequentialGame):
     min_num_players = 2
+    max_num_players = 9
 
     player_type = PokerPlayer
     environment_type = PokerEnvironment
@@ -17,8 +16,5 @@ class Poker(SequentialGame):
 
     starting_stack: int
 
-    """Type hinting"""
-
-    players: List[Optional[PokerPlayer]]
-    environment: PokerEnvironment
-    logic: PokerLogic
+    def create_player(self, index: int):
+        return self.player_type(index, self.starting_stack)
