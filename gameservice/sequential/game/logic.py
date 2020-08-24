@@ -6,12 +6,12 @@ from typing import List, Dict, Type, Optional, TYPE_CHECKING
 from gameservice.exceptions import TerminalGameError, NotTerminalGameError
 
 if TYPE_CHECKING:
-    from gameservice.sequential.game.game import SequentialGame
+    from .game import SequentialGame
     from .action import Action
 
 
 class Logic(ABC):
-    action_set: Dict[str, Type[Action]]
+    action_set: Dict[Optional[str], Type[Action]]
 
     def __init__(self, game: SequentialGame):
         self.game: SequentialGame = game
@@ -20,56 +20,55 @@ class Logic(ABC):
     def update(self) -> None:
         pass
 
-    @property
     @abstractmethod
-    def turn(self) -> Optional[int]:
-        if self.terminal:
+    def get_turn(self) -> Optional[int]:
+        if self.is_terminal():
             raise TerminalGameError
 
         return None
 
-    @property
     @abstractmethod
-    def terminal(self) -> bool:
-        pass
+    def is_terminal(self) -> bool:
+        return True
 
-    @property
     @abstractmethod
-    def result(self) -> List[int]:
-        if not self.terminal:
+    def get_result(self) -> List[int]:
+        if not self.is_terminal:
             raise NotTerminalGameError
 
-        return []
+        return [0 for i in range(self.game.get_num_players())]
+
+    def get_action_set(self) -> Dict[str, Type[Action]]:
+        return self.action_set
 
 
 class TurnAlternationLogic(Logic, ABC):
     def __init__(self, game: SequentialGame):
         super().__init__(game)
-        self._turn: int = self._initial_turn
 
-    @property
-    def _initial_turn(self) -> Optional[int]:
-        return self.game.remaining_indices[0]
+        self._turn: int = self.get_initial_turn()
+
+    def get_initial_turn(self) -> Optional[int]:
+        return self.game.get_remaining_indices()[0]
 
     def update(self) -> None:
-        self._turn = (self._turn + 1) % self.game.num_players
+        self._turn = (self._turn + 1) % self.game.get_num_players()
 
-        while not self.game.remaining(self._turn):
-            self._turn = (self._turn + 1) % self.game.num_players
+        while not self.game.is_remaining(self._turn):
+            self._turn = (self._turn + 1) % self.game.get_num_players()
 
-    @property
-    def turn(self) -> Optional[int]:
-        return super().turn or self._turn
+    def get_turn(self) -> Optional[int]:
+        return super().get_turn() or self._turn
 
 
 class TurnQueueLogic(Logic, ABC):
     def __init__(self, game: SequentialGame):
         super().__init__(game)
-        self._order: List[Optional[int]] = self._initial_order
 
-    @property
-    def _initial_order(self) -> List[Optional[int]]:
-        return self.game.remaining_indices
+        self._order: List[Optional[int]] = self.get_initial_order()
+
+    def get_initial_order(self) -> List[Optional[int]]:
+        return self.game.get_remaining_indices()
 
     def add_turn(self, index: int) -> None:
         self._order.append(index)
@@ -80,6 +79,39 @@ class TurnQueueLogic(Logic, ABC):
         except IndexError:
             pass
 
-    @property
-    def turn(self) -> Optional[int]:
-        return super().turn or (self._order[0] if self._order else None)
+    def get_turn(self) -> Optional[int]:
+        return super().get_turn() or (self._order[0] if self._order else None)
+
+
+class NestedLogic(Logic, ABC):
+    nested_logic_types: List[Type[Logic]]
+
+    def __init__(self, game: SequentialGame):
+        super().__init__(game)
+
+        self._nested_logics: List[Logic] = [nested_logic_type(game) for nested_logic_type in self.nested_logic_types]
+        self._nested_logic_index: int = 0
+
+        self._result: List[int] = [0 for i in range(game.get_num_players())]
+
+    def update(self) -> None:
+        self.get_nested_logic().update()
+
+        if self.get_nested_logic().is_terminal():
+            self._result = [i + j for i, j in zip(self._result, self.get_nested_logic().get_result())]
+            self._nested_logic_index += 1
+
+    def get_turn(self) -> Optional[int]:
+        return super().get_turn() or self.get_nested_logic().get_turn()
+
+    def is_terminal(self) -> bool:
+        return self._nested_logic_index == len(self._nested_logics)
+
+    def get_result(self) -> List[int]:
+        return [i + j for i, j in zip(super().get_result(), self._result)]
+
+    def get_action_set(self) -> Dict[Optional[str], Type[Action]]:
+        return self.get_nested_logic().get_action_set()
+
+    def get_nested_logic(self) -> Logic:
+        return self._nested_logics[self._nested_logic_index]

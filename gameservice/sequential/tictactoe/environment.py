@@ -1,27 +1,22 @@
 from __future__ import annotations
 
-from typing import List, Dict, Optional, Any, TYPE_CHECKING
+from typing import List, Dict, Optional, Any
 
-from ..game import Environment
-
-if TYPE_CHECKING:
-    from .game import TicTacToe
+from ..game.environment import Environment
 
 
 class TicTacToeEnvironment(Environment):
-    def __init__(self, game: TicTacToe):
-        super().__init__(game)
+    def __init__(self):
+        super().__init__()
 
         self.board: List[List[Optional[int]]] = [[None, None, None],
                                                  [None, None, None],
                                                  [None, None, None]]
 
-    @property
-    def empty_cell_coords(self) -> List[List[int]]:
+    def get_empty_cell_coords(self) -> List[List[int]]:
         return [[r, c] for r in range(3) for c in range(3) if self.board[r][c] is None]
 
-    @property
-    def winning_cell_coords(self) -> Optional[List[List[int]]]:
+    def get_winning_cell_coords(self) -> Optional[List[List[int]]]:
         for i in range(3):
             if self.board[i][0] == self.board[i][1] == self.board[i][2] is not None:
                 return [[i, 0], [i, 1], [i, 2]]
@@ -35,8 +30,7 @@ class TicTacToeEnvironment(Environment):
 
         return None
 
-    @property
-    def info(self) -> Dict[str, Any]:
+    def get_info(self) -> Dict[str, Any]:
         return {
             "board": self.board
         }

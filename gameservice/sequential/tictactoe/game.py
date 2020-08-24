@@ -1,6 +1,7 @@
-from ..game import SequentialGame, Player
 from .environment import TicTacToeEnvironment
 from .logic import TicTacToeLogic
+from ..game import SequentialGame
+from ..game.player import Player
 
 
 class TicTacToe(SequentialGame):
@@ -10,9 +11,3 @@ class TicTacToe(SequentialGame):
     player_type = Player
     environment_type = TicTacToeEnvironment
     logic_type = TicTacToeLogic
-
-    """Type hinting"""
-
-    player: Player
-    environment: TicTacToeEnvironment
-    logic: TicTacToeLogic

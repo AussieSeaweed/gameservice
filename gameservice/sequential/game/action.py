@@ -15,14 +15,24 @@ class Action(ABC):
 
     @classmethod
     @abstractmethod
-    def info(cls, game: SequentialGame) -> Optional[Dict[str, Any]]:
-        pass
+    def get_info(cls, game: SequentialGame) -> Optional[Dict[str, Any]]:
+        return None
 
     @abstractmethod
-    def valid(self, game: SequentialGame) -> bool:
-        pass
+    def is_valid(self, game: SequentialGame) -> bool:
+        return not game.is_terminal()
 
     @abstractmethod
     def apply(self, game: SequentialGame) -> None:
-        if not self.valid(game):
+        if not self.is_valid(game):
             raise InvalidActionException
+
+
+class PlayerAction(Action, ABC):
+    def is_valid(self, game: SequentialGame):
+        return super().is_valid(game) and game.get_turn() is not None
+
+
+class NatureAction(Action, ABC):
+    def is_valid(self, game: SequentialGame):
+        return super().is_valid(game) and game.get_turn() is None

@@ -1,17 +1,8 @@
 from __future__ import annotations
 
-from abc import abstractmethod, ABC
-from typing import Dict, Any, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from .game import SequentialGame
+from typing import Dict, Any
 
 
-class Environment(ABC):
-    def __init__(self, game: SequentialGame):
-        self.game: SequentialGame = game
-
-    @property
-    @abstractmethod
-    def info(self) -> Dict[str, Any]:
-        pass
+class Environment:
+    def get_info(self) -> Dict[str, Any]:
+        return {}

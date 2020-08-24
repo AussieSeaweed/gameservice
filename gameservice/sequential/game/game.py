@@ -6,7 +6,9 @@ from gameservice.exceptions import InvalidNumPlayersException, InvalidActionExce
     NotTerminalGameError
 
 if TYPE_CHECKING:
-    from . import Environment, Logic, Player
+    from .player import Player
+    from .environment import Environment
+    from .logic import Logic
 
 
 class SequentialGame:
@@ -24,77 +26,99 @@ class SequentialGame:
         :param num_players:
         """
 
-        if not self.min_num_players <= num_players <= self.max_num_players:
+        if not self.get_min_num_players() <= num_players <= self.get_max_num_players():
             raise InvalidNumPlayersException
 
-        self.num_players: int = num_players
+        self._num_players: int = num_players
 
-        self.players: List[Optional[Player]] = [self._create_player(i) for i in range(num_players)]
-        self.environment: Environment = self._create_environment()
-        self.logic: Logic = self._create_logic()
+        self._players: List[Optional[Player]] = [self.create_player(i) for i in range(num_players)]
+        self._environment: Environment = self.create_environment()
+        self._logic: Logic = self.create_logic()
 
-    """Protected methods"""
+    """Public methods that can be overloaded"""
 
-    def _create_player(self, index: int) -> Player:
-        return self.player_type(self, index)
+    def get_min_num_players(self) -> int:
+        return self.min_num_players
 
-    def _create_environment(self) -> Environment:
-        return self.environment_type(self)
+    def get_max_num_players(self) -> int:
+        return self.max_num_players
 
-    def _create_logic(self) -> Logic:
-        return self.logic_type(self)
+    def get_player_type(self) -> Type[Player]:
+        return self.player_type
+
+    def get_environment_type(self) -> Type[Environment]:
+        return self.environment_type
+
+    def get_logic_type(self) -> Type[Logic]:
+        return self.logic_type
+
+    def create_player(self, index: int) -> Player:
+        return self.get_player_type()(index)
+
+    def create_environment(self) -> Environment:
+        return self.get_environment_type()()
+
+    def create_logic(self) -> Logic:
+        return self.get_logic_type()(self)
+
+    """Public methods (read-only)"""
+
+    def get_players(self):
+        return self._players
+
+    def get_environment(self):
+        return self._environment
+
+    def get_logic(self):
+        return self._logic
 
     """Public methods"""
 
-    @property
-    def num_remaining(self) -> int:
-        return self.num_players - self.players.count(None)
+    def get_num_players(self) -> int:
+        return self._num_players
 
-    def remaining(self, index: int) -> bool:
-        return self.players[index] is not None
+    def get_num_remaining(self) -> int:
+        return self._num_players - self._players.count(None)
 
-    @property
-    def remaining_indices(self) -> List[int]:
-        return [i for i in range(self.num_players) if self.remaining(i)]
+    def is_remaining(self, index: int) -> bool:
+        return self._players[index] is not None
 
-    def player_info(self, index: int, show_private: bool) -> Optional[Dict[str, Any]]:
-        return self.players[index].info(show_private) if self.remaining(index) else None
+    def get_remaining_indices(self) -> List[int]:
+        return [i for i in range(self.get_num_players()) if self.is_remaining(i)]
 
-    @property
-    def environment_info(self) -> Dict[str, Any]:
-        return self.environment.info
+    def get_player_info(self, index: int, show_private: bool) -> Optional[Dict[str, Any]]:
+        return self._players[index].get_info(show_private) if self.is_remaining(index) else None
 
-    @property
-    def action_set_info(self) -> Dict[str, Optional[Dict[str, Any]]]:
+    def get_environment_info(self) -> Dict[str, Any]:
+        return self._environment.get_info()
+
+    def get_action_set_info(self) -> Dict[Optional[str], Optional[Dict[str, Any]]]:
         return {
-            action_str: action_type.info(self) for action_str, action_type in self.logic.action_set.items()
+            action_name: action_type.get_info(self) for action_name, action_type in self._logic.get_action_set().items()
         }
 
-    def act(self, action_str: str, *args) -> None:
+    def act(self, action_name: Optional[str] = None, *args) -> None:
         try:
-            if self.terminal:
+            if self.is_terminal():
                 raise TerminalGameError
 
-            self.logic.action_set[action_str](*args).apply(self)
+            self._logic.get_action_set()[action_name](*args).apply(self)
         except (KeyError, TypeError):
             raise InvalidActionException
 
-        self.logic.update()
+        self._logic.update()
 
-    @property
-    def turn(self) -> Optional[int]:
-        if self.terminal:
+    def get_turn(self) -> Optional[int]:
+        if self.is_terminal():
             raise TerminalGameError
 
-        return self.logic.turn
+        return self._logic.get_turn()
 
-    @property
-    def terminal(self) -> bool:
-        return self.logic.terminal
+    def is_terminal(self) -> bool:
+        return self._logic.is_terminal()
 
-    @property
-    def result(self) -> List[int]:
-        if not self.terminal:
+    def get_result(self) -> List[int]:
+        if not self.is_terminal():
             raise NotTerminalGameError
 
-        return self.logic.result
+        return self._logic.get_result()
