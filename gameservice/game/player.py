@@ -39,6 +39,9 @@ class Player:
 
 
 class Nature(Player):
+    def __init__(self, game):
+        super().__init__(game, None)
+
     @property
     def nature(self):
         return True
