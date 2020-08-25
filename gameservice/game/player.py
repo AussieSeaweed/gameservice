@@ -1,7 +1,4 @@
-from abc import ABC, abstractmethod
-
-
-class Player(ABC):
+class Player:
     def __init__(self, game, index):
         self.__game = game
         self.__index = index
@@ -9,6 +6,10 @@ class Player(ABC):
     @property
     def game(self):
         return self.__game
+
+    @property
+    def index(self):
+        return self.__index
 
     @property
     def nature(self):
@@ -29,15 +30,15 @@ class Player(ABC):
         return {
             "players": [player.private_info if self is player else player.public_info for player in self.game.players],
             "context": self.game.context.info,
+            "action": list(self.actions),
         }
 
     @property
-    @abstractmethod
     def actions(self):
-        pass
+        return self.game.actions_type(self.game, self)
 
 
-class Nature(Player, ABC):
+class Nature(Player):
     @property
     def nature(self):
         return True
