@@ -7,16 +7,8 @@ class Action(ABC):
         if game.terminal:
             raise TerminalGameException
 
-        self.__game = game
-        self.__player = player
-
-    @property
-    def game(self):
-        return self.__game
-
-    @property
-    def player(self):
-        return self.__player
+        self.game = game
+        self.player = player
 
     @property
     @abstractmethod

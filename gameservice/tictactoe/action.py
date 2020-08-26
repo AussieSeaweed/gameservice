@@ -17,5 +17,5 @@ class Mark(SequentialAction):
         return f"Mark {self.r} {self.c}"
 
     def act(self):
-        self.game.context.board[self.r][self.c] = self.player.index
+        self.game.context.board[self.r][self.c] = self.game.players.index(self.player)
         self.game.update()

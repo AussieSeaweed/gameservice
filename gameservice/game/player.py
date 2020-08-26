@@ -1,15 +1,6 @@
 class Player:
-    def __init__(self, game, index):
-        self.__game = game
-        self.__index = index
-
-    @property
-    def game(self):
-        return self.__game
-
-    @property
-    def index(self):
-        return self.__index
+    def __init__(self, game):
+        self.game = game
 
     @property
     def nature(self):
@@ -17,9 +8,7 @@ class Player:
 
     @property
     def public_info(self):
-        return {
-            "index": self.__index
-        }
+        return {}
 
     @property
     def private_info(self):
@@ -35,13 +24,17 @@ class Player:
 
     @property
     def actions(self):
-        return self.game.actions_type(self.game, self)
+        return self.game.player_actions_type(self.game, self)
 
 
 class Nature(Player):
     def __init__(self, game):
-        super().__init__(game, None)
+        super().__init__(game)
 
     @property
     def nature(self):
         return True
+
+    @property
+    def actions(self):
+        return self.game.nature_actions_type(self.game, self)

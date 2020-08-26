@@ -3,16 +3,8 @@ from abc import ABC, abstractmethod
 
 class Actions(ABC):
     def __init__(self, game, player):
-        self.__game = game
-        self.__player = player
-
-    @property
-    def game(self):
-        return self.__game
-
-    @property
-    def player(self):
-        return self.__player
+        self.game = game
+        self.player = player
 
     @abstractmethod
     def __len__(self):

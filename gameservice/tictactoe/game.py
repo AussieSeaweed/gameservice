@@ -5,9 +5,11 @@ from .actions import TicTacToeActions
 
 
 class TicTacToe(TurnAlternationGame):
+    min_num_players = 2
+    max_num_players = 2
     num_players = 2
     context_type = TicTacToeContext
-    actions_type = TicTacToeActions
+    player_actions_type = TicTacToeActions
 
     @property
     def terminal(self):

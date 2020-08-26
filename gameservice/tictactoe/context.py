@@ -5,22 +5,18 @@ class TicTacToeContext(Context):
     def __init__(self, game):
         super().__init__(game)
 
-        self.__board = [[None, None, None],
-                        [None, None, None],
-                        [None, None, None]]
+        self.board = [[None, None, None],
+                      [None, None, None],
+                      [None, None, None]]
 
     @property
     def info(self):
         return {
             **super().info,
-            "board": self.__board,
+            "board": self.board,
             "empty_coords": self.empty_coords,
             "winning_coords": self.winning_coords,
         }
-
-    @property
-    def board(self):
-        return self.__board
 
     @property
     def empty_coords(self):

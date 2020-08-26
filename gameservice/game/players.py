@@ -1,16 +1,18 @@
 class Players:
     def __init__(self, game):
-        self.__game = game
-        self.__players = tuple(game.player_type(game, i) for i in range(game.num_players))
-        self.__nature = game.nature_type(game)
+        self.game = game
+        self.nature = self._create_nature()
 
-    @property
-    def game(self):
-        return self.__game
+        self.__players = tuple(self._create_player(i) for i in range(game.num_players))
 
-    @property
-    def nature(self):
-        return self.__nature
+    def _create_player(self, index):
+        return self.game.player_type(self.game)
+
+    def _create_nature(self):
+        return self.game.nature_type(self.game)
+
+    def index(self, player):
+        return self.__players.index(player) if player in self.__players else None
 
     def __len__(self):
         return len(self.__players)
