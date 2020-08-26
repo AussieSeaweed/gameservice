@@ -39,14 +39,15 @@ class PokerNature(Nature):
     def __init__(self, game):
         super().__init__(game)
 
-        self.__pointer = None
+        self.pointer = None
+        self.next()
 
     def next(self):
-        self.__pointer = 0 if self.__pointer is None else self.__pointer + 1
+        self.pointer = 0 if self.pointer is None else self.pointer + 1
 
-        while self.game.players[self.__pointer].mucked and self.__pointer < len(self.game.players):
-            self.__pointer += 1
+        while self.game.players[self.pointer].mucked and self.pointer < len(self.game.players):
+            self.pointer += 1
         else:
-            self.__pointer = None
+            self.pointer = None
 
-        return self.__pointer
+        return self.pointer

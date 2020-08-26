@@ -2,6 +2,7 @@ from ..sequential.game import TurnQueueGame
 from .player import PokerPlayer, PokerNature
 from .context import PokerContext
 from .players import PokerPlayers
+from .street import ResultStreet
 
 
 class PokerGame(TurnQueueGame):
@@ -25,7 +26,7 @@ class PokerGame(TurnQueueGame):
     def __init__(self, num_players=None):
         super().__init__(num_players)
 
-        self.streets = [street_type(self) for street_type in self.street_types]
+        self.streets = [street_type(self) for street_type in self.street_types] + [ResultStreet(self)]
 
     @property
     def street(self):
