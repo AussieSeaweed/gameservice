@@ -1,18 +1,14 @@
-from ..sequential.game import TurnAlternationGame
-
-from .context import TicTacToeContext
 from .actions import TicTacToeActions
+from .context import TicTacToeContext
+from ..sequential.game import SequentialGame
 
 
-class TicTacToe(TurnAlternationGame):
+class TicTacToe(SequentialGame):
     num_players = 2
     context_type = TicTacToeContext
     player_actions_type = TicTacToeActions
-    initial_turn = 0
 
     def __init__(self):
         super().__init__()
 
-    @property
-    def terminal(self):
-        return super().terminal or self.context.winning_coords is not None or not self.context.empty_coords
+        self.player = self.players[0]

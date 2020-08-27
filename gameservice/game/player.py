@@ -26,6 +26,14 @@ class Player:
     def actions(self):
         return self.game.player_actions_type(self.game, self)
 
+    @property
+    def next(self):
+        return self.game.players[(self.game.players.index(self) + 1) % len(self.game.players)]
+
+    @property
+    def prev(self):
+        return self.game.players[(self.game.players.index(self) - 1) % len(self.game.players)]
+
 
 class Nature(Player):
     def __init__(self, game):
