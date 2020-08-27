@@ -49,41 +49,40 @@ class YieldingAction(SequentialAction):
 
 
 class Deal(SequentialAction):
-    def __init__(self, game, player, index, num_cards):
+    def __init__(self, game, player, num_cards):
         super().__init__(game, player)
 
-        try:
-            if not game.players.nature or self.game.players[index].mucked or num_cards <= 0:
-                raise InvalidActionArgumentException
-        except (IndexError, TypeError):
-            raise InvalidActionArgumentException
-
-        self.__index = index
         self.__num_cards = num_cards
 
     @property
     def label(self):
-        return f"Deal {self.__num_cards} cards to Player {self.__index}"
+        return f"Deal {self.__num_cards} cards"
+
+    def act(self):
+        pass
+
+
+class Peel(SequentialAction):
+    def __init__(self, game, player, num_cards):
+        super().__init__(game, player)
+
+        self.__num_cards = num_cards
+
+    @property
+    def label(self):
+        return "Peel"
 
     def act(self):
         pass
 
 
 class Showdown(SequentialAction):
-    def __init__(self, game, player, index):
+    def __init__(self, game, player):
         super().__init__(game, player)
-
-        try:
-            if not game.players.nature or self.game.players[index].mucked:
-                raise InvalidActionArgumentException
-        except (IndexError, TypeError):
-            raise InvalidActionArgumentException
-
-        self.__index = index
 
     @property
     def label(self):
-        return f"Showdown Player {self.__index}"
+        return "Showdown"
 
     def act(self):
         pass
@@ -98,4 +97,12 @@ class Distribute(SequentialAction):
         return "Distribute"
 
     def act(self):
-        pass
+        if not self.game.winners:
+            self.game.winners = [player for player in self.game.players if not player.mucked]
+
+        self.game.winners[0].stack += self.game.context.pot % len(self.game.winners)
+
+        for winner in self.game.winners:
+            winner.stack += self.game.context.pot // len(self.game.winners)
+
+        self.game.context.pot = 0

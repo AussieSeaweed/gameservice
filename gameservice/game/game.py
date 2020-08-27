@@ -1,15 +1,11 @@
 from abc import ABC, abstractmethod
 
-from ..exceptions import InvalidNumPlayersException
-from .player import Player, Nature
 from .context import Context
+from .player import Player, Nature
 from .players import Players
 
 
 class Game(ABC):
-    min_num_players = None
-    max_num_players = None
-
     num_players = None
 
     player_type = Player
@@ -21,14 +17,15 @@ class Game(ABC):
     player_actions_type = None
     nature_actions_type = None
 
-    def __init__(self, num_players=None):
-        self.num_players = self.num_players or num_players
+    def __init__(self):
+        self.players = self._create_players()
+        self.context = self._create_context()
 
-        if self.num_players is None or not self.min_num_players <= self.num_players <= self.max_num_players:
-            raise InvalidNumPlayersException
+    def _create_players(self):
+        return self.players_type(self)
 
-        self.players = self.players_type(self)
-        self.context = self.context_type(self)
+    def _create_context(self):
+        return self.context_type(self)
 
     @property
     @abstractmethod

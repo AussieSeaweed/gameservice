@@ -1,8 +1,9 @@
 from ..sequential.game import TurnQueueGame
+from ..exceptions import InvalidNumPlayersException
 from .player import PokerPlayer, PokerNature
 from .context import PokerContext
 from .players import PokerPlayers
-from .street import ResultStreet
+from .street import Showdown, Distributing
 
 
 class PokerGame(TurnQueueGame):
@@ -23,10 +24,16 @@ class PokerGame(TurnQueueGame):
 
     street_types = None
 
-    def __init__(self, num_players=None):
-        super().__init__(num_players)
+    def __init__(self):
+        super().__init__()
 
-        self.streets = [street_type(self) for street_type in self.street_types] + [ResultStreet(self)]
+        if self.num_players < 2:
+            raise InvalidNumPlayersException
+
+        self.streets = [street_type(self) for street_type in self.street_types]
+
+        self.winners = []
+        self.winning_hand = None
 
     @property
     def street(self):
@@ -39,10 +46,3 @@ class PokerGame(TurnQueueGame):
     @property
     def nature_actions_type(self):
         return self.street.nature_actions_type
-
-    def update(self):
-        try:
-            super().update()
-        except IndexError:
-            self.streets.pop(0)
-            self.order.extend(self.street.order)

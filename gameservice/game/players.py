@@ -1,9 +1,8 @@
 class Players:
     def __init__(self, game):
         self.game = game
-        self.nature = self._create_nature()
-
         self.__players = tuple(self._create_player(i) for i in range(game.num_players))
+        self.nature = self._create_nature()
 
     def _create_player(self, index):
         return self.game.player_type(self.game)
