@@ -1,4 +1,4 @@
-from gameservice.game.player import Player
+from gameservice.game.player import Player, Nature
 
 
 class PokerPlayer(Player):
@@ -13,6 +13,10 @@ class PokerPlayer(Player):
         self.cards = []
         self.stack = game.starting_stack
         self.bet = 0
+
+    @property
+    def total(self):
+        return self.stack + self.bet
 
     @property
     def public_info(self):
@@ -37,3 +41,14 @@ class PokerPlayer(Player):
     def expose(self):
         for card in self.cards:
             card.exposed = True
+
+    @property
+    def hand(self):
+        return self.game.evaluate(self.game.context.board + [card.str_val for card in self.cards])
+
+
+class PokerNature(Nature):
+    def __init__(self, game):
+        super().__init__(game)
+
+        self.target = None

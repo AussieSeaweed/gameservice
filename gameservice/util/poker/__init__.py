@@ -1,2 +1,2 @@
 from .deck import PokerDeck, PokerDeck52
-from .eval import evaluate52
+from .evaluate import evaluate52

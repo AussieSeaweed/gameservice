@@ -6,8 +6,6 @@ from .players import Players
 
 
 class Game(ABC):
-    num_players = None
-
     player_type = Player
     nature_type = Nature
     context_type = Context

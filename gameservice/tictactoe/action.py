@@ -22,4 +22,4 @@ class Mark(SequentialAction):
         if self.game.context.winning_coords is not None or not self.game.context.empty_coords:
             self.game.player = None
         else:
-            self.game.player = self.game.player.next
+            self.game.player = self.game.players.next(self.player)

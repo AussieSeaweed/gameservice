@@ -3,7 +3,7 @@ from ..game.actions import CachedActions
 
 
 class TicTacToeActions(CachedActions):
-    def _cache_actions(self):
+    def _create_actions(self):
         if self.game.player is not self.player:
             return []
         else:
