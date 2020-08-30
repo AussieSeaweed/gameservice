@@ -1,27 +1,38 @@
+from .action import PreFlop
 from ..game.actions import CachedActions
 from ..poker.action import Put, Continue, Surrender, Peel, Showdown, Distribute
-from .action import PreFlop
 
 
 class NLHEPlayerActions(CachedActions):
+    multiplier = 1.19
+
     def _create_actions(self):
         actions = []
 
         if self.game.player is self.player:
-            for amount in self._sample_amounts:
-                actions.append(Put(self.game, self.player, amount))
+            if max(self.game.players.bets) > self.player.bet:
+                actions.append(Surrender(self.game, self.player))
 
             actions.append(Continue(self.game, self.player))
 
-            if max(self.game.players.bets) > self.player.bet:
-                actions.append(Surrender(self.game, self.player))
+            for amount in self._sample_amounts:
+                actions.append(Put(self.game, self.player, amount))
 
         return actions
 
     @property
     def _sample_amounts(self):
         if self.game.min_raise < self.player.total:
-            return [self.game.min_raise, self.player.total]
+            samples = set()
+            sample = self.game.min_raise
+
+            while sample < self.player.total:
+                samples.add(int(sample))
+                sample *= self.multiplier
+
+            samples.add(self.player.total)
+
+            return sorted(samples)
         elif max(self.game.players.bets) < self.player.total:
             return [self.player.total]
         else:
