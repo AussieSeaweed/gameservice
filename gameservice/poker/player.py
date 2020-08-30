@@ -7,12 +7,18 @@ class PokerPlayer(Player):
             self.str_val = str_val
             self.exposed = exposed
 
-    def __init__(self, game):
+    def __init__(self, game, index):
         super().__init__(game)
 
         self.cards = []
-        self.stack = game.starting_stack
+        self.stack = game.starting_stacks[index]
         self.bet = 0
+
+        if index <= 1:
+            blind = self.game.bb if index ^ (game.num_players == 2) else self.game.sb
+
+            self.stack -= blind
+            self.bet += blind
 
     @property
     def total(self):
@@ -22,7 +28,7 @@ class PokerPlayer(Player):
     def public_info(self):
         return {
             **super().public_info,
-            "cards": [card.str_val if card.exposed else None for card in self.cards],
+            "cards": None if self.mucked else [card.str_val if card.exposed else None for card in self.cards],
             "stack": self.stack,
             "bet": self.bet,
         }
@@ -31,16 +37,23 @@ class PokerPlayer(Player):
     def private_info(self):
         return {
             **super().private_info,
-            "cards": [card.str_val for card in self.cards],
+            "cards": None if self.mucked else [card.str_val for card in self.cards],
         }
+
+    def muck(self):
+        self.cards = None
+
+    def expose(self):
+        for card in self.cards:
+            card.exposed = True
 
     @property
     def mucked(self):
         return self.cards is None
 
-    def expose(self):
-        for card in self.cards:
-            card.exposed = True
+    @property
+    def relevant(self):
+        return not self.mucked and self.stack > 0
 
     @property
     def hand(self):
@@ -51,4 +64,4 @@ class PokerNature(Nature):
     def __init__(self, game):
         super().__init__(game)
 
-        self.target = None
+        self.chance_players = None

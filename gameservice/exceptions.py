@@ -20,3 +20,7 @@ class InvalidActionException(GameServiceException):
 
 class InvalidActionArgumentException(GameServiceException):
     """Raised when an argument to an action is invalid"""
+
+
+class NatureException(GameServiceException):
+    """Raised when the nature is absent"""

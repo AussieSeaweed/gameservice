@@ -1,5 +1,5 @@
 from .context import PokerContext
-from .player import PokerPlayer
+from .player import PokerPlayer, PokerNature
 from .players import PokerPlayers
 from ..exceptions import InvalidNumPlayersException
 from ..sequential.game import SequentialGame
@@ -7,21 +7,22 @@ from ..sequential.game import SequentialGame
 
 class PokerGame(SequentialGame):
     player_type = PokerPlayer
+    nature_type = PokerNature
     context_type = PokerContext
 
     players_type = PokerPlayers
 
     """Poker variables"""
 
+    num_players = None
+
     sb = None
     bb = None
 
-    starting_stack = None
-
-    num_players = None
+    starting_stacks = None
 
     deck_type = None
-    evaluate = None
+    evaluator_type = None
 
     def __init__(self):
         super().__init__()
@@ -30,12 +31,13 @@ class PokerGame(SequentialGame):
             raise InvalidNumPlayersException
 
         self.deck = self._create_deck()
+        self.evaluator = self._create_evaluator()
         self.player = self.players.nature
 
-        self.phase = -1
+        self.street = 0
 
         self.aggressor = None
-        self.min_raise = self.sb
+        self.min_raise = None
 
         self.winners = []
         self.winning_hand = None
@@ -43,12 +45,8 @@ class PokerGame(SequentialGame):
     def _create_deck(self):
         return self.deck_type()
 
-    def next(self):
-        self.context.pot += sum(self.players.bets)
+    def _create_evaluator(self):
+        return self.evaluator_type()
 
-        for player in self.players:
-            player.bet = 0
-
-        self.player = self.players.nature
-
-        self.phase += 1
+    def evaluate(self, card_str_list):
+        return self.evaluator.evaluate(card_str_list)

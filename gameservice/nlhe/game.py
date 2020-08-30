@@ -1,7 +1,7 @@
 from .actions import NLHEPlayerActions, NLHENatureActions
 from ..poker.game import PokerGame
 from ..util.poker.deck import PokerDeck52
-from ..util.poker.evaluate import evaluate52
+from ..util.poker.evaluator import Evaluator52
 
 
 class NLHEGame(PokerGame):
@@ -9,4 +9,4 @@ class NLHEGame(PokerGame):
     nature_actions_type = NLHENatureActions
 
     deck_type = PokerDeck52
-    evaluate = evaluate52
+    evaluator_type = Evaluator52
