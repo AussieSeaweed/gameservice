@@ -1,7 +1,7 @@
 from abc import ABC
 
-from ..game.action import Action
 from ..exceptions import PlayerOutOfTurnException
+from ..game.action import Action
 
 
 class SequentialAction(Action, ABC):

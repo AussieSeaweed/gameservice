@@ -13,14 +13,12 @@ class PreFlop(StreetAction):
 
     def act(self):
         if not self.player.chance_players:
-            self.player.chance_players = [player for player in self.game.players if not player.mucked]
+            self.player.chance_players = list(self.game.players)
 
-        chance_player = self.player.chance_players[0]
+        chance_player = self.player.chance_players.pop(0)
 
         chance_player.cards.extend(
             chance_player.Card(card_str, False) for card_str in self.game.deck.draw(self.num_cards))
 
-        self.player.chance_players.pop(0)
-
         if not self.player.chance_players:
-            self.begin_betting(self.game.players[1] if self.game.num_players == 2 else self.game.players[2])
+            self.begin_betting(self.game.players[1 if self.game.num_players == 2 else 2])

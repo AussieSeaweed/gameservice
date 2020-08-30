@@ -6,6 +6,10 @@ class InvalidNumPlayersException(GameServiceException):
     """Raised when the number of players is invalid"""
 
 
+class PlayerNotFoundException(GameServiceException):
+    """Raised when requested player is not found"""
+
+
 class TerminalGameException(GameServiceException):
     """Raised when the game is terminal"""
 

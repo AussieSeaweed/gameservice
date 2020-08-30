@@ -30,6 +30,7 @@ class StreetAction(SequentialAction, ABC):
 
     def begin_betting(self, first_player=None):
         try:
+            self.game.player.chance_players = None
             self.game.player = first_player if first_player is not None else next(
                 player for player in self.game.players if player.relevant)
             self.game.aggressor = self.game.player
@@ -60,7 +61,6 @@ class Put(PokerPlayerAction):
         self.player.bet = self.amount
 
         self.game.player = self.game.players.next_relevant(self.player)
-        pass
 
 
 class Continue(PokerPlayerAction):
@@ -131,7 +131,7 @@ class Showdown(StreetAction):
             index = self.player.chance_players.index(self.game.aggressor)
             self.player.chance_players = self.player.chance_players[index:] + self.player.chance_players[:index]
 
-        chance_player = self.player.chance_players[0]
+        chance_player = self.player.chance_players.pop(0)
 
         if self.game.winning_hand is None or chance_player.hand < self.game.winning_hand:
             self.game.winning_hand = chance_player.hand
@@ -142,8 +142,6 @@ class Showdown(StreetAction):
             chance_player.expose()
         else:
             chance_player.muck()
-
-        self.player.chance_players.pop(0)
 
         if not self.player.chance_players:
             self.game.street = None

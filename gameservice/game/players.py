@@ -1,3 +1,6 @@
+from ..exceptions import PlayerNotFoundException
+
+
 class Players:
     def __init__(self, game):
         self.game = game
@@ -11,7 +14,10 @@ class Players:
         return self.game.nature_type(self.game)
 
     def index(self, player):
-        return self.__players.index(player) if player in self.__players else None
+        try:
+            return None if player is self.nature else self.__players.index(player)
+        except ValueError:
+            raise PlayerNotFoundException
 
     def next(self, player):
         return self[(self.index(player) + 1) % len(self)]
@@ -23,7 +29,10 @@ class Players:
         return len(self.__players)
 
     def __getitem__(self, item):
-        return self.__players[item]
+        try:
+            return self.__players[item]
+        except IndexError:
+            raise PlayerNotFoundException
 
     def __iter__(self):
         return iter(self.__players)
