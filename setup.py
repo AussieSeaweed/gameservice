@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="gameservice-AussieSeaweed",
+    name="gameservice",
     version="0.0.1",
     author="Juho Kim",
     author_email="juho-kim@outlook.com",
