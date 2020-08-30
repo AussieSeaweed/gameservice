@@ -128,14 +128,7 @@ class Showdown(StreetAction):
     def act(self):
         if not self.player.chance_players:
             self.player.chance_players = [player for player in self.game.players if not player.mucked]
-
-            index = 0
-
-            for i in range(len(self.player.chance_players)):
-                if self.player.chance_players[i] is self.game.aggressor:
-                    index = i
-                    break
-
+            index = self.player.chance_players.index(self.game.aggressor)
             self.player.chance_players = self.player.chance_players[index:] + self.player.chance_players[:index]
 
         chance_player = self.player.chance_players[0]
@@ -162,9 +155,6 @@ class Distribute(StreetAction):
         return "Distribute"
 
     def act(self):
-        if not self.game.winners:
-            self.game.winners = [player for player in self.game.players if not player.mucked]
-
         self.game.winners[0].stack += self.game.context.pot % len(self.game.winners)
 
         for winner in self.game.winners:

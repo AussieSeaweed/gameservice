@@ -21,10 +21,6 @@ class PokerPlayer(Player):
             self.bet += blind
 
     @property
-    def total(self):
-        return self.stack + self.bet
-
-    @property
     def public_info(self):
         return {
             **super().public_info,
@@ -46,6 +42,10 @@ class PokerPlayer(Player):
     def expose(self):
         for card in self.cards:
             card.exposed = True
+
+    @property
+    def total(self):
+        return self.stack + self.bet
 
     @property
     def mucked(self):
