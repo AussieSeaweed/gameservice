@@ -10,3 +10,5 @@ class NLHEGame(PokerGame):
 
     deck_type = PokerDeck52
     evaluator_type = Evaluator52
+
+    multiplier = None

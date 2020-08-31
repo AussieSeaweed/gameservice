@@ -4,8 +4,6 @@ from ..poker.action import Put, Continue, Surrender, Peel, Showdown, Distribute
 
 
 class NLHEPlayerActions(CachedActions):
-    multiplier = 1.19
-
     def _create_actions(self):
         actions = []
 
@@ -28,7 +26,7 @@ class NLHEPlayerActions(CachedActions):
 
             while sample < self.player.total:
                 samples.add(int(sample))
-                sample *= self.multiplier
+                sample *= self.game.multiplier
 
             samples.add(self.player.total)
 
