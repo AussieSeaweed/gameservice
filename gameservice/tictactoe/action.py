@@ -21,5 +21,13 @@ class Mark(SequentialAction):
 
         if self.game.context.winning_coords is not None or not self.game.context.empty_coords:
             self.game.player = None
+
+            if self.game.context.winning_coords is not None:
+                r, c = self.game.context.winning_coords[0]
+
+                self.game.players[self.game.context.board[r][c]].payoff = 1
+            else:
+                self.game.players[0].payoff = 0
+                self.game.players[1].payoff = 0
         else:
             self.game.player = self.game.players.next(self.player)

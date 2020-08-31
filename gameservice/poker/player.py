@@ -10,8 +10,10 @@ class PokerPlayer(Player):
     def __init__(self, game, index):
         super().__init__(game)
 
+        self.starting_stack = game.starting_stacks[index]
+
         self.cards = []
-        self.stack = game.starting_stacks[index]
+        self.stack = self.starting_stack
         self.bet = 0
 
         if index <= 1:
@@ -58,6 +60,10 @@ class PokerPlayer(Player):
     @property
     def hand(self):
         return self.game.evaluate(self.game.context.board + [card.str_val for card in self.cards])
+
+    @property
+    def payoff(self):
+        return self.stack - self.starting_stack
 
 
 class PokerNature(Nature):

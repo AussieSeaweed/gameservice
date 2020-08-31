@@ -1,4 +1,6 @@
 class Player:
+    payoff = None
+
     def __init__(self, game):
         self.game = game
 
@@ -12,7 +14,9 @@ class Player:
 
     @property
     def public_info(self):
-        return {}
+        return {
+            "payoff": self.payoff,
+        }
 
     @property
     def private_info(self):
