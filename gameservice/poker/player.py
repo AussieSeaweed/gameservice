@@ -15,6 +15,7 @@ class PokerPlayer(Player):
         self.cards = []
         self.stack = self.starting_stack
         self.bet = 0
+        self.button = index == game.num_players - 1
 
         if index <= 1:
             blind = self.game.bb if index ^ (game.num_players == 2) else self.game.sb
@@ -29,6 +30,7 @@ class PokerPlayer(Player):
             "cards": None if self.mucked else [card.str_val if card.exposed else None for card in self.cards],
             "stack": self.stack,
             "bet": self.bet,
+            "button": self.button,
         }
 
     @property
