@@ -28,7 +28,7 @@ class Player:
         return {
             "players": [player.private_info if self is player else player.public_info for player in self.game.players],
             "context": self.game.context.info,
-            "action": list(self.actions),
+            "actions": list(self.actions),
         }
 
 
