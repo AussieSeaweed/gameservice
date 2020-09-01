@@ -37,3 +37,14 @@ class CachedActions(Actions, ABC):
 
     def __iter__(self):
         return iter(self.__actions.keys())
+
+
+class EmptyActions(Actions):
+    def __len__(self):
+        return 0
+
+    def __getitem__(self, item):
+        raise IndexError
+
+    def __iter__(self):
+        return iter([])
