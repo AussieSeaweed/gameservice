@@ -16,6 +16,7 @@ class Player:
     def public_info(self):
         return {
             "payoff": self.payoff,
+            "active": len(self.actions) > 0,
         }
 
     @property
