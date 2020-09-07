@@ -1,4 +1,4 @@
-from gameservice.game.player import Player, Nature
+from gameservice.game.player import Player
 
 
 class PokerPlayer(Player):
@@ -16,12 +16,6 @@ class PokerPlayer(Player):
         self.stack = self.starting_stack
         self.bet = 0
         self.button = index == game.num_players - 1
-
-        if index <= 1:
-            blind = self.game.bb if index ^ (game.num_players == 2) else self.game.sb
-
-            self.stack -= blind
-            self.bet += blind
 
     @property
     def public_info(self):
@@ -48,8 +42,8 @@ class PokerPlayer(Player):
             card.exposed = True
 
     @property
-    def total(self):
-        return self.stack + self.bet
+    def effective_stack(self):
+        return min(sorted(player.stack + player.bet for player in self.game.players)[-2], self.stack + self.bet)
 
     @property
     def mucked(self):
@@ -68,8 +62,12 @@ class PokerPlayer(Player):
         return self.stack - self.starting_stack
 
 
-class PokerNature(Nature):
-    def __init__(self, game):
-        super().__init__(game)
+class BlindedPokerPlayer(PokerPlayer):
+    def __init__(self, game, index):
+        super().__init__(game, index)
 
-        self.chance_players = None
+        if index <= 1:
+            blind = self.game.bb if index ^ (game.num_players == 2) else self.game.sb
+
+            self.stack -= blind
+            self.bet += blind
