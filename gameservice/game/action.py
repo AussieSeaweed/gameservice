@@ -17,4 +17,4 @@ class Action(ABC):
         pass
 
     def act(self):
-        self.game.logs.append((self.player, self.label))
+        self.game.logs.append([self.player, self.label])
