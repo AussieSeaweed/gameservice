@@ -16,6 +16,5 @@ class Action(ABC):
     def label(self):
         pass
 
-    @abstractmethod
     def act(self):
-        pass
+        self.game.logs.append((self.player, self.label))

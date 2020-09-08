@@ -29,7 +29,11 @@ class Player:
             "players": [player.private_info if self is player else player.public_info for player in self.game.players],
             "context": self.game.context.info,
             "actions": list(self.actions),
+            "logs": self.game.logs,
         }
+
+    def __str__(self):
+        return f"Player {self.game.players.index(self)}"
 
 
 class Nature(Player):
@@ -40,3 +44,6 @@ class Nature(Player):
     @property
     def actions(self):
         return self.game.nature_actions_type(self.game, self)
+
+    def __str__(self):
+        return "Nature"

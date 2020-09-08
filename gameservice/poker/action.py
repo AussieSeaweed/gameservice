@@ -36,6 +36,8 @@ class Put(PokerPlayerAction):
         return f"{'Raise' if max(self.game.players.bets) else 'Bet'} {self.amount}"
 
     def act(self):
+        super().act()
+
         self.game.aggressor = self.player
         self.game.min_raise = self.amount + self.amount - max(self.game.players.bets)
 
@@ -51,6 +53,8 @@ class Continue(PokerPlayerAction):
         return f"Call {max(self.game.players.bets) - self.player.bet}" if max(self.game.players.bets) != self.player.bet else "Check"
 
     def act(self):
+        super().act()
+
         amount = max(self.game.players.bets) - self.player.bet
 
         self.player.stack -= amount
@@ -74,6 +78,8 @@ class Surrender(PokerPlayerAction):
         return "Fold"
 
     def act(self):
+        super().act()
+
         self.player.muck()
 
         if self.game.num_players - self.game.players.num_mucked == 1:
@@ -124,6 +130,8 @@ class Deal(PokerNatureAction):
         return f"Deal {self.num_cards} cards"
 
     def act(self):
+        super().act()
+
         if not self.game.chance_players:
             self.game.chance_players = list(self.game.players)
 
@@ -144,9 +152,11 @@ class Peel(PokerNatureAction):
 
     @property
     def label(self):
-        return "Peel"
+        return f"Peel {', '.join(self.game.deck.peak(self.num_cards))}"
 
     def act(self):
+        super().act()
+
         self.game.context.board.extend(self.game.deck.draw(self.num_cards))
         self.start_betting()
 
@@ -157,6 +167,8 @@ class Showdown(PokerNatureAction):
         return "Showdown"
 
     def act(self):
+        super().act()
+
         if not self.game.chance_players:
             self.game.chance_players = []
 
@@ -187,6 +199,8 @@ class Distribute(PokerNatureAction):
         return "Distribute"
 
     def act(self):
+        super().act()
+
         self.game.winners[0].stack += self.game.context.pot % len(self.game.winners)
 
         for winner in self.game.winners:

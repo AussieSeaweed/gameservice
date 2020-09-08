@@ -19,6 +19,8 @@ class Game(ABC):
         self.players = self._create_players()
         self.context = self._create_context()
 
+        self.logs = []
+
     def _create_players(self):
         return self.players_type(self)
 

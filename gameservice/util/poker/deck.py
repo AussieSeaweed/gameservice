@@ -18,3 +18,6 @@ class PokerDeck52(PokerDeck):
         card_ints: List[int] = [self.__deck.draw(1)] if num_cards == 1 else self.__deck.draw(num_cards)
 
         return [Card.int_to_str(card_int) for card_int in card_ints]
+
+    def peak(self, num_cards: int) -> List[str]:
+        return [Card.int_to_str(card_int) for card_int in self.__deck.cards[:num_cards]]

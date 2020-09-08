@@ -17,6 +17,8 @@ class Mark(SequentialAction):
         return f"Mark {self.r} {self.c}"
 
     def act(self):
+        super().act()
+
         self.game.context.board[self.r][self.c] = self.game.players.index(self.player)
 
         if self.game.context.winning_coords is not None or not self.game.context.empty_coords:
