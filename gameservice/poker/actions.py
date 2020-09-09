@@ -12,10 +12,11 @@ class NLPlayerActions(CachedActions):
 
             actions.append(Continue(self.game, self.player))
 
-            if self.game.min_raise < self.player.effective_stack:
-                for amount in self.game.bet_sizes(self.game.min_raise, self.player.effective_stack):
-                    actions.append(Put(self.game, self.player, amount))
-            elif max(self.game.players.bets) < self.player.effective_stack:
-                actions.append(Put(self.game, self.player, self.player.effective_stack))
+            if self.game.players.num_relevant > 1:
+                if self.game.min_raise < self.player.total:
+                    for amount in self.game.bet_sizes(self.game.min_raise, self.player.total):
+                        actions.append(Put(self.game, self.player, amount))
+                elif max(self.game.players.bets) < self.player.total:
+                    actions.append(Put(self.game, self.player, self.player.total))
 
         return actions

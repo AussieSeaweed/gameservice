@@ -42,8 +42,16 @@ class PokerPlayer(Player):
             card.exposed = True
 
     @property
+    def total(self):
+        return self.stack + self.bet
+
+    @property
+    def commitment(self):
+        return self.starting_stack - self.stack
+
+    @property
     def effective_stack(self):
-        return min(sorted(player.stack + player.bet for player in self.game.players)[-2], self.stack + self.bet)
+        return min(sorted(player.total for player in self.game.players if not player.mucked)[-2], self.total)
 
     @property
     def mucked(self):
@@ -51,7 +59,7 @@ class PokerPlayer(Player):
 
     @property
     def relevant(self):
-        return not self.mucked and self.stack > 0
+        return not self.mucked and self.stack > 0 and self.effective_stack > 0
 
     @property
     def hand(self):

@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from .context import PokerContext
 from .players import PokerPlayers
 from ..exceptions import InvalidNumPlayersException
@@ -34,8 +36,7 @@ class PokerGame(SequentialGame):
         self.aggressor = None
         self.min_raise = None
 
-        self.winners = []
-        self.winning_hand = None
+        self.results = defaultdict(lambda: [])
 
     @property
     def num_players(self):

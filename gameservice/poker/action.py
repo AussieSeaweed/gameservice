@@ -25,8 +25,8 @@ class Put(PokerPlayerAction):
     def __init__(self, game, player, amount):
         super().__init__(game, player)
 
-        if not (isinstance(amount, int) and (game.min_raise <= amount <= player.effective_stack or
-                                             max(game.players.bets) < amount == player.effective_stack)):
+        if not (isinstance(amount, int) and (game.min_raise <= amount <= player.total or
+                                             max(game.players.bets) < amount == player.total)):
             raise InvalidActionArgumentException
 
         self.amount = amount
@@ -50,12 +50,13 @@ class Put(PokerPlayerAction):
 class Continue(PokerPlayerAction):
     @property
     def label(self):
-        return f"Call {max(self.game.players.bets) - self.player.bet}" if max(self.game.players.bets) != self.player.bet else "Check"
+        return "Check" if max(self.game.players.bets) == self.player.bet else \
+            f"Call {min(max(self.game.players.bets) - self.player.bet, self.player.stack)}"
 
     def act(self):
         super().act()
 
-        amount = max(self.game.players.bets) - self.player.bet
+        amount = min(max(self.game.players.bets) - self.player.bet, self.player.stack)
 
         self.player.stack -= amount
         self.player.bet += amount
@@ -84,7 +85,7 @@ class Surrender(PokerPlayerAction):
 
         if self.game.num_players - self.game.players.num_mucked == 1:
             self.stop_betting()
-            self.game.winners = [player for player in self.game.players if not player.mucked]
+            self.game.results[None].extend(player for player in self.game.players if not player.mucked)
             self.game.street = None
         else:
             self.game.player = self.game.players.next_relevant(self.player)
@@ -178,16 +179,15 @@ class Showdown(PokerNatureAction):
                     self.game.chance_players.append(self.game.players[i % len(self.game.players)])
 
         chance_player = self.game.chance_players.pop(0)
+        self.game.results[chance_player.hand].append(chance_player)
 
-        if self.game.winning_hand is None or chance_player.hand < self.game.winning_hand:
-            self.game.winning_hand = chance_player.hand
-            self.game.winners = [chance_player]
-            chance_player.expose()
-        elif chance_player.hand == self.game.winning_hand:
-            self.game.winners.append(chance_player)
-            chance_player.expose()
+        for hand in sorted(self.game.results):
+            if hand < chance_player.hand and \
+                    max(player.commitment for player in self.game.results[hand]) >= chance_player.commitment:
+                chance_player.muck()
+                break
         else:
-            chance_player.muck()
+            chance_player.expose()
 
         if not self.game.chance_players:
             self.game.street = None
@@ -201,11 +201,35 @@ class Distribute(PokerNatureAction):
     def act(self):
         super().act()
 
-        self.game.winners[0].stack += self.game.context.pot % len(self.game.winners)
+        distributed = 0
 
-        for winner in self.game.winners:
-            winner.stack += self.game.context.pot // len(self.game.winners)
+        while self.game.context.pot:
+            cur_hand = min(self.game.results)
+            players = self.game.results[cur_hand]
+            min_player = min(players, key=lambda player: player.commitment)
 
-        self.game.context.pot = 0
+            entitlement = min_player.commitment
+            distribution = 0
+
+            for player in self.game.players:
+                if distributed < player.commitment:
+                    distribution += min(entitlement, player.commitment) - distributed
+
+            players[0].bet += distribution % len(players)
+
+            for player in players:
+                player.bet += distribution // len(players)
+
+            self.game.context.pot -= distribution
+            distributed = entitlement
+
+            players.remove(min_player)
+
+            if not players:
+                self.game.results.pop(cur_hand)
+
+        for player in self.game.players:
+            player.stack += player.bet
+            player.bet = 0
 
         self.game.player = None

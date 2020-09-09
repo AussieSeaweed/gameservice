@@ -15,7 +15,7 @@ class PokerPlayers(Players):
 
         player = self.next(player)
 
-        while not player.relevant:
+        while not player.relevant and player != self.game.aggressor:
             player = self.next(player)
 
         return player
