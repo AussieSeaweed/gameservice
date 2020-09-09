@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gameservice",
-    version="0.1.3",
+    version="0.1.4",
     author="Juho Kim",
     author_email="juho-kim@outlook.com",
     description="A package for game services on python",
