@@ -32,6 +32,10 @@ class Player:
             "logs": self.game.logs,
         }
 
+    @property
+    def index(self):
+        return self.game.players.index(self)
+
     def __str__(self):
         return f"Player {self.game.players.index(self)}"
 

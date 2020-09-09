@@ -5,7 +5,7 @@ from ..sequential.game import SequentialGame
 from ..game.actions import EmptyActions
 
 
-class TicTacToe(SequentialGame):
+class TicTacToeGame(SequentialGame):
     context_type = TicTacToeContext
     players_type = TicTacToePlayers
 
