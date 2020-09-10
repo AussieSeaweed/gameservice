@@ -181,9 +181,8 @@ class Showdown(PokerNatureAction):
         chance_player = self.game.chance_players.pop(0)
         self.game.results[chance_player.hand].append(chance_player)
 
-        for hand in sorted(self.game.results):
-            if hand < chance_player.hand and \
-                    max(player.commitment for player in self.game.results[hand]) >= chance_player.commitment:
+        for hand, players in self.game.results.items():
+            if hand < chance_player.hand and max(player.commitment for player in players) >= chance_player.commitment:
                 chance_player.muck()
                 break
         else:
