@@ -14,6 +14,3 @@ class NLHEGame(PokerGame):
 
     deck_type = PokerDeck52
     evaluator_type = Evaluator52
-
-    def bet_sizes(self, min_raise, max_raise):
-        return range(min_raise, max_raise + 1)

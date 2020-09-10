@@ -50,3 +50,6 @@ class PokerGame(SequentialGame):
 
     def evaluate(self, card_str_list):
         return self.evaluator.evaluate(card_str_list)
+
+    def bet_sizes(self, min_raise, max_raise):
+        return range(min_raise, max_raise + 1)
