@@ -211,7 +211,7 @@ class Distribute(PokerNatureAction):
             distribution = 0
 
             for player in self.game.players:
-                if distributed < player.commitment:
+                if distributed < min(entitlement, player.commitment):
                     distribution += min(entitlement, player.commitment) - distributed
 
             players[0].bet += distribution % len(players)
