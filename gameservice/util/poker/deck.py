@@ -9,6 +9,10 @@ class PokerDeck(ABC):
     def draw(self, num_cards: int) -> List[str]:
         pass
 
+    @abstractmethod
+    def peak(self, num_cards: int) -> List[str]:
+        pass
+
 
 class PokerDeck52(PokerDeck):
     def __init__(self):

@@ -28,3 +28,7 @@ class InvalidActionArgumentException(GameServiceException):
 
 class NatureException(GameServiceException):
     """Raised when the nature is absent"""
+
+
+class InvalidConfigException(GameServiceException):
+    """Raised when the game config is invalid"""

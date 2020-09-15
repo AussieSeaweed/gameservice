@@ -1,23 +1,24 @@
-from collections import defaultdict
-
 from .context import PokerContext
+from .player import PokerPlayer, PokerNature
 from .players import PokerPlayers
 from ..exceptions import InvalidNumPlayersException
 from ..sequential.game import SequentialGame
 
 
 class PokerGame(SequentialGame):
+    player_type = PokerPlayer
+    nature_type = PokerNature
     context_type = PokerContext
+
     players_type = PokerPlayers
 
     """Poker variables"""
 
-    sb = None
-    bb = None
-
     deck_type = None
     evaluator_type = None
 
+    ante = None
+    blinds = None
     starting_stacks = None
 
     def __init__(self):
@@ -26,27 +27,15 @@ class PokerGame(SequentialGame):
         if self.num_players < 2:
             raise InvalidNumPlayersException
 
-        self.deck = self._create_deck()
-        self.evaluator = self._create_evaluator()
-        self.player = self.players.nature
+        self.deck = self.deck_type()
+        self.evaluator = self.evaluator_type()
 
-        self.street = 0
-
-        self.chance_players = []
-        self.aggressor = None
-        self.min_raise = None
-
-        self.results = defaultdict(lambda: [])
+    def _get_initial_player(self):
+        return self.players.nature
 
     @property
     def num_players(self):
         return len(self.starting_stacks)
-
-    def _create_deck(self):
-        return self.deck_type()
-
-    def _create_evaluator(self):
-        return self.evaluator_type()
 
     def evaluate(self, card_str_list):
         return self.evaluator.evaluate(card_str_list)

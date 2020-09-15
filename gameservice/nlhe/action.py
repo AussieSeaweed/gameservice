@@ -3,7 +3,7 @@ from ..poker.action import Deal
 
 class NLHEPreFlop(Deal):
     def __init__(self, game, player):
-        super().__init__(game, player, 2, False)
+        super().__init__(game, player, 2)
 
     @property
     def opener(self):

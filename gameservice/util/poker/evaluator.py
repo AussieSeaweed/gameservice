@@ -12,4 +12,7 @@ class Evaluator52:
 
         card_int_list: List[int] = [Card.new(card_str) for card_str in card_str_list]
 
-        return self.__evaluator.evaluate(card_int_list, [])
+        try:
+            return self.__evaluator.evaluate(card_int_list, [])
+        except KeyError:
+            return None

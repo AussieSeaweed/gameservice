@@ -13,23 +13,11 @@ class Mark(SequentialAction):
         self.c = c
 
     @property
-    def label(self):
+    def name(self):
         return f"Mark {self.r} {self.c}"
 
     def act(self):
-        super().act()
+        self.game.context.board[self.r][self.c] = self.player.index
 
-        self.game.context.board[self.r][self.c] = self.game.players.index(self.player)
-
-        if self.game.context.winning_coords is not None or not self.game.context.empty_coords:
-            self.game.player = None
-
-            if self.game.context.winning_coords is not None:
-                r, c = self.game.context.winning_coords[0]
-
-                self.game.players[self.game.context.board[r][c]].payoff = 1
-            else:
-                self.game.players[0].payoff = 0
-                self.game.players[1].payoff = 0
-        else:
-            self.game.player = self.game.players.next(self.player)
+        self.game.player = None if self.game.context.winning_coords or not self.game.context.empty_coords else \
+            self.game.players.next(self.player)

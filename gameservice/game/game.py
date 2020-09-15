@@ -1,31 +1,20 @@
 from abc import ABC, abstractmethod
 
-from .context import Context
-from .player import Player, Nature
-from .players import Players
-
 
 class Game(ABC):
-    player_type = Player
-    nature_type = Nature
-    context_type = Context
+    player_type = None
+    nature_type = None
+    context_type = None
 
-    players_type = Players
+    num_players = None
+    players_type = None
 
     player_actions_type = None
     nature_actions_type = None
 
     def __init__(self):
-        self.players = self._create_players()
-        self.context = self._create_context()
-
-        self.logs = []
-
-    def _create_players(self):
-        return self.players_type(self)
-
-    def _create_context(self):
-        return self.context_type(self)
+        self.players = self.players_type(self)
+        self.context = self.context_type(self)
 
     @property
     @abstractmethod

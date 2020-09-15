@@ -23,7 +23,7 @@ class CachedActions(Actions, ABC):
     def __init__(self, game, player):
         super().__init__(game, player)
 
-        self.__actions = {action.label: action for action in self._create_actions()}
+        self.__actions = {action.name: action for action in self._create_actions()}
 
     @abstractmethod
     def _create_actions(self):
@@ -36,7 +36,7 @@ class CachedActions(Actions, ABC):
         return self.__actions[item]
 
     def __iter__(self):
-        return iter(self.__actions.keys())
+        return iter(self.__actions)
 
 
 class EmptyActions(Actions):
@@ -44,7 +44,7 @@ class EmptyActions(Actions):
         return 0
 
     def __getitem__(self, item):
-        raise IndexError
+        raise KeyError
 
     def __iter__(self):
-        return iter([])
+        return iter(())

@@ -1,8 +1,10 @@
-class Player:
-    payoff = None
+from abc import ABC, abstractmethod
 
-    def __init__(self, game):
+
+class Player(ABC):
+    def __init__(self, game, index):
         self.game = game
+        self.index = index
 
     @property
     def nature(self):
@@ -14,10 +16,7 @@ class Player:
 
     @property
     def public_info(self):
-        return {
-            "payoff": self.payoff,
-            "active": len(self.actions) > 0,
-        }
+        return {}
 
     @property
     def private_info(self):
@@ -26,21 +25,32 @@ class Player:
     @property
     def infoset(self):
         return {
-            "players": [player.private_info if self is player else player.public_info for player in self.game.players],
+            "players": {
+                **{
+                    i: player.private_info if self is player else player.public_info for i, player in
+                    enumerate(self.game.players)
+                },
+
+                None: self.game.players.nature.private_info if self.nature else self.game.players.nature.public_info
+            },
+
             "context": self.game.context.info,
             "actions": list(self.actions),
-            "logs": self.game.logs,
         }
 
     @property
-    def index(self):
-        return self.game.players.index(self)
+    @abstractmethod
+    def payoff(self):
+        pass
 
     def __str__(self):
-        return f"Player {self.game.players.index(self)}"
+        return f"Player {self.index}"
 
 
-class Nature(Player):
+class Nature(Player, ABC):
+    def __init__(self, game):
+        super().__init__(game, None)
+
     @property
     def nature(self):
         return True

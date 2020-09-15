@@ -14,8 +14,6 @@ class TicTacToeContext(Context):
         return {
             **super().info,
             "board": self.board,
-            "empty_coords": self.empty_coords,
-            "winning_coords": self.winning_coords,
         }
 
     @property

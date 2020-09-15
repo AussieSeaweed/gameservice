@@ -2,8 +2,22 @@ from gameservice.game.players import Players
 
 
 class PokerPlayers(Players):
-    def _create_players(self):
-        return [self.game.player_type(self.game, i) for i in range(self.game.num_players)]
+    def __init__(self, game):
+        super().__init__(game)
+
+        if game.ante is not None:
+            for player in self:
+                ante = min(game.ante, player.stack)
+
+                player.stack -= ante
+                player.bet += ante
+
+        if game.blinds is not None:
+            for player, blind in zip(reversed(self) if len(self) == 2 else self, game.blinds):
+                blind = min(blind, player.stack)
+
+                player.stack -= blind
+                player.bet += blind
 
     @property
     def bets(self):
@@ -15,10 +29,10 @@ class PokerPlayers(Players):
 
         player = self.next(player)
 
-        while not player.relevant and player != self.game.aggressor:
+        while not player.relevant and player is not self.game.context.aggressor:
             player = self.next(player)
 
-        return player
+        return self.nature if player is self.game.context.aggressor else player
 
     @property
     def num_relevant(self):

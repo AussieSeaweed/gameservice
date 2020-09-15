@@ -13,8 +13,9 @@ class Action(ABC):
 
     @property
     @abstractmethod
-    def label(self):
+    def name(self):
         pass
 
+    @abstractmethod
     def act(self):
-        self.game.logs.append([self.player, self.label])
+        pass

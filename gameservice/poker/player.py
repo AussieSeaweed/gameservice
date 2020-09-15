@@ -1,61 +1,53 @@
-from gameservice.game.player import Player
+from gameservice.game.player import Player, Nature
 
 
 class PokerPlayer(Player):
-    class Card:
-        def __init__(self, str_val, exposed):
-            self.str_val = str_val
-            self.exposed = exposed
-
     def __init__(self, game, index):
-        super().__init__(game)
-
-        self.starting_stack = game.starting_stacks[index]
+        super().__init__(game, index)
 
         self.cards = []
-        self.stack = self.starting_stack
+        self.stack = game.starting_stacks[index]
         self.bet = 0
-        self.button = index == game.num_players - 1
+
+        self.exposed = False
 
     @property
     def public_info(self):
         return {
             **super().public_info,
-            "cards": None if self.mucked else [card.str_val if card.exposed else None for card in self.cards],
+            "cards": self.cards if self.mucked or self.exposed else [None] * len(self.cards),
             "stack": self.stack,
             "bet": self.bet,
-            "button": self.button,
+
+            "exposed": self.exposed,
         }
 
     @property
     def private_info(self):
         return {
             **super().private_info,
-            "cards": None if self.mucked else [card.str_val for card in self.cards],
+            "cards": self.cards,
         }
 
-    def muck(self):
-        self.cards = None
+    @property
+    def mucked(self):
+        return self.cards is None
 
-    def expose(self):
-        for card in self.cards:
-            card.exposed = True
+    @property
+    def payoff(self):
+        return self.stack - self.game.starting_stacks[self.index]
+
+    @property
+    def commitment(self):
+        return self.game.starting_stacks[self.index] - self.stack
 
     @property
     def total(self):
         return self.stack + self.bet
 
     @property
-    def commitment(self):
-        return self.starting_stack - self.stack
-
-    @property
     def effective_stack(self):
         return min(sorted(player.total for player in self.game.players if not player.mucked)[-2], self.total)
-
-    @property
-    def mucked(self):
-        return self.cards is None
 
     @property
     def relevant(self):
@@ -63,19 +55,10 @@ class PokerPlayer(Player):
 
     @property
     def hand(self):
-        return self.game.evaluate(self.game.context.board + [card.str_val for card in self.cards])
+        return self.game.evaluate(self.game.context.board + self.cards)
 
+
+class PokerNature(Nature):
     @property
     def payoff(self):
-        return self.stack - self.starting_stack
-
-
-class BlindedPokerPlayer(PokerPlayer):
-    def __init__(self, game, index):
-        super().__init__(game, index)
-
-        if index <= 1:
-            blind = self.game.bb if index ^ (game.num_players == 2) else self.game.sb
-
-            self.stack -= blind
-            self.bet += blind
+        return 0
