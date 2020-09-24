@@ -1,8 +1,8 @@
-from ..game.actions import CachedActions
-from .action import Put, Continue, Surrender
+from ..game.actionset import CachedActionSet
+from .actions import Put, Continue, Surrender
 
 
-class NLPlayerActions(CachedActions):
+class NLPlayerActionSet(CachedActionSet):
     def _create_actions(self):
         actions = []
 

@@ -1,7 +1,7 @@
 from abc import ABC
 
 from gameservice.exceptions import InvalidActionArgumentException, InvalidActionException, NatureException
-from gameservice.sequential.action import SequentialAction
+from gameservice.sequential.actions import SequentialAction
 
 
 class PokerPlayerAction(SequentialAction, ABC):

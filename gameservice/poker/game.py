@@ -1,6 +1,6 @@
 from .context import PokerContext
-from .player import PokerPlayer, PokerNature
-from .players import PokerPlayers
+from .players import PokerPlayer, PokerNature
+from .playerset import PokerPlayerSet
 from ..exceptions import InvalidNumPlayersException
 from ..sequential.game import SequentialGame
 
@@ -10,7 +10,7 @@ class PokerGame(SequentialGame):
     nature_type = PokerNature
     context_type = PokerContext
 
-    players_type = PokerPlayers
+    playerset_type = PokerPlayerSet
 
     """Poker variables"""
 

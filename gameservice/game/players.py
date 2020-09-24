@@ -1,27 +1,63 @@
-from ..exceptions import PlayerNotFoundException
+from abc import ABC, abstractmethod
 
 
-class Players:
-    def __init__(self, game):
+class Player(ABC):
+    def __init__(self, game, index):
         self.game = game
+        self.index = index
 
-        self.nature = self.game.nature_type(game)
-        self.__players = [self.game.player_type(game, i) for i in range(self.game.num_players)]
+    @property
+    def nature(self):
+        return False
 
-    def next(self, player):
-        return self[(player.index + 1) % len(self)]
+    @property
+    def actions(self):
+        return self.game.player_actionset_type(self.game, self)
 
-    def prev(self, player):
-        return self[(player.index - 1) % len(self)]
+    @property
+    def public_info(self):
+        return {}
 
-    def __len__(self):
-        return len(self.__players)
+    @property
+    def private_info(self):
+        return self.public_info
 
-    def __getitem__(self, item):
-        try:
-            return self.nature if item is None else self.__players[item]
-        except IndexError:
-            raise PlayerNotFoundException
+    @property
+    def infoset(self):
+        return {
+            "players": {
+                **{
+                    i: player.private_info if self is player else player.public_info for i, player in
+                    enumerate(self.game.players)
+                },
 
-    def __iter__(self):
-        return iter(self.__players)
+                None: self.game.players.nature.private_info if self.nature else self.game.players.nature.public_info
+            },
+
+            "context": self.game.context.info,
+            "actions": list(self.actions),
+        }
+
+    @property
+    @abstractmethod
+    def payoff(self):
+        pass
+
+    def __str__(self):
+        return f"Player {self.index}"
+
+
+class Nature(Player, ABC):
+    def __init__(self, game):
+        super().__init__(game, None)
+
+    @property
+    def nature(self):
+        return True
+
+    @property
+    def actions(self):
+        return self.game.nature_actionset_type(self.game, self)
+
+    def __str__(self):
+        return "Nature"

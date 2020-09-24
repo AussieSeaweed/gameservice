@@ -1,4 +1,4 @@
-from ..game.player import Player, Nature
+from ..game.players import Player, Nature
 
 
 class TicTacToePlayer(Player):

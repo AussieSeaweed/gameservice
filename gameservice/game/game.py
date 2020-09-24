@@ -7,13 +7,13 @@ class Game(ABC):
     context_type = None
 
     num_players = None
-    players_type = None
+    playerset_type = None
 
-    player_actions_type = None
-    nature_actions_type = None
+    player_actionset_type = None
+    nature_actionset_type = None
 
     def __init__(self):
-        self.players = self.players_type(self)
+        self.players = self.playerset_type(self)
         self.context = self.context_type(self)
 
     @property

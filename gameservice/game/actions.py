@@ -1,50 +1,21 @@
 from abc import ABC, abstractmethod
 
+from ..exceptions import TerminalGameException
 
-class Actions(ABC):
+
+class Action(ABC):
     def __init__(self, game, player):
+        if game.terminal:
+            raise TerminalGameException
+
         self.game = game
         self.player = player
 
+    @property
     @abstractmethod
-    def __len__(self):
+    def name(self):
         pass
 
     @abstractmethod
-    def __getitem__(self, item):
+    def act(self):
         pass
-
-    @abstractmethod
-    def __iter__(self):
-        pass
-
-
-class CachedActions(Actions, ABC):
-    def __init__(self, game, player):
-        super().__init__(game, player)
-
-        self.__actions = {action.name: action for action in self._create_actions()}
-
-    @abstractmethod
-    def _create_actions(self):
-        pass
-
-    def __len__(self):
-        return len(self.__actions)
-
-    def __getitem__(self, item):
-        return self.__actions[item]
-
-    def __iter__(self):
-        return iter(self.__actions)
-
-
-class EmptyActions(Actions):
-    def __len__(self):
-        return 0
-
-    def __getitem__(self, item):
-        raise KeyError
-
-    def __iter__(self):
-        return iter(())

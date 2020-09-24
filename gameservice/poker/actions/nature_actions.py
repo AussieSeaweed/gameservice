@@ -2,7 +2,7 @@ from abc import ABC
 from collections import defaultdict
 
 from gameservice.exceptions import NatureException
-from gameservice.sequential.action import SequentialAction
+from gameservice.sequential.actions import SequentialAction
 
 
 class PokerNatureAction(SequentialAction, ABC):

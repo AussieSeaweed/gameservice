@@ -1,14 +1,14 @@
-from .actions import NLHENatureActions
+from .actionset import NLHENatureActionSet
 from ..poker.game import PokerGame
-from ..poker.actions import NLPlayerActions
-from ..util.poker.deck import PokerDeck52
-from ..util.poker.evaluator import Evaluator52
+from ..poker.actionset import NLPlayerActionSet
+from ..utils.poker.deck import PokerDeck52
+from ..utils.poker.evaluator import Evaluator52
 from ..exceptions import InvalidConfigException
 
 
 class NLHEGame(PokerGame):
-    player_actions_type = NLPlayerActions
-    nature_actions_type = NLHENatureActions
+    player_actionset_type = NLPlayerActionSet
+    nature_actionset_type = NLHENatureActionSet
 
     deck_type = PokerDeck52
     evaluator_type = Evaluator52
