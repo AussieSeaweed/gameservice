@@ -5,6 +5,7 @@ from test import interactive_test, random_test, print_infoset
 class CustomNLHE(NLHEGame):
     blinds = [1, 2]
     starting_stacks = [200, 200, 300]
+    labels = list(map(lambda x: f"{x} player", starting_stacks))
 
     def bet_sizes(self, min_raise, max_raise):
         amounts = set()

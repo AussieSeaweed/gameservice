@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 
 
 class Game(ABC):
+    label = "Game"
+    labels = None
+
     player_type = None
     nature_type = None
     context_type = None

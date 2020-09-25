@@ -7,6 +7,8 @@ from ..sequential.game import SequentialGame
 
 
 class TicTacToeGame(SequentialGame):
+    label = "Tic Tac Toe"
+
     player_type = TicTacToePlayer
     nature_type = TicTacToeNature
     context_type = TicTacToeContext

@@ -5,6 +5,7 @@ class Player(ABC):
     def __init__(self, game, index):
         self.game = game
         self.index = index
+        self.label = None if index is None else game.labels[index]
 
     @property
     def nature(self):
@@ -16,7 +17,10 @@ class Player(ABC):
 
     @property
     def public_info(self):
-        return {}
+        return {
+            "index": self.index,
+            "label": self.label,
+        }
 
     @property
     def private_info(self):

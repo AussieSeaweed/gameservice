@@ -7,6 +7,8 @@ from ..exceptions import InvalidConfigException
 
 
 class NLHEGame(PokerGame):
+    label = "No-Limit Texas Hold'em"
+
     player_actionset_type = NLPlayerActionSet
     nature_actionset_type = NLHENatureActionSet
 
