@@ -14,7 +14,9 @@ def print_infoset(player):
             print(f"{key}: {value}")
 
 
-def interactive_test(game):
+def interactive_test(game_type):
+    game = game_type()
+
     while not game.terminal:
         print_infoset(game.player)
 
@@ -33,10 +35,12 @@ def interactive_test(game):
     })
 
 
-def random_test(game, num_tests, step):
+def random_test(game_type, num_tests, step):
     from random import choice
 
     for i in range(num_tests):
+        game = game_type()
+
         while not game.terminal:
             game.player.actions[choice(list(game.player.actions))].act()
 

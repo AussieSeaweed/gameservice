@@ -4,7 +4,8 @@ from test import interactive_test, random_test, print_infoset
 
 class CustomNLHE(NLHEGame):
     blinds = [1, 2]
-    starting_stacks = [200, 300]
+    starting_stacks = [200, 1000, 500, 1500, 600, 600]
+    labels = list(range(len(starting_stacks)))
 
     def bet_sizes(self, min_raise, max_raise):
         amounts = set()
@@ -18,11 +19,20 @@ class CustomNLHE(NLHEGame):
         return sorted(amounts)
 
 
-game = CustomNLHE()
-
 a = int(input("0: interactive\n1: random\nChoice: "))
 
 if a == 0:
-    interactive_test(game)
+    interactive_test(CustomNLHE)
 else:
-    random_test(game, 1000000, 1000)
+    from threading import Thread
+
+    threads = []
+
+    for i in range(50):
+        threads.append(Thread(target=random_test, args=(CustomNLHE, 100, 10)))
+
+    for thread in threads:
+        thread.start()
+
+    for thread in threads:
+        thread.join()
