@@ -1,9 +1,9 @@
 from .actionset import NLHENatureActionSet
-from ..poker.game import PokerGame
+from ..exceptions import InvalidConfigException
 from ..poker.actionset import NLPlayerActionSet
+from ..poker.game import PokerGame
 from ..utils.poker.deck import PokerDeck52
 from ..utils.poker.evaluator import Evaluator52
-from ..exceptions import InvalidConfigException
 
 
 class NLHEGame(PokerGame):

@@ -1,7 +1,8 @@
-from ..game.players import Player, Nature
+from ..game.players import Nature
+from ..sequential.players import SequentialPlayer
 
 
-class TicTacToePlayer(Player):
+class TicTacToePlayer(SequentialPlayer):
     @property
     def payoff(self):
         if not self.game.context.empty_coords:

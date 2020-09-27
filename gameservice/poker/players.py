@@ -1,7 +1,8 @@
-from gameservice.game.players import Player, Nature
+from ..game.players import Nature
+from ..sequential.players import SequentialPlayer
 
 
-class PokerPlayer(Player):
+class PokerPlayer(SequentialPlayer):
     def __init__(self, game, index):
         super().__init__(game, index)
 

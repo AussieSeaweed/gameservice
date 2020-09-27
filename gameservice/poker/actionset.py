@@ -1,5 +1,5 @@
-from ..game.actionset import CachedActionSet
 from .actions import Put, Continue, Surrender
+from ..game.actionset import CachedActionSet
 
 
 class NLPlayerActionSet(CachedActionSet):
