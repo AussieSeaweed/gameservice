@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from ..exceptions import InvalidActionException
+from ..exceptions import ActionNotFoundException
 
 
 class ActionSet(ABC):
@@ -38,7 +38,7 @@ class CachedActionSet(ActionSet, ABC):
         try:
             return self.__actions[item]
         except KeyError:
-            raise InvalidActionException
+            raise ActionNotFoundException(f"Action {item} is not found")
 
     def __iter__(self):
         return iter(self.__actions)
@@ -49,7 +49,7 @@ class EmptyActionSet(ActionSet):
         return 0
 
     def __getitem__(self, item):
-        raise KeyError
+        raise ActionNotFoundException(f"Action {item} is not found")
 
     def __iter__(self):
         return iter(())

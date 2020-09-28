@@ -1,7 +1,7 @@
 from abc import ABC
 from collections import defaultdict
 
-from gameservice.exceptions import NatureException
+from gameservice.exceptions import PlayerTypeException
 from gameservice.sequential.actions import SequentialAction
 
 
@@ -10,7 +10,7 @@ class PokerNatureAction(SequentialAction, ABC):
         super().__init__(game, player)
 
         if not player.nature:
-            raise NatureException
+            raise PlayerTypeException("Only nature can apply this action")
 
     def open(self):
         self.game.player = self.opener

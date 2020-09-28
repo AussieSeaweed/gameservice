@@ -1,7 +1,8 @@
+from .actionset import PokerPlayerActionSet
 from .context import PokerContext
 from .players import PokerPlayer, PokerNature
 from .playerset import PokerPlayerSet
-from ..exceptions import InvalidNumPlayersException
+from ..exceptions import PlayerNumException
 from ..sequential.game import SequentialGame
 
 
@@ -11,6 +12,8 @@ class PokerGame(SequentialGame):
     context_type = PokerContext
 
     playerset_type = PokerPlayerSet
+
+    player_actionset_type = PokerPlayerActionSet
 
     """Poker variables"""
 
@@ -25,7 +28,7 @@ class PokerGame(SequentialGame):
         super().__init__(**kwargs)
 
         if self.num_players < 2:
-            raise InvalidNumPlayersException
+            raise PlayerNumException("Poker requires 2 or more players")
 
         self.deck = self.deck_type()
         self.evaluator = self.evaluator_type()

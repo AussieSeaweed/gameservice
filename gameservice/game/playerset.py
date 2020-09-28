@@ -27,7 +27,7 @@ class PlayerSet:
         try:
             return self.__lookup[item]
         except KeyError:
-            raise PlayerNotFoundException
+            raise PlayerNotFoundException(f"Player {item} is not found")
 
     def __iter__(self):
         return iter(self.__players)

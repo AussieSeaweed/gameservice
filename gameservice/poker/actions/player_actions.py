@@ -1,6 +1,6 @@
 from abc import ABC
 
-from gameservice.exceptions import InvalidActionArgumentException, InvalidActionException, NatureException
+from gameservice.exceptions import ActionArgumentException, PlayerTypeException
 from gameservice.sequential.actions import SequentialAction
 
 
@@ -9,7 +9,7 @@ class PokerPlayerAction(SequentialAction, ABC):
         super().__init__(game, player)
 
         if player.nature:
-            raise NatureException
+            raise PlayerTypeException("Only player can apply this action")
 
     def close(self):
         self.game.context.pot += sum(self.game.players.bets)
@@ -27,7 +27,7 @@ class Put(PokerPlayerAction):
 
         if not (isinstance(amount, int) and self.game.players.num_relevant > 1 and
                 (game.context.min_raise <= amount <= player.total or max(game.players.bets) < amount == player.total)):
-            raise InvalidActionArgumentException
+            raise ActionArgumentException("Invalid bet/raise amount")
 
         self.amount = amount
 
@@ -67,7 +67,7 @@ class Surrender(PokerPlayerAction):
         super().__init__(game, player)
 
         if max(game.players.bets) <= player.bet:
-            raise InvalidActionException
+            raise ActionArgumentException("Cannot fold here")
 
     @property
     def name(self):

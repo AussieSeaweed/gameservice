@@ -1,4 +1,4 @@
-from ..exceptions import InvalidActionArgumentException
+from ..exceptions import ActionArgumentException
 from ..sequential.actions import SequentialAction
 
 
@@ -7,7 +7,7 @@ class Mark(SequentialAction):
         super().__init__(game, player)
 
         if [r, c] not in game.context.empty_coords:
-            raise InvalidActionArgumentException
+            raise ActionArgumentException(f"Coordinate {r} {c} is not empty")
 
         self.r = r
         self.c = c

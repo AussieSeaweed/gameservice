@@ -2,7 +2,7 @@ from .actions import Put, Continue, Surrender
 from ..game.actionset import CachedActionSet
 
 
-class NLPlayerActionSet(CachedActionSet):
+class PokerPlayerActionSet(CachedActionSet):
     def _create_actions(self):
         actions = []
 

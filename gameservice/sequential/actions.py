@@ -9,4 +9,4 @@ class SequentialAction(Action, ABC):
         super().__init__(game, player)
 
         if game.player is not player:
-            raise PlayerOutOfTurnException
+            raise PlayerOutOfTurnException(f"{player} is not allowed to act now")
