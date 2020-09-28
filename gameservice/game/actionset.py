@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from ..exceptions import InvalidActionException
+
 
 class ActionSet(ABC):
     def __init__(self, game, player):
@@ -33,7 +35,10 @@ class CachedActionSet(ActionSet, ABC):
         return len(self.__actions)
 
     def __getitem__(self, item):
-        return self.__actions[item]
+        try:
+            return self.__actions[item]
+        except KeyError:
+            raise InvalidActionException
 
     def __iter__(self):
         return iter(self.__actions)
