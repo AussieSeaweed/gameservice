@@ -1,24 +1,14 @@
-def print_infoset(player):
-    for key, value in player.infoset.items():
-        if type(value) is dict:
-            print(f"{key}: ")
-
-            for u, v in value.items():
-                print(f"{u}: {v}")
-        elif type(value) is list:
-            print(f"{key}: ")
-
-            for u, v in enumerate(value):
-                print(f"{u}: {v}")
-        else:
-            print(f"{key}: {value}")
-
-
 def interactive_test(game_type):
     game = game_type()
 
     while not game.terminal:
-        print_infoset(game.player)
+        for player in game.players:
+            print(player.private_info if player is game.player else player.public_info)
+
+        print(game.context.info)
+
+        for index, action in enumerate(game.player.actions):
+            print(index, action)
 
         try:
             choice = list(game.player.actions)[0 if game.player.nature else int(input(f"\n{game.player} action: "))]
@@ -26,8 +16,6 @@ def interactive_test(game_type):
             game.player.actions[choice].act()
         except IndexError:
             print("\nError Try again\n")
-
-    print_infoset(game.players.nature)
 
     print("payoffs: ", {
         **{i: player.payoff for i, player in enumerate(game.players)},

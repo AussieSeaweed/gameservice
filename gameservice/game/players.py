@@ -27,24 +27,6 @@ class Player(ABC):
         return self.public_info
 
     @property
-    def infoset(self):
-        return {
-            "players": {
-                **{
-                    i: player.private_info if self is player else player.public_info for i, player in
-                    enumerate(self.game.players)
-                },
-
-                None: self.game.players.nature.private_info if self.nature else self.game.players.nature.public_info
-            },
-
-            "context": self.game.context.info,
-            "actions": list(self.actions),
-
-            "label": self.game.label,
-        }
-
-    @property
     @abstractmethod
     def payoff(self):
         pass
