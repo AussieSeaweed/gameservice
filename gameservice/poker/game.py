@@ -21,8 +21,8 @@ class PokerGame(SequentialGame):
     blinds = None
     starting_stacks = None
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
         if self.num_players < 2:
             raise InvalidNumPlayersException

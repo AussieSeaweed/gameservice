@@ -11,7 +11,7 @@ class PlayerSet:
         self.__lookup = {
             None: self.nature,
             **{player.index: player for player in self},
-            **{player.label: player for player in self},
+            **{player.label: player for player in self if player.label is not None},
         }
 
     def next(self, player):
@@ -26,7 +26,7 @@ class PlayerSet:
     def __getitem__(self, item):
         try:
             return self.__lookup[item]
-        except IndexError:
+        except KeyError:
             raise PlayerNotFoundException
 
     def __iter__(self):

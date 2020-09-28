@@ -15,8 +15,8 @@ class NLHEGame(PokerGame):
     deck_type = PokerDeck52
     evaluator_type = Evaluator52
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
         if self.blinds is None:
             raise InvalidConfigException
