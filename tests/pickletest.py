@@ -12,3 +12,8 @@ game = pickle.load(open("ttt.gs", "rb"))
 
 print(game)
 print(game.player)
+
+game = pickle.loads(pickle.dumps(game))
+
+print(game)
+print(game.player)
