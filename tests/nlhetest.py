@@ -3,6 +3,7 @@ from test import interactive_test, random_test
 
 
 class CustomNLHE(NLHEGame):
+    ante = 1
     blinds = [1, 2]
     starting_stacks = [200, 1000, 500, 1500, 600, 600, 2000]
     labels = list(map(str, range(len(starting_stacks))))

@@ -33,6 +33,20 @@ class PokerGame(SequentialGame):
         self.deck = self.deck_type()
         self.evaluator = self.evaluator_type()
 
+        if self.ante is not None:
+            for player in self.players:
+                ante = min(self.ante, player.stack)
+
+                player.stack -= ante
+                self.context.pot += ante
+
+        if self.blinds is not None:
+            for player, blind in zip(reversed(self.players) if len(self.players) == 2 else self.players, self.blinds):
+                blind = min(blind, player.stack)
+
+                player.stack -= blind
+                player.bet += blind
+
     def _get_initial_player(self):
         return self.players.nature
 
