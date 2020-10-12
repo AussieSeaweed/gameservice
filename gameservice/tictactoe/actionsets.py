@@ -1,5 +1,5 @@
 from .actions import Mark
-from ..game.actionset import CachedActionSet
+from ..game.actionsets import CachedActionSet
 
 
 class TicTacToeActionSet(CachedActionSet):

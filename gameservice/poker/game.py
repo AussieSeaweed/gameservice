@@ -1,19 +1,17 @@
-from .actionset import PokerPlayerActionSet
 from .context import PokerContext
-from .players import PokerPlayer, PokerNature
+from .players import PokerPlayer
 from .playerset import PokerPlayerSet
 from ..exceptions import PlayerNumException
+from ..game.players import ZeroSumNature
 from ..sequential.game import SequentialGame
 
 
 class PokerGame(SequentialGame):
-    player_type = PokerPlayer
-    nature_type = PokerNature
     context_type = PokerContext
 
+    nature_type = ZeroSumNature
+    player_type = PokerPlayer
     playerset_type = PokerPlayerSet
-
-    player_actionset_type = PokerPlayerActionSet
 
     """Poker variables"""
 
@@ -56,6 +54,3 @@ class PokerGame(SequentialGame):
 
     def evaluate(self, card_str_list):
         return self.evaluator.evaluate(card_str_list)
-
-    def bet_sizes(self, min_raise, max_raise):
-        return range(min_raise, max_raise + 1)

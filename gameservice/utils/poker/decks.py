@@ -10,7 +10,7 @@ class PokerDeck(ABC):
         pass
 
     @abstractmethod
-    def peak(self, num_cards: int) -> List[str]:
+    def peek(self, num_cards: int) -> List[str]:
         pass
 
 
@@ -23,5 +23,5 @@ class PokerDeck52(PokerDeck):
 
         return [Card.int_to_str(card_int) for card_int in card_ints]
 
-    def peak(self, num_cards: int) -> List[str]:
+    def peek(self, num_cards: int) -> List[str]:
         return [Card.int_to_str(card_int) for card_int in self.__deck.cards[:num_cards]]

@@ -53,7 +53,7 @@ class Peel(PokerNatureAction):
 
     @property
     def name(self):
-        return f"Peel {', '.join(self.game.deck.peak(self.num_cards))}"
+        return f"Peel {', '.join(self.game.deck.peek(self.num_cards))}"
 
     def act(self):
         self.game.context.board.extend(self.game.deck.draw(self.num_cards))
@@ -67,17 +67,16 @@ class Showdown(PokerNatureAction):
 
     def act(self):
         player = self.game.context.aggressor
-
-        max_commitments = defaultdict(lambda: 0)
+        commitments = defaultdict(lambda: 0)
 
         while player.mucked or player.exposed:
             if player.exposed:
-                max_commitments[player.hand] = max(max_commitments[player.hand], player.commitment)
+                commitments[player.hand] = max(commitments[player.hand], player.commitment)
 
             player = self.game.players.next(player)
 
-        for hand, max_commitment in max_commitments.items():
-            if hand < player.hand and max_commitment >= player.commitment:
+        for hand, commitment in commitments.items():
+            if hand < player.hand and commitment >= player.commitment:
                 player.cards = None
                 break
         else:
@@ -93,16 +92,16 @@ class Distribute(PokerNatureAction):
         return "Distribute"
 
     def act(self):
-        max_commitments = defaultdict(lambda: 0)
+        commitments = defaultdict(lambda: 0)
 
         for player in filter(lambda player: player.exposed, self.game.players):
-            max_commitments[player.hand] = max(max_commitments[player.hand], player.commitment)
+            commitments[player.hand] = max(commitments[player.hand], player.commitment)
 
         players = []
 
-        for player in filter(lambda player: not player.mucked, self.game.players):
-            for hand, max_commitment in max_commitments.items():
-                if hand < player.hand and max_commitment >= player.commitment:
+        for player in filter(lambda player: player.exposed, self.game.players):
+            for hand, commitment in commitments.items():
+                if hand < player.hand and commitment >= player.commitment:
                     break
             else:
                 players.append(player)

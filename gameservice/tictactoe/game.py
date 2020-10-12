@@ -1,23 +1,23 @@
-from .actionset import TicTacToeActionSet
+from .actionsets import TicTacToeActionSet
 from .context import TicTacToeContext
-from .players import TicTacToePlayer, TicTacToeNature
-from ..game.actionset import EmptyActionSet
-from ..game.playerset import PlayerSet
+from .players import TicTacToePlayer
+from ..game.actionsets import EmptyActionSet
+from ..game.players import ZeroSumNature
+from ..game.playersets import PlayerSet
 from ..sequential.game import SequentialGame
 
 
 class TicTacToeGame(SequentialGame):
-    label = "Tic Tac Toe"
+    num_players = 2
 
-    player_type = TicTacToePlayer
-    nature_type = TicTacToeNature
     context_type = TicTacToeContext
 
-    num_players = 2
+    nature_type = ZeroSumNature
+    player_type = TicTacToePlayer
     playerset_type = PlayerSet
 
-    player_actionset_type = TicTacToeActionSet
     nature_actionset_type = EmptyActionSet
+    player_actionset_type = TicTacToeActionSet
 
     def _get_initial_player(self):
         return self.players[0]

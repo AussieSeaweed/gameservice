@@ -1,14 +1,14 @@
-from .actionset import NLHENatureActionSet
+from .actionsets import NLHENatureActionSet
 from ..exceptions import GameConfigException
+from ..poker.actionsets import NLPokerPlayerActionsSet
 from ..poker.game import PokerGame
-from ..utils.poker.deck import PokerDeck52
-from ..utils.poker.evaluator import Evaluator52
+from ..utils.poker.decks import PokerDeck52
+from ..utils.poker.evaluators import Evaluator52
 
 
 class NLHEGame(PokerGame):
-    label = "No-Limit Texas Hold'em"
-
     nature_actionset_type = NLHENatureActionSet
+    player_actionset_type = NLPokerPlayerActionsSet
 
     deck_type = PokerDeck52
     evaluator_type = Evaluator52
@@ -16,5 +16,5 @@ class NLHEGame(PokerGame):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        if self.blinds is None:
-            raise GameConfigException("NLHE requires blinds")
+        if not isinstance(self.blinds, list) or len(self.blinds) != 2:
+            raise GameConfigException("NLHE requires 2 blinds")

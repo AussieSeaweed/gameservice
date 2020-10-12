@@ -1,4 +1,3 @@
-from ..game.players import Nature
 from ..sequential.players import SequentialPlayer
 
 
@@ -13,9 +12,3 @@ class TicTacToePlayer(SequentialPlayer):
             return 1 if self.game.context.board[r][c] == self.index else -1
         else:
             return -1
-
-
-class TicTacToeNature(Nature):
-    @property
-    def payoff(self):
-        return 0

@@ -3,21 +3,11 @@ from test import interactive_test, random_test
 
 
 class CustomNLHE(NLHEGame):
-    ante = 1
-    blinds = [1, 2]
-    starting_stacks = [200, 1000, 500, 1500, 600, 600, 2000]
+    ante = 2
+    blinds = [5, 10]
+    starting_stacks = [200, 400, 400, 1000, 800, 2000, 200]
+
     labels = list(map(str, range(len(starting_stacks))))
-
-    def bet_sizes(self, min_raise, max_raise):
-        amounts = set()
-
-        while min_raise < max_raise:
-            amounts.add(int(min_raise))
-            min_raise *= 1.5
-
-        amounts.add(max_raise)
-
-        return sorted(amounts)
 
 
 a = int(input("0: interactive\n1: random\nChoice: "))

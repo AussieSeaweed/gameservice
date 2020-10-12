@@ -5,7 +5,7 @@ class Player(ABC):
     def __init__(self, game, index):
         self.game = game
         self.index = index
-        self.label = None if index is None or game.labels is None else game.labels[index]
+        self.label = None if index is None else game.labels[index]
 
     @property
     def nature(self):
@@ -49,3 +49,9 @@ class Nature(Player, ABC):
 
     def __str__(self):
         return "Nature"
+
+
+class ZeroSumNature(Nature):
+    @property
+    def payoff(self):
+        return -sum(player.payoff for player in self.game.players)

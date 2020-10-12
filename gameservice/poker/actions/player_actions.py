@@ -47,19 +47,20 @@ class Put(PokerPlayerAction):
 class Continue(PokerPlayerAction):
     @property
     def name(self):
-        return "Check" if max(self.game.players.bets) == self.player.bet else \
-            f"Call {min(max(self.game.players.bets) - self.player.bet, self.player.stack)}"
+        return f"Call {self.amount}" if self.amount else "Check"
 
     def act(self):
-        amount = min(max(self.game.players.bets) - self.player.bet, self.player.stack)
-
-        self.player.stack -= amount
-        self.player.bet += amount
+        self.player.stack -= self.amount
+        self.player.bet += self.amount
 
         self.game.player = self.game.players.next_relevant(self.player)
 
         if self.game.player.nature:
             self.close()
+
+    @property
+    def amount(self):
+        return min(max(self.game.players.bets) - self.player.bet, self.player.stack)
 
 
 class Surrender(PokerPlayerAction):

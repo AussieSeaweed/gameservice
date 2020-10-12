@@ -1,4 +1,4 @@
-from gameservice.game.playerset import PlayerSet
+from gameservice.game.playersets import PlayerSet
 
 
 class PokerPlayerSet(PlayerSet):
@@ -19,8 +19,8 @@ class PokerPlayerSet(PlayerSet):
 
     @property
     def num_relevant(self):
-        return [player.relevant for player in self].count(True)
+        return sum(player.relevant for player in self)
 
     @property
     def num_mucked(self):
-        return [player.mucked for player in self].count(True)
+        return sum(player.mucked for player in self)

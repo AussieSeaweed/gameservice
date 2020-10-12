@@ -1,4 +1,3 @@
-from ..game.players import Nature
 from ..sequential.players import SequentialPlayer
 
 
@@ -57,9 +56,3 @@ class PokerPlayer(SequentialPlayer):
     @property
     def hand(self):
         return self.game.evaluate(self.game.context.board + self.cards)
-
-
-class PokerNature(Nature):
-    @property
-    def payoff(self):
-        return 0
