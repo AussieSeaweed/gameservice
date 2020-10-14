@@ -37,16 +37,3 @@ class NLPokerPlayerActionsSet(PokerPlayerActionSet):
             bet_sizes.append(self.player.total)
 
         return bet_sizes
-
-
-class LPokerPlayerActionsSet(PokerPlayerActionSet):
-    @property
-    def bet_sizes(self):
-        bet_sizes = []
-
-        if self.game.context.min_raise <= self.player.total:
-            bet_sizes.append(self.game.context.min_raise)
-        elif max(self.game.players.bets) < self.player.total:
-            bet_sizes.append(self.player.total)
-
-        return bet_sizes
