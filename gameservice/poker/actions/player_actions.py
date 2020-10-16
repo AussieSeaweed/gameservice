@@ -45,6 +45,11 @@ class Put(PokerPlayerAction):
 
 
 class Continue(PokerPlayerAction):
+    def __init__(self, game, player):
+        super().__init__(game, player)
+
+        self.amount = min(max(self.game.players.bets) - self.player.bet, self.player.stack)
+
     @property
     def name(self):
         return f"Call {self.amount}" if self.amount else "Check"
@@ -57,10 +62,6 @@ class Continue(PokerPlayerAction):
 
         if self.game.player.nature:
             self.close()
-
-    @property
-    def amount(self):
-        return min(max(self.game.players.bets) - self.player.bet, self.player.stack)
 
 
 class Surrender(PokerPlayerAction):

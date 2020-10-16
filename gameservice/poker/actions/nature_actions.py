@@ -99,7 +99,7 @@ class Distribute(PokerNatureAction):
 
         players = []
 
-        for player in filter(lambda player: player.exposed, self.game.players):
+        for player in filter(lambda player: not player.mucked, self.game.players):
             for hand, commitment in commitments.items():
                 if hand < player.hand and commitment >= player.commitment:
                     break
