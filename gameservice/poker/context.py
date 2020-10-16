@@ -7,9 +7,9 @@ class PokerContext(Context):
 
         self.pot = 0
         self.board = []
+        self.street = 0
 
         self.aggressor = None
-        self.street = 0
 
     @property
     def info(self):
@@ -17,6 +17,7 @@ class PokerContext(Context):
             **super().info,
             "pot": self.pot,
             "board": self.board,
+            "street": self.street,
         }
 
     @property
