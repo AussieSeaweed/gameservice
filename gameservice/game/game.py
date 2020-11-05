@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from .utils import Log
+
 
 class Game(ABC):
     def __init__(self):
@@ -27,8 +29,8 @@ class Game(ABC):
     def logs(self):
         return self.__logs
 
-    def log(self, action_name):
-        self.__logs.append(Log(action_name))
+    def log(self, action):
+        self.__logs.append(Log(action))
 
     @property
     @abstractmethod
@@ -40,21 +42,13 @@ class SequentialGame(Game, ABC):
     def __init__(self):
         super().__init__()
 
-        self.player = self._get_initial_player()
+        self.player = self._initial_player
 
+    @property
     @abstractmethod
-    def _get_initial_player(self):
+    def _initial_player(self):
         pass
 
     @property
     def terminal(self):
         return self.player is None
-
-
-class Log:
-    def __init__(self, action_name):
-        self.__action_name = action_name
-
-    @property
-    def action_name(self):
-        return self.__action_name

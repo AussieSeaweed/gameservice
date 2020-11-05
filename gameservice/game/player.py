@@ -28,8 +28,16 @@ class Player(ABC):
     def actions(self):
         pass
 
+    @property
+    @abstractmethod
+    def info_set(self):
+        pass
+
     def __next__(self):
         return self.game.nature if self.nature else self.game.players[(self.index + 1) % len(self.game.players)]
+
+    def __str__(self):
+        return f"Player {self.__index}"
 
 
 class Nature(Player, ABC):
@@ -39,3 +47,6 @@ class Nature(Player, ABC):
     @property
     def payoff(self):
         return -sum(player.payoff for player in self.game.players)
+
+    def __str__(self):
+        return "Nature"
