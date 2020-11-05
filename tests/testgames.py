@@ -1,8 +1,9 @@
 import unittest
-from random import choice
-from gameservice.tictactoe import TicTacToeGame
-from gameservice.poker import NLHEGame, PokerLazyNoLimit
 from abc import ABC, abstractmethod
+from random import choice
+
+from gameservice.poker import NLHEGame, PokerLazyNoLimit
+from gameservice.tictactoe import TicTacToeGame
 
 
 class CustomNoLimit(PokerLazyNoLimit):

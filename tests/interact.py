@@ -1,6 +1,3 @@
-from gameservice.tictactoe import TicTacToeGame
-from gameservice.poker import NLHEGame, PokerLazyNoLimit
-
 from testgames import CustomHUNLHEGame
 
 
