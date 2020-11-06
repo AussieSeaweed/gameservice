@@ -6,9 +6,7 @@ from ..game import Player
 class TicTacToePlayer(Player):
     @property
     def payoff(self):
-        if not self.game.terminal:
-            return -1
-        elif self.game.winner is None:
+        if not self.game.empty_coords:
             return 0
         else:
             return 1 if self.game.winner is self else -1

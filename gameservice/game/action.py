@@ -7,8 +7,7 @@ class Action(ABC):
     def __init__(self, player):
         if player.game.terminal:
             raise GameTerminalException("Actions are not applicable to terminal games")
-
-        if self.chance != player.nature:
+        elif self.chance != player.nature:
             raise GamePlayerException("Nature acts chance actions")
 
         self.__player = player

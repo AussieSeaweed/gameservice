@@ -34,19 +34,19 @@ class InfoSet:
         }
 
     @classmethod
-    def nature_public_info(cls, player):
+    def nature_public_info(cls, nature):
         return {
-            "index": player.index,
-            "nature": player.nature,
-            "payoff": player.payoff,
-            "actions": [str(action) for action in player.actions if action.public]
+            "index": nature.index,
+            "nature": nature.nature,
+            "payoff": nature.payoff,
+            "actions": [str(action) for action in nature.actions if action.public]
         }
 
     @classmethod
-    def nature_private_info(cls, player):
+    def nature_private_info(cls, nature):
         return {
-            **cls.nature_public_info(player),
-            "actions": [str(action) for action in player.actions]
+            **cls.nature_public_info(nature),
+            "actions": [str(action) for action in nature.actions]
         }
 
     def player_info(self, player):

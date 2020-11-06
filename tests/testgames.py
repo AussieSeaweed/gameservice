@@ -7,8 +7,8 @@ from gameservice.tictactoe import TicTacToeGame
 
 
 class CustomNoLimit(PokerLazyNoLimit):
-    def create_bet_amounts(self, player):
-        amounts = super().create_bet_amounts(player)
+    def bet_amounts(self, player):
+        amounts = super().bet_amounts(player)
 
         if len(amounts) == 2:
             lo, hi = amounts
@@ -90,15 +90,13 @@ class PokerTestMixin(GameTestMixin, ABC):
     @staticmethod
     def check_game(game):
         return sum(game.starting_stacks) == sum(player.stack for player in game.players) and \
-               all(player.stack >= 0 and player.bet >= 0 for player in game.players) and \
-               (all(player.exposed or player.hole_cards is None for player in game.players) or
-                sum(player.hole_cards is not None for player in game.players) == 1)
+               all(player.stack >= 0 and player.bet >= 0 for player in game.players)
 
 
 class NLHETestCase(unittest.TestCase, PokerTestMixin):
     @property
     def num_monte_carlo_tests(self):
-        return 10000
+        return 1000
 
     @property
     def game_type(self):
@@ -108,7 +106,7 @@ class NLHETestCase(unittest.TestCase, PokerTestMixin):
 class HUNLHETestCase(unittest.TestCase, PokerTestMixin):
     @property
     def num_monte_carlo_tests(self):
-        return 10000
+        return 1000
 
     @property
     def game_type(self):
@@ -118,7 +116,7 @@ class HUNLHETestCase(unittest.TestCase, PokerTestMixin):
 class TicTacToeTestCase(unittest.TestCase, GameTestMixin):
     @property
     def num_monte_carlo_tests(self):
-        return 10000
+        return 1000
 
     @property
     def game_type(self):

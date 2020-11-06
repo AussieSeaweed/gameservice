@@ -26,12 +26,12 @@ class PokerAction(SequentialAction, ABC):
             self.game.streets.pop(0)
         else:
             self.game.aggressor = self.game.player
+            self.game.min_raise = max(self.game.blinds)
 
     def close(self):
         self.game.player = self.game.nature
         self.game.streets.pop(0)
-
-        self.game.min_raise = max(self.game.blinds)
+        self.game.min_raise = None
         self.game.pot += sum(self.game.bets)
 
         for player in self.game.players:
@@ -86,7 +86,7 @@ class PokerPassiveAction(PokerAction):
 
     @property
     def __amount(self):
-        return min(self.player.stack + self.player.bet, max(self.game.bets)) - self.player.bet
+        return min(self.player.stack, max(self.game.bets) - self.player.bet)
 
     @property
     def chance(self):
@@ -101,8 +101,8 @@ class PokerAggressiveAction(PokerAction):
         super().__init__(player)
 
         if not (isinstance(amount, int) and sum(player.relevant for player in self.game.players) > 1 and
-                (max(self.game.bets) + self.game.min_raise <= amount <= player.stack + player.bet or
-                 max(self.game.bets) < amount == player.stack + player.bet)):
+                (max(self.game.bets) + self.game.min_raise <= amount <= player.total or
+                 max(self.game.bets) < amount == player.total)):
             raise GameActionArgumentException("The supplied raise or bet size is not allowed")
 
         self.__amount = amount
@@ -163,36 +163,33 @@ class PokerShowdownAction(PokerAction):
             self.show()
 
         self.distribute()
+
         self.game.player = None
 
     def show(self):
+        players = self.game.players[self.game.aggressor.index:] + self.game.players[:self.game.aggressor.index]
         commitments = defaultdict(lambda: 0)
 
-        for player in (player for player in
-                       self.game.players[self.game.aggressor.index:] + self.game.players[:self.game.aggressor.index] if
-                       player.hole_cards is not None):
-            for hand_rank, commitment in commitments.items():
-                if hand_rank < player.hand_rank and commitment >= player.commitment:
+        for player in filter(lambda player: player.hole_cards is not None, players):
+            for hand, commitment in commitments.items():
+                if hand < player.hand and commitment >= player.commitment:
                     player.hole_cards = None
                     break
             else:
-                player.exposed = True
-                commitments[player.hand_rank] = max(commitments[player.hand_rank], player.commitment)
+                commitments[player.hand] = max(commitments[player.hand], player.commitment)
 
     def distribute(self):
-        assert all(player.stack >= 0 for player in self.game.players)
-
         players = [player for player in self.game.players if player.hole_cards is not None]
         baseline = 0
 
-        for cur_player in sorted(players, key=lambda player: (player.hand_rank, player.commitment)):
+        for cur_player in sorted(players, key=lambda player: (player.hand, player.commitment)):
             side_pot = 0
 
             for player in self.game.players:
-                if baseline < min(player.commitment, cur_player.commitment):
-                    side_pot += min(player.commitment, cur_player.commitment) - baseline
+                if baseline < (entitled := min(player.commitment, cur_player.commitment)):
+                    side_pot += entitled - baseline
 
-            for player in (cur_players := [player for player in players if player.hand_rank == cur_player.hand_rank]):
+            for player in (cur_players := [player for player in players if player.hand == cur_player.hand]):
                 player.bet += side_pot // len(cur_players)
             else:
                 cur_players[0].bet += side_pot % len(cur_players)
