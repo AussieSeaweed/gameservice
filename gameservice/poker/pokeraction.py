@@ -186,10 +186,14 @@ class PokerShowdownAction(PokerAction):
             side_pot = 0
 
             for player in self.game.players:
-                if baseline < (entitled := min(player.commitment, cur_player.commitment)):
-                    side_pot += entitled - baseline
+                entitlement = min(player.commitment, cur_player.commitment)
 
-            for player in (cur_players := [player for player in players if player.hand == cur_player.hand]):
+                if baseline < entitlement:
+                    side_pot += entitlement - baseline
+
+            cur_players = [player for player in players if player.hand == cur_player.hand]
+
+            for player in cur_players:
                 player.bet += side_pot // len(cur_players)
             else:
                 cur_players[0].bet += side_pot % len(cur_players)

@@ -7,7 +7,9 @@ def interact_sequential_game(sequential_game_type):
     while not sequential_game.terminal:
         print(sequential_game.player.info_set)
 
-        for action in (actions := sequential_game.player.actions):
+        actions = sequential_game.player.actions
+
+        for action in actions:
             print(action)
 
         actions[0 if len(actions) == 1 else int(input("Action index: "))].act()

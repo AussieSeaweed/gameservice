@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gameservice",
-    version="2.0.0",
+    version="2.0.1",
     author="Juho Kim",
     author_email="juho-kim@outlook.com",
     description="A package for game services on python",
@@ -18,6 +18,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.7",
     install_requires=["treys"],
 )
