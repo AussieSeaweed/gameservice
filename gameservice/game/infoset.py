@@ -23,14 +23,14 @@ class InfoSet:
             "index": player.index,
             "nature": player.nature,
             "payoff": player.payoff,
-            "actions": [str(action) for action in player.actions if action.public]
+            "actions": [str(action) for action in player.actions if action.public],
         }
 
     @classmethod
     def player_private_info(cls, player):
         return {
             **cls.player_public_info(player),
-            "actions": [str(action) for action in player.actions]
+            "actions": [str(action) for action in player.actions],
         }
 
     @classmethod
@@ -39,14 +39,14 @@ class InfoSet:
             "index": nature.index,
             "nature": nature.nature,
             "payoff": nature.payoff,
-            "actions": [str(action) for action in nature.actions if action.public]
+            "actions": [str(action) for action in nature.actions if action.public],
         }
 
     @classmethod
     def nature_private_info(cls, nature):
         return {
             **cls.nature_public_info(nature),
-            "actions": [str(action) for action in nature.actions]
+            "actions": [str(action) for action in nature.actions],
         }
 
     def player_info(self, player):
@@ -61,7 +61,7 @@ class InfoSet:
             "players": [self.player_info(player) for player in self.game.players],
             "nature": None if self.game.nature is None else self.nature_info(self.game.nature),
             "logs": [str(log) for log in self.game.logs],
-            "terminal": self.game.terminal
+            "terminal": self.game.terminal,
         }
 
     def __str__(self):
@@ -73,5 +73,5 @@ class SequentialInfoSet(InfoSet):
     def player_public_info(cls, player):
         return {
             **super().player_public_info(player),
-            "active": player is player.game.player
+            "active": player is player.game.player,
         }

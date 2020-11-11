@@ -6,5 +6,5 @@ class TicTacToeInfoSet(SequentialInfoSet):
     def environment_info(cls, game):
         return {
             **super().environment_info(game),
-            "board": game.board
+            "board": game.board,
         }
