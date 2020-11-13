@@ -11,7 +11,7 @@ class TicTacToeGame(SequentialGame):
                         [None, None, None]]
 
     def _create_players(self):
-        return [TicTacToePlayer(self, i) for i in range(2)]
+        return [TicTacToePlayer(self) for _ in range(2)]
 
     def _create_nature(self):
         return None

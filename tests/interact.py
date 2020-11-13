@@ -12,10 +12,10 @@ def interact_sequential_game(sequential_game_type):
         for action in actions:
             print(action)
 
-        actions[0 if len(actions) == 1 else int(input("Action index: "))].act()
+        actions[0 if len(actions) == 1 else int(input('Action index: '))].act()
 
     print((sequential_game.players[0] if sequential_game.nature is None else sequential_game.nature).info_set)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     interact_sequential_game(CustomHUNLHEGame)

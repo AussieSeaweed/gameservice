@@ -7,7 +7,7 @@ from ..game import Player, Nature
 
 class PokerPlayer(Player):
     def __init__(self, game, index):
-        super().__init__(game, index)
+        super().__init__(game)
 
         self.stack = game.starting_stacks[index]
         self.bet = 0

@@ -46,7 +46,7 @@ class PokerSubmissiveAction(PokerAction):
         super().__init__(player)
 
         if not player.bet < max(self.game.bets):
-            raise GameActionException("Cannot fold when the player has bet nothing")
+            raise GameActionException('Cannot fold when the player has bet nothing')
 
     def act(self):
         super().act()
@@ -67,7 +67,7 @@ class PokerSubmissiveAction(PokerAction):
         return False
 
     def __str__(self):
-        return "Fold"
+        return 'Fold'
 
 
 class PokerPassiveAction(PokerAction):
@@ -93,7 +93,7 @@ class PokerPassiveAction(PokerAction):
         return False
 
     def __str__(self):
-        return f"Call {self.__amount}" if self.__amount else "Check"
+        return f'Call {self.__amount}' if self.__amount else 'Check'
 
 
 class PokerAggressiveAction(PokerAction):
@@ -103,7 +103,7 @@ class PokerAggressiveAction(PokerAction):
         if not (isinstance(amount, int) and sum(player.relevant for player in self.game.players) > 1 and
                 (max(self.game.bets) + self.game.min_raise <= amount <= player.total or
                  max(self.game.bets) < amount == player.total)):
-            raise GameActionArgumentException("The supplied raise or bet size is not allowed")
+            raise GameActionArgumentException('The supplied raise or bet size is not allowed')
 
         self.__amount = amount
 
@@ -123,7 +123,7 @@ class PokerAggressiveAction(PokerAction):
         return False
 
     def __str__(self):
-        return f"{'Raise' if self.player.bet else 'Bet'} {self.__amount}"
+        return ('Raise' if self.player.bet else 'Bet') + str(self.__amount)
 
 
 # Poker Nature Actions
@@ -134,7 +134,7 @@ class PokerStreetAction(PokerAction):
         super().__init__(player)
 
         if self.game.street is None:
-            raise GameActionException("You have to do showdown here")
+            raise GameActionException('You have to do showdown here')
 
     def act(self):
         super().act()
@@ -152,7 +152,7 @@ class PokerStreetAction(PokerAction):
         return True
 
     def __str__(self):
-        return f"Deal {self.game.street.num_hole_cards} hole cards and {self.game.street.num_board_cards} board cards"
+        return f'Deal {self.game.street.num_hole_cards} hole cards and {self.game.street.num_board_cards} board cards'
 
 
 class PokerShowdownAction(PokerAction):
@@ -211,4 +211,4 @@ class PokerShowdownAction(PokerAction):
         return True
 
     def __str__(self):
-        return "Showdown"
+        return 'Showdown'

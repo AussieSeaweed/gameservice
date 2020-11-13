@@ -6,7 +6,7 @@ class TicTacToeMarkAction(SequentialAction):
         super().__init__(player)
 
         if not (0 <= r < 3 and 0 <= c < 3):
-            raise GameActionArgumentException("The cell coordinate is invalid")
+            raise GameActionArgumentException('The cell coordinate is invalid')
 
         self.__r = r
         self.__c = c
@@ -26,4 +26,4 @@ class TicTacToeMarkAction(SequentialAction):
         return True
 
     def __str__(self):
-        return f"Mark row {self.__r} column {self.__c}"
+        return f'Mark row {self.__r} column {self.__c}'

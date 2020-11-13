@@ -6,9 +6,9 @@ from .exception import GameTerminalException, GameInterruptionException, GamePla
 class Action(ABC):
     def __init__(self, player):
         if player.game.terminal:
-            raise GameTerminalException("Actions are not applicable to terminal games")
+            raise GameTerminalException('Actions are not applicable to terminal games')
         elif self.chance != player.nature:
-            raise GamePlayerException("Nature acts chance actions")
+            raise GamePlayerException('Nature acts chance actions')
 
         self.__player = player
         self.__num_logs = len(player.game.logs)
@@ -23,7 +23,7 @@ class Action(ABC):
 
     def act(self):
         if self.__num_logs != len(self.game.logs):
-            raise GameInterruptionException("Game was modified since the action's creation")
+            raise GameInterruptionException('Game was modified since the creation of the action')
 
         self.game.log(self)
 
@@ -46,5 +46,5 @@ class SequentialAction(Action, ABC):
     def __init__(self, player):
         super().__init__(player)
 
-        if player != self.game.player:
-            raise GamePlayerException("Player cannot act in the sequential game")
+        if player is not self.game.player:
+            raise GamePlayerException(f'{player} cannot act in turn')

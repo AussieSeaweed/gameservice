@@ -10,9 +10,9 @@ class PokerGame(SequentialGame, ABC):
         super().__init__()
 
         if not len(self.starting_stacks) > 1:
-            raise GamePlayerException("Poker is played by more than 2 players")
+            raise GamePlayerException('Poker is played by more than 2 players')
         elif len(self.blinds) not in [0, 2] or self.blinds != sorted(self.blinds):
-            raise GameParameterException("The blinds have to be length of 0 or 2 and be sorted")
+            raise GameParameterException('The blinds have to be length of 0 or 2 and be sorted')
 
         self.__streets = self._create_streets()
         self.__deck = self._create_deck()
