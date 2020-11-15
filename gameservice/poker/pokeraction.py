@@ -123,7 +123,7 @@ class PokerAggressiveAction(PokerAction):
         return False
 
     def __str__(self):
-        return ('Raise' if self.player.bet else 'Bet') + str(self.__amount)
+        return ('Raise ' if self.player.bet else 'Bet ') + str(self.__amount)
 
 
 # Poker Nature Actions
