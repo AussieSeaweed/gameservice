@@ -1,4 +1,18 @@
-from testgames import CustomHUNLHEGame
+from gameservice.poker import NLHELazyGame
+
+
+class TestGame(NLHELazyGame):
+    @property
+    def starting_stacks(self):
+        return [200, 400, 300]
+
+    @property
+    def blinds(self):
+        return [1, 2]
+
+    @property
+    def ante(self):
+        return 0
 
 
 def interact_sequential_game(sequential_game_type):
@@ -18,4 +32,4 @@ def interact_sequential_game(sequential_game_type):
 
 
 if __name__ == '__main__':
-    interact_sequential_game(CustomHUNLHEGame)
+    interact_sequential_game(TestGame)
