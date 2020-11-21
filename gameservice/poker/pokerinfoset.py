@@ -7,7 +7,7 @@ class PokerInfoSet(SequentialInfoSet):
         return {
             **super().environment_info(game),
             'pot': game.pot,
-            'board': game.board,
+            'board': [str(card) for card in game.board],
         }
 
     @classmethod
