@@ -1,7 +1,8 @@
 from gameservice.poker import NLHELazyGame
+from gameservice.tictactoe import TicTacToeGame
 
 
-class TestGame(NLHELazyGame):
+class NLHETestGame(NLHELazyGame):
     @property
     def starting_stacks(self):
         return [200, 400, 300]
@@ -32,4 +33,4 @@ def interact_sequential_game(sequential_game_type):
 
 
 if __name__ == '__main__':
-    interact_sequential_game(TestGame)
+    interact_sequential_game(TicTacToeGame)
