@@ -124,6 +124,6 @@ class NLHEGame(PokerGame, ABC):
         return PokerNoLimit()
 
 
-class LazyNLHEGame(NLHEGame, ABC):
+class NLHELazyGame(NLHEGame, ABC):
     def _create_limit(self):
         return PokerLazyNoLimit()
