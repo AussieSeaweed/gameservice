@@ -11,13 +11,13 @@ class PokerAction(SequentialAction, ABC):
 
     @property
     def opener(self):
-        try:
-            if any(player.bet for player in self.game.players):
-                return self.game.players[1 if len(self.game.players) == 2 else 2]
-            else:
+        if any(player.bet for player in self.game.players):
+            return self.game.players[1 if len(self.game.players) == 2 else 2]
+        else:
+            try:
                 return next(player for player in self.game.players if player.relevant)
-        except StopIteration:
-            return self.game.nature
+            except StopIteration:
+                return self.game.nature
 
     def open(self):
         self.game.player = self.opener
@@ -32,7 +32,7 @@ class PokerAction(SequentialAction, ABC):
         self.game.player = self.game.nature
         self.game.streets.pop(0)
         self.game.min_raise = None
-        self.game.pot += sum(self.game.bets)
+        self.game.pot += sum(player.bet for player in self.game.players)
 
         for player in self.game.players:
             player.bet = 0
@@ -45,7 +45,7 @@ class PokerSubmissiveAction(PokerAction):
     def __init__(self, player):
         super().__init__(player)
 
-        if not player.bet < max(self.game.bets):
+        if not player.bet < max(player.bet for player in self.game.players):
             raise GameActionException('Cannot fold when the player has bet nothing')
 
     def act(self):
@@ -53,7 +53,7 @@ class PokerSubmissiveAction(PokerAction):
 
         self.player.hole_cards = None
 
-        if sum(player.hole_cards is not None for player in self.game.players) == 1:
+        if sum(not player.mucked for player in self.game.players) == 1:
             self.close()
             self.game.streets.clear()
         else:
@@ -86,7 +86,7 @@ class PokerPassiveAction(PokerAction):
 
     @property
     def __amount(self):
-        return min(self.player.stack, max(self.game.bets) - self.player.bet)
+        return min(self.player.stack, max(player.bet for player in self.game.players) - self.player.bet)
 
     @property
     def chance(self):
@@ -101,8 +101,8 @@ class PokerAggressiveAction(PokerAction):
         super().__init__(player)
 
         if not (isinstance(amount, int) and sum(player.relevant for player in self.game.players) > 1 and
-                (max(self.game.bets) + self.game.min_raise <= amount <= player.total or
-                 max(self.game.bets) < amount == player.total)):
+                (max(player.bet for player in self.game.players) + self.game.min_raise <= amount <= player.total or
+                 max(player.bet for player in self.game.players) < amount == player.total)):
             raise GameActionArgumentException('The supplied raise or bet size is not allowed')
 
         self.__amount = amount
@@ -110,7 +110,7 @@ class PokerAggressiveAction(PokerAction):
     def act(self):
         super().act()
 
-        self.game.min_raise = max(self.game.min_raise, self.__amount - max(self.game.bets))
+        self.game.min_raise = max(self.game.min_raise, self.__amount - max(player.bet for player in self.game.players))
 
         self.player.stack -= self.__amount - self.player.bet
         self.player.bet = self.__amount
@@ -123,7 +123,7 @@ class PokerAggressiveAction(PokerAction):
         return False
 
     def __str__(self):
-        return ('Raise ' if self.player.bet else 'Bet ') + str(self.__amount)
+        return ('Raise ' if any(player.bet for player in self.game.players) else 'Bet ') + str(self.__amount)
 
 
 # Poker Nature Actions
@@ -140,7 +140,7 @@ class PokerStreetAction(PokerAction):
         super().act()
 
         for player in self.game.players:
-            if player.hole_cards is not None:
+            if not player.mucked:
                 player.hole_cards.extend(self.game.deck.draw(self.game.street.num_hole_cards))
 
         self.game.board.extend(self.game.deck.draw(self.game.street.num_board_cards))
@@ -156,10 +156,16 @@ class PokerStreetAction(PokerAction):
 
 
 class PokerShowdownAction(PokerAction):
+    def __init__(self, player):
+        super().__init__(player)
+
+        if self.game.street is not None:
+            raise GameActionException('You cannot do showdown here')
+
     def act(self):
         super().act()
 
-        if sum(player.hole_cards is not None for player in self.game.players) > 1:
+        if sum(not player.mucked for player in self.game.players) > 1:
             self.show()
 
         self.distribute()
@@ -170,7 +176,7 @@ class PokerShowdownAction(PokerAction):
         players = self.game.players[self.game.aggressor.index:] + self.game.players[:self.game.aggressor.index]
         commitments = defaultdict(lambda: 0)
 
-        for player in filter(lambda player: player.hole_cards is not None, players):
+        for player in filter(lambda player: not player.mucked, players):
             for hand, commitment in commitments.items():
                 if hand < player.hand and commitment >= player.commitment:
                     player.hole_cards = None
@@ -179,7 +185,7 @@ class PokerShowdownAction(PokerAction):
                 commitments[player.hand] = max(commitments[player.hand], player.commitment)
 
     def distribute(self):
-        players = [player for player in self.game.players if player.hole_cards is not None]
+        players = [player for player in self.game.players if not player.mucked]
         baseline = 0
 
         for cur_player in sorted(players, key=lambda player: (player.hand, player.commitment)):

@@ -16,13 +16,13 @@ class PokerInfoSet(SequentialInfoSet):
             **super().player_public_info(player),
             'stack': player.stack,
             'bet': player.bet,
-            'hole_cards': None if player.hole_cards is None else [card if player.game.terminal else None for card in
-                                                                  player.hole_cards],
+            'hole_cards': None if player.hole_cards is None else [str(card) if player.game.terminal else None for card
+                                                                  in player.hole_cards],
         }
 
     @classmethod
     def player_private_info(cls, player):
         return {
             **super().player_private_info(player),
-            'hole_cards': player.hole_cards,
+            'hole_cards': [str(card) for card in player.hole_cards],
         }

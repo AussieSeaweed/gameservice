@@ -22,7 +22,7 @@ class PokerPlayer(Player):
         actions = []
 
         if self.game.player is self:
-            if self.bet < max(self.game.bets):
+            if self.bet < max(player.bet for player in self.game.players):
                 actions.append(PokerSubmissiveAction(self))
 
             actions.append(PokerPassiveAction(self))
@@ -38,6 +38,10 @@ class PokerPlayer(Player):
         return PokerInfoSet(self)
 
     @property
+    def mucked(self):
+        return self.hole_cards is None
+
+    @property
     def commitment(self):
         return -self.payoff
 
@@ -51,7 +55,7 @@ class PokerPlayer(Player):
 
     @property
     def relevant(self):
-        return self.hole_cards is not None and self.stack > 0 and self.effective_stack > 0
+        return not self.mucked and self.stack > 0 and self.effective_stack > 0
 
     @property
     def hand(self):

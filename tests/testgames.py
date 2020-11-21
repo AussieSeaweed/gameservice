@@ -17,7 +17,7 @@ class CustomNoLimit(PokerLazyNoLimit):
             for i in range(lo + 1, hi, 50):
                 amounts.add(i)
 
-            amounts = list(amounts)
+            amounts = sorted(amounts)
 
         return amounts
 

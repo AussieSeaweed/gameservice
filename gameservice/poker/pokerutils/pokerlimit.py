@@ -11,9 +11,10 @@ class PokerNoLimit(PokerLimit):
     def bet_amounts(self, player):
         bet_sizes = []
 
-        if max(player.game.bets) + player.game.min_raise <= player.total:
-            bet_sizes.extend(range(max(player.game.bets) + player.game.min_raise, player.total + 1))
-        elif max(player.game.bets) < player.total:
+        if max(player.bet for player in player.game.players) + player.game.min_raise < player.total:
+            bet_sizes.extend(range(max(player.bet for player in player.game.players) + player.game.min_raise,
+                                   player.total + 1))
+        elif max(player.bet for player in player.game.players) < player.total:
             bet_sizes.append(player.total)
 
         return bet_sizes
@@ -23,9 +24,9 @@ class PokerLazyNoLimit(PokerLimit):
     def bet_amounts(self, player):
         bet_sizes = []
 
-        if max(player.game.bets) + player.game.min_raise <= player.total:
-            bet_sizes.extend([max(player.game.bets) + player.game.min_raise, player.total])
-        elif max(player.game.bets) < player.total:
+        if max(player.bet for player in player.game.players) + player.game.min_raise < player.total:
+            bet_sizes.extend([max(player.bet for player in player.game.players) + player.game.min_raise, player.total])
+        elif max(player.bet for player in player.game.players) < player.total:
             bet_sizes.append(player.total)
 
         return bet_sizes

@@ -11,8 +11,6 @@ class PokerGame(SequentialGame, ABC):
 
         if not len(self.starting_stacks) > 1:
             raise GamePlayerException('Poker is played by more than 2 players')
-        elif len(self.blinds) not in [0, 2] or self.blinds != sorted(self.blinds):
-            raise GameParameterException('The blinds have to be length of 0 or 2 and be sorted')
 
         self.__streets = self._create_streets()
         self.__deck = self._create_deck()
@@ -92,10 +90,6 @@ class PokerGame(SequentialGame, ABC):
     def board(self):
         return self.__board
 
-    @property
-    def bets(self):
-        return [player.bet for player in self.players]
-
     def setup(self):
         for player in self.players:
             ante = min(self.ante, player.stack)
@@ -111,6 +105,12 @@ class PokerGame(SequentialGame, ABC):
 
 
 class NLHEGame(PokerGame, ABC):
+    def __init__(self):
+        super().__init__()
+
+        if len(self.blinds) != 2 or self.blinds[0] >= self.blinds[1]:
+            raise GameParameterException('The blinds have to be length of 2 and be sorted')
+
     def _create_streets(self):
         return [PokerStreet(2, 0), PokerStreet(0, 3), PokerStreet(0, 1), PokerStreet(0, 1)]
 

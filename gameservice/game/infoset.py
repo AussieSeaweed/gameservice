@@ -1,3 +1,6 @@
+import json
+
+
 class InfoSet:
     def __init__(self, player):
         self.__player = player
@@ -30,17 +33,11 @@ class InfoSet:
 
     @classmethod
     def nature_public_info(cls, nature):
-        return {
-            'payoff': nature.payoff,
-            'actions': [str(action) for action in nature.actions if action.public],
-        }
+        return InfoSet.player_public_info(nature)
 
     @classmethod
     def nature_private_info(cls, nature):
-        return {
-            **cls.nature_public_info(nature),
-            'actions': [str(action) for action in nature.actions],
-        }
+        return InfoSet.player_private_info(nature)
 
     def player_info(self, player):
         return self.player_private_info(player) if player is self.player else self.player_public_info(player)
@@ -57,8 +54,8 @@ class InfoSet:
             'terminal': self.game.terminal,
         }
 
-    def __str__(self):
-        return str(self.serialize())
+    def __str__(self, indent=4, **kwargs):
+        return json.dumps(self.serialize(), indent=4, **kwargs)
 
 
 class SequentialInfoSet(InfoSet):
@@ -68,3 +65,11 @@ class SequentialInfoSet(InfoSet):
             **super().player_public_info(player),
             'active': player is player.game.player,
         }
+
+    @classmethod
+    def nature_public_info(cls, nature):
+        return SequentialInfoSet.player_public_info(nature)
+
+    @classmethod
+    def nature_private_info(cls, nature):
+        return SequentialInfoSet.player_private_info(nature)
