@@ -1,7 +1,7 @@
 from abc import ABC
 from collections import defaultdict
 
-from ..game import SequentialAction, GameActionException, GameActionArgumentException
+from ..game import GameActionArgumentException, GameActionException, SequentialAction
 
 
 class PokerAction(SequentialAction, ABC):

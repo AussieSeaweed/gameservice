@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
-from .pokerplayer import PokerPlayer, PokerNature
-from .pokerutils import PokerStreet, PokerStdDeck, PokerStdEvaluator, PokerNoLimit, PokerLazyNoLimit
-from ..game import SequentialGame, GamePlayerException, GameParameterException
+from .pokerplayer import PokerNature, PokerPlayer
+from .pokerutils import PokerLazyNoLimit, PokerNoLimit, PokerStdDeck, PokerStdEvaluator, PokerStreet
+from ..game import GameParameterException, GamePlayerException, SequentialGame
 
 
 class PokerGame(SequentialGame, ABC):

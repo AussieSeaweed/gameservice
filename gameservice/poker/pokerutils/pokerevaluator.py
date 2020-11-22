@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from treys import Evaluator, Card
+from treys import Card, Evaluator
 
 
 class PokerEvaluator(ABC):

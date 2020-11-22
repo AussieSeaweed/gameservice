@@ -1,4 +1,4 @@
-from ..game import SequentialAction, GameActionArgumentException
+from ..game import GameActionArgumentException, SequentialAction
 
 
 class TicTacToeMarkAction(SequentialAction):

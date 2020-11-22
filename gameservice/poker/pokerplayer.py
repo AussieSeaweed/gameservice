@@ -1,8 +1,8 @@
-from .pokeraction import PokerSubmissiveAction, PokerPassiveAction, PokerAggressiveAction, PokerStreetAction, \
-    PokerShowdownAction
+from .pokeraction import PokerAggressiveAction, PokerPassiveAction, PokerShowdownAction, PokerStreetAction, \
+    PokerSubmissiveAction
 from .pokerinfoset import PokerInfoSet
 from .pokerutils import PokerHand
-from ..game import Player, Nature
+from ..game import Nature, Player
 
 
 class PokerPlayer(Player):

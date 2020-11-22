@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .exception import GameTerminalException, GameInterruptionException, GamePlayerException
+from .exception import GameInterruptionException, GamePlayerException, GameTerminalException
 
 
 class Action(ABC):

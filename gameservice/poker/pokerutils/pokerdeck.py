@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from treys import Deck, Card
+from treys import Card, Deck
 
 from .pokercard import PokerCard
 
