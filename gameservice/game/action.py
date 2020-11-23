@@ -22,10 +22,11 @@ class Action(ABC):
         return self.player.game
 
     def act(self):
-        if self.__num_logs != len(self.game.logs):
-            raise GameInterruptionException('Game was modified since the creation of the action')
+        if self.public:
+            if self.__num_logs != len(self.game.logs):
+                raise GameInterruptionException('Game was modified since the creation of the action')
 
-        self.game.log(self)
+            self.game.log(self)
 
     @property
     @abstractmethod
