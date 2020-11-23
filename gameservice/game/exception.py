@@ -1,26 +1,33 @@
 class GameException(Exception):
     """Base exception class for exceptions related to gameservice"""
+    pass
 
 
 class GameTerminalException(GameException):
-    """Raised when the terminality of the game is invalid"""
+    """The terminality of the game is invalid"""
+    pass
 
 
 class GameInterruptionException(GameException):
-    """Raised when the game has been changed when not allowed"""
+    """The game has already been modified"""
+    pass
 
 
 class GamePlayerException(GameException):
-    """Raised when the player of the game is invalid"""
+    """The player cannot perform the action"""
+    pass
 
 
 class GameParameterException(GameException):
-    """Raised when the parameter of the game is invalid"""
+    """One or more invalid parameters are supplied to the game"""
+    pass
 
 
 class GameActionException(GameException):
-    """Raised when the action of the game is invalid"""
+    """The action is invalid"""
+    pass
 
 
 class GameActionArgumentException(GameException):
-    """Raised when one or more action arguments are invalid"""
+    """One or more invalid arguments are supplied to the action"""
+    pass

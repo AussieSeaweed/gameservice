@@ -89,7 +89,7 @@ while not game.terminal:  # Run while the game is not finished
 
     actions[int(input('Action index: '))].act()  # Choose an action and act (modify the game)
 
-print("Done!") 
+print('Done!') 
 ```
 
 Infoset has a serialize method that converts all known info of player to be
