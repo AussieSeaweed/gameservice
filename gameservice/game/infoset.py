@@ -55,7 +55,7 @@ class InfoSet:
         }
 
     def __str__(self, indent=4, **kwargs):
-        return json.dumps(self.serialize(), indent=4, **kwargs)
+        return json.dumps(self.serialize(), indent=indent, **kwargs)
 
 
 class SequentialInfoSet(InfoSet):
