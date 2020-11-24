@@ -1,7 +1,7 @@
 from ..game import GameActionArgumentException, SequentialAction
 
 
-class TicTacToeMarkAction(SequentialAction):
+class TTTMarkAction(SequentialAction):
     def __init__(self, player, r, c):
         super().__init__(player)
 

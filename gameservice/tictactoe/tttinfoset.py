@@ -1,7 +1,7 @@
 from ..game import SequentialInfoSet
 
 
-class TicTacToeInfoSet(SequentialInfoSet):
+class TTTInfoSet(SequentialInfoSet):
     @classmethod
     def environment_info(cls, game):
         return {

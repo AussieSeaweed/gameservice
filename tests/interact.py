@@ -1,5 +1,5 @@
 from gameservice.poker import NLHELazyGame
-from gameservice.tictactoe import TicTacToeGame
+from gameservice.tictactoe import TTTGame
 
 
 class NLHETestGame(NLHELazyGame):
@@ -33,4 +33,4 @@ def interact_sequential_game(sequential_game_type):
 
 
 if __name__ == '__main__':
-    interact_sequential_game(TicTacToeGame)
+    interact_sequential_game(TTTGame)

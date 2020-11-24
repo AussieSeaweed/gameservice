@@ -1,8 +1,8 @@
-from .tictactoeplayer import TicTacToePlayer
+from .tttplayer import TTTPlayer
 from ..game import SequentialGame
 
 
-class TicTacToeGame(SequentialGame):
+class TTTGame(SequentialGame):
     def __init__(self):
         super().__init__()
 
@@ -11,7 +11,7 @@ class TicTacToeGame(SequentialGame):
                         [None, None, None]]
 
     def _create_players(self):
-        return [TicTacToePlayer(self) for _ in range(2)]
+        return [TTTPlayer(self) for _ in range(2)]
 
     def _create_nature(self):
         return None

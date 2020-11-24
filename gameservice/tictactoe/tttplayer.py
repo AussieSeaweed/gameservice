@@ -1,9 +1,9 @@
-from .tictactoeaction import TicTacToeMarkAction
-from .tictactoeinfoset import TicTacToeInfoSet
+from .tttaction import TTTMarkAction
+from .tttinfoset import TTTInfoSet
 from ..game import Player
 
 
-class TicTacToePlayer(Player):
+class TTTPlayer(Player):
     @property
     def payoff(self):
         if self.game.winner is None:
@@ -14,10 +14,10 @@ class TicTacToePlayer(Player):
     @property
     def actions(self):
         if self.game.player is self:
-            return [TicTacToeMarkAction(self, r, c) for r, c in self.game.empty_coords]
+            return [TTTMarkAction(self, r, c) for r, c in self.game.empty_coords]
         else:
             return []
 
     @property
     def info_set(self):
-        return TicTacToeInfoSet(self)
+        return TTTInfoSet(self)

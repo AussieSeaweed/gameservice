@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from random import choice
 
 from gameservice.poker import NLHEGame, PokerLazyNoLimit
-from gameservice.tictactoe import TicTacToeGame
+from gameservice.tictactoe import TTTGame
 
 
 class CustomNoLimit(PokerLazyNoLimit):
@@ -120,14 +120,14 @@ class TicTacToeTestCase(unittest.TestCase, GameTestMixin):
 
     @property
     def game_type(self):
-        return TicTacToeGame
+        return TTTGame
 
     @staticmethod
     def check_game(game):
         return game.winner is not None or not game.empty_coords
 
     def test_tic_tac_toe_first_win(self):
-        game = TicTacToeGame()
+        game = self.game_type()
 
         while not game.terminal:
             game.player.actions[0].act()
@@ -137,7 +137,7 @@ class TicTacToeTestCase(unittest.TestCase, GameTestMixin):
         self.assertEqual([1, -1], payoffs)
 
     def test_tic_tac_toe_second_win(self):
-        game = TicTacToeGame()
+        game = self.game_type()
 
         game.player.actions[8].act()
 
@@ -149,7 +149,7 @@ class TicTacToeTestCase(unittest.TestCase, GameTestMixin):
         self.assertEqual([-1, 1], payoffs)
 
     def test_tic_tac_toe_draw(self):
-        game = TicTacToeGame()
+        game = self.game_type()
 
         game.player.actions[4].act()
 
