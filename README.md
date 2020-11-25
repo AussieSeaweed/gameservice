@@ -62,9 +62,9 @@ Tic Tac Toe games are straight-forward to create.
 
 
 ```python
-from gameservice.tictactoe import TicTacToeGame
+from gameservice.tictactoe import TTTGame
 
-game = TicTacToeGame()
+game = TTTGame()
 ```
 
 
@@ -75,9 +75,9 @@ Interacting with every game is basically the same across all games.
 As an example, Tic Tac Toe Game will be used
 
 ```python
-from gameservice.tictactoe import TicTacToeGame
+from gameservice.tictactoe import TTTGame
 
-game = TicTacToeGame()
+game = TTTGame()
 
 while not game.terminal:  # Run while the game is not finished
     print(game.player.info_set)  # Get the infoset of player to act

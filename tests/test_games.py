@@ -113,7 +113,7 @@ class HUNLHETestCase(unittest.TestCase, PokerTestMixin):
         return CustomNLHEGame
 
 
-class TicTacToeTestCase(unittest.TestCase, GameTestMixin):
+class TTTTestCase(unittest.TestCase, GameTestMixin):
     @property
     def num_monte_carlo_tests(self):
         return 1000
