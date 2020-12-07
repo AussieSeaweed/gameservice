@@ -1,6 +1,3 @@
-import json
-
-
 class InfoSet:
     def __init__(self, player):
         self.__player = player
@@ -18,32 +15,40 @@ class InfoSet:
         return {}
 
     @classmethod
-    def player_public_info(cls, player):
+    def _player_public_info(cls, player):
         return {
             'payoff': player.payoff,
             'actions': [str(action) for action in player.actions if action.public],
         }
 
     @classmethod
-    def player_private_info(cls, player):
+    def _player_private_info(cls, player):
         return {
-            **cls.player_public_info(player),
+            **cls._player_public_info(player),
             'actions': [str(action) for action in player.actions],
         }
 
     @classmethod
-    def nature_public_info(cls, nature):
-        return InfoSet.player_public_info(nature)
+    def player_public_info(cls, player):
+        return cls._player_public_info(player)
 
     @classmethod
-    def nature_private_info(cls, nature):
-        return InfoSet.player_private_info(nature)
+    def player_private_info(cls, player):
+        return cls._player_private_info(player)
 
     def player_info(self, player):
         return self.player_private_info(player) if player is self.player else self.player_public_info(player)
 
+    @classmethod
+    def nature_public_info(cls, nature):
+        return cls._player_public_info(nature)
+
+    @classmethod
+    def nature_private_info(cls, nature):
+        return cls._player_private_info(nature)
+
     def nature_info(self, nature):
-        return self.nature_private_info(nature) if nature is self.player else self.nature_public_info(nature)
+        return self.nature_private_info(nature) if self.player.nature else self.nature_public_info(nature)
 
     def serialize(self):
         return {
@@ -54,22 +59,14 @@ class InfoSet:
             'terminal': self.game.terminal,
         }
 
-    def __str__(self, indent=4, **kwargs):
-        return json.dumps(self.serialize(), indent=indent, **kwargs)
+    def __str__(self):
+        return str(self.serialize())
 
 
-class SequentialInfoSet(InfoSet):
+class SeqInfoSet(InfoSet):
     @classmethod
-    def player_public_info(cls, player):
+    def _player_public_info(cls, player):
         return {
-            **super().player_public_info(player),
+            **super()._player_public_info(player),
             'active': player is player.game.player,
         }
-
-    @classmethod
-    def nature_public_info(cls, nature):
-        return SequentialInfoSet.player_public_info(nature)
-
-    @classmethod
-    def nature_private_info(cls, nature):
-        return SequentialInfoSet.player_private_info(nature)
