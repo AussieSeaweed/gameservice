@@ -1,15 +1,10 @@
 class GameException(Exception):
-    """Base exception class for exceptions related to gameservice."""
+    """Base exception class for exceptions related to gameframe."""
     pass
 
 
 class GameTerminalException(GameException):
     """The terminality of the game is invalid."""
-    pass
-
-
-class GameInterruptionException(GameException):
-    """The game has already been modified."""
     pass
 
 
