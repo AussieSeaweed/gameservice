@@ -1,17 +1,11 @@
 from abc import ABC, abstractmethod
 
-from .exception import GameInterruptionException, GamePlayerException, GameTerminalException
+from .exception import GamePlayerException, GameTerminalException
 
 
 class Action(ABC):
     def __init__(self, player):
-        if player.game.terminal:
-            raise GameTerminalException('Actions are not applicable to terminal games')
-        elif self.chance != player.nature:
-            raise GamePlayerException('Nature acts chance actions')
-
         self.__player = player
-        self.__num_logs = len(player.game.logs)
 
     @property
     def player(self):
@@ -21,11 +15,16 @@ class Action(ABC):
     def game(self):
         return self.player.game
 
-    def act(self):
-        if self.public:
-            if self.__num_logs != len(self.game.logs):
-                raise GameInterruptionException('Game was modified since the creation of the action')
+    def _validate(self):
+        if self.player.game.terminal:
+            raise GameTerminalException('Actions are not applicable to terminal games')
+        elif self.chance != self.player.nature:
+            raise GamePlayerException('Nature acts chance actions')
 
+    def act(self):
+        self._validate()
+
+        if self.public:
             self.game.log(self)
 
     @property
@@ -43,9 +42,9 @@ class Action(ABC):
         pass
 
 
-class SequentialAction(Action, ABC):
-    def __init__(self, player):
-        super().__init__(player)
+class SeqAction(Action, ABC):
+    def _validate(self):
+        super()._validate()
 
-        if player is not self.game.player:
-            raise GamePlayerException(f'{player} cannot act in turn')
+        if self.player is not self.game.player:
+            raise GamePlayerException(f'{self.player} cannot act in turn')
