@@ -2,14 +2,14 @@ import unittest
 from abc import ABC, abstractmethod
 from random import choice, randint
 
-from gameservice.poker import NLHELazyGame
+from gameservice.poker import LazyNLHEGame
 from gameservice.tictactoe import TTTGame
 
 
 # Game Classes and Mixins
 
 
-class CustomNLHEGame(NLHELazyGame):
+class CustomNLHEGame(LazyNLHEGame):
     def __init__(self):
         self.__starting_stacks = [randint(self.min_starting_stack, self.max_starting_stack) for _ in
                                   range(self.num_players)]

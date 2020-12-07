@@ -1,8 +1,8 @@
-from gameservice.poker import NLHELazyGame
+from gameservice.poker import LazyNLHEGame
 import json
 
 
-class TestNLHEGame(NLHELazyGame):
+class TestNLHEGame(LazyNLHEGame):
     @property
     def starting_stacks(self):
         return [200, 400, 300]
