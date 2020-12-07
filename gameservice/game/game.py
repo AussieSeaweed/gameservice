@@ -38,7 +38,7 @@ class Game(ABC):
         pass
 
 
-class SequentialGame(Game, ABC):
+class SeqGame(Game, ABC):
     def __init__(self):
         super().__init__()
 
