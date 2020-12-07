@@ -16,7 +16,7 @@ class Action(ABC):
         return self.player.game
 
     def _validate(self):
-        if self.player.game.terminal:
+        if self.game.terminal:
             raise GameTerminalException('Actions are not applicable to terminal games')
         elif self.chance != self.player.nature:
             raise GamePlayerException('Nature acts chance actions')
