@@ -1,31 +1,20 @@
 import unittest
 from abc import ABC, abstractmethod
-from random import choice
+from random import choice, randint
 
-from gameservice.poker import NLHEGame, PokerLazyNoLimit
+from gameservice.poker import NLHELazyGame
 from gameservice.tictactoe import TTTGame
 
 
-class CustomNoLimit(PokerLazyNoLimit):
-    def bet_amounts(self, player):
-        amounts = super().bet_amounts(player)
-
-        if len(amounts) == 2:
-            lo, hi = amounts
-            amounts = {lo, hi}
-
-            for i in range(lo + 1, hi, 50):
-                amounts.add(i)
-
-            amounts = sorted(amounts)
-
-        return amounts
+# Game Classes and Mixins
 
 
-class CustomHUNLHEGame(NLHEGame):
-    @property
-    def starting_stacks(self):
-        return [200, 400]
+class CustomNLHEGame(NLHELazyGame):
+    def __init__(self):
+        self.__starting_stacks = [randint(self.min_starting_stack, self.max_starting_stack) for _ in
+                                  range(self.num_players)]
+
+        super().__init__()
 
     @property
     def blinds(self):
@@ -35,36 +24,49 @@ class CustomHUNLHEGame(NLHEGame):
     def ante(self):
         return 1
 
-    def _create_limit(self):
-        return CustomNoLimit()
+    @property
+    def min_starting_stack(self):
+        return 0
 
+    @property
+    def max_starting_stack(self):
+        return 1000
 
-class CustomNLHEGame(NLHEGame):
     @property
     def starting_stacks(self):
-        return [200, 400, 400, 1000, 500, 400, 200, 200, 1000]
+        return self.__starting_stacks
 
-    @property
-    def blinds(self):
-        return [1, 2]
-
-    @property
-    def ante(self):
-        return 1
-
-    def _create_limit(self):
-        return CustomNoLimit()
-
-
-class GameTestMixin(ABC):
     @property
     @abstractmethod
-    def num_monte_carlo_tests(self):
+    def num_players(self):
         pass
 
+
+class CustomNLHE2Game(CustomNLHEGame):
     @property
+    def num_players(self):
+        return 2
+
+
+class CustomNLHE6Game(CustomNLHEGame):
+    @property
+    def num_players(self):
+        return 6
+
+
+class CustomNLHE9Game(CustomNLHEGame):
+    @property
+    def num_players(self):
+        return 9
+
+
+# Game Test Mixins
+
+
+class GameTestCaseMixin(ABC):
+    @staticmethod
     @abstractmethod
-    def game_type(self):
+    def create_game():
         pass
 
     @staticmethod
@@ -72,9 +74,16 @@ class GameTestMixin(ABC):
     def check_game(game):
         pass
 
+
+class SeqTestCaseMixin(GameTestCaseMixin, ABC):
+    @property
+    @abstractmethod
+    def num_monte_carlo_tests(self):
+        pass
+
     def test_monte_carlo(self):
         for i in range(self.num_monte_carlo_tests):
-            game = self.game_type()
+            game = self.create_game()
 
             while not game.terminal:
                 choice(game.player.actions).act()
@@ -86,48 +95,35 @@ class GameTestMixin(ABC):
                 raise e
 
 
-class PokerTestMixin(GameTestMixin, ABC):
+class PokerTestCaseMixin(SeqTestCaseMixin, ABC):
+    @property
+    def num_monte_carlo_tests(self):
+        return 1000
+
     @staticmethod
     def check_game(game):
         return sum(game.starting_stacks) == sum(player.stack for player in game.players) and \
                all(player.stack >= 0 and player.bet >= 0 for player in game.players)
 
 
-class NLHETestCase(unittest.TestCase, PokerTestMixin):
-    @property
-    def num_monte_carlo_tests(self):
-        return 1000
-
-    @property
-    def game_type(self):
-        return CustomNLHEGame
+# Game Test Cases
 
 
-class HUNLHETestCase(unittest.TestCase, PokerTestMixin):
-    @property
-    def num_monte_carlo_tests(self):
-        return 1000
-
-    @property
-    def game_type(self):
-        return CustomNLHEGame
-
-
-class TTTTestCase(unittest.TestCase, GameTestMixin):
-    @property
-    def num_monte_carlo_tests(self):
-        return 1000
-
-    @property
-    def game_type(self):
-        return TTTGame
+class TTTTestCase(unittest.TestCase, GameTestCaseMixin):
+    @staticmethod
+    def create_game():
+        return TTTGame()
 
     @staticmethod
     def check_game(game):
         return game.winner is not None or not game.empty_coords
 
+    @property
+    def num_monte_carlo_tests(self):
+        return 1000
+
     def test_tic_tac_toe_first_win(self):
-        game = self.game_type()
+        game = self.create_game()
 
         while not game.terminal:
             game.player.actions[0].act()
@@ -137,7 +133,7 @@ class TTTTestCase(unittest.TestCase, GameTestMixin):
         self.assertEqual([1, -1], payoffs)
 
     def test_tic_tac_toe_second_win(self):
-        game = self.game_type()
+        game = self.create_game()
 
         game.player.actions[8].act()
 
@@ -149,7 +145,7 @@ class TTTTestCase(unittest.TestCase, GameTestMixin):
         self.assertEqual([-1, 1], payoffs)
 
     def test_tic_tac_toe_draw(self):
-        game = self.game_type()
+        game = self.create_game()
 
         game.player.actions[4].act()
 
@@ -159,6 +155,24 @@ class TTTTestCase(unittest.TestCase, GameTestMixin):
         payoffs = [player.payoff for player in game.players]
 
         self.assertEqual([0, 0], payoffs)
+
+
+class NLHE2TestCase(unittest.TestCase, PokerTestCaseMixin):
+    @staticmethod
+    def create_game():
+        return CustomNLHE2Game()
+
+
+class NLHE6TestCase(unittest.TestCase, PokerTestCaseMixin):
+    @staticmethod
+    def create_game():
+        return CustomNLHE6Game()
+
+
+class NLHE9TestCase(unittest.TestCase, PokerTestCaseMixin):
+    @staticmethod
+    def create_game():
+        return CustomNLHE9Game()
 
 
 if __name__ == '__main__':

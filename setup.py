@@ -2,10 +2,10 @@ import setuptools
 
 setuptools.setup(
     name='gameservice',
-    version='2.0.6',
+    version='3.0.0',
     author='Juho Kim',
     author_email='juho-kim@outlook.com',
-    description='A package for game services on python',
+    description='A package for various game implementations on python',
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/AussieSeaweed/gameservice',
@@ -16,7 +16,5 @@ setuptools.setup(
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.7',
-    install_requires=[
-        'treys',
-    ],
+    install_requires=['treys'],
 )
