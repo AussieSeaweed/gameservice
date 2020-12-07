@@ -1,15 +1,21 @@
-from ..game import GameActionArgumentException, SequentialAction
+from .tttexception import TTTCellException
+from ..game import GameActionArgumentException, SeqAction
 
 
-class TTTMarkAction(SequentialAction):
+class TTTMarkAction(SeqAction):
     def __init__(self, player, r, c):
         super().__init__(player)
 
-        if not (0 <= r < 3 and 0 <= c < 3):
-            raise GameActionArgumentException('The cell coordinate is invalid')
-
         self.__r = r
         self.__c = c
+
+    def _validate(self):
+        super()._validate()
+
+        if not (0 <= self.__r < 3 and 0 <= self.__c < 3):
+            raise GameActionArgumentException('The cell coordinates are invalid')
+        elif self.game.board[self.__r][self.__c] is not None:
+            raise TTTCellException('The cell is already occupied')
 
     def act(self):
         super().act()

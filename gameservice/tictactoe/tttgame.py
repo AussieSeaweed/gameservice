@@ -1,8 +1,8 @@
 from .tttplayer import TTTPlayer
-from ..game import SequentialGame
+from ..game import SeqGame
 
 
-class TTTGame(SequentialGame):
+class TTTGame(SeqGame):
     def __init__(self):
         super().__init__()
 

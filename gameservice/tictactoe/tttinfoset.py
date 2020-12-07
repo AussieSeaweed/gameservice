@@ -1,7 +1,7 @@
-from ..game import SequentialInfoSet
+from ..game import SeqInfoSet
 
 
-class TTTInfoSet(SequentialInfoSet):
+class TTTInfoSet(SeqInfoSet):
     @classmethod
     def environment_info(cls, game):
         return {
