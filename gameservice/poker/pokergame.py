@@ -2,15 +2,15 @@ from abc import ABC, abstractmethod
 
 from .pokerplayer import PokerNature, PokerPlayer
 from .pokerutils import PokerLazyNoLimit, PokerNoLimit, PokerStdDeck, PokerStdEvaluator, PokerStreet
-from ..game import GameParameterException, GamePlayerException, SequentialGame
+from ..game import GameParameterException, SeqGame
 
 
-class PokerGame(SequentialGame, ABC):
+class PokerGame(SeqGame, ABC):
     def __init__(self):
         super().__init__()
 
         if not len(self.starting_stacks) > 1:
-            raise GamePlayerException('Poker is played by more than 2 players')
+            raise GameParameterException('Poker is played by more than 2 players')
 
         self.__streets = self._create_streets()
         self.__deck = self._create_deck()
@@ -104,7 +104,7 @@ class PokerGame(SequentialGame, ABC):
             player.bet += blind
 
 
-class NLHEGame(PokerGame, ABC):
+class LazyNLHEGame(PokerGame, ABC):
     def __init__(self):
         super().__init__()
 
@@ -121,9 +121,9 @@ class NLHEGame(PokerGame, ABC):
         return PokerStdEvaluator()
 
     def _create_limit(self):
-        return PokerNoLimit()
-
-
-class NLHELazyGame(NLHEGame, ABC):
-    def _create_limit(self):
         return PokerLazyNoLimit()
+
+
+class NLHEGame(LazyNLHEGame, ABC):
+    def _create_limit(self):
+        return PokerNoLimit()

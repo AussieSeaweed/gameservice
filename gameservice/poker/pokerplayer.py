@@ -1,7 +1,6 @@
 from .pokeraction import PokerAggressiveAction, PokerPassiveAction, PokerShowdownAction, PokerStreetAction, \
     PokerSubmissiveAction
 from .pokerinfoset import PokerInfoSet
-from .pokerutils import PokerHand
 from ..game import Nature, Player
 
 
@@ -27,9 +26,8 @@ class PokerPlayer(Player):
 
             actions.append(PokerPassiveAction(self))
 
-            if sum(player.relevant for player in self.game.players) > 1:
-                for amount in self.game.limit.bet_amounts(self):
-                    actions.append(PokerAggressiveAction(self, amount))
+            for amount in self.game.limit.bet_amounts(self):
+                actions.append(PokerAggressiveAction(self, amount))
 
         return actions
 
@@ -59,7 +57,7 @@ class PokerPlayer(Player):
 
     @property
     def hand(self):
-        return PokerHand(self.game.evaluator.hand_rank(self.hole_cards, self.game.board))
+        return self.game.evaluator.hand(self.hole_cards, self.game.board)
 
     def __next__(self):
         player = Player.__next__(self)

@@ -1,7 +1,7 @@
-from ..game import SequentialInfoSet
+from ..game import SeqInfoSet
 
 
-class PokerInfoSet(SequentialInfoSet):
+class PokerInfoSet(SeqInfoSet):
     @classmethod
     def environment_info(cls, game):
         return {
@@ -24,5 +24,5 @@ class PokerInfoSet(SequentialInfoSet):
     def player_private_info(cls, player):
         return {
             **super().player_private_info(player),
-            'hole_cards': [str(card) for card in player.hole_cards],
+            'hole_cards': [str(card) for card in player.hole_cards],  # hole_cards is not None when player acts
         }
