@@ -1,5 +1,6 @@
-from gameservice.poker import LazyNLHEGame
 import json
+
+from gameservice.poker import LazyNLHEGame
 
 
 class TestNLHEGame(LazyNLHEGame):
