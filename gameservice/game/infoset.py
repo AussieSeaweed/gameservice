@@ -99,7 +99,7 @@ class InfoSet(ABC):
         :return: the dictionary representation of the game
         """
         return {
-            'environment': self.environment_info(self.game),
+            'environment': self.environment_info(self.game.environment),
             'players': [self.player_info(player) for player in self.game.players],
             'nature': None if self.game.nature is None else self.nature_info(self.game.nature),
             'logs': [str(log) for log in self.game.logs],
