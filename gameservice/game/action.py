@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from .exception import GamePlayerException, GameTerminalException
+from .utils import Log
 
 
 class Action(ABC):
@@ -25,7 +26,7 @@ class Action(ABC):
         self._validate()
 
         if self.public:
-            self.game.log(self)
+            self.game.logs.append(Log(self))
 
     @property
     @abstractmethod

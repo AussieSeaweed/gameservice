@@ -1,8 +1,8 @@
 GameService
 ===========
 
-GameService provides a general framework for board games and implements Tic Tac Toe and No Limit Texas Hold'em Poker
-games.
+GameService is a Python library that provides a general framework for board games and implements Tic Tac Toe and No
+Limit Texas Hold'em Poker games.
 
 
 Installation
@@ -16,12 +16,8 @@ Implementation Notes
 --------------------
 
 GameService currently implements No Limit Texas Hold'em and Tic Tac Toe games. As it stands right now, you can run ~5000
-tic tac toe games per second, and ~100 games per second of 9-Max NLHE with maximum of 20 bet sizes if players take
-random actions.
-
-Note that, in poker games, the vast majority of the actions will be raises (you can see why if you play around with the
-library). But, in real life, the percentages of calls, checks, folds, and all-ins will be disproportionally large.
-Therefore, the real life performance of this library is expected to be larger.
+tic tac toe games per second, and the number of No Limit Texas Hold'em games you can run varies between allowed bet
+sizes.
 
 
 Creating No Limit Texas Hold'em Games

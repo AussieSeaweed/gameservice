@@ -25,11 +25,14 @@ class PokerGame(SeqGame, ABC):
 
         self.setup()
 
-    def _create_players(self):
-        return [PokerPlayer(self, i) for i in range(len(self.starting_stacks))]
+    def _create_environment(self):
+        return None
 
     def _create_nature(self):
         return PokerNature(self)
+
+    def _create_players(self):
+        return [PokerPlayer(self, i) for i in range(len(self.starting_stacks))]
 
     @property
     def _initial_player(self):

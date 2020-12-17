@@ -10,6 +10,9 @@ class TTTGame(SeqGame):
                         [None, None, None],
                         [None, None, None]]
 
+    def _create_environment(self):
+        return None
+
     def _create_players(self):
         return [TTTPlayer(self) for _ in range(2)]
 
