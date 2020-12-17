@@ -1,5 +1,5 @@
 """
-This module defines a general game structure
+This module defines a general game structure.
 """
 from __future__ import annotations
 
