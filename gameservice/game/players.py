@@ -11,7 +11,7 @@ class Player(ABC):
 
     def __init__(self, game, label=None):
         """
-        Constructs the Player instance. Stores the game and label.
+        Constructs a Player instance. Stores the game and label of the player.
         :param game: the game of the player
         :param label: the optional label of the player
         """

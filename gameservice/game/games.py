@@ -11,7 +11,7 @@ class Game(ABC):
 
     def __init__(self):
         """
-        Constructs a Game instance. Initializes the environment, nature, players, and logs.
+        Constructs a Game instance. Initializes the environment, nature, players, and logs of the game.
         """
         self.__environment = self._create_environment()
         self.__nature = self._create_nature()
