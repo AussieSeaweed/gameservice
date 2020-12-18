@@ -49,9 +49,10 @@ class Action(ABC):
 
     def act(self):
         """
-        Takes the action of the game. The overridden act method should first call the super method and then make the
-        necessary updates to the game.
+        Applies the action to the associated game. The overridden act method should first call the super method and then
+        make the necessary modifications to the game.
         :return: None
+        :raise GameServiceException: if game validation fails
         """
         self._validate()
 

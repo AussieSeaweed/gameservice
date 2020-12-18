@@ -5,7 +5,7 @@ from ..game import GameServiceException
 
 
 class TTTException(GameServiceException):
-    """Base exception class for exceptions related to tic tac toe games."""
+    """A base exception class for exceptions related to tic tac toe."""
     pass
 
 

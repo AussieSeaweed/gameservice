@@ -93,7 +93,7 @@ class Nature(Player, ABC):
     @property
     def payoff(self):
         """
-        Returns the negated sum of the player payoffs in the game.
+        Finds the negated sum of the player payoffs in the game.
         :return: the default nature payoff
         """
         return -sum(player.payoff for player in self.game.players)

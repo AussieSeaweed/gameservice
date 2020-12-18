@@ -12,7 +12,7 @@ class TTTMarkAction(SeqAction):
 
     def __init__(self, player, r, c):
         """
-        Constructs tic tac toe mark action instance. Stores the coordinates of the cell.
+        Constructs a TTTMarkAction instance. Stores the coordinates of the cell.
         :param player: the acting player
         :param r: the row number of the cell
         :param c: the column number of the cell
@@ -38,8 +38,9 @@ class TTTMarkAction(SeqAction):
 
     def act(self):
         """
-        Applies the action in the associated tic tac toe game.
+        Applies the tic tac toe mark action to the associated tic tac toe game.
         :return: None
+        :raise GameServiceException: if tic tac toe game validation fails
         """
         super().act()
 
@@ -53,20 +54,20 @@ class TTTMarkAction(SeqAction):
     @property
     def chance(self):
         """
-        :return: False as mark actions are not chance actions
+        :return: False as tic tac toe mark actions are not chance actions
         """
         return False
 
     @property
     def public(self):
         """
-        :return: True as mark actions are public
+        :return: True as tic tac toe mark actions are public
         """
         return True
 
     def __str__(self):
         """
-        Converts a tic tac toe mark action into a string representation.
+        Converts the tic tac toe mark action into a string representation.
         :return: a string representation of the mark action
         """
         return f'Mark row {self.__r} column {self.__c}'

@@ -42,6 +42,7 @@ class InfoSet(ABC):
     @classmethod
     def _player_public_info(cls, player):
         """
+        Serializes the player publicly.
         :param player: the player of the info-set
         :return: the dictionary representation of the public player information
         """
@@ -53,6 +54,7 @@ class InfoSet(ABC):
     @classmethod
     def _player_private_info(cls, player):
         """
+        Serializes the player privately.
         :param player: the player of the info-set
         :return: the dictionary representation of the private player information
         """

@@ -4,7 +4,7 @@ This module defines exceptions in gameservice.
 
 
 class GameServiceException(Exception):
-    """Base exception class for exceptions related to gameservice."""
+    """A base exception class for exceptions related to gameservice."""
     pass
 
 

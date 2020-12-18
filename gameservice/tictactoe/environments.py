@@ -11,7 +11,7 @@ class TTTEnvironment(Environment):
 
     def __init__(self, game):
         """
-        Constructs the TicTacToeEnvironment instance. Initializes the board.
+        Constructs a TicTacToeEnvironment instance. Initializes the board.
         :param game: the game in which the tic tac toe environment belongs
         """
         super().__init__(game)
