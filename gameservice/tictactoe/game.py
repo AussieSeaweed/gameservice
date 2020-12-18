@@ -3,13 +3,6 @@ from ..game import SeqGame
 
 
 class TTTGame(SeqGame):
-    def __init__(self):
-        super().__init__()
-
-        self.__board = [[None, None, None],
-                        [None, None, None],
-                        [None, None, None]]
-
     def _create_environment(self):
         return None
 

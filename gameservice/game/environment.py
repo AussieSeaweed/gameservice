@@ -8,4 +8,9 @@ class Environment(ABC):
     """
     This is a base class for all environments in gameservice.
     """
-    pass
+
+    def __init__(self):
+        """
+        Constructs the environment instance.
+        """
+        pass
