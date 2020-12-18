@@ -1,5 +1,5 @@
 """
-This module defines a general player of gameservice.
+This module defines a general game player in gameservice.
 """
 from abc import ABC, abstractmethod
 

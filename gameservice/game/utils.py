@@ -1,5 +1,5 @@
 """
-This module defines the game utilities.
+This module defines game utilities in gameservice.
 """
 
 

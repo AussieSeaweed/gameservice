@@ -1,5 +1,5 @@
 """
-This module defines a general game structure of gameservice.
+This module defines a general game structure in gameservice.
 """
 from abc import ABC, abstractmethod
 

@@ -1,5 +1,5 @@
 """
-This module defines a general game environment of gameservice.
+This module defines a general game environment in gameservice.
 """
 from abc import ABC
 

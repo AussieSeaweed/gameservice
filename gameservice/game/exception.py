@@ -1,5 +1,5 @@
 """
-This module defines gameservice exceptions.
+This module defines game exceptions in gameservice.
 """
 
 

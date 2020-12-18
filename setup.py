@@ -9,7 +9,7 @@ setuptools.setup(
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/AussieSeaweed/gameservice',
-    packages=setuptools.find_packages(exclude=('tests',)),
+    packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',

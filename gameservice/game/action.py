@@ -1,5 +1,5 @@
 """
-This module defines a general action of gameservice.
+This module defines a general game action in gameservice.
 """
 from abc import ABC, abstractmethod
 
