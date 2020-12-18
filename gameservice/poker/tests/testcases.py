@@ -1,10 +1,10 @@
 """
 This module defines no-limit texas hold'em test cases in gameservice.
 """
-from unittest import TestCase
+from unittest import TestCase, main
 
-from gameservice.poker.tests.testcasemixins import PokerTestCaseMixin
 from gameservice.poker import LazyNLHEGame
+from gameservice.poker.tests.testcasemixins import PokerTestCaseMixin
 
 
 class CustomNLHEGame(LazyNLHEGame):
@@ -33,3 +33,7 @@ class NLHETestCase(TestCase, PokerTestCaseMixin):
     @staticmethod
     def create_game():
         return CustomNLHEGame()
+
+
+if __name__ == '__main__':
+    main()

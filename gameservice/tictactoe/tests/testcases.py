@@ -1,7 +1,7 @@
 """
 This module defines tic tac toe test cases in gameservice.
 """
-from unittest import TestCase
+from unittest import TestCase, main
 
 from gameservice.game.tests.testcasemixins import SeqTestCaseMixin
 from gameservice.tictactoe import TTTGame
@@ -84,3 +84,7 @@ class TTTTestCase(TestCase, SeqTestCaseMixin):
         payoffs = [player.payoff for player in game.players]
 
         self.assertEqual([0, 0], payoffs)
+
+
+if __name__ == '__main__':
+    main()
