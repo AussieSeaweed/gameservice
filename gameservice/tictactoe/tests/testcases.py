@@ -9,7 +9,7 @@ from gameservice.tictactoe import TTTGame
 
 class TTTTestCase(TestCase, SeqTestCaseMixin):
     """
-    This is a class for tic tac toe  game test cases.
+    This is a class for tic tac toe test cases.
     """
 
     @staticmethod
