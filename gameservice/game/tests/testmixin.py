@@ -39,14 +39,14 @@ class SeqTestCaseMixin(GameTestCaseMixin, ABC):
     @abstractmethod
     def num_monte_carlo_tests(self):
         """
-        Returns the number of monte carlo tests.
-        :return: the number of monte carlo tests
+        Returns the number of monte carlo tests of sequential games.
+        :return: the number of monte carlo tests of sequential games
         """
         pass
 
     def test_monte_carlo(self):
         """
-        Runs monte carlo games.
+        Runs monte carlo tests of sequential games.
         :return: None
         """
         for i in range(self.num_monte_carlo_tests):
