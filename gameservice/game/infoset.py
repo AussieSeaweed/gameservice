@@ -27,7 +27,7 @@ class InfoSet(ABC):
     @property
     def game(self):
         """
-        Returns the game of the info-set
+        Returns the game of the info-set.
         :return: the game of the info-set
         """
         return self.player.game
@@ -112,8 +112,8 @@ class InfoSet(ABC):
 
     def __str__(self):
         """
-        Returns the string representation of the info-set of the game
-        :return: the string representation of the info-set of the game
+        Returns the string representation of the info-set.
+        :return: the string representation of the info-set
         """
         return str(self.serialize())
 
