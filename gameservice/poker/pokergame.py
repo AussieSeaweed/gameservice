@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from .pokerplayer import PokerNature, PokerPlayer
-from .pokerutils import PokerLazyNoLimit, PokerNoLimit, PokerStdDeck, PokerStdEvaluator, PokerStreet
+from .utils import PokerLazyNoLimit, PokerNoLimit, PokerStdDeck, PokerStdEvaluator, PokerStreet
 from ..game import GameParameterException, SeqGame
 
 
