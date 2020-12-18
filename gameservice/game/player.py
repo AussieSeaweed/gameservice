@@ -94,6 +94,10 @@ class Player(ABC):
 
 
 class Nature(Player, ABC):
+    """
+    This is a base class for all natures in gameservice.
+    """
+
     @property
     def payoff(self):
         """

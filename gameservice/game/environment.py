@@ -5,4 +5,7 @@ from abc import ABC
 
 
 class Environment(ABC):
+    """
+    This is a base class for all environments in gameservice.
+    """
     pass

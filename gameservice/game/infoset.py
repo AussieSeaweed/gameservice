@@ -5,6 +5,10 @@ from abc import ABC
 
 
 class InfoSet(ABC):
+    """
+    This is a base class for all info-sets of games in gameservice.
+    """
+
     def __init__(self, player):
         """
         Constructs the InfoSet instance.
@@ -115,6 +119,10 @@ class InfoSet(ABC):
 
 
 class SeqInfoSet(InfoSet):
+    """
+    This is a base class for all info-sets of sequential games in gameservice.
+    """
+
     @classmethod
     def _player_public_info(cls, player):
         """
