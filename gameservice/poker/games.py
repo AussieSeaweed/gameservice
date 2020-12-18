@@ -71,7 +71,7 @@ class PokerGame(SeqGame, ABC):
 
     @property
     @abstractmethod
-    def starting_stacks(self):
+    def ante(self):
         pass
 
     @property
@@ -81,7 +81,7 @@ class PokerGame(SeqGame, ABC):
 
     @property
     @abstractmethod
-    def ante(self):
+    def starting_stacks(self):
         pass
 
     def setup(self):
