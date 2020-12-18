@@ -1,5 +1,5 @@
-from .tttaction import TTTMarkAction
-from .tttinfoset import TTTInfoSet
+from .action import TTTMarkAction
+from .infoset import TTTInfoSet
 from ..game import Player
 
 

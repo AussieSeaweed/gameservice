@@ -1,4 +1,4 @@
-from .tttplayer import TTTPlayer
+from .player import TTTPlayer
 from ..game import SeqGame
 
 

@@ -1,4 +1,4 @@
-from .tttexception import TTTCellException
+from .exception import TTTCellException
 from ..game import GameActionArgumentException, SeqAction
 
 
