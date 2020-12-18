@@ -7,7 +7,7 @@ from random import choice
 
 class GameTestCaseMixin(ABC):
     """
-    This is a base class for all game test cases in gameservice.
+    This is a mixin for all game test cases in gameservice.
     """
 
     @staticmethod
@@ -32,7 +32,7 @@ class GameTestCaseMixin(ABC):
 
 class SeqTestCaseMixin(GameTestCaseMixin, ABC):
     """
-    This is a base class for all sequential game test cases in gameservice.
+    This is a mixin for all sequential game test cases in gameservice.
     """
 
     @property
