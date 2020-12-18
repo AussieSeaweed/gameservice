@@ -5,7 +5,7 @@ from .exceptions import TTTCellException
 from ..game import ActionArgumentException, SeqAction
 
 
-class TTTMarkAction(SeqAction):
+class MarkAction(SeqAction):
     """
     This is a class that represents tic tac toe mark actions.
     """

@@ -1,7 +1,7 @@
 """
 This module defines tic tac toe players in gameservice.
 """
-from .actions import TTTMarkAction
+from .actions import MarkAction
 from .infosets import TTTInfoSet
 from ..game import Player
 
@@ -27,7 +27,7 @@ class TTTPlayer(Player):
         :return: a list of actions of the tic tac toe player
         """
         if self.game.player is self:
-            return [TTTMarkAction(self, r, c) for r, c in self.game.environment.empty_coords]
+            return [MarkAction(self, r, c) for r, c in self.game.environment.empty_coords]
         else:
             return []
 
