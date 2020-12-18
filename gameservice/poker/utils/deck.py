@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
-from treys import Card, Deck
+import treys
 
-from .pokercard import PokerCard
+from .card import Card
 
 
-class PokerDeck(ABC):
+class Deck(ABC):
     @abstractmethod
     def draw(self, num_cards):
         pass
@@ -15,14 +15,14 @@ class PokerDeck(ABC):
         pass
 
 
-class PokerStdDeck(PokerDeck):
+class StandardDeck(Deck):
     def __init__(self):
-        self.__deck = Deck()
+        self.__deck = treys.Deck()
 
     def draw(self, num_cards):
         card_ints = [self.__deck.draw(1)] if num_cards == 1 else self.__deck.draw(num_cards)
 
-        return [PokerCard(Card.int_to_str(card_int)) for card_int in card_ints]
+        return [Card(treys.Card.int_to_str(card_int)) for card_int in card_ints]
 
     def peek(self, num_cards):
-        return [PokerCard(Card.int_to_str(card_int)) for card_int in self.__deck.cards[:num_cards]]
+        return [Card(treys.Card.int_to_str(card_int)) for card_int in self.__deck.cards[:num_cards]]

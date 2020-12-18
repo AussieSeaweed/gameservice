@@ -1,4 +1,4 @@
-class PokerCard:
+class Card:
     def __init__(self, card_str):
         self.__card_str = card_str
 

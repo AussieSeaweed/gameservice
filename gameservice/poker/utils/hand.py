@@ -1,4 +1,4 @@
-class PokerHand:
+class Hand:
     def __init__(self, hand_rank):
         self.__hand_rank = hand_rank
 
