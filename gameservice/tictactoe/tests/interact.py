@@ -2,7 +2,7 @@
 This module allows interactions with tic tac toe games.
 """
 from gameservice.game.tests.interact import interact_seq
-from .. import TTTGame
+from gameservice.tictactoe import TTTGame
 
 
 def main():

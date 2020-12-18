@@ -3,8 +3,8 @@ This module defines no-limit texas hold'em test cases in gameservice.
 """
 from unittest import TestCase, main
 
-from .. import LazyNLHEGame
-from .testcasemixins import PokerTestCaseMixin
+from gameservice.poker import LazyNLHEGame
+from gameservice.poker.tests.testcasemixins import PokerTestCaseMixin
 
 
 class CustomNLHEGame(LazyNLHEGame):
