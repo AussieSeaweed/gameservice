@@ -3,11 +3,12 @@ from ..game import SeqInfoSet
 
 class PokerInfoSet(SeqInfoSet):
     @classmethod
-    def environment_info(cls, game):
+    def environment_info(cls, environment):
         return {
-            **super().environment_info(game),
-            'pot': game.pot,
-            'board': list(map(str, game.board))
+            **super().environment_info(environment),
+            'min_raise': environment.min_raise,
+            'pot': environment.pot,
+            'board': list(map(str, environment.board))
         }
 
     @classmethod
@@ -18,6 +19,7 @@ class PokerInfoSet(SeqInfoSet):
             'bet': player.bet,
             'hole_cards': None if player.hole_cards is None else [str(card) if player.game.terminal else None for card
                                                                   in player.hole_cards],
+            'aggressive': player is player.game.environment.aggressor,
         }
 
     @classmethod
