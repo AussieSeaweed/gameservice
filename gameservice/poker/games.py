@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from .environments import PokerEnvironment
 from .players import PokerNature, PokerPlayer
-from .utils import LazyNoLimit, NoLimit, StandardDeck, StandardEvaluator, Street
+from .utils import LazyNoLimit, NoLimit, PushNoLimit, StandardDeck, StandardEvaluator, Street
 from ..game import ParameterException, SeqGame
 
 
@@ -121,3 +121,8 @@ class NLHEGame(PokerGame, ABC):
 class LazyNLHEGame(NLHEGame, ABC):
     def _create_limit(self):
         return LazyNoLimit()
+
+
+class PushNLHEGame(NLHEGame, ABC):
+    def _create_limit(self):
+        return PushNoLimit()

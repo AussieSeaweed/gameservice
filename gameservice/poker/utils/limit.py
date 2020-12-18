@@ -32,3 +32,9 @@ class LazyNoLimit(NoLimit):
     @staticmethod
     def _bet_amounts(min_amount, max_amount):
         return list({min_amount, max_amount})
+
+
+class PushNoLimit(NoLimit):
+    @staticmethod
+    def _bet_amounts(min_amount, max_amount):
+        return [max_amount]
