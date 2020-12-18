@@ -47,6 +47,9 @@ class InfoSet(ABC):
         :return: the dictionary representation of the public player information
         """
         return {
+            'label': player.label,
+            'nature': player.nature,
+            'index': player.index,
             'payoff': player.payoff,
             'actions': [str(action) for action in player.actions if action.public],
         }
@@ -69,7 +72,10 @@ class InfoSet(ABC):
 
     @classmethod
     def player_private_info(cls, player):
-        return cls._player_private_info(player)
+        return {
+            **cls.player_public_info(player),
+            **cls._player_private_info(player),
+        }
 
     def player_info(self, player):
         """
@@ -85,7 +91,10 @@ class InfoSet(ABC):
 
     @classmethod
     def nature_private_info(cls, nature):
-        return cls._player_private_info(nature)
+        return {
+            **cls.nature_public_info(nature),
+            **cls._player_private_info(nature),
+        }
 
     def nature_info(self, nature):
         """

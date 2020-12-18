@@ -24,5 +24,5 @@ class PokerInfoSet(SeqInfoSet):
     def player_private_info(cls, player):
         return {
             **super().player_private_info(player),
-            'hole_cards': list(map(str, player.hole_card)),  # hole_cards is not None when player acts
+            'hole_cards': list(map(str, player.hole_cards)),  # hole_cards is not None when player acts
         }

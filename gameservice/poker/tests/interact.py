@@ -8,15 +8,15 @@ from gameservice.poker import LazyNLHEGame
 class CustomNLHEGame(LazyNLHEGame):
     @property
     def ante(self):
-        pass
+        return 0
 
     @property
     def blinds(self):
-        pass
+        return [1, 2]
 
     @property
     def starting_stacks(self):
-        pass
+        return [300, 200, 100]
 
 
 def main():
