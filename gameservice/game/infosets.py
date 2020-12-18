@@ -1,5 +1,5 @@
 """
-This module defines info-sets in gameservice.
+This module defines info-sets and sequential info-sets in gameservice.
 """
 from abc import ABC
 
