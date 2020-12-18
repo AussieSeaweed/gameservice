@@ -15,7 +15,7 @@ class Action(ABC):
 
     def __init__(self, player):
         """
-        Constructs the Action instance.
+        Constructs the Action instance. Stores the player taking the action.
         :param player: the player who takes the action
         """
         self.__player = player

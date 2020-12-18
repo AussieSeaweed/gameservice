@@ -11,7 +11,7 @@ class InfoSet(ABC):
 
     def __init__(self, player):
         """
-        Constructs the InfoSet instance.
+        Constructs the InfoSet instance. Stores the player being analyzed.
         :param player: the player on which the information set is constructed
         """
         self.__player = player
