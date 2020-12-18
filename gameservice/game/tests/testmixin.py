@@ -3,10 +3,9 @@ This module defines a general game test in gameservice.
 """
 from abc import ABC, abstractmethod
 from random import choice
-from unittest import TestCase
 
 
-class GameTestCase(TestCase, ABC):
+class GameTestCaseMixin(ABC):
     """
     This is a base class for all game test cases in gameservice.
     """
@@ -31,7 +30,7 @@ class GameTestCase(TestCase, ABC):
         pass
 
 
-class SeqTestCase(GameTestCase, ABC):
+class SeqTestCaseMixin(GameTestCaseMixin, ABC):
     """
     This is a base class for all sequential game test cases in gameservice.
     """
