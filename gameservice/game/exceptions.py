@@ -1,38 +1,38 @@
 """
-This module defines game exceptions in gameservice.
+This module defines exceptions in gameservice.
 """
 
 
-class GameException(Exception):
+class GameServiceException(Exception):
     """Base exception class for exceptions related to gameservice."""
     pass
 
 
-class GameActionArgumentException(GameException):
+class ActionArgumentException(GameServiceException):
     """One or more invalid arguments are supplied to the action."""
     pass
 
 
-class GameActionException(GameException):
+class ActionException(GameServiceException):
     """The action is invalid."""
     pass
 
 
-class GameParameterException(GameException):
+class ParameterException(GameServiceException):
     """One or more invalid parameters are supplied to the game."""
     pass
 
 
-class GamePlayerException(GameException):
+class PlayerException(GameServiceException):
     """The player cannot perform the action."""
     pass
 
 
-class GameTerminalException(GameException):
+class TerminalException(GameServiceException):
     """The terminality of the game is invalid."""
     pass
 
 
-class GameTypeException(GameException):
+class TypeException(GameServiceException):
     """The type of the game is invalid."""
     pass

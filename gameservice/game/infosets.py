@@ -1,25 +1,24 @@
 """
-This module defines a general game info-set in gameservice.
+This module defines info-sets in gameservice.
 """
 from abc import ABC
 
 
 class InfoSet(ABC):
     """
-    This is a base class for all info-sets of games in gameservice.
+    This is a class that represents info-sets.
     """
 
     def __init__(self, player):
         """
-        Constructs the InfoSet instance. Stores the player being analyzed.
-        :param player: the player on which the information set is constructed
+        Constructs the InfoSet instance. Stores the player of the info-set.
+        :param player: the player of the info-set
         """
         self.__player = player
 
     @property
     def player(self):
         """
-        Returns the player of the info-set.
         :return: the player of the info-set
         """
         return self.__player
@@ -27,7 +26,6 @@ class InfoSet(ABC):
     @property
     def game(self):
         """
-        Returns the game of the info-set.
         :return: the game of the info-set
         """
         return self.player.game
@@ -35,18 +33,17 @@ class InfoSet(ABC):
     @staticmethod
     def environment_info(environment):
         """
-        Returns the dictionary representation of the information of the environment.
-        :param environment: the environment to be analyzed
-        :return: the dictionary representation of the information of the environment
+        Serializes the environment.
+        :param environment: the environment of the info-set
+        :return: the dictionary representation of the environment information
         """
         return {}
 
     @classmethod
     def _player_public_info(cls, player):
         """
-        Returns the dictionary representation of the public information of the player.
-        :param player: the player to be analyzed
-        :return: the dictionary representation of the public information of the player
+        :param player: the player of the info-set
+        :return: the dictionary representation of the public player information
         """
         return {
             'payoff': player.payoff,
@@ -56,9 +53,8 @@ class InfoSet(ABC):
     @classmethod
     def _player_private_info(cls, player):
         """
-        Returns the dictionary representation of the private information of the player.
-        :param player: the player to be analyzed
-        :return: the dictionary representation of the private information of the player
+        :param player: the player of the info-set
+        :return: the dictionary representation of the private player information
         """
         return {
             **cls._player_public_info(player),
@@ -75,9 +71,9 @@ class InfoSet(ABC):
 
     def player_info(self, player):
         """
-        Returns the dictionary representation of the information of the player.
-        :param player: the player to be analyzed
-        :return: the dictionary representation of the information of the player
+        Serializes the player.
+        :param player: the player of the info-set
+        :return: the dictionary representation of the player information
         """
         return self.player_private_info(player) if player is self.player else self.player_public_info(player)
 
@@ -91,16 +87,16 @@ class InfoSet(ABC):
 
     def nature_info(self, nature):
         """
-        Returns the dictionary representation of the information of the nature.
-        :param nature: the nature to be analyzed
-        :return: the dictionary representation of the information of the nature
+        Serializes the nature.
+        :param nature: the nature of the info-set
+        :return: the dictionary representation of the nature information
         """
         return self.nature_private_info(nature) if self.player.nature else self.nature_public_info(nature)
 
     def serialize(self):
         """
-        Returns the dictionary representation of the game.
-        :return: the dictionary representation of the game
+        Serializes the game.
+        :return: the dictionary representation of the game information
         """
         return {
             'environment': self.environment_info(self.game.environment),
@@ -112,7 +108,7 @@ class InfoSet(ABC):
 
     def __str__(self):
         """
-        Returns the string representation of the info-set.
+        Converts the info-set into a string representation.
         :return: the string representation of the info-set
         """
         return str(self.serialize())
@@ -120,15 +116,14 @@ class InfoSet(ABC):
 
 class SeqInfoSet(InfoSet):
     """
-    This is a base class for all info-sets of sequential games in gameservice.
+    This is a class that represents sequential info-sets.
     """
 
     @classmethod
     def _player_public_info(cls, player):
         """
-        Returns the dictionary representation of the public information of the player in a sequential game.
-        :param player: the player to be analyzed
-        :return: the dictionary representation of the public information of the player in a sequential game.
+        :param player: the player of the sequential info-set
+        :return: the dictionary representation of the public player information
         """
         return {
             **super()._player_public_info(player),

@@ -1,17 +1,17 @@
 """
-This module defines a general game structure in gameservice.
+This module defines games and sequential games in gameservice.
 """
 from abc import ABC, abstractmethod
 
 
 class Game(ABC):
     """
-    This is a base class for all games in gameservice.
+    This is a class that represents games.
     """
 
     def __init__(self):
         """
-        Constructs the Game instance. Initializes the environment, nature, players, and logs.
+        Constructs a Game instance. Initializes the environment, nature, players, and logs.
         """
         self.__environment = self._create_environment()
         self.__nature = self._create_nature()
@@ -22,31 +22,30 @@ class Game(ABC):
     @abstractmethod
     def _create_environment(self):
         """
-        Creates the environment of the game.
-        :return: the environment of the game
+        Creates an environment.
+        :return: an environment
         """
         pass
 
     @abstractmethod
     def _create_nature(self):
         """
-        Creates the nature of the game.
-        :return: the nature of the game
+        Creates a nature.
+        :return: a nature
         """
         pass
 
     @abstractmethod
     def _create_players(self):
         """
-        Creates the players of the game.
-        :return: a list of the players of the game
+        Creates players.
+        :return: a list of players
         """
         pass
 
     @property
     def environment(self):
         """
-        Returns the environment of the game.
         :return: the environment of the game
         """
         return self.__environment
@@ -54,7 +53,6 @@ class Game(ABC):
     @property
     def nature(self):
         """
-        Returns the nature of the game.
         :return: the nature of the game
         """
         return self.__nature
@@ -62,7 +60,6 @@ class Game(ABC):
     @property
     def players(self):
         """
-        Returns the players of the game.
         :return: a list of the players of the game
         """
         return self.__players
@@ -70,7 +67,6 @@ class Game(ABC):
     @property
     def logs(self):
         """
-        Returns the logs of the game.
         :return: a list of the logs of the game
         """
         return self.__logs
@@ -79,7 +75,6 @@ class Game(ABC):
     @abstractmethod
     def terminal(self):
         """
-        Returns the terminality of the game.
         :return: a boolean value of the terminality of the game
         """
         pass
@@ -87,13 +82,13 @@ class Game(ABC):
 
 class SeqGame(Game, ABC):
     """
-    This is a base class for all sequential games in gameservice. When the game is terminal, the player member variable
-    must be set to None.
+    This is a class that represents sequential games. If a sequential game is terminal, its player member variable must
+    be set to None.
     """
 
     def __init__(self):
         """
-        Constructs the SeqGame instance. Initializes the player.
+        Constructs a SeqGame instance. Initializes the player.
         """
         super().__init__()
 
@@ -103,7 +98,6 @@ class SeqGame(Game, ABC):
     @abstractmethod
     def _initial_player(self):
         """
-        Returns the initial player of the game.
         :return: the initial player of the game
         """
         pass
@@ -111,7 +105,7 @@ class SeqGame(Game, ABC):
     @property
     def terminal(self):
         """
-        Returns whether or not the player member variable is None which corresponds to the terminality of the game.
-        :return: a boolean value of whether or not the player member variable is None
+        Returns the terminality of the game. Sequential games are terminal if the player member variable is None.
+        :return: a boolean value of the terminality of the game
         """
         return self.player is None

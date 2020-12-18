@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='gameservice',
-    version='3.0.2',
+    version='3.1.0',
     author='Juho Kim',
     author_email='juho-kim@outlook.com',
     description='A package for various game implementations on python',

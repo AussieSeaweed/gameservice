@@ -1,12 +1,15 @@
+"""
+This module defines tic tac toe test cases in gameservice.
+"""
 from unittest import TestCase
 
-from gameservice.game.tests.testmixin import SeqTestCaseMixin
+from gameservice.game.tests.testcasemixins import SeqTestCaseMixin
 from gameservice.tictactoe import TTTGame
 
 
 class TTTTestCase(TestCase, SeqTestCaseMixin):
     """
-    This is a class for tic tac toe game unit tests in gameservice.
+    This is a class for tic tac toe  game test cases.
     """
 
     @staticmethod
@@ -18,26 +21,26 @@ class TTTTestCase(TestCase, SeqTestCaseMixin):
         return TTTGame()
 
     @staticmethod
-    def check_game(game):
+    def validate_game(game):
         """
-        Checks the integrity of the tic tac toe game.
-        :param game: a tic tac toe game to be checked on
-        :return: None
+        Validates the integrity of the tic tac toe game.
+        :param game: a tic tac toe game of the tic tac toe test case
+        :return: a boolean value of the validity of the tic tac toe game
         """
-        return game.winner is not None or not game.empty_coords
+        return game.environment.winner is not None or not game.environment.empty_coords
 
     @property
     def num_monte_carlo_tests(self):
         """
-        Returns the number of monte carlo tests of tic tac toe games.
         :return: the number of monte carlo tests of tic tac toe games
         """
         return 10000
 
     def test_tic_tac_toe_first_win(self):
         """
-        Tests whether if the tic tac toe properly detects a case of the first player winning.
+        Tests if the tic tac toe properly detects a case of the first player winning.
         :return: None
+        :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
         game = self.create_game()
 
@@ -50,8 +53,9 @@ class TTTTestCase(TestCase, SeqTestCaseMixin):
 
     def test_tic_tac_toe_second_win(self):
         """
-        Tests whether if the tic tac toe properly detects a case of the second player winning.
+        Tests if the tic tac toe properly detects a case of the second player winning.
         :return: None
+        :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
         game = self.create_game()
 
@@ -66,8 +70,9 @@ class TTTTestCase(TestCase, SeqTestCaseMixin):
 
     def test_tic_tac_toe_draw(self):
         """
-        Tests whether if the tic tac toe properly detects a case of a tied game.
+        Tests if the tic tac toe properly detects a case of a tied game.
         :return: None
+        :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
         game = self.create_game()
 
