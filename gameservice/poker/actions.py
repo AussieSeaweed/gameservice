@@ -26,7 +26,7 @@ class PokerPlayerAction(PokerAction, ABC):
             player.bet = 0
 
 
-class PokerSubmissiveAction(PokerPlayerAction):
+class SubmissiveAction(PokerPlayerAction):
     def __init__(self, player):
         super().__init__(player)
 
@@ -51,7 +51,7 @@ class PokerSubmissiveAction(PokerPlayerAction):
         return 'Fold'
 
 
-class PokerPassiveAction(PokerPlayerAction):
+class PassiveAction(PokerPlayerAction):
     def act(self):
         super().act()
 
@@ -73,7 +73,7 @@ class PokerPassiveAction(PokerPlayerAction):
         return f'Call {self.__amount}' if self.__amount else 'Check'
 
 
-class PokerAggressiveAction(PokerPlayerAction):
+class AggressiveAction(PokerPlayerAction):
     def __init__(self, player, amount):
         super().__init__(player)
 
@@ -126,7 +126,7 @@ class PokerNatureAction(PokerAction, ABC):
             self.game.environment.min_raise = max(self.game.blinds)
 
 
-class PokerStreetAction(PokerNatureAction):
+class StreetAction(PokerNatureAction):
     def __init__(self, player):
         super().__init__(player)
 
@@ -152,7 +152,7 @@ class PokerStreetAction(PokerNatureAction):
         return f'Deal {self.game.street.num_hole_cards} hole cards and {self.game.street.num_board_cards} board cards'
 
 
-class PokerShowdownAction(PokerNatureAction):
+class ShowdownAction(PokerNatureAction):
     def __init__(self, player):
         super().__init__(player)
 

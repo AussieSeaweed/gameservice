@@ -1,5 +1,4 @@
-from .actions import PokerAggressiveAction, PokerPassiveAction, PokerShowdownAction, PokerStreetAction, \
-    PokerSubmissiveAction
+from .actions import AggressiveAction, PassiveAction, ShowdownAction, StreetAction, SubmissiveAction
 from .infosets import PokerInfoSet
 from ..game import ActionException, Nature, Player
 
@@ -22,14 +21,14 @@ class PokerPlayer(Player):
 
         if self.game.player is self:
             try:
-                actions.append(PokerSubmissiveAction(self))
+                actions.append(SubmissiveAction(self))
             except ActionException:
                 pass
 
-            actions.append(PokerPassiveAction(self))
+            actions.append(PassiveAction(self))
 
             for amount in self.game.limit.bet_amounts(self):
-                actions.append(PokerAggressiveAction(self, amount))
+                actions.append(AggressiveAction(self, amount))
 
         return actions
 
@@ -74,7 +73,7 @@ class PokerNature(Nature):
     @property
     def actions(self):
         if self.game.player is self:
-            return [PokerShowdownAction(self) if self.game.street is None else PokerStreetAction(self)]
+            return [ShowdownAction(self) if self.game.street is None else StreetAction(self)]
         else:
             return []
 
