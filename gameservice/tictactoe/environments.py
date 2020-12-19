@@ -12,6 +12,7 @@ class TTTEnvironment(Environment):
     def __init__(self, game):
         """
         Constructs a TicTacToeEnvironment instance. Initializes the board.
+
         :param game: the game in which the tic tac toe environment belongs
         """
         super().__init__(game)
@@ -38,6 +39,7 @@ class TTTEnvironment(Environment):
     def winner(self):
         """
         Determines the winner of the tic tac toe game.
+
         :return: the winning player if it exists else None
         """
         for i in range(3):

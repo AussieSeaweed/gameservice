@@ -14,6 +14,7 @@ class TTTGame(SeqGame):
     def _create_environment(self):
         """
         Creates a tic tac toe environment.
+
         :return: a tic tac toe environment
         """
         return TTTEnvironment(self)
@@ -21,6 +22,7 @@ class TTTGame(SeqGame):
     def _create_nature(self):
         """
         Returns None as tic tac toe games do not have nature.
+
         :return: None
         """
         return None
@@ -28,6 +30,7 @@ class TTTGame(SeqGame):
     def _create_players(self):
         """
         Creates tic tac toe players.
+
         :return: a list of tic tac toe players
         """
         return [TTTPlayer(self) for _ in range(2)]

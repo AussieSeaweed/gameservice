@@ -16,6 +16,7 @@ class TTTTestCase(TestCase, SeqTestCaseMixin):
     def create_game():
         """
         Creates a tic tac toe game instance.
+
         :return: a tic tac toe game instance
         """
         return TTTGame()
@@ -24,6 +25,7 @@ class TTTTestCase(TestCase, SeqTestCaseMixin):
     def validate_game(game):
         """
         Validates the integrity of the tic tac toe game.
+
         :param game: a tic tac toe game of the tic tac toe test case
         :return: a boolean value of the validity of the tic tac toe game
         """
@@ -39,6 +41,7 @@ class TTTTestCase(TestCase, SeqTestCaseMixin):
     def test_tic_tac_toe_first_win(self):
         """
         Tests if the tic tac toe properly detects a case of the first player winning.
+
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
@@ -54,6 +57,7 @@ class TTTTestCase(TestCase, SeqTestCaseMixin):
     def test_tic_tac_toe_second_win(self):
         """
         Tests if the tic tac toe properly detects a case of the second player winning.
+
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
@@ -71,6 +75,7 @@ class TTTTestCase(TestCase, SeqTestCaseMixin):
     def test_tic_tac_toe_draw(self):
         """
         Tests if the tic tac toe properly detects a case of a tied game.
+
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
