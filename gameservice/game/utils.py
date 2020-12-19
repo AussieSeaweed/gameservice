@@ -11,6 +11,7 @@ class Log:
     def __init__(self, action):
         """
         Constructs a Log instance. Stores the string representation of the taken action and the acting player.
+
         :param action: the taken action
         """
         self.__action_str = str(action)
@@ -19,6 +20,7 @@ class Log:
     def __str__(self):
         """
         Converts the log into a string representation.
+
         :return: the string representation of the log
         """
         return f'{self.__player_str}: {self.__action_str}'

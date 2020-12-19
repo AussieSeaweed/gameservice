@@ -15,6 +15,7 @@ class TestCaseMixin(ABC):
     def create_game():
         """
         Creates a game instance.
+
         :return: a game instance
         """
         pass
@@ -24,6 +25,7 @@ class TestCaseMixin(ABC):
     def validate_game(game):
         """
         Validates the integrity of the game.
+
         :param game: a game of the test case
         :return: a boolean value of the validity of the game
         """
@@ -46,6 +48,7 @@ class SeqTestCaseMixin(TestCaseMixin, ABC):
     def test_monte_carlo(self):
         """
         Runs monte carlo tests of sequential games.
+
         :return: None
         :raise AssertionError: if the game validation fails in any tests
         """

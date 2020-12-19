@@ -12,6 +12,7 @@ class Environment(ABC):
     def __init__(self, game):
         """
         Constructs an Environment instance. Stores the game of the environment.
+
         :param game: the game of the environment
         """
         self.__game = game

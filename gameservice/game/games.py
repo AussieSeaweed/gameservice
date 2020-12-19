@@ -23,6 +23,7 @@ class Game(ABC):
     def _create_environment(self):
         """
         Creates an environment.
+
         :return: an environment
         """
         pass
@@ -31,6 +32,7 @@ class Game(ABC):
     def _create_nature(self):
         """
         Creates a nature.
+
         :return: a nature
         """
         pass
@@ -39,6 +41,7 @@ class Game(ABC):
     def _create_players(self):
         """
         Creates players.
+
         :return: a list of players
         """
         pass
@@ -106,6 +109,7 @@ class SeqGame(Game, ABC):
     def terminal(self):
         """
         Returns the terminality of the game. Sequential games are terminal if the player member variable is None.
+
         :return: a boolean value of the terminality of the game
         """
         return self.player is None

@@ -12,6 +12,7 @@ class InfoSet(ABC):
     def __init__(self, player):
         """
         Constructs an InfoSet instance. Stores the player of the info-set.
+
         :param player: the player of the info-set
         """
         self.__player = player
@@ -34,6 +35,7 @@ class InfoSet(ABC):
     def environment_info(environment):
         """
         Serializes the environment.
+
         :param environment: the environment of the info-set
         :return: the dictionary representation of the environment information
         """
@@ -43,6 +45,7 @@ class InfoSet(ABC):
     def _player_public_info(cls, player):
         """
         Serializes the player publicly.
+
         :param player: the player of the info-set
         :return: the dictionary representation of the public player information
         """
@@ -58,6 +61,7 @@ class InfoSet(ABC):
     def _player_private_info(cls, player):
         """
         Serializes the player privately.
+
         :param player: the player of the info-set
         :return: the dictionary representation of the private player information
         """
@@ -80,6 +84,7 @@ class InfoSet(ABC):
     def player_info(self, player):
         """
         Serializes the player.
+
         :param player: the player of the info-set
         :return: the dictionary representation of the player information
         """
@@ -99,6 +104,7 @@ class InfoSet(ABC):
     def nature_info(self, nature):
         """
         Serializes the nature.
+
         :param nature: the nature of the info-set
         :return: the dictionary representation of the nature information
         """
@@ -107,6 +113,7 @@ class InfoSet(ABC):
     def serialize(self):
         """
         Serializes the game.
+
         :return: the dictionary representation of the game information
         """
         return {
@@ -120,6 +127,7 @@ class InfoSet(ABC):
     def __str__(self):
         """
         Converts the info-set into a string representation.
+
         :return: the string representation of the info-set
         """
         return str(self.serialize())

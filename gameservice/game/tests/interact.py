@@ -7,6 +7,7 @@ from json import dumps
 def interact_seq(seq_game_factory):
     """
     Interacts with sequential games on console.
+
     :param seq_game_factory: a function that creates a sequential game instance
     :return: None
     """

@@ -16,6 +16,7 @@ class Action(ABC):
     def __init__(self, player):
         """
         Constructs an Action instance. Stores the acting player.
+
         :param player: the acting player
         """
         self.__player = player
@@ -37,6 +38,7 @@ class Action(ABC):
     def _validate(self):
         """
         Validates the integrity of the action.
+
         :return: None
         :raise GameTerminalException: if the game is terminal
         :raise GamePlayerException: if the action is a chance action but the player is not nature or vice versa
@@ -51,6 +53,7 @@ class Action(ABC):
         """
         Applies the action to the associated game. The overridden act method should first call the super method and then
         make the necessary modifications to the game.
+
         :return: None
         :raise GameServiceException: if game validation fails
         """
@@ -79,6 +82,7 @@ class Action(ABC):
     def __str__(self):
         """
         Converts the action into a string representation.
+
         :return: the string representation of the action
         """
         pass
@@ -92,6 +96,7 @@ class SeqAction(Action, ABC):
     def _validate(self):
         """
         Validates the integrity of the sequential action.
+
         :return: None
         :raise GameTypeException: if the game is not a sequential game
         :raise GamePlayerException: if the player to act is not the acting player

@@ -12,6 +12,7 @@ class Player(ABC):
     def __init__(self, game, label=None):
         """
         Constructs a Player instance. Stores the game and label of the player.
+
         :param game: the game of the player
         :param label: the optional label of the player
         """
@@ -73,6 +74,7 @@ class Player(ABC):
     def __next__(self):
         """
         Finds the next player of the game unless the player is the nature, in which case the nature is returned.
+
         :return: the next player or the nature of the game
         """
         return self.game.nature if self.nature else self.game.players[(self.index + 1) % len(self.game.players)]
@@ -80,6 +82,7 @@ class Player(ABC):
     def __str__(self):
         """
         Converts the player into a string representation.
+
         :return: the string representation of the player
         """
         return f'Player {self.index}' if self.label is None else self.label
@@ -94,6 +97,7 @@ class Nature(Player, ABC):
     def payoff(self):
         """
         Finds the negated sum of the player payoffs in the game.
+
         :return: the default nature payoff
         """
         return -sum(player.payoff for player in self.game.players)
@@ -101,6 +105,7 @@ class Nature(Player, ABC):
     def __str__(self):
         """
         Converts the nature into a string representation.
+
         :return: the string representation of the nature
         """
         return 'Nature'
