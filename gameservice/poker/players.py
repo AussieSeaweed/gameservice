@@ -1,11 +1,25 @@
+"""
+This module defines poker players in gameservice.
+"""
 from .actions import AggressiveAction, PassiveAction, ShowdownAction, StreetAction, SubmissiveAction
 from .infosets import PokerInfoSet
 from ..game import ActionException, Nature, Player
 
 
 class PokerPlayer(Player):
-    def __init__(self, game, index):
-        super().__init__(game)
+    """
+    This is a class that represents poker players.
+    """
+
+    def __init__(self, game, index, label=None):
+        """
+        Constructs a PokerPlayer instance. Initializes the stack, bet and hole_cards.
+
+        :param game: the poker game of the poker player
+        :param index: the index of the poker player
+        :param label: the optional label of the poker player
+        """
+        super().__init__(game, label)
 
         self.stack = game.starting_stacks[index]
         self.bet = 0

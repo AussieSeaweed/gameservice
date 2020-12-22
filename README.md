@@ -52,23 +52,23 @@ Creating Tic Tac Toe Games
 Tic Tac Toe games are more straight-forward to create.
 
 ```python
-from gameservice.tictactoe import TTTGame
+from gameservice.tictactoe import TicTacToeGame
 
-game = TTTGame()
+game = TicTacToeGame()
 ```
 
 Interacting with Games
 ----------------------
 
-TicTacToeGame and NLHEGame are subclasses of SeqGame (Sequential Game). The way you interact with instances of
+TicTacToeGame and NLHEGame are subclasses of SequentialGame. The way you interact with instances of
 sequential games are the same.
 
 ```python
 import json
 
-from gameservice.tictactoe import TTTGame
+from gameservice.tictactoe import TicTacToeGame
 
-game = TTTGame()
+game = TicTacToeGame()
 
 while not game.terminal:
     print(json.dumps(game.player.info_set.serialize(), indent=4))

@@ -1,10 +1,10 @@
 from abc import ABC
 from collections import defaultdict
 
-from ..game import ActionArgumentException, ActionException, SeqAction
+from ..game import ActionArgumentException, ActionException, SequentialAction
 
 
-class PokerAction(SeqAction, ABC):
+class PokerAction(SequentialAction, ABC):
     @property
     def public(self):
         return True

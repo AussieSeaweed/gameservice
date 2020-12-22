@@ -2,11 +2,11 @@
 This module defines tic tac toe players in gameservice.
 """
 from .actions import MarkAction
-from .infosets import TTTInfoSet
+from .infosets import TicTacToeInfoSet
 from ..game import Player
 
 
-class TTTPlayer(Player):
+class TicTacToePlayer(Player):
     """
     This is a class that represents tic tac toe players.
     """
@@ -36,4 +36,4 @@ class TTTPlayer(Player):
         """
         :return: the info-set of the tic tac toe player
         """
-        return TTTInfoSet(self)
+        return TicTacToeInfoSet(self)

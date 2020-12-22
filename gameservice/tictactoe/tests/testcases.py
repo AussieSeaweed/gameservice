@@ -4,10 +4,10 @@ This module defines tic tac toe test cases in gameservice.
 from unittest import TestCase, main
 
 from gameservice.game.tests.testcasemixins import SeqTestCaseMixin
-from gameservice.tictactoe import TTTGame
+from gameservice.tictactoe import TicTacToeGame
 
 
-class TTTTestCase(TestCase, SeqTestCaseMixin):
+class TicTacToeTestCase(TestCase, SeqTestCaseMixin):
     """
     This is a class for tic tac toe test cases.
     """
@@ -19,7 +19,7 @@ class TTTTestCase(TestCase, SeqTestCaseMixin):
 
         :return: a tic tac toe game instance
         """
-        return TTTGame()
+        return TicTacToeGame()
 
     @staticmethod
     def validate_game(game):

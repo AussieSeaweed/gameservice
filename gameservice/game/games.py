@@ -13,14 +13,14 @@ class Game(ABC):
         """
         Constructs a Game instance. Initializes the environment, nature, players, and logs of the game.
         """
-        self.__environment = self._create_environment()
-        self.__nature = self._create_nature()
-        self.__players = self._create_players()
+        self.__environment = self.create_environment()
+        self.__nature = self.create_nature()
+        self.__players = self.create_player()
 
         self.__logs = []
 
     @abstractmethod
-    def _create_environment(self):
+    def create_environment(self):
         """
         Creates an environment.
 
@@ -29,7 +29,7 @@ class Game(ABC):
         pass
 
     @abstractmethod
-    def _create_nature(self):
+    def create_nature(self):
         """
         Creates a nature.
 
@@ -38,7 +38,7 @@ class Game(ABC):
         pass
 
     @abstractmethod
-    def _create_players(self):
+    def create_player(self):
         """
         Creates players.
 
@@ -83,7 +83,7 @@ class Game(ABC):
         pass
 
 
-class SeqGame(Game, ABC):
+class SequentialGame(Game, ABC):
     """
     This is a class that represents sequential games. If a sequential game is terminal, its player member variable must
     be set to None.
@@ -91,7 +91,7 @@ class SeqGame(Game, ABC):
 
     def __init__(self):
         """
-        Constructs a SeqGame instance. Initializes the player.
+        Constructs a SequentialGame instance. Initializes the player.
         """
         super().__init__()
 

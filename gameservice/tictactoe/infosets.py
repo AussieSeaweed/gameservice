@@ -1,10 +1,10 @@
 """
 This module defines tic tac toe info-sets in gameservice.
 """
-from ..game import SeqInfoSet
+from ..game import SequentialInfoSet
 
 
-class TTTInfoSet(SeqInfoSet):
+class TicTacToeInfoSet(SequentialInfoSet):
     """
     This is a class that represents tic tac toe info-sets.
     """

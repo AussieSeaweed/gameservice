@@ -4,7 +4,7 @@ This module defines actions and sequential actions in gameservice.
 from abc import ABC, abstractmethod
 
 from .exceptions import PlayerException, TerminalException, TypeException
-from .games import SeqGame
+from .games import SequentialGame
 from .utils import Log
 
 
@@ -88,7 +88,7 @@ class Action(ABC):
         pass
 
 
-class SeqAction(Action, ABC):
+class SequentialAction(Action, ABC):
     """
     This is a class that represents sequential actions.
     """
@@ -103,7 +103,7 @@ class SeqAction(Action, ABC):
         """
         super()._validate()
 
-        if not isinstance(self.game, SeqGame):
+        if not isinstance(self.game, SequentialGame):
             raise TypeException('The game is not a sequential game')
         if self.player is not self.game.player:
             raise PlayerException(f'{self.player} cannot act in turn')

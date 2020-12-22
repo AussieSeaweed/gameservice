@@ -1,18 +1,27 @@
 """
 This module defines tic tac toe actions in gameservice.
 """
-from .exceptions import TTTCellException
-from ..game import ActionArgumentException, SeqAction
+from abc import ABC
+
+from .exceptions import TicTacToeCellException
+from ..game import ActionArgumentException, SequentialAction
 
 
-class MarkAction(SeqAction):
+class TicTacToeAction(SequentialAction, ABC):
     """
-    This is a class that represents tic tac toe mark actions.
+    This is a class that represents tic tac toe actions.
+    """
+    pass
+
+
+class MarkAction(TicTacToeAction):
+    """
+    This is a class that represents mark actions.
     """
 
     def __init__(self, player, r, c):
         """
-        Constructs a TTTMarkAction instance. Stores the coordinates of the cell.
+        Constructs a MarkAction instance. Stores the coordinates of the cell.
 
         :param player: the acting player
         :param r: the row number of the cell
@@ -29,14 +38,14 @@ class MarkAction(SeqAction):
 
         :return: None
         :raise GameActionArgumentException: if the cell coordinate is invalid
-        :raise TTTCellException: if the cell is occupied
+        :raise TicTacToeCellException: if the cell is occupied
         """
         super()._validate()
 
         if not (0 <= self.__r < 3 and 0 <= self.__c < 3):
             raise ActionArgumentException('The cell coordinates are invalid')
         elif self.game.environment.board[self.__r][self.__c] is not None:
-            raise TTTCellException('The cell is already occupied')
+            raise TicTacToeCellException('The cell is already occupied')
 
     def act(self):
         """

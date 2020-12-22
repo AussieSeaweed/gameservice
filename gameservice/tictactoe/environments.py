@@ -4,7 +4,7 @@ This module defines tic tac toe environments in gameservice.
 from ..game import Environment
 
 
-class TTTEnvironment(Environment):
+class TicTacToeEnvironment(Environment):
     """
     This is a class that represents tic tac toe environments.
     """

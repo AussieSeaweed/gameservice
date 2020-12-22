@@ -133,7 +133,7 @@ class InfoSet(ABC):
         return str(self.serialize())
 
 
-class SeqInfoSet(InfoSet):
+class SequentialInfoSet(InfoSet):
     """
     This is a class that represents sequential info-sets.
     """

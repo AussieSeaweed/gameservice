@@ -1,25 +1,25 @@
 """
 This module defines tic tac toe games in gameservice.
 """
-from .environments import TTTEnvironment
-from .players import TTTPlayer
-from ..game import SeqGame
+from .environments import TicTacToeEnvironment
+from .players import TicTacToePlayer
+from ..game import SequentialGame
 
 
-class TTTGame(SeqGame):
+class TicTacToeGame(SequentialGame):
     """
     This is a class that represents tic tac toe games.
     """
 
-    def _create_environment(self):
+    def create_environment(self):
         """
         Creates a tic tac toe environment.
 
         :return: a tic tac toe environment
         """
-        return TTTEnvironment(self)
+        return TicTacToeEnvironment(self)
 
-    def _create_nature(self):
+    def create_nature(self):
         """
         Returns None as tic tac toe games do not have nature.
 
@@ -27,13 +27,13 @@ class TTTGame(SeqGame):
         """
         return None
 
-    def _create_players(self):
+    def create_player(self):
         """
         Creates tic tac toe players.
 
         :return: a list of tic tac toe players
         """
-        return [TTTPlayer(self) for _ in range(2)]
+        return [TicTacToePlayer(self) for _ in range(2)]
 
     @property
     def _initial_player(self):
