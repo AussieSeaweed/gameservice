@@ -17,18 +17,18 @@ class NoLimit(Limit):
             max_bet = max(player.bet for player in player.game.players)
 
             if max_bet + player.game.environment.min_raise < player.total:
-                amounts.extend(cls._bet_amounts(max_bet + player.game.environment.min_raise, player.total))
+                amounts.extend(cls.int_bet_amounts(max_bet + player.game.environment.min_raise, player.total))
             elif max_bet < player.total:
                 amounts.append(player.total)
 
         return amounts
 
     @staticmethod
-    def _bet_amounts(min_amount, max_amount):
+    def int_bet_amounts(min_amount, max_amount):
         return list(range(min_amount, max_amount + 1))
 
 
 class LazyNoLimit(NoLimit):
     @staticmethod
-    def _bet_amounts(min_amount, max_amount):
+    def int_bet_amounts(min_amount, max_amount):
         return list({min_amount, max_amount})

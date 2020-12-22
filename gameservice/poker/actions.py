@@ -55,7 +55,7 @@ class PassiveAction(PokerPlayerAction):
     def act(self):
         super().act()
 
-        amount = self.__amount
+        amount = self.amount
 
         self.player.stack -= amount
         self.player.bet += amount
@@ -66,11 +66,11 @@ class PassiveAction(PokerPlayerAction):
             self.close()
 
     @property
-    def __amount(self):
+    def amount(self):
         return min(self.player.stack, max(player.bet for player in self.game.players) - self.player.bet)
 
     def __str__(self):
-        return f'Call {self.__amount}' if self.__amount else 'Check'
+        return f'Call {self.amount}' if self.amount else 'Check'
 
 
 class AggressiveAction(PokerPlayerAction):

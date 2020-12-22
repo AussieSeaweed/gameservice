@@ -95,11 +95,11 @@ class SequentialGame(Game, ABC):
         """
         super().__init__()
 
-        self.player = self._initial_player
+        self.player = self.initial_player
 
     @property
     @abstractmethod
-    def _initial_player(self):
+    def initial_player(self):
         """
         :return: the initial player of the game
         """

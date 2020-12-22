@@ -25,10 +25,10 @@ class PokerGame(SequentialGame, ABC):
         if not len(self.starting_stacks) > 1:
             raise ParameterException('Poker is played by more than 2 players')
 
-        self.__deck = self._create_deck()
-        self.__evaluator = self._create_evaluator()
-        self.__limit = self._create_limit()
-        self.__streets = self._create_streets()
+        self.__deck = self.create_deck()
+        self.__evaluator = self.create_evaluator()
+        self.__limit = self.create_limit()
+        self.__streets = self.create_streets()
 
         self.setup()
 
@@ -57,14 +57,14 @@ class PokerGame(SequentialGame, ABC):
         return [PokerPlayer(self, i) for i in range(len(self.starting_stacks))]
 
     @property
-    def _initial_player(self):
+    def initial_player(self):
         """
         :return: the initial player of the poker game
         """
         return self.nature
 
     @abstractmethod
-    def _create_deck(self):
+    def create_deck(self):
         """
         Creates a poker deck.
 
@@ -73,7 +73,7 @@ class PokerGame(SequentialGame, ABC):
         pass
 
     @abstractmethod
-    def _create_evaluator(self):
+    def create_evaluator(self):
         """
         Creates a poker evaluator.
 
@@ -82,7 +82,7 @@ class PokerGame(SequentialGame, ABC):
         pass
 
     @abstractmethod
-    def _create_limit(self):
+    def create_limit(self):
         """
         Creates a poker limit.
 
@@ -91,7 +91,7 @@ class PokerGame(SequentialGame, ABC):
         pass
 
     @abstractmethod
-    def _create_streets(self):
+    def create_streets(self):
         """
         Creates poker streets.
 
@@ -193,7 +193,7 @@ class NLHEGame(PokerGame, ABC):
         if len(self.blinds) != 2 or self.blinds[0] >= self.blinds[1]:
             raise ParameterException('The blinds have to be length of 2 and be sorted')
 
-    def _create_deck(self):
+    def create_deck(self):
         """
         Creates a deck of the no-limit texas hold'em game.
 
@@ -201,7 +201,7 @@ class NLHEGame(PokerGame, ABC):
         """
         return StandardDeck()
 
-    def _create_evaluator(self):
+    def create_evaluator(self):
         """
         Creates an evaluator of the no-limit texas hold'em game.
 
@@ -209,7 +209,7 @@ class NLHEGame(PokerGame, ABC):
         """
         return StandardEvaluator()
 
-    def _create_limit(self):
+    def create_limit(self):
         """
         Creates a limit of the no-limit texas hold'em game.
 
@@ -217,7 +217,7 @@ class NLHEGame(PokerGame, ABC):
         """
         return NoLimit()
 
-    def _create_streets(self):
+    def create_streets(self):
         """
         Creates streets of the no-limit texas hold'em game.
 
@@ -233,7 +233,7 @@ class LazyNLHEGame(NLHEGame, ABC):
     minimum or maximum, an AggressiveAction instance should be created and used.
     """
 
-    def _create_limit(self):
+    def create_limit(self):
         """
         Creates a limit of the lazy no-limit texas hold'em game.
 

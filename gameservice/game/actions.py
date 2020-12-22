@@ -35,7 +35,7 @@ class Action(ABC):
         """
         return self.player.game
 
-    def _validate(self):
+    def validate(self):
         """
         Validates the integrity of the action.
 
@@ -57,7 +57,7 @@ class Action(ABC):
         :return: None
         :raise GameServiceException: if game validation fails
         """
-        self._validate()
+        self.validate()
 
         if self.public:
             self.game.logs.append(Log(self))
@@ -93,7 +93,7 @@ class SequentialAction(Action, ABC):
     This is a class that represents sequential actions.
     """
 
-    def _validate(self):
+    def validate(self):
         """
         Validates the integrity of the sequential action.
 
@@ -101,7 +101,7 @@ class SequentialAction(Action, ABC):
         :raise GameTypeException: if the game is not a sequential game
         :raise GamePlayerException: if the player to act is not the acting player
         """
-        super()._validate()
+        super().validate()
 
         if not isinstance(self.game, SequentialGame):
             raise TypeException('The game is not a sequential game')

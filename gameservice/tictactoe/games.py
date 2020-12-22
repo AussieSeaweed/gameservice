@@ -36,7 +36,7 @@ class TicTacToeGame(SequentialGame):
         return [TicTacToePlayer(self) for _ in range(2)]
 
     @property
-    def _initial_player(self):
+    def initial_player(self):
         """
         :return: the initial player of the tic tac toe game
         """

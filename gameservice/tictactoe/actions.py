@@ -32,7 +32,7 @@ class MarkAction(TicTacToeAction):
         self.__r = r
         self.__c = c
 
-    def _validate(self):
+    def validate(self):
         """
         Validates the integrity of the tic tac toe mark action.
 
@@ -40,7 +40,7 @@ class MarkAction(TicTacToeAction):
         :raise GameActionArgumentException: if the cell coordinate is invalid
         :raise TicTacToeCellException: if the cell is occupied
         """
-        super()._validate()
+        super().validate()
 
         if not (0 <= self.__r < 3 and 0 <= self.__c < 3):
             raise ActionArgumentException('The cell coordinates are invalid')
