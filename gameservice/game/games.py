@@ -10,41 +10,11 @@ class Game(ABC):
     """
 
     def __init__(self):
-        """
-        Constructs a Game instance. Initializes the environment, nature, players, and logs of the game.
-        """
         self.__environment = self.create_environment()
         self.__nature = self.create_nature()
         self.__players = self.create_player()
 
         self.__logs = []
-
-    @abstractmethod
-    def create_environment(self):
-        """
-        Creates an environment.
-
-        :return: an environment
-        """
-        pass
-
-    @abstractmethod
-    def create_nature(self):
-        """
-        Creates a nature.
-
-        :return: a nature
-        """
-        pass
-
-    @abstractmethod
-    def create_player(self):
-        """
-        Creates players.
-
-        :return: a list of players
-        """
-        pass
 
     @property
     def environment(self):
@@ -74,6 +44,33 @@ class Game(ABC):
         """
         return self.__logs
 
+    @abstractmethod
+    def create_environment(self):
+        """
+        Creates an environment.
+
+        :return: an environment
+        """
+        pass
+
+    @abstractmethod
+    def create_nature(self):
+        """
+        Creates a nature.
+
+        :return: a nature
+        """
+        pass
+
+    @abstractmethod
+    def create_player(self):
+        """
+        Creates players.
+
+        :return: a list of players
+        """
+        pass
+
     @property
     @abstractmethod
     def terminal(self):
@@ -85,31 +82,24 @@ class Game(ABC):
 
 class SequentialGame(Game, ABC):
     """
-    This is a class that represents sequential games. If a sequential game is terminal, its player member variable must
-    be set to None.
+    This is a class that represents sequential games. In sequential games, only one player can act at a time. The player
+    in turn is stored in the player attribute of the SequentialGame instance. If a sequential game is terminal, its
+    player member variable must be set to None.
     """
 
     def __init__(self):
-        """
-        Constructs a SequentialGame instance. Initializes the player.
-        """
         super().__init__()
 
         self.player = self.initial_player
 
     @property
+    def terminal(self):
+        return self.player is None
+
+    @property
     @abstractmethod
     def initial_player(self):
         """
-        :return: the initial player of the game
+        :return: the initial player of the sequential game
         """
         pass
-
-    @property
-    def terminal(self):
-        """
-        Returns the terminality of the game. Sequential games are terminal if the player member variable is None.
-
-        :return: a boolean value of the terminality of the game
-        """
-        return self.player is None
