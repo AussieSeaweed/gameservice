@@ -5,17 +5,30 @@ from ..game import ActionArgumentException, ActionException, SequentialAction
 
 
 class PokerAction(SequentialAction, ABC):
+    """
+    This is a class that represents poker actions.
+    """
+
     @property
     def public(self):
         return True
 
 
 class PokerPlayerAction(PokerAction, ABC):
+    """
+    This is a class that represents poker player actions.
+    """
+
     @property
     def chance(self):
         return False
 
     def close(self):
+        """
+        Closes the poker street of the poker game.
+
+        :return: None
+        """
         self.game.player = self.game.nature
         self.game.streets.pop(0)
 
@@ -27,6 +40,10 @@ class PokerPlayerAction(PokerAction, ABC):
 
 
 class SubmissiveAction(PokerPlayerAction):
+    """
+    This is a class that represents submissive actions (folds).
+    """
+
     def __init__(self, player):
         super().__init__(player)
 
@@ -52,6 +69,10 @@ class SubmissiveAction(PokerPlayerAction):
 
 
 class PassiveAction(PokerPlayerAction):
+    """
+    This is a class that represents passive actions (checks and calls).
+    """
+
     def act(self):
         super().act()
 
@@ -67,6 +88,9 @@ class PassiveAction(PokerPlayerAction):
 
     @property
     def amount(self):
+        """
+        :return: the call/check amount of the passive action
+        """
         return min(self.player.stack, max(player.bet for player in self.game.players) - self.player.bet)
 
     def __str__(self):
@@ -74,6 +98,10 @@ class PassiveAction(PokerPlayerAction):
 
 
 class AggressiveAction(PokerPlayerAction):
+    """
+    This is a class that represents aggressive actions (bets and raises).
+    """
+
     def __init__(self, player, amount):
         super().__init__(player)
 
@@ -101,12 +129,19 @@ class AggressiveAction(PokerPlayerAction):
 
 
 class PokerNatureAction(PokerAction, ABC):
+    """
+    This is a class that represents poker nature actions.
+    """
+
     @property
     def chance(self):
         return True
 
     @property
     def opener(self):
+        """
+        :return: the opener of the poker street
+        """
         if any(player.bet for player in self.game.players):
             return self.game.players[1 if len(self.game.players) == 2 else 2]
         else:
@@ -116,6 +151,11 @@ class PokerNatureAction(PokerAction, ABC):
                 return self.game.nature
 
     def open(self):
+        """
+        Opens the poker street of the poker game.
+
+        :return: None
+        """
         self.game.player = self.opener
 
         if self.game.player.nature:
@@ -126,6 +166,11 @@ class PokerNatureAction(PokerAction, ABC):
 
 
 class StreetAction(PokerNatureAction):
+    """
+    This is a class that represents street actions. This action sets up the street according to the street instance by
+    dealing the player hole cards and the board.
+    """
+
     def __init__(self, player):
         super().__init__(player)
 
@@ -152,6 +197,11 @@ class StreetAction(PokerNatureAction):
 
 
 class ShowdownAction(PokerNatureAction):
+    """
+    This is a class that represents showdown actions. This action exposes the poker player's hole cards if necessary and
+    distributes the pot.
+    """
+
     def __init__(self, player):
         super().__init__(player)
 
@@ -169,8 +219,14 @@ class ShowdownAction(PokerNatureAction):
         self.game.player = None
 
     def show(self):
-        players = self.game.players[self.game.environment.aggressor.index:] \
-                  + self.game.players[:self.game.environment.aggressor.index]
+        """
+        Iterates through the poker players in accordance to the showdown order and exposes the player's hole cards if
+        necessary.
+
+        :return: None
+        """
+        players = self.game.players[self.game.environment.aggressor.index:] + self.game.players[
+                                                                              :self.game.environment.aggressor.index]
         commitments = defaultdict(lambda: 0)
 
         for player in filter(lambda player: not player.mucked, players):
@@ -182,6 +238,11 @@ class ShowdownAction(PokerNatureAction):
                 commitments[player.hand] = max(commitments[player.hand], player.commitment)
 
     def distribute(self):
+        """
+        Distributes the pot to the winners.
+
+        :return: None
+        """
         players = [player for player in self.game.players if not player.mucked]
         baseline = 0
 
