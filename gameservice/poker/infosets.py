@@ -13,7 +13,7 @@ class PokerInfoSet(SequentialInfoSet):
     def environment_info(cls, environment):
         return {
             **super().environment_info(environment),
-            'min_raise': environment.min_raise,
+            'min_delta': environment.min_delta,
             'pot': environment.pot,
             'board': list(map(str, environment.board)),
         }

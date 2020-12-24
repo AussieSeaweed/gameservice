@@ -32,7 +32,7 @@ class PokerPlayerAction(PokerAction, ABC):
         self.game.player = self.game.nature
         self.game.streets.pop(0)
 
-        self.game.environment.min_raise = None
+        self.game.environment.min_delta = None
         self.game.environment.pot += sum(player.bet for player in self.game.players)
 
         for player in self.game.players:
@@ -106,7 +106,7 @@ class AggressiveAction(PokerPlayerAction):
         super().__init__(player)
 
         if not (isinstance(amount, int) and sum(player.relevant for player in self.game.players) > 1 and
-                (max(player.bet for player in self.game.players) + self.game.environment.min_raise <= amount
+                (max(player.bet for player in self.game.players) + self.game.environment.min_delta <= amount
                  <= player.total or max(player.bet for player in self.game.players) < amount == player.total)):
             raise ActionArgumentException('The supplied raise or bet size is not allowed')
 
@@ -115,7 +115,7 @@ class AggressiveAction(PokerPlayerAction):
     def act(self):
         super().act()
 
-        self.game.environment.min_raise = max(self.game.environment.min_raise,
+        self.game.environment.min_delta = max(self.game.environment.min_delta,
                                               self.__amount - max(player.bet for player in self.game.players))
 
         self.player.stack -= self.__amount - self.player.bet
@@ -162,7 +162,7 @@ class PokerNatureAction(PokerAction, ABC):
             self.game.streets.pop(0)
         else:
             self.game.environment.aggressor = self.game.player
-            self.game.environment.min_raise = max(self.game.blinds)
+            self.game.environment.min_delta = max(self.game.blinds)
 
 
 class StreetAction(PokerNatureAction):

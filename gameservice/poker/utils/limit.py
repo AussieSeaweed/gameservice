@@ -31,8 +31,8 @@ class NoLimit(Limit):
         if sum(player.relevant for player in player.game.players) > 1:
             max_bet = max(player.bet for player in player.game.players)
 
-            if max_bet + player.game.environment.min_raise < player.total:
-                amounts.extend(self.int_bet_amounts(max_bet + player.game.environment.min_raise, player.total))
+            if max_bet + player.game.environment.min_delta < player.total:
+                amounts.extend(self.int_bet_amounts(max_bet + player.game.environment.min_delta, player.total))
             elif max_bet < player.total:
                 amounts.append(player.total)
 
