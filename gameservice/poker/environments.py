@@ -10,11 +10,6 @@ class PokerEnvironment(Environment):
     """
 
     def __init__(self, game):
-        """
-        Constructs a PokerEnvironment instance. Initializes the aggressor, min_raise, pot and board.
-
-        :param game: the game in which the tic tac toe environment belongs
-        """
         super().__init__(game)
 
         self.aggressor = None

@@ -10,11 +10,6 @@ class TicTacToeEnvironment(Environment):
     """
 
     def __init__(self, game):
-        """
-        Constructs a TicTacToeEnvironment instance. Initializes the board.
-
-        :param game: the game in which the tic tac toe environment belongs
-        """
         super().__init__(game)
 
         self.__board = [[None, None, None],
@@ -31,7 +26,9 @@ class TicTacToeEnvironment(Environment):
     @property
     def empty_coords(self):
         """
-        :return: a list of empty coordinates of the board of the tic tac toe environment
+        Determines the empty coordinates of the tic tac toe game.
+
+        :return: a list of the empty coordinates of the board of the tic tac toe environment
         """
         return [(r, c) for r in range(3) for c in range(3) if self.board[r][c] is None]
 
