@@ -1,5 +1,5 @@
 """
-This module defines functions for interacting with games in gameservice.
+This module defines functions for interacting with games and sequential games in gameservice.
 """
 from json import dumps
 

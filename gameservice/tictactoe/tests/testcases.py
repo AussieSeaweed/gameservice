@@ -14,28 +14,14 @@ class TicTacToeTestCase(TestCase, SeqTestCaseMixin):
 
     @staticmethod
     def create_game():
-        """
-        Creates a tic tac toe game instance.
-
-        :return: a tic tac toe game instance
-        """
         return TicTacToeGame()
 
     @staticmethod
     def validate_game(game):
-        """
-        Validates the integrity of the tic tac toe game.
-
-        :param game: a tic tac toe game of the tic tac toe test case
-        :return: a boolean value of the validity of the tic tac toe game
-        """
         return game.environment.winner is not None or not game.environment.empty_coords
 
     @property
     def num_monte_carlo_tests(self):
-        """
-        :return: the number of monte carlo tests of tic tac toe games
-        """
         return 10000
 
     def test_tic_tac_toe_first_win(self):

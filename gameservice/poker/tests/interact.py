@@ -1,11 +1,15 @@
 """
-This module allows interactions with tic tac toe games.
+This module allows interactions with custom no-limit texas hold'em games.
 """
 from gameservice.game.tests.interact import interact_seq
 from gameservice.poker import LazyNLHEGame
 
 
 class CustomNLHEGame(LazyNLHEGame):
+    """
+    This is a class that represents a custom no-limit texas hold'em games.
+    """
+
     @property
     def ante(self):
         return 0
