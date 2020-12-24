@@ -9,11 +9,6 @@ class Log:
     """
 
     def __init__(self, action):
-        """
-        Constructs a Log instance. Stores the string representation of the taken action and the acting player.
-
-        :param action: the taken action
-        """
         self.__action_str = str(action)
         self.__player_str = str(action.player)
 
