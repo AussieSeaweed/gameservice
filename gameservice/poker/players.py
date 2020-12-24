@@ -11,10 +11,10 @@ class PokerPlayer(Player):
     This is a class that represents poker players.
     """
 
-    def __init__(self, game, index, label=None):
+    def __init__(self, game, label=None):
         super().__init__(game, label)
 
-        self.stack = game.starting_stacks[index]  # TODO: find a better way to find starting stack
+        self.stack = 0
         self.bet = 0
         self.hole_cards = []
 

@@ -2,6 +2,7 @@
 This module defines poker games in gameservice.
 """
 from abc import ABC, abstractmethod
+from itertools import zip_longest
 
 from .environments import PokerEnvironment
 from .players import PokerNature, PokerPlayer
@@ -37,7 +38,7 @@ class PokerGame(SequentialGame, ABC):
         return PokerNature(self)
 
     def create_player(self):
-        return [PokerPlayer(self, i) for i in range(len(self.starting_stacks))]
+        return [PokerPlayer(self) for _ in range(len(self.starting_stacks))]
 
     @property
     def initial_player(self):
@@ -80,21 +81,25 @@ class PokerGame(SequentialGame, ABC):
 
     def setup(self):
         """
-        Takes antes and blinds the players.
+        Assign starting stacks, takes antes, and blinds the players.
 
         :return: None
         """
-        for player in self.players:
+        for player, starting_stack, blind in zip_longest(self.players, self.starting_stacks,
+                                                         reversed(self.blinds) if len(
+                                                                 self.players) == 2 else self.blinds):
+            player.stack = starting_stack
+
             ante = min(self.ante, player.stack)
 
             player.stack -= ante
             self.environment.pot += ante
 
-        for player, blind in zip(self.players, reversed(self.blinds) if len(self.players) == 2 else self.blinds):
-            blind = min(blind, player.stack)
+            if blind is not None:
+                blind = min(blind, player.stack)
 
-            player.stack -= blind
-            player.bet += blind
+                player.stack -= blind
+                player.bet += blind
 
     @property
     @abstractmethod
