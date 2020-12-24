@@ -21,7 +21,7 @@ class PokerPlayer(Player):
         """
         super().__init__(game, label)
 
-        self.stack = game.starting_stacks[index]
+        self.stack = game.starting_stacks[index]  # TODO: find a better way to find starting stack
         self.bet = 0
         self.hole_cards = []
 

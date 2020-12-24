@@ -11,12 +11,6 @@ class TicTacToeInfoSet(SequentialInfoSet):
 
     @classmethod
     def environment_info(cls, environment):
-        """
-        Serializes the tic tac toe environment.
-
-        :param environment: the tic tac toe environment of the tic tac toe info-set
-        :return: the dictionary representation of the tic tac toe environment information
-        """
         return {
             **super().environment_info(environment),
             'board': environment.board,

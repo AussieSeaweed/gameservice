@@ -6,15 +6,12 @@ from abc import ABC
 
 class InfoSet(ABC):
     """
-    This is a class that represents info-sets.
+    This is a class that represents info-sets. The subclasses of this class should overload environment_info,
+    player_public_info, player_private_info, nature_public_info, and nature_private_info methods accordingly to
+    represent various elements of the info-set of the corresponding player.
     """
 
     def __init__(self, player):
-        """
-        Constructs an InfoSet instance. Stores the player of the info-set.
-
-        :param player: the player of the info-set
-        """
         self.__player = player
 
     @property
@@ -42,7 +39,7 @@ class InfoSet(ABC):
         return {}
 
     @classmethod
-    def _player_public_info(cls, player):
+    def player_public_info(cls, player):
         """
         Serializes the player publicly.
 
@@ -58,7 +55,7 @@ class InfoSet(ABC):
         }
 
     @classmethod
-    def _player_private_info(cls, player):
+    def player_private_info(cls, player):
         """
         Serializes the player privately.
 
@@ -66,19 +63,8 @@ class InfoSet(ABC):
         :return: the dictionary representation of the private player information
         """
         return {
-            **cls._player_public_info(player),
-            'actions': [str(action) for action in player.actions],
-        }
-
-    @classmethod
-    def player_public_info(cls, player):
-        return cls._player_public_info(player)
-
-    @classmethod
-    def player_private_info(cls, player):
-        return {
             **cls.player_public_info(player),
-            **cls._player_private_info(player),
+            'actions': [str(action) for action in player.actions],
         }
 
     def player_info(self, player):
@@ -92,13 +78,31 @@ class InfoSet(ABC):
 
     @classmethod
     def nature_public_info(cls, nature):
-        return cls._player_public_info(nature)
+        """
+        Serializes the nature publicly.
+
+        :param nature: the nature of the info-set
+        :return: the dictionary representation of the public nature information
+        """
+        return {
+            'label': nature.label,
+            'nature': nature.nature,
+            'index': nature.index,
+            'payoff': nature.payoff,
+            'actions': [str(action) for action in nature.actions if action.public],
+        }
 
     @classmethod
     def nature_private_info(cls, nature):
+        """
+        Serializes the nature privately.
+
+        :param nature: the nature of the info-set
+        :return: the dictionary representation of the private nature information
+        """
         return {
             **cls.nature_public_info(nature),
-            **cls._player_private_info(nature),
+            'actions': [str(action) for action in nature.actions],
         }
 
     def nature_info(self, nature):
@@ -139,12 +143,12 @@ class SequentialInfoSet(InfoSet):
     """
 
     @classmethod
-    def _player_public_info(cls, player):
+    def player_public_info(cls, player):
         """
         :param player: the player of the sequential info-set
         :return: the dictionary representation of the public player information
         """
         return {
-            **super()._player_public_info(player),
+            **super().player_public_info(player),
             'active': player is player.game.player,
         }

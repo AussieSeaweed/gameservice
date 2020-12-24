@@ -84,7 +84,7 @@ class SequentialGame(Game, ABC):
     """
     This is a class that represents sequential games. In sequential games, only one player can act at a time. The player
     in turn is stored in the player attribute of the SequentialGame instance. If a sequential game is terminal, its
-    player member variable must be set to None.
+    player attribute variable must be set to None.
     """
 
     def __init__(self):

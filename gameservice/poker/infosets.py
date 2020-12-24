@@ -11,27 +11,15 @@ class PokerInfoSet(SequentialInfoSet):
 
     @classmethod
     def environment_info(cls, environment):
-        """
-        Serializes the poker environment.
-
-        :param environment: the poker environment of the poker info-set
-        :return: the dictionary representation of the poker environment information
-        """
         return {
             **super().environment_info(environment),
             'min_raise': environment.min_raise,
             'pot': environment.pot,
-            'board': list(map(str, environment.board))
+            'board': list(map(str, environment.board)),
         }
 
     @classmethod
     def player_public_info(cls, player):
-        """
-        Serializes the poker player publicly.
-
-        :param player: the poker player of the poker info-set
-        :return: the dictionary representation of the public poker player information
-        """
         return {
             **super().player_public_info(player),
             'stack': player.stack,
@@ -43,12 +31,6 @@ class PokerInfoSet(SequentialInfoSet):
 
     @classmethod
     def player_private_info(cls, player):
-        """
-        Serializes the poker player privately.
-
-        :param player: the poker player of the poker info-set
-        :return: the dictionary representation of the private poker player information
-        """
         return {
             **super().player_private_info(player),
             'hole_cards': list(map(str, player.hole_cards)),  # hole_cards is not None when player acts

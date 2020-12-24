@@ -13,7 +13,7 @@ class PokerEnvironment(Environment):
         super().__init__(game)
 
         self.aggressor = None
-        self.min_raise = None
+        self.min_raise = None  # TODO: find a better name
 
         self.pot = 0
         self.__board = []
