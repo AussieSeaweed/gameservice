@@ -10,12 +10,6 @@ class Player(ABC):
     """
 
     def __init__(self, game, label=None):
-        """
-        Constructs a Player instance. Stores the game and label of the player.
-
-        :param game: the game of the player
-        :param label: the optional label of the player
-        """
         self.__game = game
         self.__label = label
 
@@ -90,22 +84,13 @@ class Player(ABC):
 
 class Nature(Player, ABC):
     """
-    This is a class that represents natures.
+    This is a class that represents natures. The nature's default payoff assumes that the game is a zero sum game and
+    returns the negated sum of the player payoffs.
     """
 
     @property
     def payoff(self):
-        """
-        Finds the negated sum of the player payoffs in the game.
-
-        :return: the default nature payoff
-        """
         return -sum(player.payoff for player in self.game.players)
 
     def __str__(self):
-        """
-        Converts the nature into a string representation.
-
-        :return: the string representation of the nature
-        """
         return 'Nature'

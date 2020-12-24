@@ -13,9 +13,6 @@ class TicTacToePlayer(Player):
 
     @property
     def payoff(self):
-        """
-        :return: the payoff of the tic tac toe player
-        """
         if self.game.environment.winner is None:
             return 0 if self.game.terminal else -1
         else:
@@ -23,9 +20,6 @@ class TicTacToePlayer(Player):
 
     @property
     def actions(self):
-        """
-        :return: a list of actions of the tic tac toe player
-        """
         if self.game.player is self:
             return [MarkAction(self, r, c) for r, c in self.game.environment.empty_coords]
         else:
@@ -33,7 +27,4 @@ class TicTacToePlayer(Player):
 
     @property
     def info_set(self):
-        """
-        :return: the info-set of the tic tac toe player
-        """
         return TicTacToeInfoSet(self)

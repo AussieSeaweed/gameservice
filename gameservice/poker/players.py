@@ -12,13 +12,6 @@ class PokerPlayer(Player):
     """
 
     def __init__(self, game, index, label=None):
-        """
-        Constructs a PokerPlayer instance. Initializes the stack, bet and hole_cards.
-
-        :param game: the poker game of the poker player
-        :param index: the index of the poker player
-        :param label: the optional label of the poker player
-        """
         super().__init__(game, label)
 
         self.stack = game.starting_stacks[index]  # TODO: find a better way to find starting stack
@@ -52,26 +45,49 @@ class PokerPlayer(Player):
 
     @property
     def mucked(self):
+        """
+        :return: a boolean value of whether or not the poker player has mucked
+        """
         return self.hole_cards is None
 
     @property
     def commitment(self):
+        """
+        :return: the amount the poker player has put into the pot
+        """
         return -self.payoff
 
     @property
     def total(self):
+        """
+        :return: the sum of the bet and the stack of the poker player
+        """
         return self.stack + self.bet
 
     @property
     def effective_stack(self):
+        """
+        Finds the effective stack of the poker player. The effective stack denotes how much a player can lose in a pot.
+
+        :return: the effective stack of the poker player
+        """
         return min(sorted(player.total for player in self.game.players)[-2], self.total)
 
     @property
     def relevant(self):
+        """
+        Finds the relevancy of the poker player. A relevant poker player can make a bet/raise and there is at least one
+        opponent who can call.
+
+        :return: the relevancy of the poker player
+        """
         return not self.mucked and self.stack > 0 and self.effective_stack > 0
 
     @property
     def hand(self):
+        """
+        :return: the hand of the poker player if any hand is made else None
+        """
         return self.game.evaluator.hand(self.hole_cards, self.game.environment.board)
 
     def __next__(self):
@@ -84,6 +100,10 @@ class PokerPlayer(Player):
 
 
 class PokerNature(Nature):
+    """
+    This is a class that represents poker natures.
+    """
+
     @property
     def actions(self):
         if self.game.player is self:
