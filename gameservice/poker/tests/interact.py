@@ -12,7 +12,7 @@ class CustomNLHEGame(LazyNLHEGame):
 
     @property
     def ante(self):
-        return 0
+        return 1
 
     @property
     def blinds(self):
@@ -20,7 +20,7 @@ class CustomNLHEGame(LazyNLHEGame):
 
     @property
     def starting_stacks(self):
-        return [300, 200, 100]
+        return [200, 100, 50]
 
 
 def main():

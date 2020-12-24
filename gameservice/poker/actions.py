@@ -143,7 +143,9 @@ class PokerNatureAction(PokerAction, ABC):
         :return: the opener of the poker street
         """
         if any(player.bet for player in self.game.players):
-            return self.game.players[1 if len(self.game.players) == 2 else 2]
+            opener = self.game.players[1 if len(self.game.players) == 2 else 2]
+
+            return opener if opener.relevant else next(opener)
         else:
             try:
                 return next(player for player in self.game.players if player.relevant)
