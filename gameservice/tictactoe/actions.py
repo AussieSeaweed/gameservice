@@ -3,7 +3,6 @@ This module defines tic tac toe actions in gameservice.
 """
 from abc import ABC
 
-from .exceptions import TicTacToeCellException
 from ..game import ActionArgumentException, SequentialAction
 
 
@@ -45,7 +44,7 @@ class MarkAction(TicTacToeAction):
         if not (0 <= self.__r < 3 and 0 <= self.__c < 3):
             raise ActionArgumentException('The cell coordinates are invalid')
         elif self.game.environment.board[self.__r][self.__c] is not None:
-            raise TicTacToeCellException('The cell is already occupied')
+            raise ActionArgumentException('The cell is already occupied')
 
     def act(self):
         """
