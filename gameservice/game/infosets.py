@@ -6,9 +6,11 @@ from abc import ABC
 
 class InfoSet(ABC):
     """
-    This is a class that represents info-sets. The subclasses of this class should overload environment_info,
-    player_public_info, player_private_info, nature_public_info, and nature_private_info methods accordingly to
-    represent various elements of the info-set of the corresponding player.
+    This is a class that represents info-sets.
+
+    The subclasses of this class should overload environment_info, nature_public_info, nature_private_info,
+    player_public_info, and player_private_info methods accordingly to represent various elements of the info-set of the
+    corresponding player.
     """
 
     def __init__(self, player):
@@ -129,11 +131,6 @@ class InfoSet(ABC):
         }
 
     def __str__(self):
-        """
-        Converts the info-set into a string representation.
-
-        :return: the string representation of the info-set
-        """
         return str(self.serialize())
 
 
@@ -142,13 +139,9 @@ class SequentialInfoSet(InfoSet):
     This is a class that represents sequential info-sets.
     """
 
-    @classmethod
-    def player_public_info(cls, player):
-        """
-        :param player: the player of the sequential info-set
-        :return: the dictionary representation of the public player information
-        """
+    def serialize(self):
         return {
-            **super().player_public_info(player),
-            'active': player is player.game.player,
+            **super().serialize(),
+            'player': self.nature_info(self.game.player) if self.game.player.nature else \
+                self.player_info(self.game.player),
         }

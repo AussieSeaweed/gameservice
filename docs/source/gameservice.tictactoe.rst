@@ -28,14 +28,6 @@ gameservice.tictactoe.environments module
    :undoc-members:
    :show-inheritance:
 
-gameservice.tictactoe.exceptions module
----------------------------------------
-
-.. automodule:: gameservice.tictactoe.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 gameservice.tictactoe.games module
 ----------------------------------
 
