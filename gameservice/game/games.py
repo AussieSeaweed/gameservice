@@ -100,8 +100,8 @@ class SequentialGame(Game, ABC):
     must be set to None to denote such.
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
         self.player = self.initial_player
 
