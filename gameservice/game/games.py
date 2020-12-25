@@ -12,14 +12,19 @@ class Game(ABC):
     instance is created, its environment, nature, and players are also created through the invocations of
     corresponding create methods, which should be overridden by the subclasses. Also, every subclass should override the
     terminal property accordingly.
+
+    Any supplied keyword arguments during initialization is set as an attribute of the instance.
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.__environment = self.create_environment()
         self.__nature = self.create_nature()
         self.__players = self.create_player()
 
         self.__logs = []
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     @property
     def environment(self):
