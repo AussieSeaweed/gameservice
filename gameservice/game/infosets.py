@@ -140,12 +140,7 @@ class SequentialInfoSet(InfoSet):
     """
 
     def serialize(self):
-        serialization = super().serialize()
-
-        if self.game.terminal:
-            serialization['player'] = None
-        else:
-            serialization['player'] = self.nature_info(self.game.player) if self.game.player.nature else \
-                                          self.player_info(self.game.player),
-
-        return serialization
+        return {
+            **super().serialize(),
+            'player': str(self.game.player),
+        }

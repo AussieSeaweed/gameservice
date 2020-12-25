@@ -14,5 +14,5 @@ class TicTacToeInfoSet(SequentialInfoSet):
             **super().environment_info(environment),
             'board': environment.board,
             'empty_coords': environment.empty_coords,
-            'winner': None if environment.winner is None else self.player_info(environment.winner),
+            'winner': str(environment.winner),
         }
