@@ -9,29 +9,29 @@ class PokerInfoSet(SequentialInfoSet):
     This is a class that represents poker info-sets.
     """
 
-    @classmethod
-    def environment_info(cls, environment):
+    @property
+    def environment_info(self):
         return {
-            **super().environment_info(environment),
-            'min_delta': environment.min_delta,
-            'pot': environment.pot,
-            'board': list(map(str, environment.board)),
+            **super().environment_info,
+            'min_delta': self.game.environment.min_delta,
+            'pot': self.game.environment.pot,
+            'board': list(map(str, self.game.environment.board)),
+            'aggressor': None if self.game.environment.aggressor is None else str(self.game.environment.aggressor),
         }
 
-    @classmethod
-    def player_public_info(cls, player):
+    def player_public_info(self, index):
         return {
-            **super().player_public_info(player),
-            'stack': player.stack,
-            'bet': player.bet,
-            'hole_cards': None if player.hole_cards is None else [str(card) if player.game.terminal else None for card
-                                                                  in player.hole_cards],
-            'aggressive': player is player.game.environment.aggressor,
+            **super().player_public_info(index),
+            'stack': self.game.players[index].stack,
+            'bet': self.game.players[index].bet,
+            'hole_cards': None if self.game.players[index].hole_cards is None else [
+                str(card) if self.game.terminal else None for card in self.game.players[index].hole_cards
+            ],
         }
 
-    @classmethod
-    def player_private_info(cls, player):
+    def player_private_info(self, index):
         return {
-            **super().player_private_info(player),
-            'hole_cards': None if player.hole_cards is None else list(map(str, player.hole_cards)),
+            **super().player_private_info(index),
+            'hole_cards': None if self.game.players[index].hole_cards is None else list(
+                map(str, self.game.players[index].hole_cards)),
         }
