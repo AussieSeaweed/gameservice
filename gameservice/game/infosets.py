@@ -49,7 +49,6 @@ class InfoSet(ABC):
         :return: the dictionary representation of the public nature information
         """
         return {
-            'label': nature.label,
             'nature': nature.nature,
             'index': nature.index,
             'payoff': nature.payoff,
@@ -87,7 +86,6 @@ class InfoSet(ABC):
         :return: the dictionary representation of the public player information
         """
         return {
-            'label': player.label,
             'nature': player.nature,
             'index': player.index,
             'payoff': player.payoff,

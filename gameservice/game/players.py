@@ -9,9 +9,8 @@ class Player(ABC):
     This is a class that represents players.
     """
 
-    def __init__(self, game, label=None):
+    def __init__(self, game):
         self.__game = game
-        self.__label = label
 
     @property
     def game(self):
@@ -19,13 +18,6 @@ class Player(ABC):
         :return: the game of the player
         """
         return self.__game
-
-    @property
-    def label(self):
-        """
-        :return: the label of the player
-        """
-        return self.__label
 
     @property
     def nature(self):
@@ -79,7 +71,7 @@ class Player(ABC):
 
         :return: the string representation of the player
         """
-        return f'Player {self.index}' if self.label is None else self.label
+        return f'Player {self.index}'
 
 
 class Nature(Player, ABC):
