@@ -9,10 +9,11 @@ class TicTacToeInfoSet(SequentialInfoSet):
     This is a class that represents tic tac toe info-sets.
     """
 
-    def environment_info(self, environment):
+    @property
+    def environment_info(self):
         return {
-            **super().environment_info(environment),
-            'board': environment.board,
-            'empty_coords': environment.empty_coords,
-            'winner': str(environment.winner),
+            **super().environment_info,
+            'board': self.game.environment.board,
+            'empty_coords': self.game.environment.empty_coords,
+            'winner': None if self.game.environment.winner is None else str(self.game.environment.winner),
         }

@@ -30,89 +30,87 @@ class InfoSet(ABC):
         """
         return self.player.game
 
-    @staticmethod
-    def environment_info(environment):
+    @property
+    def environment_info(self):
         """
         Serializes the environment.
 
-        :param environment: the environment of the info-set
         :return: the dictionary representation of the environment information
         """
-        return {}
+        return None if self.game.environment is None else {}
 
-    @staticmethod
-    def nature_public_info(nature):
+    @property
+    def nature_public_info(self):
         """
         Serializes the nature publicly.
 
-        :param nature: the nature of the info-set
         :return: the dictionary representation of the public nature information
         """
         return {
-            'nature': nature.nature,
-            'index': nature.index,
-            'payoff': nature.payoff,
-            'actions': [str(action) for action in nature.actions if action.public],
+            'nature': self.game.nature.nature,
+            'index': self.game.nature.index,
+            'payoff': self.game.nature.payoff,
+            'actions': [str(action) for action in self.game.nature.actions if action.public],
         }
 
-    @classmethod
-    def nature_private_info(cls, nature):
+    @property
+    def nature_private_info(self):
         """
         Serializes the nature privately.
 
-        :param nature: the nature of the info-set
         :return: the dictionary representation of the private nature information
         """
         return {
-            **cls.nature_public_info(nature),
-            'actions': [str(action) for action in nature.actions],
+            **self.nature_public_info,
+            'actions': [str(action) for action in self.game.nature.actions],
         }
 
-    def nature_info(self, nature):
+    @property
+    def nature_info(self):
         """
         Serializes the nature.
 
-        :param nature: the nature of the info-set
         :return: the dictionary representation of the nature information
         """
-        return self.nature_private_info(nature) if self.player.nature else self.nature_public_info(nature)
+        if self.game.nature is None:
+            return None
+        else:
+            return self.nature_private_info if self.player.nature else self.nature_public_info
 
-    @staticmethod
-    def player_public_info(player):
+    def player_public_info(self, index):
         """
         Serializes the player publicly.
 
-        :param player: the player of the info-set
+        :param index: the index of the player
         :return: the dictionary representation of the public player information
         """
         return {
-            'nature': player.nature,
-            'index': player.index,
-            'payoff': player.payoff,
-            'actions': [str(action) for action in player.actions if action.public],
+            'nature': self.game.players[index].nature,
+            'index': self.game.players[index].index,
+            'payoff': self.game.players[index].payoff,
+            'actions': [str(action) for action in self.game.players[index].actions if action.public],
         }
 
-    @classmethod
-    def player_private_info(cls, player):
+    def player_private_info(self, index):
         """
         Serializes the player privately.
 
-        :param player: the player of the info-set
+        :param index: the index of the player
         :return: the dictionary representation of the private player information
         """
         return {
-            **cls.player_public_info(player),
-            'actions': [str(action) for action in player.actions],
+            **self.player_public_info(index),
+            'actions': [str(action) for action in self.game.players[index].actions],
         }
 
-    def player_info(self, player):
+    def player_info(self, index):
         """
         Serializes the player.
 
-        :param player: the player of the info-set
+        :param index: the index of the player
         :return: the dictionary representation of the player information
         """
-        return self.player_private_info(player) if player is self.player else self.player_public_info(player)
+        return self.player_private_info(index) if index == self.player.index else self.player_public_info(index)
 
     def serialize(self):
         """
@@ -121,10 +119,10 @@ class InfoSet(ABC):
         :return: the dictionary representation of the game information
         """
         return {
-            'environment': self.environment_info(self.game.environment),
-            'nature': None if self.game.nature is None else self.nature_info(self.game.nature),
-            'players': [self.player_info(player) for player in self.game.players],
-            'logs': [str(log) for log in self.game.logs],
+            'environment': self.environment_info,
+            'nature': self.nature_info,
+            'players': list(map(self.player_info, range(len(self.game.players)))),
+            'logs': list(map(str, self.game.logs)),
             'terminal': self.game.terminal,
         }
 
@@ -140,5 +138,5 @@ class SequentialInfoSet(InfoSet):
     def serialize(self):
         return {
             **super().serialize(),
-            'player': str(self.game.player),
+            'player': None if self.game.terminal else str(self.game.player),
         }
