@@ -84,8 +84,10 @@ class Player(ABC):
 
 class Nature(Player, ABC):
     """
-    This is a class that represents natures. The nature's default payoff assumes that the game is a zero sum game and
-    returns the negated sum of the player payoffs.
+    This is a class that represents natures.
+
+    The nature's default payoff assumes that the game is a zero sum game and returns the negated sum of the players'
+    payoffs.
     """
 
     @property

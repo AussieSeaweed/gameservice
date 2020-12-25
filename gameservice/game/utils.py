@@ -13,9 +13,4 @@ class Log:
         self.__player_str = str(action.player)
 
     def __str__(self):
-        """
-        Converts the log into a string representation.
-
-        :return: the string representation of the log
-        """
         return f'{self.__player_str}: {self.__action_str}'

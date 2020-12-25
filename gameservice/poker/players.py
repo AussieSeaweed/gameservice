@@ -67,7 +67,9 @@ class PokerPlayer(Player):
     @property
     def effective_stack(self):
         """
-        Finds the effective stack of the poker player. The effective stack denotes how much a player can lose in a pot.
+        Finds the effective stack of the poker player.
+
+        The effective stack denotes how much a player can lose in a pot.
 
         :return: the effective stack of the poker player
         """
@@ -76,8 +78,9 @@ class PokerPlayer(Player):
     @property
     def relevant(self):
         """
-        Finds the relevancy of the poker player. A relevant poker player can make a bet/raise and there is at least one
-        opponent who can call.
+        Finds the relevancy of the poker player.
+
+        A poker player is relevant if he/she can make a bet/raise and there is at least one opponent who can call.
 
         :return: the relevancy of the poker player
         """

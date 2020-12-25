@@ -24,7 +24,7 @@ class TicTacToeTestCase(TestCase, SeqTestCaseMixin):
     def num_monte_carlo_tests(self):
         return 10000
 
-    def test_tic_tac_toe_first_win(self):
+    def test_first_win(self):
         """
         Tests if the tic tac toe properly detects a case of the first player winning.
 
@@ -40,7 +40,7 @@ class TicTacToeTestCase(TestCase, SeqTestCaseMixin):
 
         self.assertEqual([1, -1], payoffs)
 
-    def test_tic_tac_toe_second_win(self):
+    def test_second_win(self):
         """
         Tests if the tic tac toe properly detects a case of the second player winning.
 
@@ -58,7 +58,7 @@ class TicTacToeTestCase(TestCase, SeqTestCaseMixin):
 
         self.assertEqual([-1, 1], payoffs)
 
-    def test_tic_tac_toe_draw(self):
+    def test_draw(self):
         """
         Tests if the tic tac toe properly detects a case of a tied game.
 
