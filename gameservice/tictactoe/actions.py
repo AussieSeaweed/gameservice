@@ -10,7 +10,14 @@ class TicTacToeAction(SequentialAction, ABC):
     """
     This is a class that represents tic tac toe actions.
     """
-    pass
+
+    @property
+    def chance(self):
+        return False
+
+    @property
+    def public(self):
+        return True
 
 
 class MarkAction(TicTacToeAction):
@@ -41,14 +48,6 @@ class MarkAction(TicTacToeAction):
             self.game.player = next(self.player)
         else:
             self.game.player = None
-
-    @property
-    def chance(self):
-        return False
-
-    @property
-    def public(self):
-        return True
 
     def __str__(self):
         return f'Mark row {self.__r} column {self.__c}'
