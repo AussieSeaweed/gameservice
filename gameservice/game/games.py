@@ -12,19 +12,14 @@ class Game(ABC):
     instance is created, its environment, nature, and players are also created through the invocations of
     corresponding create methods, which should be overridden by the subclasses. Also, every subclass should override the
     terminal property accordingly.
-
-    Any supplied keyword arguments during initialization is set as an attribute of the instance.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         self.__environment = self.create_environment()
         self.__nature = self.create_nature()
         self.__players = self.create_player()
 
         self.__logs = []
-
-        for key, value in kwargs.items():
-            setattr(self, key, value)
 
     @property
     def environment(self):
@@ -100,8 +95,8 @@ class SequentialGame(Game, ABC):
     must be set to None to denote such.
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
 
         self.player = self.initial_player
 

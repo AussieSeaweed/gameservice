@@ -21,8 +21,8 @@ class PokerGame(SequentialGame, ABC):
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
 
         if not len(self.starting_stacks) > 1:
             raise ParameterException('Poker is played by more than 2 players')
@@ -172,8 +172,8 @@ class NLHEGame(PokerGame, ABC):
     The blinds property should be of length 2 and be sorted.
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
 
         if len(self.blinds) != 2 or self.blinds[0] >= self.blinds[1]:
             raise ParameterException('The blinds have to be length of 2 and be sorted')

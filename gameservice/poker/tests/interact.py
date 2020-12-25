@@ -24,7 +24,7 @@ class CustomNLHEGame(LazyNLHEGame):
 
 
 def main():
-    interact_seq(CustomNLHEGame)
+    interact_seq(lambda: LazyNLHEGame(ante=1, blinds=[1, 2], starting_stacks=[200, 100, 50]))
 
 
 if __name__ == '__main__':
