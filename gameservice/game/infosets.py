@@ -40,8 +40,8 @@ class InfoSet(ABC):
         """
         return {}
 
-    @classmethod
-    def nature_public_info(cls, nature):
+    @staticmethod
+    def nature_public_info(nature):
         """
         Serializes the nature publicly.
 
@@ -78,8 +78,8 @@ class InfoSet(ABC):
         """
         return self.nature_private_info(nature) if self.player.nature else self.nature_public_info(nature)
 
-    @classmethod
-    def player_public_info(cls, player):
+    @staticmethod
+    def player_public_info(player):
         """
         Serializes the player publicly.
 
@@ -140,8 +140,12 @@ class SequentialInfoSet(InfoSet):
     """
 
     def serialize(self):
-        return {
-            **super().serialize(),
-            'player': self.nature_info(self.game.player) if self.game.player.nature else \
-                self.player_info(self.game.player),
-        }
+        serialization = super().serialize()
+
+        if self.game.terminal:
+            serialization['player'] = None
+        else:
+            serialization['player'] = self.nature_info(self.game.player) if self.game.player.nature else \
+                                          self.player_info(self.game.player),
+
+        return serialization
