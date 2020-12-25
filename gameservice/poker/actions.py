@@ -23,12 +23,7 @@ class PokerPlayerAction(PokerAction, ABC):
     def chance(self):
         return False
 
-    def close(self):
-        """
-        Closes the poker street of the poker game.
-
-        :return: None
-        """
+    def _close(self):
         self.game.player = self.game.nature
         self.game.streets.pop(0)
 
@@ -56,13 +51,13 @@ class SubmissiveAction(PokerPlayerAction):
         self.player.hole_cards = None
 
         if sum(not player.mucked for player in self.game.players) == 1:
-            self.close()
+            self._close()
             self.game.streets.clear()
         else:
             self.game.player = next(self.player)
 
             if self.game.player.nature:
-                self.close()
+                self._close()
 
     def __str__(self):
         return 'Fold'
@@ -84,7 +79,7 @@ class PassiveAction(PokerPlayerAction):
         self.game.player = next(self.player)
 
         if self.game.player.nature:
-            self.close()
+            self._close()
 
     @property
     def amount(self):
@@ -138,10 +133,7 @@ class PokerNatureAction(PokerAction, ABC):
         return True
 
     @property
-    def opener(self):
-        """
-        :return: the opener of the poker street
-        """
+    def _opener(self):
         if any(player.bet for player in self.game.players):
             opener = self.game.players[1 if len(self.game.players) == 2 else 2]
 
@@ -152,13 +144,8 @@ class PokerNatureAction(PokerAction, ABC):
             except StopIteration:
                 return self.game.nature
 
-    def open(self):
-        """
-        Opens the poker street of the poker game.
-
-        :return: None
-        """
-        self.game.player = self.opener
+    def _open(self):
+        self.game.player = self._opener
 
         if self.game.player.nature:
             self.game.streets.pop(0)
@@ -169,8 +156,9 @@ class PokerNatureAction(PokerAction, ABC):
 
 class StreetAction(PokerNatureAction):
     """
-    This is a class that represents street actions. This action sets up the street according to the street instance by
-    dealing the player hole cards and the board.
+    This is a class that represents street actions.
+
+    This action sets up the street according to the street instance by dealing the player hole cards and the board.
     """
 
     def __init__(self, player):
@@ -188,11 +176,7 @@ class StreetAction(PokerNatureAction):
 
         self.game.environment.board.extend(self.game.deck.draw(self.game.street.num_board_cards))
 
-        self.open()
-
-    @property
-    def chance(self):
-        return True
+        self._open()
 
     def __str__(self):
         return f'Deal {self.game.street.num_hole_cards} hole cards and {self.game.street.num_board_cards} board cards'
@@ -200,8 +184,9 @@ class StreetAction(PokerNatureAction):
 
 class ShowdownAction(PokerNatureAction):
     """
-    This is a class that represents showdown actions. This action exposes the poker player's hole cards if necessary and
-    distributes the pot.
+    This is a class that represents showdown actions.
+
+    This action exposes the poker player's hole cards if necessary and distributes the pot.
     """
 
     def __init__(self, player):
@@ -214,19 +199,13 @@ class ShowdownAction(PokerNatureAction):
         super().act()
 
         if sum(not player.mucked for player in self.game.players) > 1:
-            self.show()
+            self._show()
 
-        self.distribute()
+        self._distribute()
 
         self.game.player = None
 
-    def show(self):
-        """
-        Iterates through the poker players in accordance to the showdown order and exposes the player's hole cards if
-        necessary.
-
-        :return: None
-        """
+    def _show(self):
         players = self.game.players[self.game.environment.aggressor.index:] + self.game.players[
                                                                               :self.game.environment.aggressor.index]
         commitments = defaultdict(lambda: 0)
@@ -239,12 +218,7 @@ class ShowdownAction(PokerNatureAction):
             else:
                 commitments[player.hand] = max(commitments[player.hand], player.commitment)
 
-    def distribute(self):
-        """
-        Distributes the pot to the winners.
-
-        :return: None
-        """
+    def _distribute(self):
         players = [player for player in self.game.players if not player.mucked]
         baseline = 0
 

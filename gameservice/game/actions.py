@@ -46,8 +46,10 @@ class Action(ABC):
 
     def act(self):
         """
-        Applies the action to the associated game. The overridden act method should first call the super method and then
-        make the necessary modifications to the game.
+        Applies the action to the associated game.
+
+        The overridden act method should first call the super method and then make the necessary modifications to the
+        game.
 
         :return: None
         :raise GameServiceException: if game validation fails
@@ -75,11 +77,6 @@ class Action(ABC):
 
     @abstractmethod
     def __str__(self):
-        """
-        Converts the action into a string representation.
-
-        :return: the string representation of the action
-        """
         pass
 
 
