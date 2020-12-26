@@ -27,6 +27,13 @@ class PokerInfoSet(SequentialInfoSet):
             'hole_cards': None if self.game.players[index].hole_cards is None else [
                 str(card) if self.game.terminal else None for card in self.game.players[index].hole_cards
             ],
+
+            'mucked': self.game.players[index].mucked,
+            'commitment': self.game.players[index].commitment,
+            'total': self.game.players[index].total,
+            'effective_stack': self.game.players[index].effective_stack,
+            'relevant': self.game.players[index].relevant,
+            'hand': self.game.players[index].hand,
         }
 
     def player_private_info(self, index):

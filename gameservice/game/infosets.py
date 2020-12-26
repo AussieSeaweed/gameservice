@@ -51,6 +51,8 @@ class InfoSet(ABC):
             'index': self.game.nature.index,
             'payoff': self.game.nature.payoff,
             'actions': [str(action) for action in self.game.nature.actions if action.public],
+            'next': str(next(self.game.nature)),
+            'str': str(self.game.nature),
         }
 
     @property
@@ -89,6 +91,8 @@ class InfoSet(ABC):
             'index': self.game.players[index].index,
             'payoff': self.game.players[index].payoff,
             'actions': [str(action) for action in self.game.players[index].actions if action.public],
+            'next': str(next(self.game.players[index])),
+            'str': str(self.game.players[index]),
         }
 
     def player_private_info(self, index):
