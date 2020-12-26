@@ -32,7 +32,7 @@ To create NLHE games, you first have to define the game parameters, as seen belo
 
 
 You can create lazy no-limit hold'em games by replacing NLHEGame with LazyNLHEGame. The difference between NLHEGame and
-LazyNLHEGame is explained in :doc:`interact` page.
+LazyNLHEGame is explained in :doc:`gameservice.poker`.
 
 
 Creating Tic Tac Toe Games

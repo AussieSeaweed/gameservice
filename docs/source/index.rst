@@ -31,8 +31,12 @@ second with randomly chosen actions.
 Contributing
 ------------
 
-Current focus of development is to improve existing games' speed and implement more types of games. You can contribute
-on `Github <https://github.com/AussieSeaweed/gameservice>`_.
+Current focuses of development is the following:
+   - improve existing games' speed
+   - implement more types of games
+   - improve documentations
+
+You can contribute on `Github <https://github.com/AussieSeaweed/gameservice>`_.
 
 .. toctree::
    :maxdepth: 1
