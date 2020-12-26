@@ -50,7 +50,7 @@ class InfoSet(ABC):
             'nature': self.game.nature.nature,
             'index': self.game.nature.index,
             'payoff': self.game.nature.payoff,
-            'actions': [str(action) for action in self.game.nature.actions if action.public],
+            'actions': list(map(str, filter(lambda action: action.public, self.game.nature.actions))),
             'next': str(next(self.game.nature)),
             'str': str(self.game.nature),
         }
@@ -64,7 +64,7 @@ class InfoSet(ABC):
         """
         return {
             **self.nature_public_info,
-            'actions': [str(action) for action in self.game.nature.actions],
+            'actions': list(map(str, self.game.nature.actions)),
         }
 
     @property
@@ -90,7 +90,7 @@ class InfoSet(ABC):
             'nature': self.game.players[index].nature,
             'index': self.game.players[index].index,
             'payoff': self.game.players[index].payoff,
-            'actions': [str(action) for action in self.game.players[index].actions if action.public],
+            'actions': list(map(str, filter(lambda action: action.public, self.game.players[index].actions))),
             'next': str(next(self.game.players[index])),
             'str': str(self.game.players[index]),
         }
