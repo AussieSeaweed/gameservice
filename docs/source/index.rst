@@ -32,6 +32,7 @@ Contributing
 ------------
 
 Current focuses of development is the following:
+   - addint type hints
    - improve existing games' speed
    - implement more types of games
    - improve documentations
