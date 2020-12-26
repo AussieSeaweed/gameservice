@@ -15,7 +15,7 @@ Try out the following code:
 
     import json
 
-    from gameservice.tictactoe import TicTacToeGame
+    from gameframe.tictactoe import TicTacToeGame
 
     game = TicTacToeGame() # Create a tic tac toe game (any sequential game would work)
 
@@ -43,7 +43,7 @@ This is an example code of interacting with lazy no-limit hold'em games.
 
 .. code-block:: python
 
-    from gameservice.poker import LazyNLHEGame
+    from gameframe.poker import LazyNLHEGame
     import json
 
     class CustomNLHEGame(LazyNLHEGame):

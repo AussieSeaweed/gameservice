@@ -1,14 +1,14 @@
 import setuptools
 
 setuptools.setup(
-    name='gameservice',
+    name='gameframe',
     version='0.0.1',
     author='Juho Kim',
     author_email='juho-kim@outlook.com',
     description='A package for various game implementations on python',
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/AussieSeaweed/gameservice',
+    url='https://github.com/AussieSeaweed/gameframe',
     packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',

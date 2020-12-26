@@ -1,7 +1,7 @@
 Create Games
 ============
 
-You can create No-Limit Hold'em and Tic Tac Toe Games with gameservice.
+You can create No-Limit Hold'em and Tic Tac Toe Games with gameframe.
 
 
 Creating No-Limit Texas Hold'em Games
@@ -11,7 +11,7 @@ To create NLHE games, you first have to define the game parameters, as seen belo
 
 .. code-block:: python
 
-    from gameservice.poker import NLHEGame
+    from gameframe.poker import NLHEGame
 
 
     class TestGame(NLHEGame):
@@ -32,7 +32,7 @@ To create NLHE games, you first have to define the game parameters, as seen belo
 
 
 You can create lazy no-limit hold'em games by replacing NLHEGame with LazyNLHEGame. The difference between NLHEGame and
-LazyNLHEGame is explained in :doc:`gameservice.poker`.
+LazyNLHEGame is explained in :doc:`gameframe.poker`.
 
 
 Creating Tic Tac Toe Games
@@ -42,6 +42,6 @@ Tic Tac Toe games are more straight-forward to create.
 
 .. code-block:: python
 
-    from gameservice.tictactoe import TicTacToeGame
+    from gameframe.tictactoe import TicTacToeGame
 
     game = TicTacToeGame()

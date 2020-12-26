@@ -12,13 +12,12 @@
 #
 # import os
 # import sys
-#
-# sys.path.insert(0, os.path.abspath('path/to/module'))
+# sys.path.insert(0, os.path.abspath('.'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'gameservice'
+project = 'gameframe'
 copyright = '2020, Juho Kim'
 author = 'Juho Kim'
 
