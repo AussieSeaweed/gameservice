@@ -32,7 +32,7 @@ class PokerGame(SequentialGame, ABC):
         self.__limit = self.create_limit()
         self.__streets = self.create_streets()
 
-        self.setup()
+        self._setup()
 
     def create_environment(self):
         return PokerEnvironment(self)
@@ -82,12 +82,7 @@ class PokerGame(SequentialGame, ABC):
         """
         return self.__streets[0] if self.__streets else None
 
-    def setup(self):
-        """
-        Assigns starting stacks, takes antes, and blinds the players.
-
-        :return: None
-        """
+    def _setup(self):
         blinds = reversed(self.blinds) if len(self.players) == 2 else self.blinds
 
         for player, starting_stack, blind in zip_longest(self.players, self.starting_stacks, blinds):

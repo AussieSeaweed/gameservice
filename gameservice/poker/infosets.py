@@ -13,10 +13,10 @@ class PokerInfoSet(SequentialInfoSet):
     def environment_info(self):
         return {
             **super().environment_info,
+            'aggressor': None if self.game.environment.aggressor is None else str(self.game.environment.aggressor),
             'min_delta': self.game.environment.min_delta,
             'pot': self.game.environment.pot,
             'board': list(map(str, self.game.environment.board)),
-            'aggressor': None if self.game.environment.aggressor is None else str(self.game.environment.aggressor),
         }
 
     def player_public_info(self, index):
