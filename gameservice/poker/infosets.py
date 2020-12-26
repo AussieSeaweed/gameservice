@@ -33,7 +33,7 @@ class PokerInfoSet(SequentialInfoSet):
             'total': self.game.players[index].total,
             'effective_stack': self.game.players[index].effective_stack,
             'relevant': self.game.players[index].relevant,
-            'hand': self.game.players[index].hand,
+            'hand': str(self.game.players[index].hand),
         }
 
     def player_private_info(self, index):
