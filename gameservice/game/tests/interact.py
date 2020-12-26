@@ -23,4 +23,6 @@ def sequential_interact(sequential_game_factory):
 
         actions[0 if len(actions) == 1 else int(input('Action #: '))].act()
 
-    print(dumps((sequential_game.players[0] if sequential_game.nature is None else sequential_game.nature).info_set.serialize(), indent=4))
+    print(dumps(
+        (sequential_game.players[0] if sequential_game.nature is None else sequential_game.nature).info_set.serialize(),
+        indent=4))

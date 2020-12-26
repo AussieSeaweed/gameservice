@@ -1,6 +1,6 @@
-from treys.evaluator import Evaluator
-from treys.deck import Deck
 from treys.card import Card
+from treys.deck import Deck
+from treys.evaluator import Evaluator
 
 evaluator = Evaluator()
 
