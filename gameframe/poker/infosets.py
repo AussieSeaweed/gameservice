@@ -33,7 +33,7 @@ class PokerInfoSet(SequentialInfoSet):
             'total': self.game.players[index].total,
             'effective_stack': self.game.players[index].effective_stack,
             'relevant': self.game.players[index].relevant,
-            'hand': None if not self.game.terminal or self.game.players[index].hand is None else str(
+            'hand': None if self.game.players[index].hand is None or not self.game.terminal else str(
                 self.game.players[index].hand),
         }
 
