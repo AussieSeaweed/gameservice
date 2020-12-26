@@ -100,7 +100,7 @@ class InfoSet(ABC):
         """
         return {
             **self.player_public_info(index),
-            'actions': [str(action) for action in self.game.players[index].actions],
+            'actions': list(map(str, self.game.players[index].actions)),
         }
 
     def player_info(self, index):
