@@ -13,9 +13,8 @@ Try out the following code:
 
 .. code-block:: python
 
-    import json
-
     from gameframe.tictactoe import TicTacToeGame
+    from json import dumps
 
     game = TicTacToeGame() # Create a tic tac toe game (any sequential game would work)
 
@@ -44,7 +43,7 @@ This is an example code of interacting with lazy no-limit hold'em games.
 .. code-block:: python
 
     from gameframe.poker import LazyNLHEGame
-    import json
+    from json import dumps
 
     class CustomNLHEGame(LazyNLHEGame):
         @property
