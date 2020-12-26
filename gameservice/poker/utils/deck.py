@@ -3,9 +3,8 @@ This module defines decks in gameservice.
 """
 from abc import ABC, abstractmethod
 
-import treys
-
 from .card import Card
+from .treys_utils import create_standard_deck
 
 
 class Deck(ABC):
@@ -40,12 +39,14 @@ class StandardDeck(Deck):
     """
 
     def __init__(self):
-        self.__deck = treys.Deck()
+        self.__deck = create_standard_deck()
 
     def draw(self, num_cards):
-        card_ints = [self.__deck.draw(1)] if num_cards == 1 else self.__deck.draw(num_cards)
+        cards = list(map(Card, self.__deck[:num_cards]))
 
-        return [Card(treys.Card.int_to_str(card_int)) for card_int in card_ints]
+        del self.__deck[:num_cards]
+
+        return cards
 
     def peek(self, num_cards):
-        return [Card(treys.Card.int_to_str(card_int)) for card_int in self.__deck.cards[:num_cards]]
+        return list(map(Card, self.__deck.cards[:num_cards]))

@@ -1,7 +1,7 @@
 """
 This module defines hands in gameservice.
 """
-from treys.evaluator import Evaluator
+from .treys_utils import rank_to_str
 
 
 class Hand:
@@ -11,7 +11,6 @@ class Hand:
 
     def __init__(self, hand_rank):
         self.__hand_rank = hand_rank
-        self.__evaluator = Evaluator()
 
     def __lt__(self, other):
         return self.__hand_rank < other.__hand_rank
@@ -23,5 +22,4 @@ class Hand:
         return hash(self.__hand_rank)
 
     def __str__(self):
-        return f'{self.__hand_rank} (' \
-               f'{self.__evaluator.class_to_string(self.__evaluator.get_rank_class(self.__hand_rank))})'
+        return f'{self.__hand_rank} ({rank_to_str(self.__hand_rank)})'

@@ -78,6 +78,7 @@ The following is an example console interaction (it is very long). In an actual 
 the game this way anyway.
 
 .. code-block:: console
+
     {
         "environment": {
             "aggressor": null,

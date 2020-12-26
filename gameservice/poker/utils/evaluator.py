@@ -3,9 +3,8 @@ This module defines evaluators in gameservice.
 """
 from abc import ABC, abstractmethod
 
-import treys
-
 from .hand import Hand
+from .treys_utils import evaluate
 
 
 class Evaluator(ABC):
@@ -30,13 +29,10 @@ class StandardEvaluator(Evaluator):
     This is a class that represents standard evaluators.
     """
 
-    def __init__(self):
-        self.__evaluator = treys.Evaluator()
-
     def hand(self, hole_cards, board):
-        card_ints = [treys.Card.new(str(card)) for card in hole_cards + board]
+        if len(hole_cards) + len(board) >= 5:
+            card_strs = list(map(str, hole_cards + board))
 
-        try:
-            return Hand(self.__evaluator.evaluate(card_ints, []))
-        except KeyError:
+            return Hand(evaluate(card_strs))
+        else:
             return None

@@ -25,8 +25,8 @@ Implementation Notes
 
 GameService currently implements No Limit Texas Hold'em and Tic Tac Toe games. As it stands right now, you can run ~5000
 tic tac toe games per second. For poker games, the number of games you can run varies depending on the number of bet
-sizes, but, for LazyNLHEGame instances (only fold, check, call, min or max bet/raise), around 100 games can be run per
-second with randomly chosen actions.
+sizes, but, for LazyNLHEGame instances (only fold, check, call, min or max bet/raise), ~400 games can be run per second
+with randomly chosen actions.
 
 Contributing
 ------------
