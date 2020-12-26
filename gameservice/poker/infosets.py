@@ -33,7 +33,8 @@ class PokerInfoSet(SequentialInfoSet):
             'total': self.game.players[index].total,
             'effective_stack': self.game.players[index].effective_stack,
             'relevant': self.game.players[index].relevant,
-            'hand': str(self.game.players[index].hand),
+            'hand': None if not self.game.terminal or self.game.players[index].hand is None else str(
+                self.game.players[index].hand),
         }
 
     def player_private_info(self, index):
@@ -41,4 +42,5 @@ class PokerInfoSet(SequentialInfoSet):
             **super().player_private_info(index),
             'hole_cards': None if self.game.players[index].hole_cards is None else list(
                 map(str, self.game.players[index].hole_cards)),
+            'hand': None if self.game.players[index].hand is None else str(self.game.players[index].hand),
         }

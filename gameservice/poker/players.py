@@ -91,7 +91,7 @@ class PokerPlayer(Player):
         """
         :return: the hand of the poker player if any hand is made else None
         """
-        return self.game.evaluator.hand(self.hole_cards, self.game.environment.board)
+        return None if self.mucked else self.game.evaluator.hand(self.hole_cards, self.game.environment.board)
 
     def __next__(self):
         player = super().__next__()
