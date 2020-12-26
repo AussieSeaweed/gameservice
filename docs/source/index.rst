@@ -31,7 +31,7 @@ with randomly chosen actions.
 Contributing
 ------------
 
-Current focuses of development is the following:
+Current focuses of development are the following:
    - adding type hints
    - improve existing games' speed
    - implement more types of games
