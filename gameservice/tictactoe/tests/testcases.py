@@ -3,11 +3,11 @@ This module defines tic tac toe test cases in gameservice.
 """
 from unittest import TestCase, main
 
-from gameservice.game.tests.testcasemixins import SeqTestCaseMixin
+from gameservice.game.tests.testcasemixins import SequentialTestCaseMixin
 from gameservice.tictactoe import TicTacToeGame
 
 
-class TicTacToeTestCase(TestCase, SeqTestCaseMixin):
+class TicTacToeTestCase(TestCase, SequentialTestCaseMixin):
     """
     This is a class for tic tac toe test cases.
     """

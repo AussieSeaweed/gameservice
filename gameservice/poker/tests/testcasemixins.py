@@ -1,9 +1,9 @@
 from abc import ABC
 
-from gameservice.game.tests.testcasemixins import SeqTestCaseMixin
+from gameservice.game.tests.testcasemixins import SequentialTestCaseMixin
 
 
-class PokerTestCaseMixin(SeqTestCaseMixin, ABC):
+class PokerTestCaseMixin(SequentialTestCaseMixin, ABC):
     """
     This is a mixin for poker test cases.
     """

@@ -1,7 +1,7 @@
 """
 This module allows interactions with custom no-limit texas hold'em games.
 """
-from gameservice.game.tests.interact import interact_seq
+from gameservice.game.tests.interact import sequential_interact
 from gameservice.poker import LazyNLHEGame
 
 
@@ -24,7 +24,7 @@ class CustomNLHEGame(LazyNLHEGame):
 
 
 def main():
-    interact_seq(CustomNLHEGame)
+    sequential_interact(CustomNLHEGame)
 
 
 if __name__ == '__main__':

@@ -1,12 +1,12 @@
 """
 This module allows interactions with tic tac toe games.
 """
-from gameservice.game.tests.interact import interact_seq
+from gameservice.game.tests.interact import sequential_interact
 from gameservice.tictactoe import TicTacToeGame
 
 
 def main():
-    interact_seq(TicTacToeGame)
+    sequential_interact(TicTacToeGame)
 
 
 if __name__ == '__main__':

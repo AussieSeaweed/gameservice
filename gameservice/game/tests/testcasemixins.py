@@ -32,7 +32,7 @@ class TestCaseMixin(ABC):
         pass
 
 
-class SeqTestCaseMixin(TestCaseMixin, ABC):
+class SequentialTestCaseMixin(TestCaseMixin, ABC):
     """
     This is a mixin for sequential test cases.
     """
