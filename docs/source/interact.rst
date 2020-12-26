@@ -47,10 +47,6 @@ This is an example code of interacting with lazy no-limit hold'em games.
     import json
 
     class CustomNLHEGame(LazyNLHEGame):
-        """
-        This is a class that represents a custom no-limit texas hold'em games.
-        """
-
         @property
         def ante(self):
             return 1
