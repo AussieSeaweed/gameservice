@@ -35,10 +35,9 @@ class Action(ABC):
         Validates the integrity of the action.
 
         :return: None
-        :raise GameTerminalException: if the game is terminal
-        :raise GamePlayerException: if the action is a chance action but the player is not nature or vice versa
+        :raise TerminalException: if the game is terminal
+        :raise PlayerException: if the action is a chance action but the player is not nature or vice versa
         """
-
         if self.game.terminal:
             raise TerminalException('Actions are not applicable to terminal games')
         elif self.chance != self.player.nature:
