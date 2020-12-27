@@ -1,7 +1,10 @@
-from ..game import Game
+from abc import ABC, abstractmethod
+
+from ..game import Game, E, N, P
+from .utils import G
 
 
-class SequentialGame(Game[E, N, P], ABC):
+class SequentialGame(Game[G, E, N, P], ABC):
     """
     This is a class that represents sequential games.
 

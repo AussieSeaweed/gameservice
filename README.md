@@ -1,5 +1,4 @@
-gameframe
-=========
+# gameframe
 
 gameframe is a Python library that provides a general framework for board games and implements No-Limit Texas Hold'em
 and Tic Tac Toe games.

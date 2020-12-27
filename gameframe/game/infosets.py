@@ -1,20 +1,12 @@
-"""
-This module defines info-sets and sequential info-sets in gameframe.
-"""
 from abc import ABC
 from typing import Generic
+from json import dumps
 
 from .utils import E, G, N, P
 
 
 class InfoSet(Generic[G, E, N, P], ABC):
-    """
-    This is a class that represents info-sets.
-
-    The subclasses of this class should overload environment_info, nature_public_info, nature_private_info,
-    player_public_info, and player_private_info methods accordingly to represent various elements of the info-set of the
-    corresponding player.
-    """
+    """InfoSet is the abstract base class for all info-sets."""
 
     def __init__(self, player):
         self.__player = player
@@ -133,5 +125,8 @@ class InfoSet(Generic[G, E, N, P], ABC):
             'terminal': self.game.terminal,
         }
 
+    def __eq__(self, other):
+        return self.serialize() == other.serialize() if isinstance(other, InfoSet) else False
+
     def __str__(self):
-        return str(self.serialize())
+        return dumps(self.serialize(), indent=4)
