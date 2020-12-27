@@ -1,6 +1,3 @@
-"""
-This module defines tic tac toe games in gameframe.
-"""
 from .environments import TicTacToeEnvironment
 from .players import TicTacToePlayer
 from ..sequential import SequentialGame

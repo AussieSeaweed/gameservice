@@ -1,6 +1,3 @@
-"""
-This module defines tic tac toe environments in gameframe.
-"""
 from ..game import Environment
 
 

@@ -1,7 +1,7 @@
 """
 This module allows interactions with custom no-limit texas hold'em games.
 """
-from gameframe.game.tests.interact import sequential_interact
+from gameframe.sequential.tests.interact import sequential_interact
 from gameframe.poker import LazyNLHEGame
 
 

@@ -1,6 +1,3 @@
-"""
-This module defines tic tac toe players in gameframe.
-"""
 from .actions import MarkAction
 from .infosets import TicTacToeInfoSet
 from ..game import Player
@@ -28,3 +25,7 @@ class TicTacToePlayer(Player):
     @property
     def info_set(self):
         return TicTacToeInfoSet(self)
+
+
+class TicTacToeNature(Player):
+    pass

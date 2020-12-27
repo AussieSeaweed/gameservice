@@ -1,7 +1,4 @@
-"""
-This module defines tic tac toe info-sets in gameframe.
-"""
-from ..game import SequentialInfoSet
+from ..sequential import SequentialInfoSet
 
 
 class TicTacToeInfoSet(SequentialInfoSet):

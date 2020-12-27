@@ -1,6 +1,6 @@
 from abc import ABC
 
-from gameframe.game.tests.testcasemixins import SequentialTestCaseMixin
+from gameframe.sequential.tests.testcasemixins import SequentialTestCaseMixin
 
 
 class PokerTestCaseMixin(SequentialTestCaseMixin, ABC):

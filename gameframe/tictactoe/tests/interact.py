@@ -1,7 +1,7 @@
 """
 This module allows interactions with tic tac toe games.
 """
-from gameframe.game.tests.interact import sequential_interact
+from gameframe.sequential.tests.interact import sequential_interact
 from gameframe.tictactoe import TicTacToeGame
 
 

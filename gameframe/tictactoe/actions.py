@@ -1,9 +1,6 @@
-"""
-This module defines tic tac toe actions in gameframe.
-"""
 from abc import ABC
 
-from ..game import ActionArgumentException, SequentialAction
+from ..sequential import SequentialAction
 
 
 class TicTacToeAction(SequentialAction, ABC):
@@ -31,13 +28,13 @@ class MarkAction(TicTacToeAction):
         self.__r = r
         self.__c = c
 
-    def validate(self):
-        super().validate()
+    def verify(self) -> None:
+        super().verify()
 
         if not (0 <= self.__r < 3 and 0 <= self.__c < 3):
-            raise ActionArgumentException('The cell coordinates are invalid')
+            raise ValueError('The cell coordinates are invalid')
         elif self.game.environment.board[self.__r][self.__c] is not None:
-            raise ActionArgumentException('The cell is already occupied')
+            raise ValueError('The cell is already occupied')
 
     def act(self):
         super().act()

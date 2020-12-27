@@ -18,8 +18,8 @@ class Game(Generic[G, E, N, P], ABC):
     The game class is a wrapper class that envelops all the elements of the game: the environment, the nature, and
     the players. They each represent elements of the game.
 
-    The environment contains global information about a game state. This information should not belong to any player in
-    particular and should be all public.
+    The environment contains global information about a game state that does not belong to any player in particular and
+    is public.
 
     The nature is a player that represents the environment and carries out chance actions. The nature may hold
     private information regarding a game state that no other player knows about. However, the nature should not be

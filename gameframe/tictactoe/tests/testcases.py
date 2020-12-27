@@ -3,7 +3,7 @@ This module defines tic tac toe test cases in gameframe.
 """
 from unittest import TestCase, main
 
-from gameframe.game.tests.testcasemixins import SequentialTestCaseMixin
+from gameframe.sequential.tests.testcasemixins import SequentialTestCaseMixin
 from gameframe.tictactoe import TicTacToeGame
 
 
