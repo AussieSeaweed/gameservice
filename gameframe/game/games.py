@@ -1,113 +1,97 @@
-"""
-This module defines games and sequential games in gameframe.
-"""
 from abc import ABC, abstractmethod
+from typing import Generic, List
+
+from .utils import E, G, Log, N, P
 
 
-class Game(ABC):
-    """
-    This is a class that represents games.
+class Game(Generic[G, E, N, P], ABC):
+    """Game is the abstract base class for all games.
+    It provides a rigid definition on which various games can be defined. Every game has the following elements that
+    need to be defined:
 
-    Implementations of different games should inherit this class from which they can be instantiated. When a Game
-    instance is created, its environment, nature, and players are also created through the invocations of
-    corresponding create methods, which should be overridden by the subclasses. Also, every subclass should override the
-    terminal property accordingly.
+    * The game
+    * The environment
+    * Nature
+    * The players
+
+    The game class is a wrapper class that envelops all the elements of the game: the environment, nature, and the
+    players. They each represent elements of the game.
+
+    The environment contains global information about a game state. This information should not belong to any player in
+    particular and should be all public.
+
+    Nature is a player that represents the environment and carries out chance actions. Nature may hold private
+    information regarding a game state that no other player knows about. However, nature should not be aware of
+    private information held by other players in the game.
+
+    The players of the game are the entities that act non-chance actions. A player is aware of all public player
+    information of other players and private player information of itself.
     """
 
     def __init__(self):
-        self.__environment = self.create_environment()
-        self.__nature = self.create_nature()
-        self.__players = self.create_player()
+        self.__environment: E = self.create_environment()
+        self.__nature: N = self.create_nature()
+        self.__players: List[P] = self.create_players()
 
-        self.__logs = []
+        self.__logs: List[Log] = []
 
     @property
-    def environment(self):
+    def environment(self) -> E:
         """
-        :return: the environment of the game
+        :return: the game environment
         """
         return self.__environment
 
     @property
-    def nature(self):
+    def nature(self) -> N:
         """
-        :return: the nature of the game
+        :return: the game nature
         """
         return self.__nature
 
     @property
-    def players(self):
+    def players(self) -> List[P]:
         """
-        :return: a list of the players of the game
+        :return: the game players
         """
         return self.__players
 
     @property
-    def logs(self):
+    def logs(self) -> List[Log]:
         """
-        :return: a list of the logs of the game
+        :return: the game logs
         """
         return self.__logs
 
     @abstractmethod
-    def create_environment(self):
-        """
-        Creates an environment.
+    def create_environment(self) -> E:
+        """Creates the game environment.
 
-        :return: an environment
-        """
-        pass
-
-    @abstractmethod
-    def create_nature(self):
-        """
-        Creates a nature.
-
-        :return: a nature
+        :return: the created environment
         """
         pass
 
     @abstractmethod
-    def create_player(self):
-        """
-        Creates players.
+    def create_nature(self) -> N:
+        """Creates the game nature.
 
-        :return: a list of players
+        :return: the created nature
+        """
+        pass
+
+    @abstractmethod
+    def create_players(self) -> List[P]:
+        """Creates the game players.
+
+        :return: the created players
         """
         pass
 
     @property
     @abstractmethod
-    def terminal(self):
-        """
-        :return: a boolean value of the terminality of the game
-        """
-        pass
+    def terminal(self) -> bool:
+        """Determines whether or not the game is terminal.
 
-
-class SequentialGame(Game, ABC):
-    """
-    This is a class that represents sequential games.
-
-    In sequential games, only one player can act at a time. The player in turn can be accessed through the player
-    attribute of the SequentialGame instance. The initial_player abstract property should be overridden by the
-    subclasses to represent the player who is the first to act. If a sequential game is terminal, its player attribute
-    must be set to None to denote such.
-    """
-
-    def __init__(self):
-        super().__init__()
-
-        self.player = self.initial_player
-
-    @property
-    def terminal(self):
-        return self.player is None
-
-    @property
-    @abstractmethod
-    def initial_player(self):
-        """
-        :return: the initial player of the sequential game
+        :return: True if the game is terminal; False otherwise
         """
         pass

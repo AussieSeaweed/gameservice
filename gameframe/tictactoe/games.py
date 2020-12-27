@@ -3,10 +3,10 @@ This module defines tic tac toe games in gameframe.
 """
 from .environments import TicTacToeEnvironment
 from .players import TicTacToePlayer
-from ..game import SequentialGame
+from ..sequential import SequentialGame
 
 
-class TicTacToeGame(SequentialGame):
+class TicTacToeGame(SequentialGame[TicTacToeEnvironment, None, TicTacToePlayer]):
     """
     This is a class that represents tic tac toe games.
     """
@@ -17,7 +17,7 @@ class TicTacToeGame(SequentialGame):
     def create_nature(self):
         return None
 
-    def create_player(self):
+    def create_players(self):
         return [TicTacToePlayer(self) for _ in range(2)]
 
     @property
