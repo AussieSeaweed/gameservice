@@ -1,10 +1,9 @@
-from ..game import InfoSet
+from .utils import G
+from ..game import E, InfoSet, N, P
 
 
-class SequentialInfoSet(InfoSet):
-    """
-    This is a class that represents sequential info-sets.
-    """
+class SequentialInfoSet(InfoSet[G, E, N, P]):
+    """SequentialInfoSet is the abstract base class for all sequential info-sets."""
 
     def serialize(self):
         return {

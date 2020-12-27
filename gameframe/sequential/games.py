@@ -5,8 +5,7 @@ from .utils import G
 
 
 class SequentialGame(Game[G, E, N, P], ABC):
-    """
-    This is a class that represents sequential games.
+    """SequentialGame is the abstract base class for all sequential games.
 
     In sequential games, only one player can act at a time. The player in turn can be accessed through the player
     attribute of the SequentialGame instance. The initial_player abstract property should be overridden by the
@@ -17,10 +16,10 @@ class SequentialGame(Game[G, E, N, P], ABC):
     def __init__(self):
         super().__init__()
 
-        self.player = self.initial_player
+        self.player: P = self.initial_player
 
     @property
-    def terminal(self):
+    def terminal(self) -> bool:
         return self.player is None
 
     @property
