@@ -31,8 +31,6 @@ class StandardEvaluator(Evaluator):
 
     def hand(self, hole_cards, board):
         if len(hole_cards) + len(board) >= 5:
-            card_strs = list(map(str, hole_cards + board))
-
-            return Hand(evaluate(card_strs))
+            return Hand(evaluate(list(map(str, hole_cards)), list(map(str, board))))
         else:
             return None
