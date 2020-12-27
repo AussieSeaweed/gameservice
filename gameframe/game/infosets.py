@@ -2,9 +2,12 @@
 This module defines info-sets and sequential info-sets in gameframe.
 """
 from abc import ABC
+from typing import Generic
+
+from .utils import E, G, N, P
 
 
-class InfoSet(ABC):
+class InfoSet(Generic[G, E, N, P], ABC):
     """
     This is a class that represents info-sets.
 
@@ -132,15 +135,3 @@ class InfoSet(ABC):
 
     def __str__(self):
         return str(self.serialize())
-
-
-class SequentialInfoSet(InfoSet):
-    """
-    This is a class that represents sequential info-sets.
-    """
-
-    def serialize(self):
-        return {
-            **super().serialize(),
-            'player': None if self.game.terminal else str(self.game.player),
-        }

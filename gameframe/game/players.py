@@ -1,19 +1,16 @@
-"""
-This module defines players and natures in gameframe.
-"""
 from abc import ABC, abstractmethod
-from typing import Generic
-from .utils import G, E, N, P
+from typing import Generic, List, Optional
+
+from .actions import Action
+from .infosets import InfoSet
+from .utils import E, G, N, P
 
 
 class Player(Generic[G, E, N, P], ABC):
-    """
-    This is a class that represents players.
-    """
+    """Player is the abstract base class for all players."""
 
-    def __init__(self, game: G, index: int):
+    def __init__(self, game: G):
         self.__game: G = game
-        self.__index: int = index
 
     @property
     def game(self) -> G:
@@ -23,55 +20,45 @@ class Player(Generic[G, E, N, P], ABC):
         return self.__game
 
     @property
-    def index(self) -> int:
+    def index(self) -> Optional[int]:
         """
         :return: the index of the player
         """
-        return self.__index
+        return None if self.nature else self.game.players.index(self)
+
+    @property
+    def nature(self) -> bool:
+        """
+        :return: True if the player is nature, False otherwise
+        """
+        return self is self.game.nature
+
+    def __next__(self) -> Optional[P]:
+        return None if self.nature else self.game.players[(self.index + 1) % len(self.game.players)]
+
+    def __str__(self) -> str:
+        return 'Nature' if self.nature else f'Player {self.index}'
 
     @property
     @abstractmethod
-    def payoff(self):
+    def actions(self) -> List[Action[G, E, N, P]]:
         """
-        :return: the payoff of the player
+        :return: the actions of the player
         """
         pass
 
     @property
     @abstractmethod
-    def actions(self):
-        """
-        :return: a list of actions of the player
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def info_set(self):
+    def info_set(self) -> InfoSet[G, E, N, P]:
         """
         :return: the info-set of the player
         """
         pass
 
     @property
-    def nature(self):
+    @abstractmethod
+    def payoff(self) -> int:
         """
-        :return: a boolean value of whether or not the player is the nature
+        :return: the payoff of the player
         """
-        return self is self.game.nature
-
-    def __next__(self):
-        """
-        Finds the next player of the game unless the player is the nature, in which case the nature is returned.
-
-        :return: the next player or the nature of the game
-        """
-        return self.game.nature if self.nature else self.game.players[(self.index + 1) % len(self.game.players)]
-
-    def __str__(self):
-        """
-        Converts the player into a string representation.
-
-        :return: the string representation of the player
-        """
-        return f'Player {self.index}'
+        pass

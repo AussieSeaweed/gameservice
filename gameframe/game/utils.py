@@ -1,7 +1,9 @@
-"""
-This module defines utilities in gameframe.
-"""
-from typing import TypeVar
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, TypeVar
+
+if TYPE_CHECKING:
+    from .actions import Action
 
 G = TypeVar('G')
 E = TypeVar('E')
@@ -10,13 +12,14 @@ P = TypeVar('P')
 
 
 class Log:
-    """
-    This is a class that represents logs. Each log records information about an action taken in the game.
+    """Log is the class for game action logs.
+
+    Each log instance records information about an action taken in the game and the acting player.
     """
 
-    def __init__(self, action):
-        self.__action_str = str(action)
-        self.__player_str = str(action.player)
+    def __init__(self, action: Action[G, E, N, P]):
+        self.__action_str: str = str(action)
+        self.__player_str: str = str(action.player)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.__player_str}: {self.__action_str}'

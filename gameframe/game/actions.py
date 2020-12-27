@@ -1,93 +1,70 @@
-"""
-This module defines actions and sequential actions in gameframe.
-"""
 from abc import ABC, abstractmethod
+from typing import Generic
 
-from .exceptions import PlayerException, TerminalException, TypeException
-from .games import SequentialGame
-from .utils import Log
+from .utils import E, G, Log, N, P
 
 
-class Action(ABC):
-    """
-    This is a class that represents actions.
-    """
+class Action(Generic[G, E, N, P], ABC):
+    """Action is the abstract base class for all actions."""
 
-    def __init__(self, player):
-        self.__player = player
+    def __init__(self, player: P):
+        self.__player: P = player
 
     @property
-    def player(self):
+    def player(self) -> P:
         """
-        :return: the acting player
+        :return: the player of the action
         """
         return self.__player
 
     @property
-    def game(self):
+    def game(self) -> G:
         """
         :return: the game of the action
         """
         return self.player.game
 
-    def validate(self):
-        """
-        Validates the integrity of the action.
-
-        :return: None
-        :raise TerminalException: if the game is terminal
-        :raise PlayerException: if the action is a chance action but the player is not nature or vice versa
-        """
-        if self.game.terminal:
-            raise TerminalException('Actions are not applicable to terminal games')
-        elif self.chance != self.player.nature:
-            raise PlayerException('Nature acts chance actions')
-
-    def act(self):
-        """
-        Applies the action to the associated game.
+    def act(self) -> None:
+        """Applies the action to the game of the action.
 
         The overridden act method should first call the super method and then make the necessary modifications to the
         game.
 
         :return: None
-        :raise GameException: if game validation fails
+        :raise ValueError: if the action integrity verification fails
         """
-        self.validate()
+        self.verify()
 
         if self.public:
             self.game.logs.append(Log(self))
 
+    def verify(self) -> None:
+        """Verifies the integrity of the action.
+
+        :return: None
+        :raise ValueError: if the action integrity verification fails
+        """
+        if self.game.terminal:
+            raise ValueError('Actions are not applicable to terminal games')
+        elif self.chance != self.player.nature:
+            raise ValueError('Nature acts chance actions')
+
     @property
     @abstractmethod
-    def chance(self):
+    def chance(self) -> bool:
         """
-        :return: a boolean value of whether or not the action is a chance action
+        :return: True if the action is a chance action, False otherwise
         """
         pass
 
     @property
     @abstractmethod
-    def public(self):
+    def public(self) -> bool:
         """
-        :return: a boolean value of whether or not the action is public
+        :return: True if the action is a public action, False otherwise
         """
         pass
 
     @abstractmethod
-    def __str__(self):
+    def __str__(self) -> str:
         pass
-
-
-class SequentialAction(Action, ABC):
-    """
-    This is a class that represents sequential actions.
-    """
-
-    def validate(self):
-        super().validate()
-
-        if not isinstance(self.game, SequentialGame):
-            raise TypeException('The game is not a sequential game')
-        if self.player is not self.game.player:
-            raise PlayerException(f'{self.player} cannot act in turn')

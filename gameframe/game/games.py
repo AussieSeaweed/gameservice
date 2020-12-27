@@ -10,10 +10,10 @@ class Game(Generic[G, E, N, P], ABC):
     It provides a rigid definition on which various games can be defined. Every game has the following elements that
     need to be defined:
 
-    * The game
-    * The environment
-    * The nature
-    * The players
+        - The game
+        - The environment
+        - The nature
+        - The players
 
     The game class is a wrapper class that envelops all the elements of the game: the environment, the nature, and
     the players. They each represent elements of the game.
@@ -25,8 +25,8 @@ class Game(Generic[G, E, N, P], ABC):
     private information regarding a game state that no other player knows about. However, the nature should not be
     aware of any private information held by other players in the game.
 
-    The players of the game are the entities that act non-chance actions. A player is aware of all public player
-    information of other players and private player information of itself.
+    The players of the game are the entities that act non-chance actions. A player is aware of the environment
+    information, all the public player information of other players, and the private player information of itself.
     """
 
     def __init__(self):
@@ -93,6 +93,6 @@ class Game(Generic[G, E, N, P], ABC):
     def terminal(self) -> bool:
         """Determines whether or not the game is terminal.
 
-        :return: True if the game is terminal; False otherwise
+        :return: True if the game is terminal, False otherwise
         """
         pass
