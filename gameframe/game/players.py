@@ -2,36 +2,32 @@
 This module defines players and natures in gameframe.
 """
 from abc import ABC, abstractmethod
+from typing import Generic
+from .utils import G, E, N, P
 
 
-class Player(ABC):
+class Player(Generic[G, E, N, P], ABC):
     """
     This is a class that represents players.
     """
 
-    def __init__(self, game):
-        self.__game = game
+    def __init__(self, game: G, index: int):
+        self.__game: G = game
+        self.__index: int = index
 
     @property
-    def game(self):
+    def game(self) -> G:
         """
         :return: the game of the player
         """
         return self.__game
 
     @property
-    def nature(self):
-        """
-        :return: a boolean value of whether or not the player is the nature
-        """
-        return self is self.game.nature
-
-    @property
-    def index(self):
+    def index(self) -> int:
         """
         :return: the index of the player
         """
-        return None if self.nature else self.game.players.index(self)
+        return self.__index
 
     @property
     @abstractmethod
@@ -56,6 +52,13 @@ class Player(ABC):
         :return: the info-set of the player
         """
         pass
+
+    @property
+    def nature(self):
+        """
+        :return: a boolean value of whether or not the player is the nature
+        """
+        return self is self.game.nature
 
     def __next__(self):
         """

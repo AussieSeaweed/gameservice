@@ -1,15 +1,10 @@
-"""
-This module defines environments in gameframe.
-"""
 from abc import ABC
 from typing import Generic
 from .utils import G, E, N, P
 
 
 class Environment(Generic[G, E, N, P], ABC):
-    """
-    This is a class that represents environments.
-    """
+    """Environment is the base class for all environments."""
 
     def __init__(self, game: G):
         self.__game: G = game
