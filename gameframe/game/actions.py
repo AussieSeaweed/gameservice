@@ -10,20 +10,6 @@ class Action(Generic[G, E, N, P], ABC):
     def __init__(self, player: P):
         self.__player: P = player
 
-    @property
-    def player(self) -> P:
-        """
-        :return: the player of the action
-        """
-        return self.__player
-
-    @property
-    def game(self) -> G:
-        """
-        :return: the game of the action
-        """
-        return self.player.game
-
     def act(self) -> None:
         """Applies the action to the game of the action.
 
@@ -33,18 +19,21 @@ class Action(Generic[G, E, N, P], ABC):
         :return: None
         :raise ValueError: if the action integrity verification fails
         """
-        self.verify()
+        self._verify()
 
-    def verify(self) -> None:
-        """Verifies the integrity of the action.
-
-        :return: None
-        :raise ValueError: if the action integrity verification fails
+    @property
+    def game(self) -> G:
         """
-        if self.game.terminal:
-            raise ValueError('Actions are not applicable to terminal games')
-        elif self.chance != self.player.nature:
-            raise ValueError('Nature acts chance actions')
+        :return: the game of the action
+        """
+        return self.player.game
+
+    @property
+    def player(self) -> P:
+        """
+        :return: the player of the action
+        """
+        return self.__player
 
     @property
     @abstractmethod
@@ -65,3 +54,9 @@ class Action(Generic[G, E, N, P], ABC):
     @abstractmethod
     def __str__(self) -> str:
         pass
+
+    def _verify(self) -> None:
+        if self.game.terminal:
+            raise ValueError('Actions are not applicable to terminal games')
+        elif self.chance != self.player.nature:
+            raise ValueError('Nature acts chance actions')
