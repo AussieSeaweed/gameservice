@@ -1,61 +1,27 @@
-"""
-This module defines test case mixins and sequential test case mixins in gameframe.
-"""
 from abc import ABC, abstractmethod
 from random import choice
 
-
-class TestCaseMixin(ABC):
-    """
-    This is a mixin for game test cases.
-    """
-
-    @staticmethod
-    @abstractmethod
-    def create_game():
-        """
-        Creates a game instance.
-
-        :return: a game instance
-        """
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def validate_game(game):
-        """
-        Validates the integrity of the game.
-
-        :param game: a game of the test case
-        :return: a boolean value of the validity of the game
-        """
-        pass
+from gameframe.game.tests import TestCaseMixin
 
 
 class SequentialTestCaseMixin(TestCaseMixin, ABC):
-    """
-    This is a mixin for sequential test cases.
-    """
+    """SequentialTestCaseMixin is the abstract base class for all sequential test mixins."""
 
     @property
     @abstractmethod
-    def num_monte_carlo_tests(self):
-        """
-        :return: the number of monte carlo tests of sequential games
-        """
+    def _num_monte_carlo_tests(self):
         pass
 
     def test_monte_carlo(self):
-        """
-        Runs monte carlo tests of sequential games.
+        """Runs monte carlo tests of sequential games.
 
         :return: None
-        :raise AssertionError: if the game validation fails in any tests
+        :raise AssertionError: if the game integrity verification fails in any tests
         """
-        for i in range(self.num_monte_carlo_tests):
-            game = self.create_game()
+        for i in range(self._num_monte_carlo_tests):
+            game = self._create_game()
 
             while not game.terminal:
                 choice(game.player.actions).act()
 
-            assert self.validate_game(game)
+            assert self._verify(game)

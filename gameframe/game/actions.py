@@ -17,7 +17,7 @@ class Action(Generic[G, E, N, P], ABC):
         game.
 
         :return: None
-        :raise ValueError: if the action integrity verification fails
+        :raise ValueError: if the action integrity verification fails prior to the action
         """
         self._verify()
 
