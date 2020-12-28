@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Generic, List
+from typing import Any, Dict, Generic, List
 
 from .utils import E, G, N, P
 
@@ -30,9 +30,9 @@ class Game(Generic[G, E, N, P], ABC):
     """
 
     def __init__(self):
-        self.__environment: E = self.create_environment()
-        self.__nature: N = self.create_nature()
-        self.__players: List[P] = self.create_players()
+        self.__environment: E = self._create_environment()
+        self.__nature: N = self._create_nature()
+        self.__players: List[P] = self._create_players()
 
     @property
     def environment(self) -> E:
@@ -55,35 +55,26 @@ class Game(Generic[G, E, N, P], ABC):
         """
         return self.__players
 
+    @property
     @abstractmethod
-    def create_environment(self) -> E:
-        """Creates the environment of the game.
-
-        :return: the created environment of the game
+    def terminal(self) -> bool:
         """
-        pass
-
-    @abstractmethod
-    def create_nature(self) -> N:
-        """Creates the nature of the game.
-
-        :return: the created nature of the game
-        """
-        pass
-
-    @abstractmethod
-    def create_players(self) -> List[P]:
-        """Creates the players of the game.
-
-        :return: the created players of the game
+        :return: True if the game is terminal, False otherwise
         """
         pass
 
     @property
-    @abstractmethod
-    def terminal(self) -> bool:
-        """Determines whether or not the game is terminal.
+    def _information(self) -> Dict[str, Any]:
+        return {}
 
-        :return: True if the game is terminal, False otherwise
-        """
+    @abstractmethod
+    def _create_environment(self) -> E:
+        pass
+
+    @abstractmethod
+    def _create_nature(self) -> N:
+        pass
+
+    @abstractmethod
+    def _create_players(self) -> List[P]:
         pass
