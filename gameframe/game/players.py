@@ -47,7 +47,7 @@ class Player(Generic[G, E, N, P], Iterator[P], ABC):
         return self is self.game.nature
 
     def __next__(self) -> Optional[P]:
-        return None if self.nature else self.game.players[(self.index + 1) % len(self.game.players)]
+        return None if self.index is None else self.game.players[(self.index + 1) % len(self.game.players)]
 
     def __str__(self) -> str:
         return 'Nature' if self.nature else f'Player {self.index}'
