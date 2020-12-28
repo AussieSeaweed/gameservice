@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Optional
 
 from .utils import G
 from ..game import E, Game, N, P
@@ -32,5 +32,5 @@ class SequentialGame(Game[G, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def _initial_player(self) -> P:
+    def _initial_player(self) -> Optional[P]:
         pass

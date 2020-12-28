@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from .environments import TicTacToeEnvironment
 from .players import TicTacToeNature, TicTacToePlayer
@@ -18,5 +18,5 @@ class TicTacToeGame(SequentialGame['TicTacToeGame', TicTacToeEnvironment, TicTac
         return [TicTacToePlayer(self), TicTacToePlayer(self)]
 
     @property
-    def _initial_player(self) -> TicTacToePlayer:
+    def _initial_player(self) -> Optional[TicTacToePlayer]:
         return self.players[0]
