@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Generic, List, Optional
+from typing import Any, Dict, Generic, List, Optional
 
 from .actions import Action
-from .infosets import InfoSet
 from .utils import E, G, N, P
 
 
@@ -27,6 +26,20 @@ class Player(Generic[G, E, N, P], ABC):
         return None if self.nature else self.game.players.index(self)
 
     @property
+    def information_set(self) -> Dict[str, Any]:
+        """
+        :return: the information set of the player
+        """
+        return {
+            'game': self.game._information,
+            'environment': self.game.environment._information,
+            'nature': self.game.nature._private_information if self.nature else self.game.nature._public_information,
+            'player': list(
+                map(lambda player: player._private_information if self is player else player._public_information,
+                    self.game)),
+        }
+
+    @property
     def nature(self) -> bool:
         """
         :return: True if the player is nature, False otherwise
@@ -49,16 +62,21 @@ class Player(Generic[G, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def info_set(self) -> InfoSet[G, E, N, P]:
-        """
-        :return: the info-set of the player
-        """
-        pass
-
-    @property
-    @abstractmethod
     def payoff(self) -> int:
         """
         :return: the payoff of the player
         """
         pass
+
+    @property
+    def _private_information(self) -> Dict[str, Any]:
+        return {
+            **self._public_information,
+            'actions': self.actions,
+        }
+
+    @property
+    def _public_information(self) -> Dict[str, Any]:
+        return {
+            'actions': list(filter(lambda action: action.public, self.actions)),
+        }
