@@ -1,1 +1,1 @@
-from .testcasemixins import *
+from .testcases import *

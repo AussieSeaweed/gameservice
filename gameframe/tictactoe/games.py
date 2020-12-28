@@ -8,15 +8,15 @@ class TicTacToeGame(SequentialGame['TicTacToeGame', TicTacToeEnvironment, None, 
     This is a class that represents tic tac toe games.
     """
 
-    def create_environment(self):
+    def _create_environment(self):
         return TicTacToeEnvironment(self)
 
-    def create_nature(self):
+    def _create_nature(self):
         return TicTacToeNature(self)
 
-    def create_players(self):
+    def _create_players(self):
         return [TicTacToePlayer(self) for _ in range(2)]
 
     @property
-    def initial_player(self):
+    def _initial_player(self):
         return self.players[0]

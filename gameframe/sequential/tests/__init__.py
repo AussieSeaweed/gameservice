@@ -1,2 +1,2 @@
 from .interact import *
-from .testcasemixins import *
+from .testcases import *
