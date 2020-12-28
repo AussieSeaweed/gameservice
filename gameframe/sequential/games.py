@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
+from typing import Dict
 
-from ..game import Game, E, N, P
 from .utils import G
+from ..game import E, Game, N, P
 
 
 class SequentialGame(Game[G, E, N, P], ABC):
@@ -16,16 +17,20 @@ class SequentialGame(Game[G, E, N, P], ABC):
     def __init__(self):
         super().__init__()
 
-        self.player: P = self.initial_player
+        self.player: P = self._initial_player
 
     @property
     def terminal(self) -> bool:
         return self.player is None
 
     @property
+    def _information(self) -> Dict[str, str]:
+        return {
+            **super()._information,
+            'player': self.player,
+        }
+
+    @property
     @abstractmethod
-    def initial_player(self) -> P:
-        """
-        :return: the initial player of the sequential game
-        """
+    def _initial_player(self) -> P:
         pass
