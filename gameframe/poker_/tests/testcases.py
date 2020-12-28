@@ -3,8 +3,8 @@ This module defines no-limit texas hold'em test cases in gameframe.
 """
 from unittest import TestCase, main
 
-from gameframe.poker import LazyNLHEGame
-from gameframe.poker.tests.testcasemixins import PokerTestCaseMixin
+from gameframe.poker_ import LazyNLHEGame
+from gameframe.poker_.tests.testcasemixins import PokerTestCaseMixin
 
 
 class CustomNLHEGame(LazyNLHEGame):

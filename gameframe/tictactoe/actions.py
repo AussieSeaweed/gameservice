@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class MarkAction(SequentialAction['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
-    """MarkAction is the class for all mark actions."""
+    """MarkAction is the class for mark actions."""
 
     def __init__(self, player: TicTacToePlayer, r: int, c: int):
         super().__init__(player)

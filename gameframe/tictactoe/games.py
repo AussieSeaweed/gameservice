@@ -6,7 +6,7 @@ from ..sequential import SequentialGame
 
 
 class TicTacToeGame(SequentialGame['TicTacToeGame', TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer]):
-    """TicTacToeGame is the class for all tic tac toe games."""
+    """TicTacToeGame is the class for tic tac toe games."""
 
     def _create_environment(self) -> TicTacToeEnvironment:
         return TicTacToeEnvironment(self)

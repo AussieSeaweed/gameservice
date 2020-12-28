@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class TicTacToePlayer(Player['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
-    """TicTacToePlayer is the class for all tic tac toe players."""
+    """TicTacToePlayer is the class for tic tac toe players."""
 
     @property
     def actions(self) -> List[Action[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer]]:

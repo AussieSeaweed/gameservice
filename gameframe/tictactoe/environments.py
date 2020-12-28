@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class TicTacToeEnvironment(Environment['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
-    """TicTacToeGame is the class for all tic tac toe environments."""
+    """TicTacToeGame is the class for tic tac toe environments."""
 
     def __init__(self, game: TicTacToeGame):
         super().__init__(game)

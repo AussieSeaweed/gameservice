@@ -5,7 +5,7 @@ from gameframe.sequential.tests.testcases import SequentialTestCaseMixin
 
 class PokerTestCaseMixin(SequentialTestCaseMixin, ABC):
     """
-    This is a mixin for poker test cases.
+    This is a mixin for poker_ test cases.
     """
 
     @staticmethod

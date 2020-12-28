@@ -1,12 +1,12 @@
 """
-This module defines poker info-sets in gameframe.
+This module defines poker_ info-sets in gameframe.
 """
 from ..game import SequentialInfoSet
 
 
 class PokerInfoSet(SequentialInfoSet):
     """
-    This is a class that represents poker info-sets.
+    This is a class that represents poker_ info-sets.
     """
 
     @property

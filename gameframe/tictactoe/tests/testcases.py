@@ -4,9 +4,9 @@ from gameframe.sequential.tests import SequentialTestCaseMixin
 from gameframe.tictactoe import TicTacToeEnvironment, TicTacToeGame, TicTacToeNature, TicTacToePlayer
 
 
-class TicTacToeTestCase(TestCase,
-                        SequentialTestCaseMixin[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer]):
-    """TicTacToeTestCase is the class for all tic tac toe test cases."""
+class TicTacToeTestCase(TestCase, SequentialTestCaseMixin[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature,
+                                                          TicTacToePlayer]):
+    """TicTacToeTestCase is the class for tic tac toe test cases."""
 
     def test_draw(self) -> None:
         """Tests if the tic tac toe properly detects a case of a tied game.
