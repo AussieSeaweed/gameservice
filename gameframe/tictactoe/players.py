@@ -6,8 +6,8 @@ from .actions import MarkAction
 from ..game import Player
 
 if TYPE_CHECKING:
-    from ..game import Action
     from . import TicTacToeGame, TicTacToeEnvironment
+    from ..game import Action
 
 
 class TicTacToePlayer(Player['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
