@@ -9,9 +9,7 @@ from gameframe.tictactoe import TicTacToeEnvironment, TicTacToeGame, TicTacToeNa
 
 
 class TicTacToeTestCase(SequentialTestCase[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer]):
-    """
-    This is a class for tic tac toe test cases.
-    """
+    """TicTacToeTestCase is the class for all tic tac toe test cases."""
 
     @staticmethod
     def _create_game() -> TicTacToeGame:
@@ -19,15 +17,14 @@ class TicTacToeTestCase(SequentialTestCase[TicTacToeGame, TicTacToeEnvironment, 
 
     @staticmethod
     def _verify(game: TicTacToeGame) -> None:
-        assert game.environment.winner is not None or not game.environment.empty_coords
+        assert game.environment._winner is not None or not game.environment._empty_coordinates
 
     @property
     def _num_monte_carlo_tests(self) -> int:
         return 10000
 
     def test_first_win(self) -> None:
-        """
-        Tests if the tic tac toe properly detects a case of the first player winning.
+        """Tests if the tic tac toe properly detects a case of the first player winning.
 
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
@@ -37,13 +34,10 @@ class TicTacToeTestCase(SequentialTestCase[TicTacToeGame, TicTacToeEnvironment, 
         while not game.terminal:
             game.player.actions[0].act()
 
-        payoffs: List[int] = [player.payoff for player in game.players]
-
-        self.assertEqual([1, -1], payoffs)
+        self.assertEqual([1, -1], [player.payoff for player in game.players])
 
     def test_second_win(self) -> None:
-        """
-        Tests if the tic tac toe properly detects a case of the second player winning.
+        """Tests if the tic tac toe properly detects a case of the second player winning.
 
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
@@ -55,13 +49,10 @@ class TicTacToeTestCase(SequentialTestCase[TicTacToeGame, TicTacToeEnvironment, 
         while not game.terminal:
             game.player.actions[0].act()
 
-        payoffs: List[int] = [player.payoff for player in game.players]
-
-        self.assertEqual([-1, 1], payoffs)
+        self.assertEqual([-1, 1], [player.payoff for player in game.players])
 
     def test_draw(self) -> None:
-        """
-        Tests if the tic tac toe properly detects a case of a tied game.
+        """Tests if the tic tac toe properly detects a case of a tied game.
 
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
@@ -73,9 +64,7 @@ class TicTacToeTestCase(SequentialTestCase[TicTacToeGame, TicTacToeEnvironment, 
         while not game.terminal:
             game.player.actions[0].act()
 
-        payoffs: List[int] = [player.payoff for player in game.players]
-
-        self.assertEqual([0, 0], payoffs)
+        self.assertEqual([0, 0], [player.payoff for player in game.players])
 
 
 if __name__ == '__main__':

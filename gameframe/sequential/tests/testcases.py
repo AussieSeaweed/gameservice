@@ -26,4 +26,4 @@ class SequentialTestCase(GameTestCase[G, E, N, P], ABC):
             while not game.terminal:
                 choice(game.player.actions).act()
 
-            assert self._verify(game)
+            self._verify(game)

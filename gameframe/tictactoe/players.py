@@ -1,31 +1,39 @@
+from __future__ import annotations
+
+from typing import List, TYPE_CHECKING
+
 from .actions import MarkAction
-from .infosets import TicTacToeInfoSet
-from ..game import Player
+from ..game import Action, Player
+
+if TYPE_CHECKING:
+    from . import TicTacToeGame, TicTacToeEnvironment
 
 
-class TicTacToePlayer(Player):
-    """
-    This is a class that represents tic tac toe players.
-    """
-
-    @property
-    def payoff(self):
-        if self.game.environment.winner is None:
-            return 0 if self.game.terminal else -1
-        else:
-            return 1 if self.game.environment.winner is self else -1
+class TicTacToePlayer(Player['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
+    """TicTacToePlayer is the class for all tic tac toe players."""
 
     @property
-    def actions(self):
-        if self.game.player is self:
-            return [MarkAction(self, r, c) for r, c in self.game.environment.empty_coords]
+    def actions(self) -> List[Action[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer]]:
+        if self is self.game.player:
+            return [MarkAction(self, r, c) for r, c in self.game.environment._empty_coordinates]
         else:
             return []
 
     @property
-    def info_set(self):
-        return TicTacToeInfoSet(self)
+    def payoff(self) -> int:
+        if self.game.environment._winner is None:
+            return 0 if self.game.terminal else -1
+        else:
+            return 1 if self.game.environment._winner is self else -1
 
 
-class TicTacToeNature(Player):
-    pass
+class TicTacToeNature(Player['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', TicTacToePlayer]):
+    """TicTacToeNature is the class for all tic tac toe natures."""
+
+    @property
+    def actions(self) -> List[Action[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer]]:
+        return []
+
+    @property
+    def payoff(self) -> int:
+        return 0
