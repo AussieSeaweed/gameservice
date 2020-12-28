@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, List, Optional
+from typing import Any, Dict, Generic, List, Optional, Iterator
 
 from .actions import Action
 from .utils import E, G, N, P
 
 
-class Player(Generic[G, E, N, P], ABC):
+class Player(Generic[G, E, N, P], Iterator[P], ABC):
     """Player is the abstract base class for all players."""
 
     def __init__(self, game: G):

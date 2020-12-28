@@ -9,11 +9,6 @@ from gameframe.sequential import G
 class SequentialTestCaseMixin(GameTestCaseMixin[G, E, N, P], ABC):
     """SequentialTestCaseMixin is the abstract base mixin for all sequential test cases."""
 
-    @property
-    @abstractmethod
-    def _num_monte_carlo_tests(self) -> int:
-        pass
-
     def test_monte_carlo(self) -> None:
         """Runs monte carlo tests of sequential games.
 
@@ -27,3 +22,8 @@ class SequentialTestCaseMixin(GameTestCaseMixin[G, E, N, P], ABC):
                 choice(game.player.actions).act()
 
             self._verify(game)
+
+    @property
+    @abstractmethod
+    def _num_monte_carlo_tests(self) -> int:
+        pass
