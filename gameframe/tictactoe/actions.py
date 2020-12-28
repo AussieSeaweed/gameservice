@@ -20,7 +20,7 @@ class MarkAction(SequentialAction['TicTacToeGame', 'TicTacToeEnvironment', 'TicT
     def act(self) -> None:
         super().act()
 
-        self.game.environment.board[self.__r][self.__c] = self.player
+        self.game.environment.board[self.__r][self.__c]: TicTacToePlayer = self.player
 
         if self.game.environment._empty_coordinates and self.game.environment._winner is None:
             self.game.player = next(self.player)

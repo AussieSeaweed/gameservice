@@ -29,7 +29,7 @@ class TicTacToePlayer(Player['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToe
 
 
 class TicTacToeNature(Player['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', TicTacToePlayer]):
-    """TicTacToeNature is the class for all tic tac toe natures."""
+    """TicTacToeNature is the class for tic tac toe natures."""
 
     @property
     def actions(self) -> List[Action[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer]]:
