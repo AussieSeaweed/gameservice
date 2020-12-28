@@ -13,15 +13,15 @@ class TicTacToeTestCase(TestCase, SequentialTestCaseMixin):
     """
 
     @staticmethod
-    def create_game():
+    def _create_game():
         return TicTacToeGame()
 
     @staticmethod
-    def validate_game(game):
+    def _verify(game):
         return game.environment.winner is not None or not game.environment.empty_coords
 
     @property
-    def num_monte_carlo_tests(self):
+    def _num_monte_carlo_tests(self):
         return 10000
 
     def test_first_win(self):
@@ -31,7 +31,7 @@ class TicTacToeTestCase(TestCase, SequentialTestCaseMixin):
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
-        game = self.create_game()
+        game = self._create_game()
 
         while not game.terminal:
             game.player.actions[0].act()
@@ -47,7 +47,7 @@ class TicTacToeTestCase(TestCase, SequentialTestCaseMixin):
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
-        game = self.create_game()
+        game = self._create_game()
 
         game.player.actions[8].act()
 
@@ -65,7 +65,7 @@ class TicTacToeTestCase(TestCase, SequentialTestCaseMixin):
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
-        game = self.create_game()
+        game = self._create_game()
 
         game.player.actions[4].act()
 

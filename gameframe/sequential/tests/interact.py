@@ -1,11 +1,5 @@
-"""
-This module defines functions for interacting with games and sequential games in gameframe.
-"""
-
-
 def sequential_interact(sequential_game_factory):
-    """
-    Interacts with sequential games on console.
+    """Interacts with sequential games on console.
 
     :param sequential_game_factory: a function that creates a sequential game instance
     :return: None

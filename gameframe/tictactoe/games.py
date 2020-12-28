@@ -1,9 +1,9 @@
 from .environments import TicTacToeEnvironment
-from .players import TicTacToePlayer
+from .players import TicTacToePlayer, TicTacToeNature
 from ..sequential import SequentialGame
 
 
-class TicTacToeGame(SequentialGame[TicTacToeEnvironment, None, TicTacToePlayer]):
+class TicTacToeGame(SequentialGame['TicTacToeGame', TicTacToeEnvironment, None, TicTacToePlayer]):
     """
     This is a class that represents tic tac toe games.
     """
@@ -12,7 +12,7 @@ class TicTacToeGame(SequentialGame[TicTacToeEnvironment, None, TicTacToePlayer])
         return TicTacToeEnvironment(self)
 
     def create_nature(self):
-        return None
+        return TicTacToeNature(self)
 
     def create_players(self):
         return [TicTacToePlayer(self) for _ in range(2)]
