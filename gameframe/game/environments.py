@@ -1,4 +1,4 @@
-from typing import Generic
+from typing import Any, Dict, Generic
 
 from .utils import E, G, N, P
 
@@ -15,3 +15,7 @@ class Environment(Generic[G, E, N, P]):
         :return: the game of the environment
         """
         return self.__game
+
+    @property
+    def _information(self) -> Dict[str, Any]:
+        return {}
