@@ -1,11 +1,11 @@
 """
 This module allows interactions with tic tac toe games.
 """
-from gameframe.sequential.tests.interact import sequential_interact
+from gameframe.sequential.tests import sequential_interact
 from gameframe.tictactoe import TicTacToeGame
 
 
-def main():
+def main() -> None:
     sequential_interact(TicTacToeGame)
 
 

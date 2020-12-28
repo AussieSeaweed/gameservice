@@ -1,3 +1,6 @@
+from gameframe.game.tests import print_information_set
+
+
 def sequential_interact(sequential_game_factory):
     """Interacts with sequential games on console.
 
@@ -7,7 +10,7 @@ def sequential_interact(sequential_game_factory):
     sequential_game = sequential_game_factory()
 
     while not sequential_game.terminal:
-        print(sequential_game.player.info_set)
+        print_information_set(sequential_game.player.info_set)
 
         actions = sequential_game.player.actions
 
@@ -16,4 +19,4 @@ def sequential_interact(sequential_game_factory):
 
         actions[0 if len(actions) == 1 else int(input('Action #: '))].act()
 
-    print(sequential_game.nature.info_set)
+    print_information_set(sequential_game.nature.info_set)
