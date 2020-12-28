@@ -1,8 +1,8 @@
 """
 This module defines tic tac toe test cases in gameframe.
 """
-from unittest import main
 from typing import List
+from unittest import main
 
 from gameframe.sequential.tests import SequentialTestCase
 from gameframe.tictactoe import TicTacToeEnvironment, TicTacToeGame, TicTacToeNature, TicTacToePlayer

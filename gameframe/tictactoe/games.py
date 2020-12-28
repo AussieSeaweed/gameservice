@@ -1,5 +1,5 @@
 from .environments import TicTacToeEnvironment
-from .players import TicTacToePlayer, TicTacToeNature
+from .players import TicTacToeNature, TicTacToePlayer
 from ..sequential import SequentialGame
 
 

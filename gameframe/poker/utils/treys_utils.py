@@ -1,7 +1,8 @@
+from itertools import combinations
+
 from treys.card import Card
 from treys.deck import Deck
 from treys.evaluator import Evaluator
-from itertools import combinations
 
 evaluator = Evaluator()
 

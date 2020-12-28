@@ -34,9 +34,9 @@ class Player(Generic[G, E, N, P], ABC):
             'game': self.game._information,
             'environment': self.game.environment._information,
             'nature': self.game.nature._private_information if self.nature else self.game.nature._public_information,
-            'player': list(
-                map(lambda player: player._private_information if self is player else player._public_information,
-                    self.game)),
+            'player': list(map(
+                lambda player: player._private_information if self is player else player._public_information,
+                self.game.players)),
         }
 
     @property
