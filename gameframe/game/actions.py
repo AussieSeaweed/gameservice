@@ -10,17 +10,6 @@ class Action(Generic[G, E, N, P], ABC):
     def __init__(self, player: P):
         self.__player: P = player
 
-    def act(self) -> None:
-        """Applies the action to the game of the action.
-
-        The overridden act method should first call the super method and then make the necessary modifications to the
-        game.
-
-        :return: None
-        :raise ValueError: if the action integrity verification fails prior to the action
-        """
-        self._verify()
-
     @property
     def game(self) -> G:
         """
@@ -34,6 +23,17 @@ class Action(Generic[G, E, N, P], ABC):
         :return: the player of the action
         """
         return self.__player
+
+    def act(self) -> None:
+        """Applies the action to the game of the action.
+
+        The overridden act method should first call the super method and then make the necessary modifications to the
+        game.
+
+        :return: None
+        :raise ValueError: if the action integrity verification fails prior to the action
+        """
+        self._verify()
 
     @property
     @abstractmethod
