@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from random import choice
 
 from gameframe.game import E, N, P
@@ -17,8 +17,3 @@ class SequentialTestCaseMixin(GameTestCaseMixin[G, E, N, P], ABC):
                 choice(game.player.actions).act()
 
             self._verify(game)
-
-    @property
-    @abstractmethod
-    def _num_monte_carlo_tests(self) -> int:
-        pass
