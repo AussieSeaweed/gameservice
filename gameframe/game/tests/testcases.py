@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import Generic
-from unittest import TestCase
 
 from gameframe.game import E, G, N, P
 
 
-class GameTestCase(TestCase, Generic[G, E, N, P], ABC):
-    """GameTestCase is the abstract base class for all game test cases."""
+class GameTestCaseMixin(Generic[G, E, N, P], ABC):
+    """GameTestCaseMixin is the abstract base mixin for all game test cases."""
 
     @staticmethod
     @abstractmethod

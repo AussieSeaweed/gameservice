@@ -2,12 +2,12 @@ from abc import ABC, abstractmethod
 from random import choice
 
 from gameframe.game import E, N, P
-from gameframe.game.tests import GameTestCase
+from gameframe.game.tests import GameTestCaseMixin
 from gameframe.sequential import G
 
 
-class SequentialTestCase(GameTestCase[G, E, N, P], ABC):
-    """SequentialTestCase is the abstract base class for all sequential test cases."""
+class SequentialTestCaseMixin(GameTestCaseMixin[G, E, N, P], ABC):
+    """SequentialTestCaseMixin is the abstract base mixin for all sequential test cases."""
 
     @property
     @abstractmethod
