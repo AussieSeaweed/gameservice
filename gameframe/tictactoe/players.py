@@ -3,9 +3,10 @@ from __future__ import annotations
 from typing import List, TYPE_CHECKING
 
 from .actions import MarkAction
-from ..game import Action, Player
+from ..game import Player
 
 if TYPE_CHECKING:
+    from ..game import Action
     from . import TicTacToeGame, TicTacToeEnvironment
 
 
