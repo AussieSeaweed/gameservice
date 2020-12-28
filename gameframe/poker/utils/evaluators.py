@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
 from itertools import combinations
+from typing import List, Optional
 
 from .cards import Card
 from .hands import Hand, _TreysHand
