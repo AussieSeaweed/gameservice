@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Generic, List
 
-from .utils import E, G, Log, N, P
+from .utils import E, G, N, P
 
 
 class Game(Generic[G, E, N, P], ABC):
@@ -34,8 +34,6 @@ class Game(Generic[G, E, N, P], ABC):
         self.__nature: N = self.create_nature()
         self.__players: List[P] = self.create_players()
 
-        self.__logs: List[Log] = []
-
     @property
     def environment(self) -> E:
         """
@@ -56,13 +54,6 @@ class Game(Generic[G, E, N, P], ABC):
         :return: the players of the game
         """
         return self.__players
-
-    @property
-    def logs(self) -> List[Log]:
-        """
-        :return: the logs of the game
-        """
-        return self.__logs
 
     @abstractmethod
     def create_environment(self) -> E:

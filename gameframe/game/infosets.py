@@ -1,6 +1,6 @@
 from abc import ABC
-from typing import Generic
 from json import dumps
+from typing import Generic
 
 from .utils import E, G, N, P
 

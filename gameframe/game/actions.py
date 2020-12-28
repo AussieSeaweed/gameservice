@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Generic
 
-from .utils import E, G, Log, N, P
+from .utils import E, G, N, P
 
 
 class Action(Generic[G, E, N, P], ABC):
@@ -34,9 +34,6 @@ class Action(Generic[G, E, N, P], ABC):
         :raise ValueError: if the action integrity verification fails
         """
         self.verify()
-
-        if self.public:
-            self.game.logs.append(Log(self))
 
     def verify(self) -> None:
         """Verifies the integrity of the action.
