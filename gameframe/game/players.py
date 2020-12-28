@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, List, Optional, Iterator
+from typing import Any, Dict, Generic, Iterator, List, Optional
 
 from .actions import Action
 from .utils import E, G, N, P
