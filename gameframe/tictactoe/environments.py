@@ -1,36 +1,29 @@
-from __future__ import annotations
-
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
-
 from ..game import Environment
 
-if TYPE_CHECKING:
-    from . import TicTacToeGame, TicTacToePlayer
 
-
-class TicTacToeEnvironment(Environment['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
+class TicTacToeEnvironment(Environment):
     """TicTacToeGame is the class for tic tac toe environments."""
 
-    def __init__(self, game: TicTacToeGame):
+    def __init__(self, game):
         super().__init__(game)
 
-        self.__board: List[List[Optional[TicTacToePlayer]]] = [[None, None, None],
-                                                               [None, None, None],
-                                                               [None, None, None]]
+        self.__board = [[None, None, None],
+                        [None, None, None],
+                        [None, None, None]]
 
     @property
-    def board(self) -> List[List[Optional[TicTacToePlayer]]]:
+    def board(self):
         """
         :return: the board of the tic tac toe environment
         """
         return self.__board
 
     @property
-    def _empty_coordinates(self) -> List[List[int]]:
+    def _empty_coordinates(self):
         return [[r, c] for r in range(3) for c in range(3) if self.board[r][c] is None]
 
     @property
-    def _winner(self) -> Optional[TicTacToePlayer]:
+    def _winner(self):
         for i in range(3):
             if self.board[i][0] == self.board[i][1] == self.board[i][2] is not None:
                 return self.board[i][0]
@@ -44,7 +37,7 @@ class TicTacToeEnvironment(Environment['TicTacToeGame', 'TicTacToeEnvironment', 
         return None
 
     @property
-    def _information(self) -> Dict[str, Any]:
+    def _information(self):
         return {
             'board': self.board,
         }

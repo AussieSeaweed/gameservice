@@ -1,26 +1,19 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
 from ..sequential import SequentialAction
 
-if TYPE_CHECKING:
-    from . import TicTacToePlayer
 
-
-class MarkAction(SequentialAction['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
+class MarkAction(SequentialAction):
     """MarkAction is the class for mark actions."""
 
-    def __init__(self, player: TicTacToePlayer, r: int, c: int):
+    def __init__(self, player, r, c):
         super().__init__(player)
 
-        self.__r: int = r
-        self.__c: int = c
+        self.__r = r
+        self.__c = c
 
-    def act(self) -> None:
+    def act(self):
         super().act()
 
-        self.game.environment.board[self.__r][self.__c]: TicTacToePlayer = self.player
+        self.game.environment.board[self.__r][self.__c] = self.player
 
         if self.game.environment._empty_coordinates and self.game.environment._winner is None:
             self.game.player = next(self.player)
@@ -28,17 +21,17 @@ class MarkAction(SequentialAction['TicTacToeGame', 'TicTacToeEnvironment', 'TicT
             self.game.player = None
 
     @property
-    def chance(self) -> bool:
+    def chance(self):
         return False
 
     @property
-    def public(self) -> bool:
+    def public(self):
         return True
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'Mark row {self.__r} column {self.__c}'
 
-    def _verify(self) -> None:
+    def _verify(self):
         super()._verify()
 
         if not (0 <= self.__r < 3 and 0 <= self.__c < 3):

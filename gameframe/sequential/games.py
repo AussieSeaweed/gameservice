@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Optional
 
-from .utils import G
-from ..game import E, Game, N, P
+from ..game import Game
 
 
-class SequentialGame(Game[G, E, N, P], ABC):
+class SequentialGame(Game, ABC):
     """SequentialGame is the abstract base class for all sequential games.
 
     In sequential games, only one player can act at a time. The player in turn can be accessed through the player
@@ -17,14 +15,14 @@ class SequentialGame(Game[G, E, N, P], ABC):
     def __init__(self):
         super().__init__()
 
-        self.player: P = self._initial_player
+        self.player = self._initial_player
 
     @property
-    def terminal(self) -> bool:
+    def terminal(self):
         return self.player is None
 
     @property
-    def _information(self) -> Dict[str, str]:
+    def _information(self):
         return {
             **super()._information,
             'player': self.player,
@@ -32,5 +30,5 @@ class SequentialGame(Game[G, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def _initial_player(self) -> Optional[P]:
+    def _initial_player(self):
         pass

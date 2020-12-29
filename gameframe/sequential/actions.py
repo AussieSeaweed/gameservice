@@ -1,14 +1,13 @@
 from abc import ABC
 
 from .games import SequentialGame
-from .utils import G
-from ..game import Action, E, N, P
+from ..game import Action
 
 
-class SequentialAction(Action[G, E, N, P], ABC):
+class SequentialAction(Action, ABC):
     """SequentialAction is the abstract base class for all sequential actions."""
 
-    def _verify(self) -> None:
+    def _verify(self):
         super()._verify()
 
         if not isinstance(self.game, SequentialGame):

@@ -5,7 +5,7 @@ from gameframe.sequential.tests import sequential_interact
 from gameframe.tictactoe import TicTacToeGame
 
 
-def main() -> None:
+def main():
     sequential_interact(TicTacToeGame)
 
 
