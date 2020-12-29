@@ -53,6 +53,7 @@
           <option value="gameframe.game._initial_player.actions" />
           <option value="_importlib_modulespec.ModuleType.urlpatterns" />
           <option value="gameservice.game._initial_player.actions" />
+          <option value="gameframe.sequential._initial_player.actions" />
         </list>
       </option>
     </inspection_tool>
