@@ -22,17 +22,17 @@ class Evaluator(ABC):
         pass
 
 
-class TexasHoldEmEvaluator(Evaluator):
-    """TexasHoldEmEvaluator is the class for texas hold'em evaluators"""
+class StandardEvaluator(Evaluator):
+    """StandardEvaluator is the class for standard evaluators"""
 
     def hand(self, hole_cards: List[Card], board_cards: List[Card]) -> Optional[Hand]:
-        if len(hole_cards) != 2 or len(hole_cards) + len(board_cards) < 5:
+        if len(hole_cards) + len(board_cards) < 5:
             return None
         else:
             return _TreysHand(hole_cards, board_cards)
 
 
-class OmahaHoldEmEvaluator(TexasHoldEmEvaluator):
+class OmahaHoldEmEvaluator(StandardEvaluator):
     """OmahaHoldEmEvaluator is the class for omaha hold'em evaluators"""
 
     def hand(self, hole_cards: List[Card], board_cards: List[Card]) -> Optional[Hand]:
