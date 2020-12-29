@@ -13,17 +13,15 @@ class GameTestCaseMixin(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
-    def _create_game():
+    def _create_game(self):
+        pass
+
+    @abstractmethod
+    def _verify(self, game):
         pass
 
     @property
     @abstractmethod
     def _num_monte_carlo_tests(self):
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def _verify(game):
         pass

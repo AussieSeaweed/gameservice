@@ -50,12 +50,10 @@ class TicTacToeTestCase(TestCase, SequentialTestCaseMixin):
 
         self.assertEqual([1, -1], [player.payoff for player in game.players])
 
-    @staticmethod
-    def _create_game():
+    def _create_game(self):
         return TicTacToeGame()
 
-    @staticmethod
-    def _verify(game):
+    def _verify(self, game):
         assert game.environment._winner is not None or not game.environment._empty_coordinates
 
     @property
