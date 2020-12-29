@@ -73,5 +73,5 @@ class Game(ABC):
         pass
 
     @abstractmethod
-    def _create_players(self) :
+    def _create_players(self):
         pass
