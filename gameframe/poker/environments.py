@@ -22,6 +22,9 @@ class PokerEnvironment(Environment):
 
     @property
     def pot(self):
+        """
+        :return: the pot of the poker environment
+        """
         return self._pot
 
     @property
