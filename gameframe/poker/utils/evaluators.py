@@ -26,7 +26,7 @@ class TexasHoldEmEvaluator(Evaluator):
     """TexasHoldEmEvaluator is the class for texas hold'em evaluators"""
 
     def hand(self, hole_cards: List[Card], board_cards: List[Card]) -> Optional[Hand]:
-        if len(hole_cards) < 2 or len(hole_cards) + len(board_cards) < 5:
+        if len(hole_cards) != 2 or len(hole_cards) + len(board_cards) < 5:
             return None
         else:
             return _TreysHand(hole_cards, board_cards)
@@ -36,12 +36,14 @@ class OmahaHoldEmEvaluator(TexasHoldEmEvaluator):
     """OmahaHoldEmEvaluator is the class for omaha hold'em evaluators"""
 
     def hand(self, hole_cards: List[Card], board_cards: List[Card]) -> Optional[Hand]:
-        hand = None
+        hand: Optional[Hand] = None
 
         for combination in combinations(hole_cards, 2):
+            cur_hand: Optional[Hand] = super().hand(combination, board_cards)
+
             if hand is None:
-                hand = super().hand(combination, board_cards)
-            else:
-                hand = min(hand, super().hand(combination, board_cards))
+                hand = cur_hand
+            elif cur_hand is not None:
+                hand = min(hand, cur_hand)
 
         return hand
