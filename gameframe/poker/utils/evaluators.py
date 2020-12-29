@@ -45,3 +45,20 @@ class OmahaHoldEmEvaluator(StandardEvaluator):
                 hand = min(hand, cur_hand)
 
         return hand
+
+
+class GreekHoldEmEvaluator(StandardEvaluator):
+    """GreekHoldEmEvaluator is the class for greek hold'em evaluators"""
+
+    def hand(self, hole_cards, board_cards):
+        hand = None
+
+        for combination in combinations(board_cards, 3):
+            cur_hand = super().hand(hole_cards, combination)
+
+            if hand is None:
+                hand = cur_hand
+            elif cur_hand is not None:
+                hand = min(hand, cur_hand)
+
+        return hand

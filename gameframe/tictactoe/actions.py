@@ -16,9 +16,9 @@ class MarkAction(SequentialAction):
         self.game.environment.board[self.__r][self.__c] = self.player
 
         if self.game.environment._empty_coordinates and self.game.environment._winner is None:
-            self.game.player = next(self.player)
+            self.game._player = next(self.player)
         else:
-            self.game.player = None
+            self.game._player = None
 
     @property
     def chance(self):

@@ -15,7 +15,14 @@ class SequentialGame(Game, ABC):
     def __init__(self):
         super().__init__()
 
-        self.player = self._initial_player
+        self._player = self._initial_player
+
+    @property
+    def player(self):
+        """
+        :return: the player in turn to act of the sequential game
+        """
+        return self._player
 
     @property
     def terminal(self):
