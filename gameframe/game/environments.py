@@ -1,21 +1,16 @@
-from typing import Any, Dict, Generic
-
-from .utils import E, G, N, P
-
-
-class Environment(Generic[G, E, N, P]):
+class Environment:
     """Environment is the base class for all environments."""
 
-    def __init__(self, game: G):
-        self.__game: G = game
+    def __init__(self, game):
+        self.__game = game
 
     @property
-    def game(self) -> G:
+    def game(self):
         """
         :return: the game of the environment
         """
         return self.__game
 
     @property
-    def _information(self) -> Dict[str, Any]:
+    def _information(self):
         return {}

@@ -1,50 +1,43 @@
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from typing import Generic, List, TypeVar
 
-from treys import Card as TreysCard, Evaluator as TreysEvaluator
-
-from .cards import Card
-
-H = TypeVar('H')  # TODO: BOUND HAND TYPES AS SEQUENTIAL AND GAME
+from treys import Card as _TreysCard, Evaluator as _TreysEvaluator
 
 
-class Hand(Generic[H], ABC):
+class Hand(ABC):
     """Hand is the abstract base class for all hands."""
 
     @abstractmethod
-    def __lt__(self, other: H) -> bool:
+    def __lt__(self, other):
         pass
 
     @abstractmethod
-    def __eq__(self, other: H) -> bool:
+    def __eq__(self, other):
         pass
 
     @abstractmethod
-    def __hash__(self) -> int:
+    def __hash__(self):
         pass
 
     @abstractmethod
-    def __str__(self) -> str:
+    def __str__(self):
         pass
 
 
-class _TreysHand(Hand['_TreysHand']):
-    __treys_evaluator = TreysEvaluator()
+class _TreysHand(Hand):
+    __treys_evaluator = _TreysEvaluator()
 
-    def __init__(self, hole_cards: List[Card], board_cards: List[Card]):
-        self.__hand_rank: int = self.__treys_evaluator.evaluate(list(map(TreysCard.new, map(str, hole_cards))),
-                                                                list(map(TreysCard.new, map(str, board_cards))))
+    def __init__(self, hole_cards, board_cards):
+        self.__hand_rank = self.__treys_evaluator.evaluate(list(map(_TreysCard.new, map(str, hole_cards))),
+                                                           list(map(_TreysCard.new, map(str, board_cards))))
 
-    def __lt__(self, other: _TreysHand) -> bool:
+    def __lt__(self, other):
         return self.__hand_rank < other.__hand_rank
 
-    def __eq__(self, other: _TreysHand) -> bool:
+    def __eq__(self, other):
         return self.__hand_rank == other.__hand_rank
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash(self.__hand_rank)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.__treys_evaluator.class_to_string(self.__treys_evaluator.get_rank_class(self.__hand_rank))

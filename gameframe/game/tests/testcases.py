@@ -1,14 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Generic
-
-from gameframe.game import E, G, N, P
 
 
-class GameTestCaseMixin(Generic[G, E, N, P], ABC):
+class GameTestCaseMixin(ABC):
     """GameTestCaseMixin is the abstract base mixin for all game test cases."""
 
     @abstractmethod
-    def test_monte_carlo(self) -> None:
+    def test_monte_carlo(self):
         """Runs monte carlo tests of games.
 
         :return: None
@@ -18,15 +15,15 @@ class GameTestCaseMixin(Generic[G, E, N, P], ABC):
 
     @staticmethod
     @abstractmethod
-    def _create_game() -> G:
+    def _create_game():
         pass
 
     @property
     @abstractmethod
-    def _num_monte_carlo_tests(self) -> int:
+    def _num_monte_carlo_tests(self):
         pass
 
     @staticmethod
     @abstractmethod
-    def _verify(game: G) -> None:
+    def _verify(game):
         pass

@@ -1,7 +1,4 @@
-from typing import Any
-
-
-def pretty_print(o: Any, indent: str = '    ', prefix: str = '') -> None:
+def pretty_print(o, indent='    ', prefix=''):
     """Prints the object on the console prettily.
 
     :param o: the object

@@ -1,32 +1,28 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, Iterator, List, Optional
-
-from .actions import Action
-from .utils import E, G, N, P
 
 
-class Player(Generic[G, E, N, P], Iterator[P], ABC):
+class Player(ABC):
     """Player is the abstract base class for all players."""
 
-    def __init__(self, game: G):
-        self.__game: G = game
+    def __init__(self, game):
+        self.__game = game
 
     @property
-    def game(self) -> G:
+    def game(self):
         """
         :return: the game of the player
         """
         return self.__game
 
     @property
-    def index(self) -> Optional[int]:
+    def index(self):
         """
         :return: the index of the player
         """
         return None if self.nature else self.game.players.index(self)
 
     @property
-    def information_set(self) -> Dict[str, Any]:
+    def information_set(self):
         """
         :return: the information set of the player
         """
@@ -40,21 +36,21 @@ class Player(Generic[G, E, N, P], Iterator[P], ABC):
         }
 
     @property
-    def nature(self) -> bool:
+    def nature(self):
         """
         :return: True if the player is nature, False otherwise
         """
         return self is self.game.nature
 
-    def __next__(self) -> Optional[P]:
-        return None if self.index is None else self.game.players[(self.index + 1) % len(self.game.players)]
+    def __next__(self):
+        return self if self.index is None else self.game.players[(self.index + 1) % len(self.game.players)]
 
-    def __str__(self) -> str:
+    def __str__(self):
         return 'Nature' if self.nature else f'Player {self.index}'
 
     @property
     @abstractmethod
-    def actions(self) -> List[Action[G, E, N, P]]:
+    def actions(self):
         """
         :return: the actions of the player
         """
@@ -62,21 +58,21 @@ class Player(Generic[G, E, N, P], Iterator[P], ABC):
 
     @property
     @abstractmethod
-    def payoff(self) -> int:
+    def payoff(self):
         """
         :return: the payoff of the player
         """
         pass
 
     @property
-    def _private_information(self) -> Dict[str, Any]:
+    def _private_information(self):
         return {
             **self._public_information,
             'actions': self.actions,
         }
 
     @property
-    def _public_information(self) -> Dict[str, Any]:
+    def _public_information(self):
         return {
             'actions': list(filter(lambda action: action.public, self.actions)),
         }

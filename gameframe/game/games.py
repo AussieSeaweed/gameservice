@@ -1,10 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, List
-
-from .utils import E, G, N, P
 
 
-class Game(Generic[G, E, N, P], ABC):
+class Game(ABC):
     """Game is the abstract base class for all games.
 
     It provides a rigid definition on which various games can be defined. Every game has the following elements that
@@ -30,26 +27,26 @@ class Game(Generic[G, E, N, P], ABC):
     """
 
     def __init__(self):
-        self.__environment: E = self._create_environment()
-        self.__nature: N = self._create_nature()
-        self.__players: List[P] = self._create_players()
+        self.__environment = self._create_environment()
+        self.__nature = self._create_nature()
+        self.__players = self._create_players()
 
     @property
-    def environment(self) -> E:
+    def environment(self):
         """
         :return: the environment of the game
         """
         return self.__environment
 
     @property
-    def nature(self) -> N:
+    def nature(self):
         """
         :return: the nature of the game
         """
         return self.__nature
 
     @property
-    def players(self) -> List[P]:
+    def players(self):
         """
         :return: the players of the game
         """
@@ -57,24 +54,24 @@ class Game(Generic[G, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def terminal(self) -> bool:
+    def terminal(self):
         """
         :return: True if the game is terminal, False otherwise
         """
         pass
 
     @property
-    def _information(self) -> Dict[str, Any]:
+    def _information(self):
         return {}
 
     @abstractmethod
-    def _create_environment(self) -> E:
+    def _create_environment(self):
         pass
 
     @abstractmethod
-    def _create_nature(self) -> N:
+    def _create_nature(self):
         pass
 
     @abstractmethod
-    def _create_players(self) -> List[P]:
+    def _create_players(self) :
         pass

@@ -1,30 +1,27 @@
 from abc import ABC, abstractmethod
-from typing import Generic
-
-from .utils import E, G, N, P
 
 
-class Action(Generic[G, E, N, P], ABC):
+class Action(ABC):
     """Action is the abstract base class for all actions."""
 
-    def __init__(self, player: P):
-        self.__player: P = player
+    def __init__(self, player):
+        self.__player = player
 
     @property
-    def game(self) -> G:
+    def game(self):
         """
         :return: the game of the action
         """
         return self.player.game
 
     @property
-    def player(self) -> P:
+    def player(self):
         """
         :return: the player of the action
         """
         return self.__player
 
-    def act(self) -> None:
+    def act(self):
         """Applies the action to the game of the action.
 
         The overridden act method should first call the super method and then make the necessary modifications to the
@@ -37,7 +34,7 @@ class Action(Generic[G, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def chance(self) -> bool:
+    def chance(self):
         """
         :return: True if the action is a chance action, False otherwise
         """
@@ -45,17 +42,17 @@ class Action(Generic[G, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def public(self) -> bool:
+    def public(self):
         """
         :return: True if the action is a public action, False otherwise
         """
         pass
 
     @abstractmethod
-    def __str__(self) -> str:
+    def __str__(self):
         pass
 
-    def _verify(self) -> None:
+    def _verify(self):
         if self.game.terminal:
             raise ValueError('Actions are not applicable to terminal games')
         elif self.chance != self.player.nature:

@@ -15,6 +15,7 @@ class Rank(Enum):
     JACK = 'J'
     QUEEN = 'Q'
     KING = 'K'
+    ACE = 'A'
 
 
 class Suit(Enum):
@@ -28,9 +29,9 @@ class Suit(Enum):
 class Card:
     """Card is the class for cards."""
 
-    def __init__(self, rank: Rank, suit: Suit):
-        self.__rank: Rank = rank
-        self.__suit: Suit = suit
+    def __init__(self, rank, suit):
+        self.__rank = rank
+        self.__suit = suit
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.__rank.value + self.__suit.value
