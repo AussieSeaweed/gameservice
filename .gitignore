@@ -1,3 +1,5 @@
+# Covers Python
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -69,7 +71,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs1/_build/
+docs/_build/
 
 # PyBuilder
 .pybuilder/
@@ -136,6 +138,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
