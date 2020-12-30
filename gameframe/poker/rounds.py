@@ -3,12 +3,20 @@ from abc import ABC
 
 class Round(ABC):
     """Round is the abstract base class for all rounds."""
-    pass
+
+    def __init__(self, game):
+        self.__game = game
+
+    @property
+    def game(self):
+        """
+        :return: the game of the round
+        """
+        return self.__game
 
 
 class BettingRound(Round, ABC):
     """BettingRound is the abstract base class for all betting rounds."""
-    pass
 
 
 class LimitBettingRound(BettingRound):

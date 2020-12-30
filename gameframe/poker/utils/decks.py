@@ -39,3 +39,10 @@ class StandardDeck(Deck):
 
     def _create_cards(self):
         return [Card(rank, suit) for rank in Rank for suit in Suit]
+
+
+class SixPlusDeck(Deck):
+    """SixPlusDeck is the class for six-plus decks."""
+
+    def _create_cards(self):
+        return [Card(rank, suit) for rank in Rank if not rank.isdigit() or int(rank) >= 6 for suit in Suit]
