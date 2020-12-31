@@ -6,7 +6,7 @@ class PokerPlayer(Player):
 
     @property
     def actions(self):
-        pass
+        return []
 
     @property
     def payoff(self):
@@ -18,7 +18,7 @@ class PokerNature(Player):
 
     @property
     def actions(self):
-        pass
+        return []
 
     @property
     def payoff(self):
