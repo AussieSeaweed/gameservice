@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from treys import Card as _TreysCard, Evaluator as _TreysEvaluator
 
-from gameframe.utils.cards import Card
+from gameframe.poker.utils.cards import Card
 
 
 class Hand(ABC):

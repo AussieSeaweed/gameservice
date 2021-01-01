@@ -1,4 +1,4 @@
-from gameframe.tests.interact_sequential import interact_sequential
+from gameframe.sequential.tests.interact import interact_sequential
 from gameframe.tictactoe import TicTacToeGame
 
 

@@ -1,8 +1,8 @@
 from typing import Callable
 
 from gameframe.game import Action, Environment, Game, Nature, Player
+from gameframe.game.tests import pretty_print
 from gameframe.sequential import SequentialGame
-from gameframe.tests.interact import pretty_print
 
 
 def interact_sequential(sequential_game_factory: Callable[[], SequentialGame]) -> None:

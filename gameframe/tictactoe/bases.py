@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import ABC
 from typing import Any, Optional
 
 from gameframe.game import Action, Environment, Nature, Player
@@ -82,7 +83,9 @@ class TicTacToePlayer(Player[TicTacToeGame, TicTacToeEnvironment, TicTacToeNatur
     """TicTacToePlayer is the class for tic tac toe players."""
 
     @property
-    def actions(self: TicTacToePlayer) -> list[MarkAction]:
+    def actions(self: TicTacToePlayer) -> list[TicTacToeAction]:
+        from gameframe.tictactoe.actions import MarkAction
+
         if self is self.game.actor:
             return [MarkAction(self, r, c) for r, c in self.game.environment._empty_coordinates]
         else:
@@ -96,40 +99,6 @@ class TicTacToePlayer(Player[TicTacToeGame, TicTacToeEnvironment, TicTacToeNatur
             return 1 if self.game.environment._winner is self else -1
 
 
-class MarkAction(SequentialAction[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer]):
-    """MarkAction is the class for mark actions."""
-
-    def __init__(self: MarkAction, player: TicTacToePlayer, r: int, c: int) -> None:
-        super().__init__(player)
-
-        self.__r: int = r
-        self.__c: int = c
-
-    def act(self: MarkAction) -> None:
-        super().act()
-
-        self.game.environment.board[self.__r][self.__c] = self.actor
-
-        if self.game.environment._empty_coordinates and self.game.environment._winner is None:
-            self.game._actor = next(self.actor)
-        else:
-            self.game._actor = None
-
-    @property
-    def chance(self: MarkAction) -> bool:
-        return False
-
-    @property
-    def public(self: MarkAction) -> bool:
-        return True
-
-    def __str__(self: MarkAction) -> str:
-        return f'Mark row {self.__r} column {self.__c}'
-
-    def _verify(self: MarkAction) -> None:
-        super()._verify()
-
-        if not (0 <= self.__r < 3 and 0 <= self.__c < 3):
-            raise ValueError('The cell coordinates are out of range')
-        elif self.game.environment.board[self.__r][self.__c] is not None:
-            raise ValueError('The cell is already occupied')
+class TicTacToeAction(SequentialAction[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer], ABC):
+    """TicTacToeAction is the abstract base class for all tic tac toe actions"""
+    pass

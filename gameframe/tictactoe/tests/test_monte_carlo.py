@@ -1,52 +1,9 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from random import choice
-from typing import Generic
 from unittest import TestCase, main
 
-from gameframe.game import G
-from gameframe.sequential import SG
+from gameframe.sequential.tests import SequentialMonteCarloTestCaseMixin
 from gameframe.tictactoe import TicTacToeGame
-
-
-class MonteCarloTestCaseMixin(Generic[G], ABC):
-    """MonteCarloTestCaseMixin is the abstract base mixin for all monte carlo test cases."""
-
-    @abstractmethod
-    def test_monte_carlo(self: MonteCarloTestCaseMixin[G]) -> None:
-        """Runs monte carlo tests of games.
-
-        :return: None
-        :raise AssertionError: if the game integrity verification fails in any tests
-        """
-        pass
-
-    @abstractmethod
-    def _create_game(self: MonteCarloTestCaseMixin[G]) -> G:
-        pass
-
-    @abstractmethod
-    def _verify(self: MonteCarloTestCaseMixin[G], game: G) -> None:
-        pass
-
-    @property
-    @abstractmethod
-    def _num_monte_carlo_tests(self: MonteCarloTestCaseMixin[G]) -> int:
-        pass
-
-
-class SequentialMonteCarloTestCaseMixin(MonteCarloTestCaseMixin[SG], Generic[SG], ABC):
-    """SequentialMonteCarloTestCaseMixin is the abstract base mixin for all sequential monte carlo test cases."""
-
-    def test_monte_carlo(self: SequentialMonteCarloTestCaseMixin[SG]) -> None:
-        for i in range(self._num_monte_carlo_tests):
-            game: SG = self._create_game()
-
-            while not game.terminal:
-                choice(game.actor.actions).act()
-
-            self._verify(game)
 
 
 class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin[TicTacToeGame]):
