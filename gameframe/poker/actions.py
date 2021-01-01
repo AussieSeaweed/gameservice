@@ -1,199 +1,125 @@
 from __future__ import annotations
 
-from abc import ABC
 from collections import defaultdict
+from typing import Iterable, TYPE_CHECKING
 
-from gameframe.poker.bases import PokerAction
+from gameframe.poker.bases import PokerNatureAction, PokerPlayerAction
+from gameframe.utils import rotate
 
-
-class PokerPlayerAction(PokerAction, ABC):
-    """PokerPlayerAction is the abstract base class for all poker player actions."""
-
-    @property
-    def chance(self: PokerPlayerAction) -> bool:
-        return False
-
-    @property
-    def public(self: PokerPlayerAction) -> bool:
-        return True
-
-    def _close(self: PokerPlayerAction) -> None:
-        self.game.player = self.game.nature
-        self.game.streets.pop(0)
-
-        self.game.environment.min_delta = None
-        self.game.environment.pot += sum(player.bet for player in self.game.players)
-
-        for player in self.game.players:
-            player.bet = 0
+if TYPE_CHECKING:
+    from gameframe.poker import PokerPlayer, Hand
 
 
 class SubmissiveAction(PokerPlayerAction):
-    """
-    This is a class that represents submissive actions (folds).
-    """
+    """SubmissiveAction is the class for folds."""
 
-    def __init__(self, player):
-        super().__init__(player)
-
-        if not player.bet < max(player.bet for player in self.game.players):
-            raise ActionException('Cannot fold when the player has bet nothing')
-
-    def act(self):
+    def act(self: SubmissiveAction) -> None:
         super().act()
 
-        self.player.hole_cards = None
+        self.actor._hole_cards = None
 
         if sum(not player.mucked for player in self.game.players) == 1:
-            self._close()
-            self.game.streets.clear()
+            self.game._round._close()
+            self.game._rounds.clear()
         else:
-            self.game.player = next(self.player)
+            self.game._actor = next(self.actor)
 
-            if self.game.player.nature:
-                self._close()
+            if self.game.actor.nature:
+                self.game._round._close()
 
-    def __str__(self):
+    def __str__(self: SubmissiveAction) -> str:
         return 'Fold'
+
+    def _verify(self: SubmissiveAction) -> None:
+        super()._verify()
+
+        if self.actor.bet >= max(player.bet for player in self.game.players):
+            raise ValueError('Player cannot fold if enough amount is already bet')
 
 
 class PassiveAction(PokerPlayerAction):
-    """
-    This is a class that represents passive actions (checks and calls).
-    """
+    """PassiveAction is the class for checks and calls."""
 
-    def act(self):
+    def act(self: PassiveAction) -> None:
         super().act()
 
-        amount = self.amount
+        amount: int = self.amount
 
-        self.player.stack -= amount
-        self.player.bet += amount
+        self.actor.stack -= amount
+        self.actor.bet += amount
 
-        self.game.player = next(self.player)
+        self.game._actor = next(self.actor)
 
-        if self.game.player.nature:
-            self._close()
+        if self.game._actor.nature:
+            self.game._round._close()
 
     @property
-    def amount(self):
+    def amount(self: PassiveAction) -> int:
         """
         :return: the call/check amount of the passive action
         """
-        return min(self.player.stack, max(player.bet for player in self.game.players) - self.player.bet)
+        return min(self.actor.stack, max(player.bet for player in self.game.players) - self.actor.bet)
 
-    def __str__(self):
+    def __str__(self: PassiveAction) -> str:
         return f'Call {self.amount}' if self.amount else 'Check'
 
 
 class AggressiveAction(PokerPlayerAction):
-    """
-    This is a class that represents aggressive actions (bets and raises).
-    """
+    """AggressiveAction is the class for bets and raises."""
 
-    def __init__(self, player, amount):
-        super().__init__(player)
+    def __init__(self: AggressiveAction, actor: PokerPlayer, amount: int) -> None:
+        super().__init__(actor)
 
-        if not (isinstance(amount, int) and sum(player.relevant for player in self.game.players) > 1 and
-                (max(player.bet for player in self.game.players) + self.game.environment.min_delta <= amount
-                 <= player.total or max(player.bet for player in self.game.players) < amount == player.total)):
-            raise ActionArgumentException('The supplied raise or bet size is not allowed')
+        self.__amount: int = amount
 
-        self.__amount = amount
-
-    def act(self):
+    def act(self: AggressiveAction) -> None:
         super().act()
 
-        self.game.environment.min_delta = max(self.game.environment.min_delta,
-                                              self.__amount - max(player.bet for player in self.game.players))
+        self.game.environment._max_delta = max(self.game.environment._max_delta,
+                                               self.__amount - max(player.bet for player in self.game.players))
 
-        self.player.stack -= self.__amount - self.player.bet
-        self.player.bet = self.__amount
+        self.actor._stack -= self.__amount - self.actor.bet
+        self.actor._bet = self.__amount
 
-        self.game.environment.aggressor = self.player
-        self.game.player = next(self.player)
+        self.game.environment._aggressor = self.actor
+        self.game._actor = next(self.actor)
 
-    def __str__(self):
+    def __str__(self: AggressiveAction) -> str:
         return ('Raise ' if any(player.bet for player in self.game.players) else 'Bet ') + str(self.__amount)
 
+    def _verify(self: AggressiveAction) -> None:
+        super()._verify()
 
-class PokerNatureAction(PokerAction, ABC):
-    """
-    This is a class that represents poker nature actions.
-    """
+        max_bet: int = max(player.bet for player in self.game.players)
 
-    @property
-    def chance(self):
-        return True
-
-    @property
-    def public(self: PokerAction) -> bool:
-        return True
-
-    @property
-    def _opener(self):
-        if any(player.bet for player in self.game.players):
-            opener = self.game.players[1 if len(self.game.players) == 2 else 2]
-
-            return opener if opener.relevant else next(opener)
-        else:
-            try:
-                return next(player for player in self.game.players if player.relevant)
-            except StopIteration:
-                return self.game.nature
-
-    def _open(self):
-        self.game.player = self._opener
-
-        if self.game.player.nature:
-            self.game.streets.pop(0)
-        else:
-            self.game.environment.aggressor = self.game.player
-            self.game.environment.min_delta = max(self.game.blinds)
+        if not ((max_bet + self.game.environment._max_delta <= self.__amount <= self.actor.total or
+                 max_bet < self.__amount == self.actor.total) and
+                sum(player.relevant for player in self.game.players) > 1):
+            raise ValueError('The supplied raise or bet size is not allowed')
 
 
-class StreetAction(PokerNatureAction):
-    """
-    This is a class that represents street actions.
+class RoundAction(PokerNatureAction):
+    """RoundAction is the class for opening rounds."""
 
-    This action sets up the street according to the street instance by dealing the player hole cards and the board.
-    """
-
-    def __init__(self, player):
-        super().__init__(player)
-
-        if self.game.street is None:
-            raise ActionException('You have to do showdown here')
-
-    def act(self):
+    def act(self: RoundAction) -> None:
         super().act()
 
-        for player in self.game.players:
-            if not player.mucked:
-                player.hole_cards.extend(self.game.deck.draw(self.game.street.num_hole_cards))
+        self.game._round._open()
 
-        self.game.environment.board.extend(self.game.deck.draw(self.game.street.num_board_cards))
+    def __str__(self: RoundAction) -> str:
+        return 'Start round'
 
-        self._open()
+    def _verify(self: RoundAction) -> None:
+        super()._verify()
 
-    def __str__(self):
-        return f'Deal {self.game.street.num_hole_cards} hole cards and {self.game.street.num_board_cards} board cards'
+        if self.game._round is None:
+            raise ValueError('No more round to open')
 
 
 class ShowdownAction(PokerNatureAction):
-    """
-    This is a class that represents showdown actions.
+    """ShowdownAction is the class for showdowns."""
 
-    This action exposes the poker player's hole cards if necessary and distributes the pot.
-    """
-
-    def __init__(self, player):
-        super().__init__(player)
-
-        if self.game.street is not None:
-            raise ActionException('You cannot do showdown here')
-
-    def act(self):
+    def act(self: ShowdownAction) -> None:
         super().act()
 
         if sum(not player.mucked for player in self.game.players) > 1:
@@ -201,48 +127,59 @@ class ShowdownAction(PokerNatureAction):
 
         self._distribute()
 
-        self.game.player = None
+        self.game._actor = None
 
-    def _show(self):
-        players = self.game.players[self.game.environment.aggressor.index:] + self.game.players[
-                                                                              :self.game.environment.aggressor.index]
-        commitments = defaultdict(lambda: 0)
+    def __str__(self: ShowdownAction) -> str:
+        return 'Showdown'
 
-        for player in filter(lambda player: not player.mucked, players):
-            for hand, commitment in commitments.items():
-                if hand < player.hand and commitment >= player.commitment:
-                    player.hole_cards = None
-                    break
-            else:
-                commitments[player.hand] = max(commitments[player.hand], player.commitment)
+    def _show(self: ShowdownAction) -> None:
+        players: Iterable[PokerPlayer] = filter(lambda player: not player.mucked,
+                                                rotate(self.game.players, self.game.environment._aggressor.index))
 
-    def _distribute(self):
-        players = [player for player in self.game.players if not player.mucked]
-        baseline = 0
-
-        for cur_player in sorted(players, key=lambda player: (player.hand, player.commitment)):
-            side_pot = 0
-
-            for player in self.game.players:
-                entitlement = min(player.commitment, cur_player.commitment)
-
-                if baseline < entitlement:
-                    side_pot += entitlement - baseline
-
-            cur_players = [player for player in players if player.hand == cur_player.hand]
-
-            for player in cur_players:
-                player.bet += side_pot // len(cur_players)
-            else:
-                cur_players[0].bet += side_pot % len(cur_players)
-
-            baseline = max(baseline, cur_player.commitment)
-
-        self.game.environment.pot = 0
+        commitments: defaultdict[Hand, int] = defaultdict(lambda: 0)
 
         for player in players:
-            player.stack += player.bet
-            player.bet = 0
+            for hand, commitment in commitments.items():
+                if player.hand < hand and commitment > player.commitment:
+                    player._hole_cards = None
+                    break
+                else:
+                    commitments[player.hand] = max(commitments[player.hand], player.commitment)
 
-    def __str__(self):
-        return 'Showdown'
+    def _distribute(self: ShowdownAction) -> None:
+        players: list[PokerPlayer] = list(filter(lambda player: not player.mucked,
+                                                 rotate(self.game.players, self.game.environment._aggressor.index)))
+        base: int = 0
+
+        for base_player in sorted(players):
+            side_pot: int = self.__side_pot(base, base_player)
+
+            recipients: list[PokerPlayer] = list(filter(lambda player: player.hand == base_player.hand, players))
+
+            for recipient in recipients:
+                recipient._bet += side_pot // len(recipients)
+            else:
+                recipients[0]._bet += side_pot % len(recipients)
+
+            base: int = max(base, base_player.commitment)
+
+        self.game.environment._pot = 0
+
+        for player in players:
+            player._stack += player.bet
+            player._bet = 0
+
+    def _verify(self: ShowdownAction) -> None:
+        super()._verify()
+
+        if self.game._round is not None:
+            raise ValueError('There are at least one round left')
+
+    def __side_pot(self: ShowdownAction, base: int, base_player: PokerPlayer) -> int:
+        side_pot = 0
+
+        for player in self.game.players:
+            if base < (entitlement := min(player.commitment, base_player.commitment)):
+                side_pot += entitlement - base
+
+        return side_pot

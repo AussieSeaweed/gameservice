@@ -26,14 +26,6 @@ class MarkAction(TicTacToeAction):
         else:
             self.game._actor = None
 
-    @property
-    def chance(self: MarkAction) -> bool:
-        return False
-
-    @property
-    def public(self: MarkAction) -> bool:
-        return True
-
     def __str__(self: MarkAction) -> str:
         return f'Mark row {self.__r} column {self.__c}'
 

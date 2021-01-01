@@ -101,4 +101,11 @@ class TicTacToePlayer(Player[TicTacToeGame, TicTacToeEnvironment, TicTacToeNatur
 
 class TicTacToeAction(SequentialAction[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer], ABC):
     """TicTacToeAction is the abstract base class for all tic tac toe actions"""
-    pass
+
+    @property
+    def chance(self: TicTacToeAction) -> bool:
+        return False
+
+    @property
+    def public(self: TicTacToeAction) -> bool:
+        return True

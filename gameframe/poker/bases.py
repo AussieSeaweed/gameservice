@@ -114,18 +114,18 @@ class PokerEnvironment(Environment[PokerGame, 'PokerEnvironment', 'PokerNature',
     def __init__(self: PokerEnvironment, game: PokerGame) -> None:
         super().__init__(game)
 
-        self.__board: list[Card] = []
+        self.__board_cards: list[Card] = []
         self._pot: int = 0
 
         self._aggressor: Optional[PokerPlayer] = None
         self._max_delta: Optional[int] = None
 
     @property
-    def board(self: PokerEnvironment) -> list[Card]:
+    def board_cards(self: PokerEnvironment) -> list[Card]:
         """
-        :return: the board of the poker environment
+        :return: the board cards of the poker environment
         """
-        return self.__board
+        return self.__board_cards
 
     @property
     def pot(self: PokerEnvironment) -> int:
@@ -139,7 +139,7 @@ class PokerEnvironment(Environment[PokerGame, 'PokerEnvironment', 'PokerNature',
         return {
             **super()._information,
             'pot': self.pot,
-            'board': self.board,
+            'board_cards': self.board_cards,
         }
 
 
@@ -148,7 +148,12 @@ class PokerNature(Nature[PokerGame, PokerEnvironment, 'PokerNature', 'PokerPlaye
 
     @property
     def actions(self: PokerNature) -> list[PokerAction]:
-        return self.game._round._create_actions()
+        from gameframe.poker import RoundAction, ShowdownAction
+
+        if self is self.game.actor:
+            return [ShowdownAction(self) if self.game._round is None else RoundAction(self)]
+        else:
+            return []
 
     @property
     def payoff(self: PokerNature) -> int:
@@ -213,11 +218,14 @@ class PokerPlayer(Player[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer'
     def effective_stack(self: PokerPlayer) -> int:
         """Finds the effective stack of the poker player.
 
-        The effective stack denotes how much a player can lose in a pot.
+        The effective stack denotes how much a player can lose.
 
         :return: the effective stack of the poker player
         """
-        return min(sorted(player.total for player in self.game.players)[-2], self.total)
+        try:
+            return min(sorted(player.total for player in self.game.players if not player.mucked)[-2], self.total)
+        except IndexError:
+            return 0
 
     @property
     def relevant(self: PokerPlayer) -> bool:
@@ -234,15 +242,18 @@ class PokerPlayer(Player[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer'
         """
         :return: the hand of the poker player if any hand is made else None
         """
-        return self.game._evaluator.hand(self.hole_cards, self.game.environment.board)
+        return self.game._evaluator.hand(self.hole_cards, self.game.environment.board_cards)
 
     @property
     def actions(self: PokerPlayer) -> list[PokerAction]:
-        return self.game._round._create_actions()
+        return self.game._round._create_actions() if self is self.game.actor else []
 
     @property
     def payoff(self: PokerPlayer) -> int:
         return -self.commitment
+
+    def __lt__(self: PokerPlayer, other: PokerPlayer) -> bool:
+        return self.commitment < other.commitment if self.hand == other.hand else self.hand > other.hand
 
     @property
     def __next__(self: PokerPlayer) -> Union[PokerNature, PokerPlayer]:
@@ -274,4 +285,23 @@ class PokerPlayer(Player[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer'
 
 class PokerAction(SequentialAction[PokerGame, PokerEnvironment, PokerNature, PokerPlayer], ABC):
     """PokerAction is the abstract base class for all poker actions."""
-    pass
+
+    @property
+    def public(self: PokerAction) -> bool:
+        return True
+
+
+class PokerPlayerAction(PokerAction, ABC):
+    """PokerPlayerAction is the abstract base class for all poker player actions."""
+
+    @property
+    def chance(self: PokerAction) -> bool:
+        return False
+
+
+class PokerNatureAction(PokerAction, ABC):
+    """PokerNatureAction is the abstract base class for all poker nature actions."""
+
+    @property
+    def chance(self: PokerAction) -> bool:
+        return True
