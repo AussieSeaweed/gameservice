@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, TypeVar, Union
+from typing import Any, Generic, Optional, TypeVar, Union
 
 from gameframe.game import Action, E, Game, N, P
 
@@ -21,10 +21,10 @@ class SequentialGame(Game[SG, E, N, P], Generic[SG, E, N, P], ABC):
     def __init__(self: SG) -> None:
         super().__init__()
 
-        self._actor: Union[N, P] = self._initial_actor
+        self._actor: Optional[Union[N, P]] = self._initial_actor
 
     @property
-    def actor(self: SG) -> Union[N, P]:
+    def actor(self: SG) -> Optional[Union[N, P]]:
         """
         :return: the actor in turn to act of the sequential game
         """
@@ -43,7 +43,7 @@ class SequentialGame(Game[SG, E, N, P], Generic[SG, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def _initial_actor(self: SG) -> Union[N, P]:
+    def _initial_actor(self: SG) -> Optional[Union[N, P]]:
         pass
 
 

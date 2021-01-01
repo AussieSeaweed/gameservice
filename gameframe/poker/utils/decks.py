@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from gameframe.poker.utils import Card, Rank, Suit
+from gameframe.poker.utils.cards import Card, Rank, Suit
 
 
 class Deck(ABC):

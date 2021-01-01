@@ -29,7 +29,7 @@ class Suit(Enum):
 
 
 class Card:
-    """Card is the class for cards."""
+    """Card is the base class for all cards."""
 
     def __init__(self: Card, rank: Rank, suit: Suit) -> None:
         self.__rank: Rank = rank
@@ -37,3 +37,16 @@ class Card:
 
     def __str__(self: Card) -> str:
         return self.__rank.value + self.__suit.value
+
+
+class HoleCard(Card):
+    """HoleCard is the class for hole cards."""
+
+    def __init__(self, rank: Rank, suit: Suit, status: bool) -> None:
+        super().__init__(rank, suit)
+
+        self.__status: bool = status
+
+    @property
+    def status(self: HoleCard) -> bool:
+        return self.__status

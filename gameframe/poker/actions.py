@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC
 from collections import defaultdict
 
@@ -10,6 +12,10 @@ class PokerPlayerAction(PokerAction, ABC):
     @property
     def chance(self) -> bool:
         return False
+
+    @property
+    def public(self: PokerAction) -> bool:
+        return True
 
     def _close(self):
         self.game.player = self.game.nature
@@ -118,6 +124,10 @@ class PokerNatureAction(PokerAction, ABC):
 
     @property
     def chance(self):
+        return True
+
+    @property
+    def public(self: PokerAction) -> bool:
         return True
 
     @property

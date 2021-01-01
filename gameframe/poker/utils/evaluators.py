@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from itertools import combinations
 from typing import Optional
 
-from gameframe.poker.utils import Card
+from gameframe.poker.utils.cards import Card
 from gameframe.poker.utils.hands import Hand, _TreysHand
 
 

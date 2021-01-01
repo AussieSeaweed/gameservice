@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, Iterator, TypeVar, Union
+from typing import Any, Generic, Iterator, Optional, TypeVar, Union
 
 G = TypeVar('G', bound='Game')
 E = TypeVar('E', bound='Environment')
@@ -119,7 +119,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
         return self.__game
 
     @property
-    def index(self: Union[N, P]) -> int:
+    def index(self: Union[N, P]) -> Optional[int]:
         """
         :return: the index of the actor
         """

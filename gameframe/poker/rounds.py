@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class Round(ABC):
@@ -13,6 +13,10 @@ class Round(ABC):
         :return: the game of the round
         """
         return self.__game
+
+    @abstractmethod
+    def _create_actions(self):
+        pass
 
 
 class BettingRound(Round, ABC):
