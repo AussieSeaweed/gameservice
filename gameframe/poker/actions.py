@@ -104,16 +104,17 @@ class RoundAction(PokerNatureAction):
         else:
             self.game._rounds.pop(0)
 
-        if self.game._round is not None:
-            self.game._round._open()
-            self.game._actor = self.game._round._opener
-        else:
+        if self.game._round is None:
             if sum(not player.mucked for player in self.game.players) > 1:
                 self.__show()
 
             self.__distribute()
 
             self.game._actor = None
+        else:
+            self.game._round._open()
+
+            self.game._actor = self.game._round._opener
 
     def __str__(self) -> str:
         return 'Next Street'
