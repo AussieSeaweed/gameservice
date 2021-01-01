@@ -1,21 +1,19 @@
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from typing import Any, Generic, Optional, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union
 
 from gameframe.game import Action, E, Game, N, P
 
 SG = TypeVar('SG', bound='SequentialGame')
 
 
-class SequentialGame(Game[SG, E, N, P], Generic[SG, E, N, P], ABC):
+class SequentialGame(Game[SG, E, N, P], ABC):
     """SequentialGame is the abstract base class for all sequential games.
 
-    In sequential games, only one player can act at a time.
+    In sequential games, only one actor can act at a time.
 
-    The player in turn can be accessed through the player attribute of the SequentialGame instance. The initial_player
-    abstract property should be overridden by the subclasses to represent the player who is the first to act. If a
-    sequential game is terminal, its player attribute must be set to None to denote such.
+    The actor in turn can be accessed through the actor property of the SequentialGame instance. The initial_actor
+    abstract property should be overridden by the subclasses to represent the actor who is the first to act. If a
+    sequential game is terminal, its protected actor attribute must be set to None to denote such.
     """
 
     def __init__(self: SG) -> None:
@@ -47,13 +45,13 @@ class SequentialGame(Game[SG, E, N, P], Generic[SG, E, N, P], ABC):
         pass
 
 
-class SequentialAction(Action[SG, E, N, P], Generic[SG, E, N, P], ABC):
+class SequentialAction(Action[SG, E, N, P], ABC):
     """SequentialAction is the abstract base class for all sequential actions."""
 
-    def _verify(self: SequentialAction[SG, E, N, P]) -> None:
+    def _verify(self) -> None:
         super()._verify()
 
         if not isinstance(self.game, SequentialGame):
             raise TypeError('The game is not an instance of SequentialGame')
         if self.actor is not self.game.actor:
-            raise ValueError('The acting player is not in turn to act')
+            raise ValueError('The actor is not in turn to act')

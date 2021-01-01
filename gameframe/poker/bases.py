@@ -20,7 +20,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self: PokerGame) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
         if not len(self.players) > 1:
@@ -34,7 +34,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
 
     @property
     @abstractmethod
-    def ante(self: PokerGame) -> int:
+    def ante(self) -> int:
         """
         :return: the ante of the poker game
         """
@@ -42,7 +42,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
 
     @property
     @abstractmethod
-    def blinds(self: PokerGame) -> list[int]:
+    def blinds(self) -> list[int]:
         """
         :return: the blinds of the poker game
         """
@@ -50,36 +50,14 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
 
     @property
     @abstractmethod
-    def starting_stacks(self: PokerGame) -> list[int]:
+    def starting_stacks(self) -> list[int]:
         """
         :return: the starting stacks of the poker game
         """
         pass
 
-    def _setup(self: PokerGame) -> None:
-        for player in self.players:
-            ante: int = min(self.ante, player.stack)
-
-            player._stack -= ante
-            self.environment._pot += ante
-
-        for player, blind in zip(self.players, reversed(self.blinds) if len(self.players) == 2 else self.blinds):
-            blind: int = min(blind, player.stack)
-
-            player._stack -= blind
-            player._bet += blind
-
-    def _create_environment(self: PokerGame) -> PokerEnvironment:
-        return PokerEnvironment(self)
-
-    def _create_nature(self: PokerGame) -> PokerNature:
-        return PokerNature(self)
-
-    def _create_players(self: PokerGame) -> list[PokerPlayer]:
-        return [PokerPlayer(self, starting_stack) for starting_stack in self.starting_stacks]
-
     @property
-    def _information(self: PokerGame) -> dict[str, Any]:
+    def _information(self) -> dict[str, Any]:
         return {
             **super()._information,
             'ante': self.ante,
@@ -88,54 +66,75 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
         }
 
     @property
-    def _initial_player(self: PokerGame) -> PokerNature:
+    def _initial_actor(self) -> PokerNature:
         return self.nature
 
     @property
-    def _round(self: PokerGame) -> Round:
+    def _round(self) -> Round:
         return self._rounds[0] if self._rounds else None
 
+    def _create_environment(self) -> PokerEnvironment:
+        return PokerEnvironment(self)
+
+    def _create_nature(self) -> PokerNature:
+        return PokerNature(self)
+
+    def _create_players(self) -> list[PokerPlayer]:
+        return [PokerPlayer(self, starting_stack) for starting_stack in self.starting_stacks]
+
+    def _setup(self) -> None:
+        for player in self.players:
+            ante = min(self.ante, player.stack)
+
+            player._stack -= ante
+            self.environment._pot += ante
+
+        for player, blind in zip(self.players, reversed(self.blinds) if len(self.players) == 2 else self.blinds):
+            blind = min(blind, player.stack)
+
+            player._stack -= blind
+            player._bet += blind
+
     @abstractmethod
-    def _create_deck(self: PokerGame) -> Deck:
+    def _create_deck(self) -> Deck:
         pass
 
     @abstractmethod
-    def _create_evaluator(self: PokerGame) -> Evaluator:
+    def _create_evaluator(self) -> Evaluator:
         pass
 
     @abstractmethod
-    def _create_rounds(self: PokerGame) -> list[Round]:
+    def _create_rounds(self) -> list[Round]:
         pass
 
 
 class PokerEnvironment(Environment[PokerGame, 'PokerEnvironment', 'PokerNature', 'PokerPlayer']):
     """PokerEnvironment is the class for poker environments."""
 
-    def __init__(self: PokerEnvironment, game: PokerGame) -> None:
+    def __init__(self, game: PokerGame) -> None:
         super().__init__(game)
-
-        self.__board_cards: list[Card] = []
-        self._pot: int = 0
 
         self._aggressor: Optional[PokerPlayer] = None
         self._max_delta: Optional[int] = None
+        self._pot: int = 0
+        self.__board_cards: list[Card] = []
 
     @property
-    def board_cards(self: PokerEnvironment) -> list[Card]:
+    def board_cards(self) -> list[Card]:
         """
         :return: the board cards of the poker environment
         """
         return self.__board_cards
 
     @property
-    def pot(self: PokerEnvironment) -> int:
+    def pot(self) -> int:
         """
         :return: the pot of the poker environment
         """
         return self._pot
 
     @property
-    def _information(self: PokerEnvironment) -> dict[str, Any]:
+    def _information(self) -> dict[str, Any]:
         return {
             **super()._information,
             'pot': self.pot,
@@ -147,7 +146,7 @@ class PokerNature(Nature[PokerGame, PokerEnvironment, 'PokerNature', 'PokerPlaye
     """PokerNature is the class for poker natures."""
 
     @property
-    def actions(self: PokerNature) -> list[PokerAction]:
+    def actions(self) -> list[PokerAction]:
         from gameframe.poker import RoundAction, ShowdownAction
 
         if self is self.game.actor:
@@ -156,66 +155,41 @@ class PokerNature(Nature[PokerGame, PokerEnvironment, 'PokerNature', 'PokerPlaye
             return []
 
     @property
-    def payoff(self: PokerNature) -> int:
+    def payoff(self) -> int:
         return 0
 
 
 class PokerPlayer(Player[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']):
     """PokerPlayer is the class for poker players."""
 
-    def __init__(self: PokerPlayer, game: PokerGame, starting_stack: int) -> None:
+    def __init__(self, game: PokerGame, starting_stack: int) -> None:
         super().__init__(game)
 
         self._bet: int = 0
         self._stack: int = 0
-        self._hole_cards: Optional[list[HoleCard]] = []
-
+        self.__hole_cards: Optional[list[HoleCard]] = []
         self.__starting_stack: int = starting_stack
 
     @property
-    def bet(self: PokerPlayer) -> int:
+    def actions(self) -> list[PokerAction]:
+        return self.game._round._create_actions() if self is self.game.actor else []
+
+    @property
+    def bet(self) -> int:
         """
         :return: the bet of the poker player
         """
         return self._bet
 
     @property
-    def stack(self: PokerPlayer) -> int:
-        """
-        :return: the stack of the poker player
-        """
-        return self._stack
-
-    @property
-    def hole_cards(self: PokerPlayer) -> Optional[list[HoleCard]]:
-        """
-        :return: the hole cards of the poker player
-        """
-        return self._hole_cards
-
-    @property
-    def mucked(self: PokerPlayer) -> bool:
-        """
-        :return: True if the poker player has mucked, False otherwise
-        """
-        return self.hole_cards is None
-
-    @property
-    def commitment(self: PokerPlayer) -> int:
+    def commitment(self) -> int:
         """
         :return: the amount the poker player has put
         """
         return self.__starting_stack - self.stack
 
     @property
-    def total(self: PokerPlayer) -> int:
-        """
-        :return: the sum of the bet and the stack of the poker player
-        """
-        return self.bet + self.stack
-
-    @property
-    def effective_stack(self: PokerPlayer) -> int:
+    def effective_stack(self) -> int:
         """Finds the effective stack of the poker player.
 
         The effective stack denotes how much a player can lose.
@@ -228,66 +202,93 @@ class PokerPlayer(Player[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer'
             return 0
 
     @property
-    def relevant(self: PokerPlayer) -> bool:
-        """Finds the relevancy of the poker player.
-
-        A poker player is relevant if he/she can make a bet/raise and there is at least one opponent who can call.
-
-        :return: the relevancy of the poker player
-        """
-        return not self.mucked and self.stack and self.effective_stack
-
-    @property
-    def hand(self: PokerPlayer) -> Hand:
+    def hand(self) -> Hand:
         """
         :return: the hand of the poker player if any hand is made else None
         """
         return self.game._evaluator.hand(self.hole_cards, self.game.environment.board_cards)
 
     @property
-    def actions(self: PokerPlayer) -> list[PokerAction]:
-        return self.game._round._create_actions() if self is self.game.actor else []
+    def hole_cards(self) -> Optional[list[HoleCard]]:
+        """
+        :return: the hole cards of the poker player
+        """
+        return self.__hole_cards
 
     @property
-    def payoff(self: PokerPlayer) -> int:
+    def mucked(self) -> bool:
+        """
+        :return: True if the poker player has mucked, False otherwise
+        """
+        return self.hole_cards is None
+
+    @property
+    def payoff(self) -> int:
         return -self.commitment
 
-    def __lt__(self: PokerPlayer, other: PokerPlayer) -> bool:
-        return self.commitment < other.commitment if self.hand == other.hand else self.hand > other.hand
+    @property
+    def relevant(self) -> bool:
+        """Finds the relevancy of the poker player.
+
+        A poker player is relevant if he/she can make a bet/raise.
+
+        :return: the relevancy of the poker player
+        """
+        return not self.mucked and self.stack and self.effective_stack  # TODO SUSPICIOUS EXPRESSION
 
     @property
-    def __next__(self: PokerPlayer) -> Union[PokerNature, PokerPlayer]:
+    def stack(self) -> int:
+        """
+        :return: the stack of the poker player
+        """
+        return self._stack
+
+    @property
+    def total(self) -> int:
+        """
+        :return: the sum of the bet and the stack of the poker player
+        """
+        return self.bet + self.stack
+
+    def __lt__(self, other: PokerPlayer) -> bool:
+        return self.commitment < other.commitment if self.hand == other.hand else self.hand > other.hand
+
+    def __next__(self) -> Union[PokerNature, PokerPlayer]:
         player: Union[PokerNature, PokerPlayer] = super().__next__()
 
         while not player.relevant and player is not self.game.environment._aggressor:
-            player: Union[PokerNature, PokerPlayer] = Player.__next__(player)
+            player = Player.__next__(player)
 
         return self.game.nature if player is self.game.environment._aggressor else player
 
     @property
-    def _private_information(self: PokerPlayer) -> dict[str, Any]:
+    def _private_information(self) -> dict[str, Any]:
         return {
             **super()._private_information,
             'hole_cards': self.hole_cards,
         }
 
     @property
-    def _public_information(self: PokerPlayer) -> dict[str, Any]:
+    def _public_information(self) -> dict[str, Any]:
         return {
             **super()._public_information,
             'bet': self.bet,
             'stack': self.stack,
-            'hole_cards': None if self.hole_cards is None else [
-                hole_card if hole_card.status else None for hole_card in self.hole_cards
-            ],
+            'hole_cards': None if self.hole_cards is None else map(
+                lambda hole_card: hole_card if hole_card.status else None,
+                self.hole_cards,
+            ),
         }
+
+    def _muck(self) -> None:
+        self.__hole_cards = None
 
 
 class PokerAction(SequentialAction[PokerGame, PokerEnvironment, PokerNature, PokerPlayer], ABC):
     """PokerAction is the abstract base class for all poker actions."""
 
     @property
-    def public(self: PokerAction) -> bool:
+    def public(self) -> bool:
         return True
 
 
@@ -295,7 +296,7 @@ class PokerPlayerAction(PokerAction, ABC):
     """PokerPlayerAction is the abstract base class for all poker player actions."""
 
     @property
-    def chance(self: PokerAction) -> bool:
+    def chance(self) -> bool:
         return False
 
 
@@ -303,5 +304,5 @@ class PokerNatureAction(PokerAction, ABC):
     """PokerNatureAction is the abstract base class for all poker nature actions."""
 
     @property
-    def chance(self: PokerAction) -> bool:
+    def chance(self) -> bool:
         return True

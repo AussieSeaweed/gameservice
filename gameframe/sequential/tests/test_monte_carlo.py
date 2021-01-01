@@ -11,7 +11,7 @@ class SequentialMonteCarloTestCaseMixin(MonteCarloTestCaseMixin[SG], Generic[SG]
 
     def test_monte_carlo(self) -> None:
         for i in range(self._monte_carlo_test_count):
-            game = self._create_game()
+            game: SG = self._create_game()
 
             while not game.terminal:
                 choice(game.actor.actions).act()

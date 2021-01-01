@@ -13,7 +13,7 @@ class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin[Ti
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
-        game = self._create_game()
+        game: TicTacToeGame = self._create_game()
 
         game.actor.actions[4].act()
 
@@ -28,7 +28,7 @@ class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin[Ti
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
-        game = self._create_game()
+        game: TicTacToeGame = self._create_game()
 
         game.actor.actions[8].act()
 
@@ -43,7 +43,7 @@ class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin[Ti
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
-        game = self._create_game()
+        game: TicTacToeGame = self._create_game()
 
         while not game.terminal:
             game.actor.actions[0].act()

@@ -13,15 +13,15 @@ if TYPE_CHECKING:
 class CommunityCardGame(PokerGame, ABC):
     """CommunityCardGame is the abstract base class for all community card games."""
 
-    def _create_rounds(self: CommunityCardGame) -> list[Round]:
+    def _create_rounds(self) -> list[Round]:
         return []  # TODO
 
 
 class TexasHoldEmGame(CommunityCardGame, ABC):
     """TexasHoldEmGame is the abstract base class for all texas hold'em games."""
 
-    def _create_deck(self: TexasHoldEmGame) -> StandardDeck:
+    def _create_deck(self) -> StandardDeck:
         return StandardDeck()
 
-    def _create_evaluator(self: TexasHoldEmGame) -> StandardEvaluator:
+    def _create_evaluator(self) -> StandardEvaluator:
         return StandardEvaluator()

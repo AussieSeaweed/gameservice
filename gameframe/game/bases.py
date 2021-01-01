@@ -91,7 +91,7 @@ class Environment(Generic[G, E, N, P]):
     """Environment is the base class for all environments."""
 
     def __init__(self: E, game: G) -> None:
-        self.__game: G = game
+        self.__game = game
 
     @property
     def game(self: E) -> G:
@@ -109,7 +109,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
     """Actor is the abstract base class for all actors."""
 
     def __init__(self: Union[N, P], game: G) -> None:
-        self.__game: G = game
+        self.__game = game
 
     @property
     def game(self: Union[N, P]) -> G:
@@ -183,12 +183,12 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
         }
 
 
-class Nature(Actor[G, E, N, P], Generic[G, E, N, P], ABC):
+class Nature(Actor[G, E, N, P], ABC):
     """Nature is the abstract base class for all natures."""
     pass
 
 
-class Player(Actor[G, E, N, P], Generic[G, E, N, P], ABC):
+class Player(Actor[G, E, N, P], ABC):
     """Player is the abstract base class for all players."""
     pass
 
@@ -196,24 +196,24 @@ class Player(Actor[G, E, N, P], Generic[G, E, N, P], ABC):
 class Action(Generic[G, E, N, P], ABC):
     """Action is the abstract base class for all actions."""
 
-    def __init__(self: Action[G, E, N, P], actor: Union[N, P]) -> None:
-        self.__actor: Union[N, P] = actor
+    def __init__(self, actor: Union[N, P]) -> None:
+        self.__actor = actor
 
     @property
-    def game(self: Action[G, E, N, P]) -> G:
-        """
-        :return: the game of the action
-        """
-        return self.actor.game
-
-    @property
-    def actor(self: Action[G, E, N, P]) -> Union[N, P]:
+    def actor(self) -> Union[N, P]:
         """
         :return: the actor of the action
         """
         return self.__actor
 
-    def act(self: Action[G, E, N, P]) -> None:
+    @property
+    def game(self) -> G:
+        """
+        :return: the game of the action
+        """
+        return self.actor.game
+
+    def act(self) -> None:
         """Applies the action to the game of the action.
 
         The overridden act method should first call the super method and then make the necessary modifications to the
@@ -226,7 +226,7 @@ class Action(Generic[G, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def chance(self: Action[G, E, N, P]) -> bool:
+    def chance(self) -> bool:
         """
         :return: True if the action is a chance action, False otherwise
         """
@@ -234,17 +234,17 @@ class Action(Generic[G, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def public(self: Action[G, E, N, P]) -> bool:
+    def public(self) -> bool:
         """
         :return: True if the action is a public action, False otherwise
         """
         pass
 
     @abstractmethod
-    def __str__(self: Action[G, E, N, P]) -> str:
+    def __str__(self) -> str:
         pass
 
-    def _verify(self: Action[G, E, N, P]) -> None:
+    def _verify(self) -> None:
         if self.game.terminal:
             raise ValueError('Actions are not applicable to terminal games')
         elif self.chance != self.actor.nature:

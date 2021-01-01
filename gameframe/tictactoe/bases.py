@@ -3,31 +3,31 @@ from __future__ import annotations
 from abc import ABC
 from typing import Any, Optional
 
-from gameframe.game import Action, Environment, Nature, Player
+from gameframe.game import Environment, Nature, Player
 from gameframe.sequential import SequentialAction, SequentialGame
 
 
 class TicTacToeGame(SequentialGame['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
     """TicTacToeGame is the class for tic tac toe games."""
 
-    def _create_environment(self: TicTacToeGame) -> TicTacToeEnvironment:
+    @property
+    def _initial_actor(self) -> TicTacToePlayer:
+        return self.players[0]
+
+    def _create_environment(self) -> TicTacToeEnvironment:
         return TicTacToeEnvironment(self)
 
-    def _create_nature(self: TicTacToeGame) -> TicTacToeNature:
+    def _create_nature(self) -> TicTacToeNature:
         return TicTacToeNature(self)
 
-    def _create_players(self: TicTacToeGame) -> list[TicTacToePlayer]:
+    def _create_players(self) -> list[TicTacToePlayer]:
         return [TicTacToePlayer(self), TicTacToePlayer(self)]
-
-    @property
-    def _initial_actor(self: TicTacToeGame) -> TicTacToePlayer:
-        return self.players[0]
 
 
 class TicTacToeEnvironment(Environment[TicTacToeGame, 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
     """TicTacToeGame is the class for tic tac toe environments."""
 
-    def __init__(self: TicTacToeEnvironment, game: TicTacToeGame) -> None:
+    def __init__(self, game: TicTacToeGame) -> None:
         super().__init__(game)
 
         self.__board: list[list[Optional[TicTacToePlayer]]] = [[None, None, None],
@@ -35,18 +35,24 @@ class TicTacToeEnvironment(Environment[TicTacToeGame, 'TicTacToeEnvironment', 'T
                                                                [None, None, None]]
 
     @property
-    def board(self: TicTacToeEnvironment) -> list[list[Optional[TicTacToePlayer]]]:
+    def board(self) -> list[list[Optional[TicTacToePlayer]]]:
         """
         :return: the board of the tic tac toe environment
         """
         return self.__board
 
     @property
-    def _empty_coordinates(self: TicTacToeEnvironment) -> list[list[int]]:
+    def _empty_coordinates(self) -> list[list[int]]:
         return [[r, c] for r in range(3) for c in range(3) if self.board[r][c] is None]
 
     @property
-    def _winner(self: TicTacToeEnvironment) -> Optional[TicTacToePlayer]:
+    def _information(self) -> dict[str, Any]:
+        return {
+            'board': self.board,
+        }
+
+    @property
+    def _winner(self) -> Optional[TicTacToePlayer]:
         for i in range(3):
             if self.board[i][0] == self.board[i][1] == self.board[i][2] is not None:
                 return self.board[i][0]
@@ -59,23 +65,16 @@ class TicTacToeEnvironment(Environment[TicTacToeGame, 'TicTacToeEnvironment', 'T
 
         return None
 
-    @property
-    def _information(self: TicTacToeEnvironment) -> dict[str, Any]:
-        return {
-            'board': self.board,
-        }
-
 
 class TicTacToeNature(Nature[TicTacToeGame, TicTacToeEnvironment, 'TicTacToeNature', 'TicTacToePlayer']):
     """TicTacToeNature is the class for tic tac toe natures."""
 
     @property
-    def actions(self: TicTacToeNature) -> list[Action[TicTacToeGame, TicTacToeEnvironment, 'TicTacToeNature',
-                                                      'TicTacToePlayer']]:
+    def actions(self) -> list[TicTacToeAction]:
         return []
 
     @property
-    def payoff(self: TicTacToeNature) -> int:
+    def payoff(self) -> int:
         return 0
 
 
@@ -83,7 +82,7 @@ class TicTacToePlayer(Player[TicTacToeGame, TicTacToeEnvironment, TicTacToeNatur
     """TicTacToePlayer is the class for tic tac toe players."""
 
     @property
-    def actions(self: TicTacToePlayer) -> list[TicTacToeAction]:
+    def actions(self) -> list[TicTacToeAction]:
         from gameframe.tictactoe import MarkAction
 
         if self is self.game.actor:
@@ -92,20 +91,20 @@ class TicTacToePlayer(Player[TicTacToeGame, TicTacToeEnvironment, TicTacToeNatur
             return []
 
     @property
-    def payoff(self: TicTacToePlayer) -> int:
+    def payoff(self) -> int:
         if self.game.environment._winner is None:
             return 0 if self.game.terminal else -1
         else:
-            return 1 if self.game.environment._winner is self else -1
+            return 1 if self is self.game.environment._winner else -1
 
 
 class TicTacToeAction(SequentialAction[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer], ABC):
     """TicTacToeAction is the abstract base class for all tic tac toe actions"""
 
     @property
-    def chance(self: TicTacToeAction) -> bool:
+    def chance(self) -> bool:
         return False
 
     @property
-    def public(self: TicTacToeAction) -> bool:
+    def public(self) -> bool:
         return True
