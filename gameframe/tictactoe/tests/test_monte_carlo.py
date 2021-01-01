@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from unittest import TestCase, main
 
 from gameframe.sequential.tests import SequentialMonteCarloTestCaseMixin
@@ -9,58 +7,58 @@ from gameframe.tictactoe import TicTacToeGame
 class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin[TicTacToeGame]):
     """TicTacToeTestCase is the class for tic tac toe test cases."""
 
-    def test_draw(self: TicTacToeMonteCarloTestCase) -> None:
-        """Tests if the tic tac toe properly detects a case of a tied game.
+    def test_draw(self) -> None:
+        """Tests if tic tac toe properly detects a case of a tied game.
 
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
-        game: TicTacToeGame = self._create_game()
+        game = self._create_game()
 
         game.actor.actions[4].act()
 
         while not game.terminal:
             game.actor.actions[0].act()
 
-        self.assertEqual([0, 0], [player.payoff for player in game.players])
+        self.assertSequenceEqual((0, 0), tuple(map(lambda player: player.payoff, game.players)))
 
-    def test_loss(self: TicTacToeMonteCarloTestCase) -> None:
-        """Tests if the tic tac toe properly detects a case of the first player losing.
+    def test_loss(self) -> None:
+        """Tests if tic tac toe properly detects a case of the first player losing.
 
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
-        game: TicTacToeGame = self._create_game()
+        game = self._create_game()
 
         game.actor.actions[8].act()
 
         while not game.terminal:
             game.actor.actions[0].act()
 
-        self.assertEqual([-1, 1], [player.payoff for player in game.players])
+        self.assertSequenceEqual((-1, 1), tuple(map(lambda player: player.payoff, game.players)))
 
-    def test_win(self: TicTacToeMonteCarloTestCase) -> None:
-        """Tests if the tic tac toe properly detects a case of the first player winning.
+    def test_win(self) -> None:
+        """Tests if tic tac toe properly detects a case of the first player winning.
 
         :return: None
         :raise AssertionError: if the tic tac toe player payoffs are wrong
         """
-        game: TicTacToeGame = self._create_game()
+        game = self._create_game()
 
         while not game.terminal:
             game.actor.actions[0].act()
 
-        self.assertEqual([1, -1], [player.payoff for player in game.players])
-
-    def _create_game(self: TicTacToeMonteCarloTestCase) -> TicTacToeGame:
-        return TicTacToeGame()
-
-    def _verify(self: TicTacToeMonteCarloTestCase, game: TicTacToeGame) -> None:
-        assert game.environment._winner is not None or not game.environment._empty_coordinates
+        self.assertSequenceEqual((1, -1), tuple(map(lambda player: player.payoff, game.players)))
 
     @property
-    def _num_monte_carlo_tests(self: TicTacToeMonteCarloTestCase) -> int:
+    def _monte_carlo_test_count(self) -> int:
         return 10000
+
+    def _create_game(self) -> TicTacToeGame:
+        return TicTacToeGame()
+
+    def _verify_game(self, game: TicTacToeGame) -> None:
+        assert game.environment._winner is not None or not game.environment._empty_coordinates
 
 
 if __name__ == '__main__':

@@ -3,6 +3,7 @@ from gameframe.tictactoe import TicTacToeGame
 
 
 def main() -> None:
+    """Interacts with a tic tac toe game."""
     interact_sequential(TicTacToeGame)
 
 

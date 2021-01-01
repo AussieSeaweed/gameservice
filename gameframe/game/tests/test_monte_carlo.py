@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
 from typing import Generic
 
@@ -10,7 +8,7 @@ class MonteCarloTestCaseMixin(Generic[G], ABC):
     """MonteCarloTestCaseMixin is the abstract base mixin for all monte carlo test cases."""
 
     @abstractmethod
-    def test_monte_carlo(self: MonteCarloTestCaseMixin[G]) -> None:
+    def test_monte_carlo(self) -> None:
         """Runs monte carlo tests of games.
 
         :return: None
@@ -18,15 +16,15 @@ class MonteCarloTestCaseMixin(Generic[G], ABC):
         """
         pass
 
-    @abstractmethod
-    def _create_game(self: MonteCarloTestCaseMixin[G]) -> G:
-        pass
-
-    @abstractmethod
-    def _verify(self: MonteCarloTestCaseMixin[G], game: G) -> None:
-        pass
-
     @property
     @abstractmethod
-    def _num_monte_carlo_tests(self: MonteCarloTestCaseMixin[G]) -> int:
+    def _monte_carlo_test_count(self) -> int:
+        pass
+
+    @abstractmethod
+    def _create_game(self) -> G:
+        pass
+
+    @abstractmethod
+    def _verify_game(self, game: G) -> None:
         pass
