@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from itertools import zip_longest
-from typing import Any, Iterable, Optional, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from gameframe.game import Environment, Nature, Player
-from gameframe.poker.rounds import Round
-from gameframe.poker.utils import Card, Deck, Evaluator, Hand, HoleCard
 from gameframe.sequential import SequentialAction, SequentialGame
+
+if TYPE_CHECKING:
+    from . import Card, Deck, Evaluator, Hand, HoleCard, Round
 
 
 class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', 'PokerPlayer'], ABC):

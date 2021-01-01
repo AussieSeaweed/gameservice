@@ -1,21 +1,27 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
+
+if TYPE_CHECKING:
+    from . import PokerGame, PokerAction
 
 
 class Round(ABC):
     """Round is the abstract base class for all rounds."""
 
-    def __init__(self, game):
-        self.__game = game
+    def __init__(self: Round, game: PokerGame) -> None:
+        self.__game: PokerGame = game
 
     @property
-    def game(self):
+    def game(self: Round) -> PokerGame:
         """
         :return: the game of the round
         """
         return self.__game
 
     @abstractmethod
-    def _create_actions(self):
+    def _create_actions(self: Round) -> list[PokerAction]:
         pass
 
 
