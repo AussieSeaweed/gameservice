@@ -28,12 +28,13 @@ class Round(ABC):
     def _opener(self) -> Union[PokerNature, PokerPlayer]:
         pass
 
+    @abstractmethod
     def _open(self) -> None:
-        self.game._actor = self._opener
+        pass
 
+    @abstractmethod
     def _close(self) -> None:
-        self.game._actor = self.game.nature  # Redundant assignment, but just in case
-        self.game._rounds.pop(0)
+        pass
 
     @abstractmethod
     def _create_actions(self) -> list[PokerAction]:
@@ -59,7 +60,7 @@ class BettingRound(Round, ABC):
     @property
     def _opener(self) -> Union[PokerNature, PokerPlayer]:
         if any(player.bet for player in self.game.players):
-            opener = self.game.players[1 if len(self.game.players) == 2 else 2]
+            opener: PokerPlayer = min(self.game.players, key=lambda player: (player.bet, player.index))
 
             return opener if opener.relevant else next(opener)
         else:
@@ -69,8 +70,6 @@ class BettingRound(Round, ABC):
                 return self.game.nature
 
     def _open(self) -> None:
-        super()._open()
-
         self.game.environment.board_cards.extend(self.game._deck.draw(self.__board_card_count))
 
         for player in self.game.players:
@@ -79,15 +78,11 @@ class BettingRound(Round, ABC):
                                              self.__hole_card_statuses):
                     player.hole_cards.append(HoleCard(hole_card, status))
 
-        if self.game.actor.nature:
-            self._close()
-        else:
+        if not self._opener.nature:
             self.game.environment._aggressor = self.game.actor
             self.game.environment._max_delta = max(self.game.blinds)
 
     def _close(self) -> None:
-        super()._close()
-
         self.game.environment._max_delta = None
         self.game.environment._pot += sum(player.bet for player in self.game.players)
 
@@ -95,7 +90,7 @@ class BettingRound(Round, ABC):
             player._bet = 0
 
     def _create_actions(self) -> list[PokerAction]:
-        actions = []
+        actions: list[PokerAction] = []
 
         if self.game.actor.bet < max(player.bet for player in self.game.players):
             actions.append(SubmissiveAction(self.game.actor))
@@ -105,10 +100,8 @@ class BettingRound(Round, ABC):
         if sum(player.relevant for player in self.game.players) > 1 and \
                 max(player.bet for player in self.game.players) < self.game.actor.stack:
             if self.__lazy:
-                actions.extend([
-                    AggressiveAction(self.game.actor, self._min_amount),
-                    AggressiveAction(self.game.actor, self._max_amount),
-                ])
+                actions.append(AggressiveAction(self.game.actor, self._min_amount))
+                actions.append(AggressiveAction(self.game.actor, self._max_amount))
             else:
                 actions.extend(map(lambda amount: AggressiveAction(self.game.actor, amount),
                                    range(self._min_amount, self._max_amount + 1)))

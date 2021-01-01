@@ -84,13 +84,13 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
 
     def _setup(self) -> None:
         for player in self.players:
-            ante = min(self.ante, player.stack)
+            ante: int = min(self.ante, player.stack)
 
             player._stack -= ante
             self.environment._pot += ante
 
         for player, blind in zip(self.players, reversed(self.blinds) if len(self.players) == 2 else self.blinds):
-            blind = min(blind, player.stack)
+            blind: int = min(blind, player.stack)
 
             player._stack -= blind
             player._bet += blind
@@ -147,12 +147,9 @@ class PokerNature(Nature[PokerGame, PokerEnvironment, 'PokerNature', 'PokerPlaye
 
     @property
     def actions(self) -> list[PokerAction]:
-        from gameframe.poker import RoundAction, ShowdownAction
+        from gameframe.poker import RoundAction
 
-        if self is self.game.actor:
-            return [ShowdownAction(self) if self.game._round is None else RoundAction(self)]
-        else:
-            return []
+        return [RoundAction(self)] if self is self.game.actor else []
 
     @property
     def payoff(self) -> int:
@@ -230,11 +227,11 @@ class PokerPlayer(Player[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer'
     def relevant(self) -> bool:
         """Finds the relevancy of the poker player.
 
-        A poker player is relevant if he/she can make a bet/raise.
+        A poker player is relevant if he/she can make a bet/raise and be played back.
 
         :return: the relevancy of the poker player
         """
-        return not self.mucked and self.stack and self.effective_stack  # TODO SUSPICIOUS EXPRESSION
+        return not self.mucked and self.stack and self.effective_stack
 
     @property
     def stack(self) -> int:
@@ -257,7 +254,7 @@ class PokerPlayer(Player[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer'
         player: Union[PokerNature, PokerPlayer] = super().__next__()
 
         while not player.relevant and player is not self.game.environment._aggressor:
-            player = Player.__next__(player)
+            player: Union[PokerNature, PokerPlayer] = Player.__next__(player)
 
         return self.game.nature if player is self.game.environment._aggressor else player
 
@@ -281,7 +278,7 @@ class PokerPlayer(Player[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer'
         }
 
     def _muck(self) -> None:
-        self.__hole_cards = None
+        self.__hole_cards: Optional[list[HoleCard]] = None
 
 
 class PokerAction(SequentialAction[PokerGame, PokerEnvironment, PokerNature, PokerPlayer], ABC):
