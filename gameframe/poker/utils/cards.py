@@ -32,21 +32,24 @@ class Card:
     """Card is the base class for all cards."""
 
     def __init__(self: Card, rank: Rank, suit: Suit) -> None:
-        self.__rank: Rank = rank
-        self.__suit: Suit = suit
+        self._rank: Rank = rank
+        self._suit: Suit = suit
 
     def __str__(self: Card) -> str:
-        return self.__rank.value + self.__suit.value
+        return self._rank.value + self._suit.value
 
 
 class HoleCard(Card):
     """HoleCard is the class for hole cards."""
 
-    def __init__(self, rank: Rank, suit: Suit, status: bool) -> None:
-        super().__init__(rank, suit)
+    def __init__(self: HoleCard, card: Card, status: bool) -> None:
+        super().__init__(card._rank, card._suit)
 
         self.__status: bool = status
 
     @property
     def status(self: HoleCard) -> bool:
+        """
+        :return: the status of the hole card
+        """
         return self.__status

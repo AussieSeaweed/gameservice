@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
-    from . import PokerGame, PokerAction
+    from gameframe.poker import PokerGame, PokerAction
 
 
 class Round(ABC):

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from treys import Card as _TreysCard, Evaluator as _TreysEvaluator
 
-from gameframe.poker.utils.cards import Card
+if TYPE_CHECKING:
+    from gameframe.poker import Card
 
 
 class Hand(ABC):

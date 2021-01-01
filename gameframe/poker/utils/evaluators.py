@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from itertools import combinations
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
-from gameframe.poker.utils.cards import Card
-from gameframe.poker.utils.hands import Hand, _TreysHand
+from gameframe.poker.utils.hands import _TreysHand
+
+if TYPE_CHECKING:
+    from gameframe.poker import Hand, Card
 
 
 class Evaluator(ABC):

@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from gameframe.tictactoe.bases import TicTacToeAction, TicTacToePlayer
+from typing import TYPE_CHECKING
+from gameframe.tictactoe.bases import TicTacToeAction
+
+if TYPE_CHECKING:
+    from gameframe.tictactoe import TicTacToePlayer
 
 
 class MarkAction(TicTacToeAction):

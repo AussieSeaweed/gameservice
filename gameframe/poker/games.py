@@ -7,7 +7,7 @@ from gameframe.poker.bases import PokerGame
 from gameframe.poker.utils import StandardDeck, GreekHoldEmEvaluator, OmahaHoldEmEvaluator, StandardEvaluator
 
 if TYPE_CHECKING:
-    from . import Round
+    from gameframe.poker import Round
 
 
 class CommunityCardGame(PokerGame, ABC):

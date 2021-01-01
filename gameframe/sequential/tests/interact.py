@@ -1,8 +1,12 @@
-from typing import Callable
+from __future__ import annotations
 
-from gameframe.game import Action, Environment, Game, Nature, Player
+from typing import Callable, TYPE_CHECKING
+
 from gameframe.game.tests import pretty_print
-from gameframe.sequential import SequentialGame
+
+if TYPE_CHECKING:
+    from gameframe.game import Action, Environment, Game, Nature, Player
+    from gameframe.sequential import SequentialGame
 
 
 def interact_sequential(sequential_game_factory: Callable[[], SequentialGame]) -> None:

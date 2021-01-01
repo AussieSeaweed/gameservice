@@ -7,7 +7,7 @@ from gameframe.game import Environment, Nature, Player
 from gameframe.sequential import SequentialAction, SequentialGame
 
 if TYPE_CHECKING:
-    from . import Card, Deck, Evaluator, Hand, HoleCard, Round
+    from gameframe.poker import Card, Deck, Evaluator, Hand, HoleCard, Round
 
 
 class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', 'PokerPlayer'], ABC):
@@ -23,7 +23,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
     def __init__(self: PokerGame) -> None:
         super().__init__()
 
-        if not len(self.starting_stacks) > 1:
+        if not len(self.players) > 1:
             raise ValueError('Poker is played by more than 2 players')
 
         self._deck: Deck = self._create_deck()

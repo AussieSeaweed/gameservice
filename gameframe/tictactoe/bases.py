@@ -84,7 +84,7 @@ class TicTacToePlayer(Player[TicTacToeGame, TicTacToeEnvironment, TicTacToeNatur
 
     @property
     def actions(self: TicTacToePlayer) -> list[TicTacToeAction]:
-        from gameframe.tictactoe.actions import MarkAction
+        from gameframe.tictactoe import MarkAction
 
         if self is self.game.actor:
             return [MarkAction(self, r, c) for r, c in self.game.environment._empty_coordinates]

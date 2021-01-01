@@ -10,14 +10,14 @@ class PokerPlayerAction(PokerAction, ABC):
     """PokerPlayerAction is the abstract base class for all poker player actions."""
 
     @property
-    def chance(self) -> bool:
+    def chance(self: PokerPlayerAction) -> bool:
         return False
 
     @property
-    def public(self: PokerAction) -> bool:
+    def public(self: PokerPlayerAction) -> bool:
         return True
 
-    def _close(self):
+    def _close(self: PokerPlayerAction) -> None:
         self.game.player = self.game.nature
         self.game.streets.pop(0)
 
