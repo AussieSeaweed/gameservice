@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from .cards import Card, Rank, Suit
+from gameframe.utils.cards import Card, Rank, Suit
 
 
 class Deck(ABC):

@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from itertools import zip_longest
 
-from .environments import PokerEnvironment
-from .players import PokerNature, PokerPlayer
-from gameframe.poker.utils import GreekHoldEmEvaluator, OmahaHoldEmEvaluator, StandardDeck, StandardEvaluator
+from gameframe.poker.environments import PokerEnvironment
+from gameframe.poker.players import PokerNature, PokerPlayer
+from gameframe.utils.decks import StandardDeck
+from gameframe.utils.evaluators import GreekHoldEmEvaluator, OmahaHoldEmEvaluator, StandardEvaluator
 from gameframe.sequential import SequentialGame
 
 

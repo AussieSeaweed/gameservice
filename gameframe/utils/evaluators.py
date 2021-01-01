@@ -5,8 +5,7 @@ from itertools import combinations
 from typing import Optional
 
 from gameframe.utils.cards import Card
-from gameframe.utils.hands import Hand
-from .hands import _TreysHand
+from gameframe.utils.hands import Hand, _TreysHand
 
 
 class Evaluator(ABC):

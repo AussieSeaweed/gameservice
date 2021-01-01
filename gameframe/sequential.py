@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Any, Generic, TypeVar, Union
 
@@ -48,7 +50,7 @@ class SequentialGame(Game[SG, E, N, P], Generic[SG, E, N, P], ABC):
 class SequentialAction(Action[SG, E, N, P], Generic[SG, E, N, P], ABC):
     """SequentialAction is the abstract base class for all sequential actions."""
 
-    def _verify(self) -> None:
+    def _verify(self: SequentialAction[SG, E, N, P]) -> None:
         super()._verify()
 
         if not isinstance(self.game, SequentialGame):
