@@ -1,9 +1,9 @@
-from gameframe.tests.interact_sequential import sequential_interact
+from gameframe.tests.interact_sequential import interact_sequential
 from gameframe.tictactoe import TicTacToeGame
 
 
 def main() -> None:
-    sequential_interact(TicTacToeGame)
+    interact_sequential(TicTacToeGame)
 
 
 if __name__ == '__main__':

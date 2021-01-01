@@ -5,7 +5,7 @@ from gameframe.sequential import SequentialGame
 from gameframe.tests.interact import pretty_print
 
 
-def sequential_interact(sequential_game_factory: Callable[[], SequentialGame]) -> None:
+def interact_sequential(sequential_game_factory: Callable[[], SequentialGame]) -> None:
     """Interacts with sequential games on the console.
 
     :param sequential_game_factory: a function that creates a sequential game instance
