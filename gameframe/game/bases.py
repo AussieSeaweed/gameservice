@@ -91,7 +91,7 @@ class Environment(Generic[G, E, N, P]):
     """Environment is the base class for all environments."""
 
     def __init__(self: E, game: G) -> None:
-        self.__game = game
+        self.__game: G = game
 
     @property
     def game(self: E) -> G:
@@ -109,7 +109,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
     """Actor is the abstract base class for all actors."""
 
     def __init__(self: Union[N, P], game: G) -> None:
-        self.__game = game
+        self.__game: G = game
 
     @property
     def game(self: Union[N, P]) -> G:
@@ -197,7 +197,7 @@ class Action(Generic[G, E, N, P], ABC):
     """Action is the abstract base class for all actions."""
 
     def __init__(self, actor: Union[N, P]) -> None:
-        self.__actor = actor
+        self.__actor: Union[N, P] = actor
 
     @property
     def actor(self) -> Union[N, P]:
