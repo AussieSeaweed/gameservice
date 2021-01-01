@@ -10,11 +10,11 @@ from gameframe.sequential import SG
 from gameframe.tictactoe import TicTacToeGame
 
 
-class GameTestCaseMixin(Generic[G], ABC):
-    """GameTestCaseMixin is the abstract base mixin for all game test cases."""
+class MonteCarloTestCaseMixin(Generic[G], ABC):
+    """MonteCarloTestCaseMixin is the abstract base mixin for all monte carlo test cases."""
 
     @abstractmethod
-    def test_monte_carlo(self: GameTestCaseMixin[G]) -> None:
+    def test_monte_carlo(self: MonteCarloTestCaseMixin[G]) -> None:
         """Runs monte carlo tests of games.
 
         :return: None
@@ -23,23 +23,23 @@ class GameTestCaseMixin(Generic[G], ABC):
         pass
 
     @abstractmethod
-    def _create_game(self: GameTestCaseMixin[G]) -> G:
+    def _create_game(self: MonteCarloTestCaseMixin[G]) -> G:
         pass
 
     @abstractmethod
-    def _verify(self: GameTestCaseMixin[G], game: G) -> None:
+    def _verify(self: MonteCarloTestCaseMixin[G], game: G) -> None:
         pass
 
     @property
     @abstractmethod
-    def _num_monte_carlo_tests(self: GameTestCaseMixin[G]) -> int:
+    def _num_monte_carlo_tests(self: MonteCarloTestCaseMixin[G]) -> int:
         pass
 
 
-class SequentialTestCaseMixin(GameTestCaseMixin[SG], Generic[SG], ABC):
-    """SequentialTestCaseMixin is the abstract base mixin for all sequential test cases."""
+class SequentialMonteCarloTestCaseMixin(MonteCarloTestCaseMixin[SG], Generic[SG], ABC):
+    """SequentialMonteCarloTestCaseMixin is the abstract base mixin for all sequential monte carlo test cases."""
 
-    def test_monte_carlo(self: SequentialTestCaseMixin[SG]) -> None:
+    def test_monte_carlo(self: SequentialMonteCarloTestCaseMixin[SG]) -> None:
         for i in range(self._num_monte_carlo_tests):
             game: SG = self._create_game()
 
@@ -49,10 +49,10 @@ class SequentialTestCaseMixin(GameTestCaseMixin[SG], Generic[SG], ABC):
             self._verify(game)
 
 
-class TicTacToeTestCase(TestCase, SequentialTestCaseMixin[TicTacToeGame]):
+class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin[TicTacToeGame]):
     """TicTacToeTestCase is the class for tic tac toe test cases."""
 
-    def test_draw(self: TicTacToeTestCase) -> None:
+    def test_draw(self: TicTacToeMonteCarloTestCase) -> None:
         """Tests if the tic tac toe properly detects a case of a tied game.
 
         :return: None
@@ -67,7 +67,7 @@ class TicTacToeTestCase(TestCase, SequentialTestCaseMixin[TicTacToeGame]):
 
         self.assertEqual([0, 0], [player.payoff for player in game.players])
 
-    def test_loss(self: TicTacToeTestCase) -> None:
+    def test_loss(self: TicTacToeMonteCarloTestCase) -> None:
         """Tests if the tic tac toe properly detects a case of the first player losing.
 
         :return: None
@@ -82,7 +82,7 @@ class TicTacToeTestCase(TestCase, SequentialTestCaseMixin[TicTacToeGame]):
 
         self.assertEqual([-1, 1], [player.payoff for player in game.players])
 
-    def test_win(self: TicTacToeTestCase) -> None:
+    def test_win(self: TicTacToeMonteCarloTestCase) -> None:
         """Tests if the tic tac toe properly detects a case of the first player winning.
 
         :return: None
@@ -95,14 +95,14 @@ class TicTacToeTestCase(TestCase, SequentialTestCaseMixin[TicTacToeGame]):
 
         self.assertEqual([1, -1], [player.payoff for player in game.players])
 
-    def _create_game(self: TicTacToeTestCase) -> TicTacToeGame:
+    def _create_game(self: TicTacToeMonteCarloTestCase) -> TicTacToeGame:
         return TicTacToeGame()
 
-    def _verify(self: TicTacToeTestCase, game: TicTacToeGame) -> None:
+    def _verify(self: TicTacToeMonteCarloTestCase, game: TicTacToeGame) -> None:
         assert game.environment._winner is not None or not game.environment._empty_coordinates
 
     @property
-    def _num_monte_carlo_tests(self: TicTacToeTestCase) -> int:
+    def _num_monte_carlo_tests(self: TicTacToeMonteCarloTestCase) -> int:
         return 10000
 
 

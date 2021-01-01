@@ -3,8 +3,8 @@ from itertools import zip_longest
 
 from .environments import PokerEnvironment
 from .players import PokerNature, PokerPlayer
-from .utils import GreekHoldEmEvaluator, OmahaHoldEmEvaluator, StandardDeck, StandardEvaluator
-from ..sequential import SequentialGame
+from gameframe.poker.utils import GreekHoldEmEvaluator, OmahaHoldEmEvaluator, StandardDeck, StandardEvaluator
+from gameframe.sequential import SequentialGame
 
 
 class PokerGame(SequentialGame, ABC):

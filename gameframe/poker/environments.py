@@ -1,4 +1,4 @@
-from ..game import Environment
+from gameframe.game import Environment
 
 
 class PokerEnvironment(Environment):

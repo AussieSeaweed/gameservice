@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from .game import Action, Environment, Nature, Player
-from .sequential import SequentialAction, SequentialGame
+from gameframe.game import Action, Environment, Nature, Player
+from gameframe.sequential import SequentialAction, SequentialGame
 
 
 class TicTacToeGame(SequentialGame['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Generic, TypeVar, Union
 
-from .game import Action, E, Game, N, P
+from gameframe.game import Action, E, Game, N, P
 
 SG = TypeVar('SG', bound='SequentialGame')
 

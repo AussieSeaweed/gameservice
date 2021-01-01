@@ -16,5 +16,7 @@ setuptools.setup(
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.9',
-    install_requires=['treys'],
+    install_requires=[
+        'treys',
+    ],
 )

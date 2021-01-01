@@ -1,4 +1,4 @@
-from ..game import Player
+from gameframe.game import Player
 
 
 class PokerPlayer(Player):
