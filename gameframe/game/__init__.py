@@ -1,1 +1,1 @@
-from gameframe.game.bases import Action, E, Environment, G, Game, N, Nature, P, Player
+from gameframe.game.bases import Action, Actor, E, Environment, G, Game, N, P

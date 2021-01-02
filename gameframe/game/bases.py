@@ -5,8 +5,8 @@ from typing import Any, Generic, Iterator, Optional, TypeVar, Union
 
 G = TypeVar('G', bound='Game')
 E = TypeVar('E', bound='Environment')
-N = TypeVar('N', bound='Nature')
-P = TypeVar('P', bound='Player')
+N = TypeVar('N', bound='Actor')
+P = TypeVar('P', bound='Actor')
 
 
 class Game(Generic[G, E, N, P], ABC):
@@ -36,27 +36,27 @@ class Game(Generic[G, E, N, P], ABC):
     information, all the public information of other actors, and the private information of itself.
     """
 
-    def __init__(self: G) -> None:
+    def __init__(self) -> None:
         self.__environment: E = self._create_environment()
         self.__nature: N = self._create_nature()
         self.__players: list[P] = self._create_players()
 
     @property
-    def environment(self: G) -> E:
+    def environment(self) -> E:
         """
         :return: the environment of the game
         """
         return self.__environment
 
     @property
-    def nature(self: G) -> N:
+    def nature(self) -> N:
         """
         :return: the nature of the game
         """
         return self.__nature
 
     @property
-    def players(self: G) -> list[P]:
+    def players(self) -> list[P]:
         """
         :return: the players of the game
         """
@@ -64,69 +64,69 @@ class Game(Generic[G, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def terminal(self: G) -> bool:
+    def terminal(self) -> bool:
         """
         :return: True if the game is terminal, False otherwise
         """
         pass
 
     @property
-    def _information(self: G) -> dict[str, Any]:
+    def _information(self) -> dict[str, Any]:
         return {}
 
     @abstractmethod
-    def _create_environment(self: G) -> E:
+    def _create_environment(self) -> E:
         pass
 
     @abstractmethod
-    def _create_nature(self: G) -> N:
+    def _create_nature(self) -> N:
         pass
 
     @abstractmethod
-    def _create_players(self: G) -> list[P]:
+    def _create_players(self) -> list[P]:
         pass
 
 
 class Environment(Generic[G, E, N, P]):
     """Environment is the base class for all environments."""
 
-    def __init__(self: E, game: G) -> None:
+    def __init__(self, game: G) -> None:
         self.__game: G = game
 
     @property
-    def game(self: E) -> G:
+    def game(self) -> G:
         """
         :return: the game of the environment
         """
         return self.__game
 
     @property
-    def _information(self: E) -> dict[str, Any]:
+    def _information(self) -> dict[str, Any]:
         return {}
 
 
 class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
     """Actor is the abstract base class for all actors."""
 
-    def __init__(self: Union[N, P], game: G) -> None:
+    def __init__(self, game: G) -> None:
         self.__game: G = game
 
     @property
-    def game(self: Union[N, P]) -> G:
+    def game(self) -> G:
         """
         :return: the game of the actor
         """
         return self.__game
 
     @property
-    def index(self: Union[N, P]) -> Optional[int]:
+    def index(self) -> Optional[int]:
         """
         :return: the index of the actor
         """
         return None if self.nature else self.game.players.index(self)
 
     @property
-    def information_set(self: Union[N, P]) -> dict[str, Any]:
+    def information_set(self) -> dict[str, Any]:
         """
         :return: the information set of the actor
         """
@@ -141,21 +141,21 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
         }
 
     @property
-    def nature(self: Union[N, P]) -> bool:
+    def nature(self) -> bool:
         """
         :return: True if the actor is nature, False otherwise
         """
         return self is self.game.nature
 
-    def __next__(self: Union[N, P]) -> Union[N, P]:
+    def __next__(self) -> Union[N, P]:
         return self if self.index is None else self.game.players[(self.index + 1) % len(self.game.players)]
 
-    def __str__(self: Union[N, P]) -> str:
+    def __str__(self) -> str:
         return 'Nature' if self.nature else f'Player {self.index}'
 
     @property
     @abstractmethod
-    def actions(self: Union[N, P]) -> list[Action[G, E, N, P]]:
+    def actions(self) -> list[Action[G, E, N, P]]:
         """
         :return: the actions of the actor
         """
@@ -163,34 +163,24 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 
     @property
     @abstractmethod
-    def payoff(self: Union[N, P]) -> int:
+    def payoff(self) -> int:
         """
         :return: the payoff of the actor
         """
         pass
 
     @property
-    def _private_information(self: Union[N, P]) -> dict[str, Any]:
+    def _private_information(self) -> dict[str, Any]:
         return {
             **self._public_information,
             'actions': self.actions,
         }
 
     @property
-    def _public_information(self: Union[N, P]) -> dict[str, Any]:
+    def _public_information(self) -> dict[str, Any]:
         return {
             'actions': list(filter(lambda action: action.public, self.actions)),
         }
-
-
-class Nature(Actor[G, E, N, P], ABC):
-    """Nature is the abstract base class for all natures."""
-    pass
-
-
-class Player(Actor[G, E, N, P], ABC):
-    """Player is the abstract base class for all players."""
-    pass
 
 
 class Action(Generic[G, E, N, P], ABC):

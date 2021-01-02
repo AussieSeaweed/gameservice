@@ -16,24 +16,24 @@ class SequentialGame(Game[SG, E, N, P], ABC):
     sequential game is terminal, its protected actor attribute must be set to None to denote such.
     """
 
-    def __init__(self: SG) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
         self._actor: Optional[Union[N, P]] = self._initial_actor
 
     @property
-    def actor(self: SG) -> Optional[Union[N, P]]:
+    def actor(self) -> Optional[Union[N, P]]:
         """
         :return: the actor in turn to act of the sequential game
         """
         return self._actor
 
     @property
-    def terminal(self: SG) -> bool:
+    def terminal(self) -> bool:
         return self.actor is None
 
     @property
-    def _information(self: SG) -> dict[str, Any]:
+    def _information(self) -> dict[str, Any]:
         return {
             **super()._information,
             'actor': self.actor,
@@ -41,7 +41,7 @@ class SequentialGame(Game[SG, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def _initial_actor(self: SG) -> Optional[Union[N, P]]:
+    def _initial_actor(self) -> Optional[Union[N, P]]:
         pass
 
 

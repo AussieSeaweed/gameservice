@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import Any, Optional
 
-from gameframe.game import Environment, Nature, Player
+from gameframe.game import Environment, Actor
 from gameframe.sequential import SequentialAction, SequentialGame
 
 
@@ -66,7 +66,7 @@ class TicTacToeEnvironment(Environment[TicTacToeGame, 'TicTacToeEnvironment', 'T
         return None
 
 
-class TicTacToeNature(Nature[TicTacToeGame, TicTacToeEnvironment, 'TicTacToeNature', 'TicTacToePlayer']):
+class TicTacToeNature(Actor[TicTacToeGame, TicTacToeEnvironment, 'TicTacToeNature', 'TicTacToePlayer']):
     """TicTacToeNature is the class for tic tac toe natures."""
 
     @property
@@ -78,7 +78,7 @@ class TicTacToeNature(Nature[TicTacToeGame, TicTacToeEnvironment, 'TicTacToeNatu
         return 0
 
 
-class TicTacToePlayer(Player[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, 'TicTacToePlayer']):
+class TicTacToePlayer(Actor[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, 'TicTacToePlayer']):
     """TicTacToePlayer is the class for tic tac toe players."""
 
     @property
