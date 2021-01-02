@@ -1,7 +1,7 @@
 from gameframe.poker.actions import AggressiveAction, PassiveAction, RoundAction, SubmissiveAction
 from gameframe.poker.bases import PokerAction, PokerEnvironment, PokerGame, PokerNature, PokerNatureAction, \
     PokerPlayer, PokerPlayerAction
-from gameframe.poker.exceptions import AmountOutOfBoundsException, IllegalFoldException, \
+from gameframe.poker.exceptions import AmountOutOfBoundsException, FutileActionException, \
     InsufficientPlayerCountException, InvalidBlindConfigurationException
 from gameframe.poker.games import HoldEmGame, NoLimitTexasHoldEmGame, TexasHoldEmGame
 from gameframe.poker.limits import FixedLimit, Limit, NoLimit

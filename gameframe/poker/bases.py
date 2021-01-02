@@ -85,7 +85,6 @@ class PokerEnvironment(Environment[PokerGame, 'PokerEnvironment', 'PokerNature',
         """
         :return: the board cards of the poker environment
         """
-        Sequence.__
         return self.__board_cards
 
     @property

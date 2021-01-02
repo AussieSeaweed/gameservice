@@ -49,8 +49,8 @@ class PassiveAction(PokerPlayerAction):
 
         amount: int = self.__amount
 
-        self.actor.stack -= amount
-        self.actor.bet += amount
+        self.actor._stack -= amount
+        self.actor._bet += amount
 
         self.game._actor = next(self.actor)
 
@@ -134,7 +134,7 @@ class RoundAction(PokerNatureAction):
         return 'Next Street'
 
     def __show(self) -> None:
-        players: Iterable[PokerPlayer] = filter(lambda player: not player.mucked,
+        players: Iterable[PokerPlayer] = filter(lambda player: not player._mucked,
                                                 rotate(self.game.players, self.game.environment._aggressor.index))
 
         commitments: defaultdict[Hand, int] = defaultdict(lambda: 0)
@@ -148,13 +148,13 @@ class RoundAction(PokerNatureAction):
                     commitments[player._hand] = max(commitments[player._hand], player._commitment)
 
     def __distribute(self) -> None:
-        players: list[PokerPlayer] = list(filter(lambda player: not player.mucked, self.game.players))
+        players: list[PokerPlayer] = list(filter(lambda player: not player._mucked, self.game.players))
         base: int = 0
 
         for base_player in sorted(players):
             side_pot: int = self.__side_pot(base, base_player)
 
-            recipients: list[PokerPlayer] = list(filter(lambda player: player.hand == base_player._hand, players))
+            recipients: list[PokerPlayer] = list(filter(lambda player: player._hand == base_player._hand, players))
 
             for recipient in recipients:
                 recipient._bet += side_pot // len(recipients)
