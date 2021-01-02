@@ -7,7 +7,7 @@ from gameframe.game import Environment, Nature, Player
 from gameframe.sequential import SequentialAction, SequentialGame
 
 if TYPE_CHECKING:
-    from gameframe.poker import Card, Deck, Evaluator, Hand, HoleCard, Round
+    from gameframe.poker import Card, Deck, Evaluator, Hand, HoleCard, Round, Limit
 
 
 class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', 'PokerPlayer'], ABC):
@@ -28,6 +28,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
 
         self._deck: Deck = self._create_deck()
         self._evaluator: Evaluator = self._create_evaluator()
+        self._limit: Limit = self._create_limit()
         self._rounds: list[Round] = self._create_rounds()
 
         self._setup()
@@ -73,6 +74,11 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
     def _round(self) -> Round:
         return self._rounds[0] if self._rounds else None
 
+    @property
+    @abstractmethod
+    def _lazy(self) -> bool:
+        pass
+
     def _create_environment(self) -> PokerEnvironment:
         return PokerEnvironment(self)
 
@@ -101,6 +107,10 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
 
     @abstractmethod
     def _create_evaluator(self) -> Evaluator:
+        pass
+
+    @abstractmethod
+    def _create_limit(self) -> Limit:
         pass
 
     @abstractmethod

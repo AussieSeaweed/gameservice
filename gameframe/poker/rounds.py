@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Union
+from typing import Iterable, TYPE_CHECKING, Union
 
 from gameframe.poker.actions import AggressiveAction, PassiveAction, SubmissiveAction
 from gameframe.poker.utils import HoleCard
@@ -44,18 +44,11 @@ class Round(ABC):
 class BettingRound(Round, ABC):
     """BettingRound is the abstract base class for all betting rounds."""
 
-    def __init__(self, game: PokerGame, board_card_count: int, hole_card_statuses: list[bool], lazy: bool) -> None:
+    def __init__(self, game: PokerGame, board_card_count: int, hole_card_statuses: list[bool]) -> None:
         super(BettingRound, self).__init__(game)
 
         self.__board_card_count: int = board_card_count
         self.__hole_card_statuses: list[bool] = hole_card_statuses
-
-        self.__lazy: bool = lazy
-
-    @property
-    def _min_amount(self) -> int:
-        return min(max(player.bet for player in self.game.players) + self.game.environment._max_delta,
-                   self.game.actor.total)
 
     @property
     def _opener(self) -> Union[PokerNature, PokerPlayer]:
@@ -99,32 +92,11 @@ class BettingRound(Round, ABC):
 
         if sum(player.relevant for player in self.game.players) > 1 and \
                 max(player.bet for player in self.game.players) < self.game.actor.stack:
-            if self.__lazy:
-                actions.append(AggressiveAction(self.game.actor, self._min_amount))
-                actions.append(AggressiveAction(self.game.actor, self._max_amount))
+            if self.game._lazy:
+                bet_amounts: Iterable[int] = list({self.game._limit.min_amount, self.game._limit.max_amount})
             else:
-                actions.extend(map(lambda amount: AggressiveAction(self.game.actor, amount),
-                                   range(self._min_amount, self._max_amount + 1)))
+                bet_amounts: Iterable[int] = range(self.game._limit.min_amount, self.game._limit.max_amount + 1)
+
+            actions.extend(map(lambda amount: AggressiveAction(self.game.actor, amount), bet_amounts))
 
         return actions
-
-    @property
-    @abstractmethod
-    def _max_amount(self) -> int:
-        pass
-
-
-class NoLimitBettingRound(BettingRound):
-    """NoLimitBettingRound is the class for no-limit betting rounds."""
-
-    @property
-    def _max_amount(self) -> int:
-        return self.game.actor.total
-
-
-class LimitBettingRound(BettingRound):
-    """LimitBettingRound is the class for limit betting rounds."""
-
-    @property
-    def _max_amount(self) -> int:
-        return self._min_amount

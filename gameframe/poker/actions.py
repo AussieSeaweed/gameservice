@@ -83,10 +83,7 @@ class AggressiveAction(PokerPlayerAction):
     def _verify(self) -> None:
         super()._verify()
 
-        max_bet: int = max(player.bet for player in self.game.players)
-
-        if not ((max_bet + self.game.environment._max_delta <= self.__amount <= self.actor.total or
-                 max_bet < self.__amount == self.actor.total) and
+        if not (self.game._limit.min_amount <= self.__amount <= self.game._limit.max_amount and
                 sum(player.relevant for player in self.game.players) > 1):
             raise ValueError('The supplied raise or bet size is not allowed')
 
