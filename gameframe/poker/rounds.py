@@ -77,7 +77,7 @@ class BettingRound(Round, ABC):
                     player.hole_cards.append(HoleCard(hole_card, status))
 
         if not self._opener.nature:
-            self.game.environment._aggressor = self.game.actor
+            self.game.environment._aggressor = self._opener
             self.game.environment._max_delta = max(self.game._blinds)
 
     @override
@@ -100,7 +100,7 @@ class BettingRound(Round, ABC):
         if sum(player._relevant for player in self.game.players) > 1 and \
                 max(player.bet for player in self.game.players) < self.game.actor.stack:
             if self.game._lazy:
-                bet_amounts: Sequence[int] = list({self.game._limit.min_amount, self.game._limit.max_amount})
+                bet_amounts: Sequence[int] = sorted({self.game._limit.min_amount, self.game._limit.max_amount})
             else:
                 bet_amounts: Sequence[int] = range(self.game._limit.min_amount, self.game._limit.max_amount + 1)
 

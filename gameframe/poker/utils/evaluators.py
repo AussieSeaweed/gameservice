@@ -42,7 +42,6 @@ class StandardEvaluator(Evaluator):
 class OmahaHoldEmEvaluator(StandardEvaluator):
     """OmahaHoldEmEvaluator is the class for omaha hold'em evaluators"""
 
-    @final
     @override
     def hand(self, hole_cards: Sequence[Card], board_cards: Sequence[Card]) -> Optional[Hand]:
         hand: Optional[Hand] = None
@@ -62,7 +61,6 @@ class OmahaHoldEmEvaluator(StandardEvaluator):
 class GreekHoldEmEvaluator(StandardEvaluator):
     """GreekHoldEmEvaluator is the class for greek hold'em evaluators"""
 
-    @final
     @override
     def hand(self, hole_cards: Sequence[Card], board_cards: Sequence[Card]) -> Optional[Hand]:
         hand: Optional[Hand] = None

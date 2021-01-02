@@ -40,6 +40,6 @@ class MarkAction(TicTacToeAction):
         super()._verify()
 
         if not (0 <= self.__r < 3 and 0 <= self.__c < 3):
-            raise CoordinatesOutOfBoundsException('The cell coordinates are out of range')
+            raise CoordinatesOutOfBoundsException()
         elif self.game.environment.board[self.__r][self.__c] is not None:
-            raise OccupiedCellException('The cell is already occupied')
+            raise OccupiedCellException()

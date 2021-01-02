@@ -1,7 +1,7 @@
 from typing import Any, Callable, Sequence, TypeVar
 
-T = TypeVar('T')
 C = TypeVar('C', bound=Callable)
+T = TypeVar('T')
 
 
 def override(function: C) -> C:
@@ -41,7 +41,7 @@ def pretty_print(o: Any, indent: str = '    ', start: str = '', end: str = '\n')
         print(start + str(o), end=end)
 
 
-def rotate(collection: Sequence[T], index: int) -> list[T]:
+def rotate(collection: Sequence[T], index: int) -> Sequence[T]:
     """Rotates the list by an index.
 
     :param collection: the list to be rotated

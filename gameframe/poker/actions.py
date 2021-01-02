@@ -4,9 +4,9 @@ from collections import defaultdict
 from typing import Iterable, TYPE_CHECKING, final
 
 from gameframe.poker.bases import PokerNatureAction, PokerPlayerAction
-from gameframe.utils import rotate
-from gameframe.poker.exceptions import FutileActionException, AmountOutOfBoundsException
+from gameframe.poker.exceptions import AmountOutOfBoundsException, FutileActionException
 from gameframe.utils import override
+from gameframe.utils import rotate
 
 if TYPE_CHECKING:
     from gameframe.poker import Hand, PokerPlayer
@@ -36,7 +36,7 @@ class SubmissiveAction(PokerPlayerAction):
         super()._verify()
 
         if self.actor.bet >= max(player.bet for player in self.game.players):
-            raise FutileActionException('Player should not fold if enough amount is already bet')
+            raise FutileActionException()
 
 
 @final
@@ -60,9 +60,6 @@ class PassiveAction(PokerPlayerAction):
 
     @property
     def __amount(self) -> int:
-        """
-        :return: the call/check amount of the passive action
-        """
         return min(self.actor.stack, max(player.bet for player in self.game.players) - self.actor.bet)
 
 
@@ -97,9 +94,9 @@ class AggressiveAction(PokerPlayerAction):
         super()._verify()
 
         if sum(player._relevant for player in self.game.players) <= 1:
-            raise FutileActionException('The bet/raise cannot be called by any opponents')
+            raise FutileActionException()
         if not (self.game._limit.min_amount <= self.__amount <= self.game._limit.max_amount):
-            raise AmountOutOfBoundsException('The supplied bet/raise size is not allowed')
+            raise AmountOutOfBoundsException()
 
 
 @final
@@ -110,7 +107,8 @@ class RoundAction(PokerNatureAction):
     def act(self) -> None:
         super().act()
 
-        self.game._round._close()
+        if self.game._round is not None:
+            self.game._round._close()
 
         if sum(not player._mucked for player in self.game.players) == 1:
             self.game._rounds.clear()
@@ -134,24 +132,30 @@ class RoundAction(PokerNatureAction):
         return 'Next Street'
 
     def __show(self) -> None:
-        players: Iterable[PokerPlayer] = filter(lambda player: not player._mucked,
-                                                rotate(self.game.players, self.game.environment._aggressor.index))
+        players: Iterable[PokerPlayer] = filter(
+            lambda player: not player._mucked,
+            self.game.players if self.game.environment._aggressor is None else rotate(
+                self.game.players, self.game.environment._aggressor.index),
+        )
 
         commitments: defaultdict[Hand, int] = defaultdict(lambda: 0)
 
         for player in players:
             for hand, commitment in commitments.items():
-                if player._hand < hand and commitment > player._commitment:
+                if hand < player._hand and commitment >= player._commitment:
                     player._muck()
                     break
-                else:
-                    commitments[player._hand] = max(commitments[player._hand], player._commitment)
+            else:
+                commitments[player._hand] = max(commitments[player._hand], player._commitment)
+
+                for card in player.hole_cards:
+                    card._status = True
 
     def __distribute(self) -> None:
         players: list[PokerPlayer] = list(filter(lambda player: not player._mucked, self.game.players))
         base: int = 0
 
-        for base_player in sorted(players):
+        for base_player in sorted(players, key=lambda player: (player._hand, player._commitment)):
             side_pot: int = self.__side_pot(base, base_player)
 
             recipients: list[PokerPlayer] = list(filter(lambda player: player._hand == base_player._hand, players))

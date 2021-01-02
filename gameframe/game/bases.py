@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Generic, Iterator, Optional, Sequence, TypeVar, Union, final
 
-from gameframe.game.exceptions import PlayerTypeException, TerminalityException
+from gameframe.game.exceptions import PlayerTypeMismatchException, TerminalityException
 from gameframe.utils import override
 
 G = TypeVar('G', bound='Game')
@@ -243,6 +243,6 @@ class Action(Generic[G, E, N, P], ABC):
 
     def _verify(self) -> None:
         if self.game.terminal:
-            raise TerminalityException('Actions are not applicable to terminal games')
+            raise TerminalityException()
         elif self.chance != self.actor.nature:
-            raise PlayerTypeException('Nature acts chance actions')
+            raise PlayerTypeMismatchException()

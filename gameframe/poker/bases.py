@@ -30,7 +30,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
         self._deck: Deck = deck
         self._evaluator: Evaluator = evaluator
         self._limit: Limit = limit
-        self._rounds: list[Round] = rounds
+        self._rounds: list[Optional[Round]] = [None, *rounds]
 
         self._ante: int = ante
         self._blinds: Sequence[int] = blinds
@@ -39,15 +39,15 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
         self._lazy: bool = lazy
 
         if not len(self.players) > 1:
-            raise InsufficientPlayerCountException('Poker is played by more than 2 players')
+            raise InsufficientPlayerCountException()
         elif self._blinds != sorted(self._blinds):
-            raise InvalidBlindConfigurationException('Blinds are not sorted')
+            raise InvalidBlindConfigurationException()
 
         self._setup()
 
     @property
     @final
-    def _round(self) -> Round:
+    def _round(self) -> Optional[Round]:
         return self._rounds[0] if self._rounds else None
 
     @final
@@ -156,15 +156,12 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
     @property
     @override
     def actions(self) -> Sequence[PokerAction]:
-        return self.game._round._create_actions() if self is self.game.actor else []
+        return self.game._round._create_actions() if self is self.game.actor and self.game._round is not None else []
 
     @property
     @override
     def payoff(self) -> int:
         return -self._commitment
-
-    def __lt__(self, other: PokerPlayer) -> bool:
-        return self._commitment < other._commitment if self._hand == other._hand else self._hand > other._hand
 
     @override
     def __next__(self) -> Union[PokerNature, PokerPlayer]:
@@ -196,7 +193,7 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
 
     @property
     def _relevant(self) -> bool:
-        return not self._mucked and self.stack and self._effective_stack
+        return not self._mucked and self.stack > 0 and self._effective_stack > 0
 
     @property
     def _starting_stack(self) -> int:

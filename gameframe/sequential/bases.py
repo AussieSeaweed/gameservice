@@ -18,10 +18,11 @@ class SequentialGame(Game[SG, E, N, P], ABC):
     set to None to denote such.
     """
 
-    def __init__(self, environment: E, nature: N, players: Sequence[P], actor_index: Optional[int]) -> None:
+    def __init__(self, environment: E, nature: N, players: Sequence[P], initial_actor_index: Optional[int]) -> None:
         super().__init__(environment, nature, players)
 
-        self._actor: Optional[Union[N, P]] = self.nature if actor_index is None else self.players[actor_index]
+        self._actor: Optional[Union[N, P]] = self.nature if initial_actor_index is None else self.players[
+            initial_actor_index]
 
     @property
     @final
@@ -53,7 +54,5 @@ class SequentialAction(Action[SG, E, N, P], ABC):
     def _verify(self) -> None:
         super()._verify()
 
-        if not isinstance(self.game, SequentialGame):
-            raise TypeError('The game is not an instance of SequentialGame')
         if self.actor is not self.game.actor:
-            raise ActorOutOfTurnException('The actor is not in turn to act')
+            raise ActorOutOfTurnException()

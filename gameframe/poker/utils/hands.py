@@ -47,7 +47,7 @@ class _TreysHand(Hand['_TreysHand']):
 
     @override
     def __lt__(self, other: _TreysHand) -> bool:
-        return self.__hand_rank > other.__hand_rank
+        return self.__hand_rank < other.__hand_rank
 
     @override
     def __eq__(self, other: _TreysHand) -> bool:

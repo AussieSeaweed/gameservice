@@ -53,11 +53,11 @@ class HoleCard(Card):
     def __init__(self, card: Card, status: bool) -> None:
         super().__init__(card._rank, card._suit)
 
-        self.__status: bool = status
+        self._status: bool = status
 
     @property
     def status(self) -> bool:
         """
         :return: the status of the hole card
         """
-        return self.__status
+        return self._status

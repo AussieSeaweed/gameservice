@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Sequence, final
+from random import shuffle
 
 from gameframe.poker.utils.cards import Card, Rank, Suit
 from gameframe.utils import override
@@ -12,6 +13,8 @@ class Deck(ABC):
 
     def __init__(self) -> None:
         self.__cards: list[Card] = self._create_cards()
+
+        shuffle(self.__cards)
 
     @final
     def draw(self, card_count: int) -> Sequence[Card]:
