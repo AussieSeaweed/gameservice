@@ -7,7 +7,7 @@ from gameframe.poker.bases import PokerNatureAction, PokerPlayerAction
 from gameframe.utils import rotate
 
 if TYPE_CHECKING:
-    from gameframe.poker import PokerPlayer, Hand
+    from gameframe.poker import Hand, PokerPlayer
 
 
 class SubmissiveAction(PokerPlayerAction):

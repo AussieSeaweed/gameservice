@@ -10,14 +10,14 @@ if TYPE_CHECKING:
     from gameframe.poker import Round
 
 
-class CommunityCardGame(PokerGame, ABC):
-    """CommunityCardGame is the abstract base class for all community card games."""
+class HoldEmGame(PokerGame, ABC):
+    """HoldEmGame is the abstract base class for all hold'em games."""
 
     def _create_rounds(self) -> list[Round]:
         return []  # TODO
 
 
-class TexasHoldEmGame(CommunityCardGame, ABC):
+class TexasHoldEmGame(HoldEmGame, ABC):
     """TexasHoldEmGame is the abstract base class for all texas hold'em games."""
 
     def _create_deck(self) -> StandardDeck:
