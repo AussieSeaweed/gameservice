@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, Iterator, Optional, TypeVar, Union
+from typing import Any, Generic, Iterator, Optional, Sequence, TypeVar, Union, final
+
+from gameframe.game.exceptions import PlayerTypeException, TerminalityException
+from gameframe.utils import override
 
 G = TypeVar('G', bound='Game')
 E = TypeVar('E', bound='Environment')
@@ -36,12 +39,13 @@ class Game(Generic[G, E, N, P], ABC):
     information, all the public information of other actors, and the private information of itself.
     """
 
-    def __init__(self) -> None:
-        self.__environment: E = self._create_environment()
-        self.__nature: N = self._create_nature()
-        self.__players: list[P] = self._create_players()
+    def __init__(self, environment: E, nature: N, players: Sequence[P]) -> None:
+        self.__environment: E = environment
+        self.__nature: N = nature
+        self.__players: Sequence[P] = players
 
     @property
+    @final
     def environment(self) -> E:
         """
         :return: the environment of the game
@@ -49,6 +53,7 @@ class Game(Generic[G, E, N, P], ABC):
         return self.__environment
 
     @property
+    @final
     def nature(self) -> N:
         """
         :return: the nature of the game
@@ -56,7 +61,8 @@ class Game(Generic[G, E, N, P], ABC):
         return self.__nature
 
     @property
-    def players(self) -> list[P]:
+    @final
+    def players(self) -> Sequence[P]:
         """
         :return: the players of the game
         """
@@ -74,18 +80,6 @@ class Game(Generic[G, E, N, P], ABC):
     def _information(self) -> dict[str, Any]:
         return {}
 
-    @abstractmethod
-    def _create_environment(self) -> E:
-        pass
-
-    @abstractmethod
-    def _create_nature(self) -> N:
-        pass
-
-    @abstractmethod
-    def _create_players(self) -> list[P]:
-        pass
-
 
 class Environment(Generic[G, E, N, P]):
     """Environment is the base class for all environments."""
@@ -94,6 +88,7 @@ class Environment(Generic[G, E, N, P]):
         self.__game: G = game
 
     @property
+    @final
     def game(self) -> G:
         """
         :return: the game of the environment
@@ -112,6 +107,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
         self.__game: G = game
 
     @property
+    @final
     def game(self) -> G:
         """
         :return: the game of the actor
@@ -119,6 +115,15 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
         return self.__game
 
     @property
+    @final
+    def nature(self) -> bool:
+        """
+        :return: True if the actor is nature, False otherwise
+        """
+        return self is self.game.nature
+
+    @property
+    @final
     def index(self) -> Optional[int]:
         """
         :return: the index of the actor
@@ -126,6 +131,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
         return None if self.nature else self.game.players.index(self)
 
     @property
+    @final
     def information_set(self) -> dict[str, Any]:
         """
         :return: the information set of the actor
@@ -141,21 +147,8 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
         }
 
     @property
-    def nature(self) -> bool:
-        """
-        :return: True if the actor is nature, False otherwise
-        """
-        return self is self.game.nature
-
-    def __next__(self) -> Union[N, P]:
-        return self if self.index is None else self.game.players[(self.index + 1) % len(self.game.players)]
-
-    def __str__(self) -> str:
-        return 'Nature' if self.nature else f'Player {self.index}'
-
-    @property
     @abstractmethod
-    def actions(self) -> list[Action[G, E, N, P]]:
+    def actions(self) -> Sequence[Action[G, E, N, P]]:
         """
         :return: the actions of the actor
         """
@@ -168,6 +161,14 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
         :return: the payoff of the actor
         """
         pass
+
+    @override
+    def __next__(self) -> Union[N, P]:
+        return self if self.index is None else self.game.players[(self.index + 1) % len(self.game.players)]
+
+    @override
+    def __str__(self) -> str:
+        return 'Nature' if self.nature else f'Player {self.index}'
 
     @property
     def _private_information(self) -> dict[str, Any]:
@@ -186,10 +187,14 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 class Action(Generic[G, E, N, P], ABC):
     """Action is the abstract base class for all actions."""
 
-    def __init__(self, actor: Union[N, P]) -> None:
+    def __init__(self, actor: Union[N, P], chance: bool, public: bool) -> None:
         self.__actor: Union[N, P] = actor
 
+        self.__chance: bool = chance
+        self.__public: bool = public
+
     @property
+    @final
     def actor(self) -> Union[N, P]:
         """
         :return: the actor of the action
@@ -197,11 +202,28 @@ class Action(Generic[G, E, N, P], ABC):
         return self.__actor
 
     @property
+    @final
     def game(self) -> G:
         """
         :return: the game of the action
         """
         return self.actor.game
+
+    @property
+    @final
+    def chance(self) -> bool:
+        """
+        :return: True if the action is a chance action, False otherwise
+        """
+        return self.__chance
+
+    @property
+    @final
+    def public(self) -> bool:
+        """
+        :return: True if the action is a public action, False otherwise
+        """
+        return self.__public
 
     def act(self) -> None:
         """Applies the action to the game of the action.
@@ -210,32 +232,17 @@ class Action(Generic[G, E, N, P], ABC):
         game.
 
         :return: None
-        :raise ValueError: if the action integrity verification fails prior to the action
+        :raise GameFrameException: if the action integrity verification fails prior to the action
         """
         self._verify()
 
-    @property
     @abstractmethod
-    def chance(self) -> bool:
-        """
-        :return: True if the action is a chance action, False otherwise
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def public(self) -> bool:
-        """
-        :return: True if the action is a public action, False otherwise
-        """
-        pass
-
-    @abstractmethod
+    @override
     def __str__(self) -> str:
         pass
 
     def _verify(self) -> None:
         if self.game.terminal:
-            raise ValueError('Actions are not applicable to terminal games')
+            raise TerminalityException('Actions are not applicable to terminal games')
         elif self.chance != self.actor.nature:
-            raise ValueError('Nature acts chance actions')
+            raise PlayerTypeException('Nature acts chance actions')

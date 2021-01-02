@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from abc import ABC
+from typing import Sequence, TYPE_CHECKING, final
 
 from gameframe.poker.bases import PokerGame
 from gameframe.poker.limits import NoLimit
@@ -9,65 +9,32 @@ from gameframe.poker.rounds import BettingRound
 from gameframe.poker.utils import StandardDeck, StandardEvaluator
 
 if TYPE_CHECKING:
-    from gameframe.poker import Round
-
-
-class NoLimitMixin(PokerGame, ABC):
-    """NoLimitMixin is the mixin for no-limit poker."""
-
-    def _create_limit(self) -> NoLimit:
-        return NoLimit(self)
+    from gameframe.poker import Deck, Evaluator, Limit
 
 
 class HoldEmGame(PokerGame, ABC):
     """HoldEmGame is the abstract base class for all hold'em games."""
 
-    @property
-    def blinds(self) -> list[int]:
-        return [self.small_blind, self.big_blind]
-
-    @property
-    @abstractmethod
-    def small_blind(self) -> int:
-        pass
-
-    @property
-    @abstractmethod
-    def big_blind(self) -> int:
-        pass
-
-    def _create_rounds(self) -> list[Round]:
-        return [BettingRound(self, 0, [False] * self._hole_card_count)] + list(map(
-            lambda board_card_count: BettingRound(self, board_card_count, []), self._board_card_counts))
-
-    @property
-    @abstractmethod
-    def _hole_card_count(self) -> int:
-        pass
-
-    @property
-    @abstractmethod
-    def _board_card_counts(self) -> list[int]:
-        pass
+    def __init__(self, deck: Deck, evaluator: Evaluator, limit: Limit, hole_card_count: int,
+                 board_card_counts: Sequence[int], ante: int, blinds: Sequence[int],
+                 starting_stacks: Sequence[int], lazy: bool) -> None:
+        super().__init__(deck, evaluator, limit, [BettingRound(self, 0, [False] * hole_card_count)] + list(map(
+            lambda board_card_count: BettingRound(self, board_card_count, []),
+            board_card_counts,
+        )), ante, blinds, starting_stacks, lazy)
 
 
 class TexasHoldEmGame(HoldEmGame, ABC):
     """TexasHoldEmGame is the abstract base class for all texas hold'em games."""
 
-    @property
-    def _hole_card_count(self) -> int:
-        return 2
-
-    @property
-    def _board_card_counts(self) -> list[int]:
-        return [3, 1, 1]
-
-    def _create_deck(self) -> StandardDeck:
-        return StandardDeck()
-
-    def _create_evaluator(self) -> StandardEvaluator:
-        return StandardEvaluator()
+    def __init__(self, limit: Limit, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int],
+                 lazy: bool) -> None:
+        super().__init__(StandardDeck(), StandardEvaluator(), limit, 2, [3, 1, 1], ante, blinds, starting_stacks, lazy)
 
 
-class NoLimitTexasHoldEmGame(TexasHoldEmGame, NoLimitMixin, ABC):
+@final
+class NoLimitTexasHoldEmGame(TexasHoldEmGame, ABC):
     """NoLimitTexasHoldEmGame is the abstract base class for all no-limit texas hold'em games."""
+
+    def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int], lazy: bool) -> None:
+        super().__init__(NoLimit(self), ante, blinds, starting_stacks, lazy)

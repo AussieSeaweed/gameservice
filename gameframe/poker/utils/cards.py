@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import final
+
+from gameframe.utils import override
 
 
+@final
 class Rank(Enum):
     """Rank is the enum for ranks."""
     TWO: str = '2'
@@ -20,6 +24,7 @@ class Rank(Enum):
     ACE: str = 'A'
 
 
+@final
 class Suit(Enum):
     """Suit is the enum for suits."""
     CLUB: str = 'c'
@@ -35,10 +40,13 @@ class Card:
         self._rank: Rank = rank
         self._suit: Suit = suit
 
+    @final
+    @override
     def __str__(self) -> str:
         return self._rank.value + self._suit.value
 
 
+@final
 class HoleCard(Card):
     """HoleCard is the class for hole cards."""
 

@@ -1,55 +1,43 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Optional
+from typing import Any, Optional, Sequence, Union, final
 
-from gameframe.game import Environment, Actor
+from gameframe.game import Actor, Environment
 from gameframe.sequential import SequentialAction, SequentialGame
+from gameframe.utils import override
 
 
+@final
 class TicTacToeGame(SequentialGame['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
     """TicTacToeGame is the class for tic tac toe games."""
 
-    @property
-    def _initial_actor(self) -> TicTacToePlayer:
-        return self.players[0]
-
-    def _create_environment(self) -> TicTacToeEnvironment:
-        return TicTacToeEnvironment(self)
-
-    def _create_nature(self) -> TicTacToeNature:
-        return TicTacToeNature(self)
-
-    def _create_players(self) -> list[TicTacToePlayer]:
-        return [TicTacToePlayer(self), TicTacToePlayer(self)]
+    def __init__(self) -> None:
+        super().__init__(TicTacToeEnvironment(self), TicTacToeNature(self),
+                         (TicTacToePlayer(self), TicTacToePlayer(self)), 0)
 
 
+@final
 class TicTacToeEnvironment(Environment[TicTacToeGame, 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer']):
     """TicTacToeGame is the class for tic tac toe environments."""
 
     def __init__(self, game: TicTacToeGame) -> None:
         super().__init__(game)
 
-        self.__board: list[list[Optional[TicTacToePlayer]]] = [[None, None, None],
-                                                               [None, None, None],
-                                                               [None, None, None]]
+        self._board: list[list[Optional[TicTacToePlayer]]] = [[None, None, None],
+                                                              [None, None, None],
+                                                              [None, None, None]]
 
     @property
-    def board(self) -> list[list[Optional[TicTacToePlayer]]]:
+    def board(self) -> Sequence[Sequence[Optional[TicTacToePlayer]]]:
         """
         :return: the board of the tic tac toe environment
         """
-        return self.__board
+        return self._board
 
     @property
-    def _empty_coordinates(self) -> list[list[int]]:
+    def _empty_coordinates(self) -> Sequence[Sequence[int]]:
         return [[r, c] for r in range(3) for c in range(3) if self.board[r][c] is None]
-
-    @property
-    def _information(self) -> dict[str, Any]:
-        return {
-            'board': self.board,
-        }
 
     @property
     def _winner(self) -> Optional[TicTacToePlayer]:
@@ -65,24 +53,36 @@ class TicTacToeEnvironment(Environment[TicTacToeGame, 'TicTacToeEnvironment', 'T
 
         return None
 
+    @property
+    @override
+    def _information(self) -> dict[str, Any]:
+        return {
+            'board': self.board,
+        }
 
+
+@final
 class TicTacToeNature(Actor[TicTacToeGame, TicTacToeEnvironment, 'TicTacToeNature', 'TicTacToePlayer']):
     """TicTacToeNature is the class for tic tac toe natures."""
 
     @property
-    def actions(self) -> list[TicTacToeAction]:
+    @override
+    def actions(self) -> Sequence[TicTacToeAction]:
         return []
 
     @property
+    @override
     def payoff(self) -> int:
         return 0
 
 
+@final
 class TicTacToePlayer(Actor[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, 'TicTacToePlayer']):
     """TicTacToePlayer is the class for tic tac toe players."""
 
     @property
-    def actions(self) -> list[TicTacToeAction]:
+    @override
+    def actions(self) -> Sequence[TicTacToeAction]:
         from gameframe.tictactoe import MarkAction
 
         if self is self.game.actor:
@@ -91,6 +91,7 @@ class TicTacToePlayer(Actor[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature
             return []
 
     @property
+    @override
     def payoff(self) -> int:
         if self.game.environment._winner is None:
             return 0 if self.game.terminal else -1
@@ -101,10 +102,5 @@ class TicTacToePlayer(Actor[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature
 class TicTacToeAction(SequentialAction[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer], ABC):
     """TicTacToeAction is the abstract base class for all tic tac toe actions"""
 
-    @property
-    def chance(self) -> bool:
-        return False
-
-    @property
-    def public(self) -> bool:
-        return True
+    def __init__(self, actor: Union[TicTacToeNature, TicTacToePlayer]) -> None:
+        super().__init__(actor, False, True)

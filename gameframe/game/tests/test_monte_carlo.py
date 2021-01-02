@@ -7,6 +7,8 @@ from gameframe.game import G
 class MonteCarloTestCaseMixin(Generic[G], ABC):
     """MonteCarloTestCaseMixin is the abstract base mixin for all monte carlo test cases."""
 
+    _test_count: int
+
     @abstractmethod
     def test_monte_carlo(self) -> None:
         """Runs monte carlo tests of games.
@@ -14,11 +16,6 @@ class MonteCarloTestCaseMixin(Generic[G], ABC):
         :return: None
         :raise AssertionError: if the game integrity verification fails in any tests
         """
-        pass
-
-    @property
-    @abstractmethod
-    def _monte_carlo_test_count(self) -> int:
         pass
 
     @abstractmethod

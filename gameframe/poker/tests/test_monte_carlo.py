@@ -1,4 +1,5 @@
 from unittest import TestCase, main
+from typing import final, Sequence
 
 from gameframe.poker import NoLimitTexasHoldEmGame
 from gameframe.sequential.tests import SequentialMonteCarloTestCaseMixin
@@ -20,7 +21,7 @@ class CustomNoLimitTexasHoldEmGame(NoLimitTexasHoldEmGame):
         return 0
 
     @property
-    def starting_stacks(self) -> list[int]:
+    def starting_stacks(self) -> Sequence[int]:
         return [100, 200, 300, 200, 300, 100]
 
     @property

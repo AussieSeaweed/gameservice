@@ -1,6 +1,16 @@
-from typing import Any, TypeVar
+from typing import Any, Callable, Sequence, TypeVar
 
 T = TypeVar('T')
+C = TypeVar('C', bound=Callable)
+
+
+def override(function: C) -> C:
+    """Annotates the function that it overrides the super class's definition
+
+    :param function: the overriding function
+    :return: the overriding function
+    """
+    return function
 
 
 def pretty_print(o: Any, indent: str = '    ', start: str = '', end: str = '\n') -> None:
@@ -31,11 +41,11 @@ def pretty_print(o: Any, indent: str = '    ', start: str = '', end: str = '\n')
         print(start + str(o), end=end)
 
 
-def rotate(collection: list[T], index: int) -> list[T]:
+def rotate(collection: Sequence[T], index: int) -> list[T]:
     """Rotates the list by an index.
 
     :param collection: the list to be rotated
     :param index: the index of rotation
     :return: the rotated list
     """
-    return collection[index:] + collection[:index]
+    return list(collection[index:]) + list(collection[:index])

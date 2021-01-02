@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
+
+from gameframe.utils import override
 
 if TYPE_CHECKING:
     from gameframe.poker import PokerGame
@@ -14,6 +16,7 @@ class Limit(ABC):
         self.__game: PokerGame = game
 
     @property
+    @final
     def game(self) -> PokerGame:
         """
         :return: the game of the round
@@ -26,7 +29,7 @@ class Limit(ABC):
         :return: the minimum bet amount
         """
         return min(max(player.bet for player in self.game.players) + self.game.environment._max_delta,
-                   self.game.actor.total)
+                   self.game.actor._total)
 
     @property
     @abstractmethod
@@ -37,17 +40,21 @@ class Limit(ABC):
         pass
 
 
+@final
 class NoLimit(Limit):
     """NoLimit is the class for no-limits."""
 
     @property
+    @override
     def max_amount(self) -> int:
-        return self.game.actor.total
+        return self.game.actor._total
 
 
+@final
 class FixedLimit(Limit):
     """FixedLimit is the class for fixed limits."""
 
     @property
+    @override
     def max_amount(self) -> int:
         return self.min_amount
