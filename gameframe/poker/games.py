@@ -23,6 +23,24 @@ class HoldEmGame(PokerGame, ABC):
     """HoldEmGame is the abstract base class for all hold'em games."""
 
     @property
+    def blinds(self) -> list[int]:
+        return [self.small_blind, self.big_blind]
+
+    @property
+    @abstractmethod
+    def small_blind(self) -> int:
+        pass
+
+    @property
+    @abstractmethod
+    def big_blind(self) -> int:
+        pass
+
+    def _create_rounds(self) -> list[Round]:
+        return [BettingRound(self, 0, [False] * self._hole_card_count)] + list(map(
+            lambda board_card_count: BettingRound(self, board_card_count, []), self._board_card_counts))
+
+    @property
     @abstractmethod
     def _hole_card_count(self) -> int:
         pass
@@ -31,10 +49,6 @@ class HoldEmGame(PokerGame, ABC):
     @abstractmethod
     def _board_card_counts(self) -> list[int]:
         pass
-
-    def _create_rounds(self) -> list[Round]:
-        return [BettingRound(self, 0, [False] * self._hole_card_count)] + list(map(
-            lambda board_card_count: BettingRound(self, board_card_count, []), self._board_card_counts))
 
 
 class TexasHoldEmGame(HoldEmGame, ABC):
