@@ -80,7 +80,6 @@ class BettingRound(Round, ABC):
     @override
     def _close(self) -> None:
         self.game.environment._max_delta = None
-        self.game.environment._pot += sum(player.bet for player in self.game.players)
 
         for player in self.game.players:
             player._bet = 0

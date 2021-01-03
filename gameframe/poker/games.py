@@ -19,8 +19,7 @@ class HoldEmGame(PokerGame, ABC):
                  board_card_counts: Sequence[int], ante: int, blinds: Sequence[int],
                  starting_stacks: Sequence[int], lazy: bool) -> None:
         super().__init__(deck, evaluator, limit, [BettingRound(self, 0, [False] * hole_card_count)] + list(map(
-            lambda board_card_count: BettingRound(self, board_card_count, []),
-            board_card_counts,
+            lambda board_card_count: BettingRound(self, board_card_count, []), board_card_counts,
         )), ante, blinds, starting_stacks, lazy)
 
 

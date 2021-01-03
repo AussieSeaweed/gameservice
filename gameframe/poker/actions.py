@@ -168,8 +168,6 @@ class RoundAction(PokerNatureAction):
 
             base: int = max(base, base_player._commitment)
 
-        self.game.environment._pot = 0
-
         for player in self.game.players:
             if base < player._commitment:
                 player._bet += player._commitment - base

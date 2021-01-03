@@ -94,7 +94,6 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
             ante: int = min(self._ante, player._stack)
 
             player._stack -= ante
-            self.environment._pot += ante
 
         for player, blind in zip(self.players, reversed(self._blinds) if len(self.players) == 2 else self._blinds):
             blind: int = min(blind, player.stack)
@@ -112,7 +111,6 @@ class PokerEnvironment(Environment[PokerGame, 'PokerEnvironment', 'PokerNature',
 
         self._aggressor: Optional[PokerPlayer] = None
         self._max_delta: Optional[int] = None
-        self._pot: int = 0
         self.__board_cards: list[Card] = []
 
     @property
@@ -127,7 +125,7 @@ class PokerEnvironment(Environment[PokerGame, 'PokerEnvironment', 'PokerNature',
         """
         :return: the pot of the poker environment
         """
-        return self._pot
+        return sum(self.game.starting_stacks) - sum(player._total for player in self.game.players)
 
     @property
     @override
