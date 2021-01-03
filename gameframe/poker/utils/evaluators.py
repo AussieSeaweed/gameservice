@@ -51,7 +51,7 @@ class GreekHoldEmEvaluator(StandardEvaluator):
             if hand is None:
                 hand: Optional[Hand] = cur_hand
             elif cur_hand is not None:
-                hand: Optional[Hand] = max(hand, cur_hand)
+                hand: Optional[Hand] = min(hand, cur_hand)
 
         return hand
 
@@ -70,6 +70,6 @@ class OmahaHoldEmEvaluator(GreekHoldEmEvaluator):
             if hand is None:
                 hand: Optional[Hand] = cur_hand
             elif cur_hand is not None:
-                hand: Optional[Hand] = max(hand, cur_hand)
+                hand: Optional[Hand] = min(hand, cur_hand)
 
         return hand
