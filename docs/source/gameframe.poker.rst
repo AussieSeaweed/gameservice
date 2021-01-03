@@ -21,10 +21,18 @@ gameframe.poker.actions module
    :undoc-members:
    :show-inheritance:
 
-gameframe.poker.environments module
------------------------------------
+gameframe.poker.bases module
+----------------------------
 
-.. automodule:: gameframe.poker.environments
+.. automodule:: gameframe.poker.bases
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gameframe.poker.exceptions module
+---------------------------------
+
+.. automodule:: gameframe.poker.exceptions
    :members:
    :undoc-members:
    :show-inheritance:
@@ -37,18 +45,18 @@ gameframe.poker.games module
    :undoc-members:
    :show-inheritance:
 
-gameframe.poker.infosets module
--------------------------------
+gameframe.poker.limits module
+-----------------------------
 
-.. automodule:: gameframe.poker.infosets
+.. automodule:: gameframe.poker.limits
    :members:
    :undoc-members:
    :show-inheritance:
 
-gameframe.poker.players module
-------------------------------
+gameframe.poker.rounds module
+-----------------------------
 
-.. automodule:: gameframe.poker.players
+.. automodule:: gameframe.poker.rounds
    :members:
    :undoc-members:
    :show-inheritance:

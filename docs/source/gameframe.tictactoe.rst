@@ -20,34 +20,18 @@ gameframe.tictactoe.actions module
    :undoc-members:
    :show-inheritance:
 
-gameframe.tictactoe.environments module
----------------------------------------
-
-.. automodule:: gameframe.tictactoe.environments
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-gameframe.tictactoe.games module
+gameframe.tictactoe.bases module
 --------------------------------
 
-.. automodule:: gameframe.tictactoe.games
+.. automodule:: gameframe.tictactoe.bases
    :members:
    :undoc-members:
    :show-inheritance:
 
-gameframe.tictactoe.infosets module
------------------------------------
+gameframe.tictactoe.exceptions module
+-------------------------------------
 
-.. automodule:: gameframe.tictactoe.infosets
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-gameframe.tictactoe.players module
-----------------------------------
-
-.. automodule:: gameframe.tictactoe.players
+.. automodule:: gameframe.tictactoe.exceptions
    :members:
    :undoc-members:
    :show-inheritance:

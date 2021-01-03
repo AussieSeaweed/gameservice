@@ -4,18 +4,10 @@ gameframe.game.tests package
 Submodules
 ----------
 
-gameframe.game.tests.interact module
-------------------------------------
+gameframe.game.tests.test\_monte\_carlo module
+----------------------------------------------
 
-.. automodule:: gameframe.game.tests.interact
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-gameframe.game.tests.testcasemixins module
-------------------------------------------
-
-.. automodule:: gameframe.game.tests.testcasemixins
+.. automodule:: gameframe.game.tests.test_monte_carlo
    :members:
    :undoc-members:
    :show-inheritance:
