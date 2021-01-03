@@ -58,13 +58,10 @@ class BettingRound(Round, ABC):
     def _opener(self) -> Union[PokerNature, PokerPlayer]:
         if any(player.bet for player in self.game.players):
             opener: PokerPlayer = min(self.game.players, key=lambda player: (player.bet, player.index))
-
-            return opener if opener._relevant else next(opener)
         else:
-            try:
-                return next(player for player in self.game.players if player._relevant)
-            except StopIteration:
-                return self.game.nature
+            opener: PokerPlayer = self.game.players[0]
+
+        return opener if opener._relevant else next(opener)
 
     @override
     def _open(self) -> None:

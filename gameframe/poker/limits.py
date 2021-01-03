@@ -48,13 +48,3 @@ class NoLimit(Limit):
     @override
     def max_amount(self) -> int:
         return self.game.actor._total
-
-
-@final
-class FixedLimit(Limit):
-    """FixedLimit is the class for fixed limits."""
-
-    @property
-    @override
-    def max_amount(self) -> int:
-        return self.min_amount

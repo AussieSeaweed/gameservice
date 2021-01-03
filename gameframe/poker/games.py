@@ -4,7 +4,7 @@ from abc import ABC
 from typing import Sequence, TYPE_CHECKING, final
 
 from gameframe.poker.bases import PokerGame
-from gameframe.poker.limits import FixedLimit, NoLimit
+from gameframe.poker.limits import NoLimit
 from gameframe.poker.rounds import BettingRound
 from gameframe.poker.utils import GreekHoldEmEvaluator, OmahaHoldEmEvaluator, StandardDeck, StandardEvaluator
 
@@ -40,14 +40,6 @@ class NoLimitTexasHoldEmGame(TexasHoldEmGame, ABC):
         super().__init__(NoLimit(self), ante, blinds, starting_stacks, lazy)
 
 
-@final
-class FixedLimitTexasHoldEmGame(TexasHoldEmGame, ABC):
-    """FixedLimitTexasHoldEmGame is the abstract base class for all limit texas hold'em games."""
-
-    def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int], lazy: bool) -> None:
-        super().__init__(FixedLimit(self), ante, blinds, starting_stacks, lazy)
-
-
 class GreekHoldEmGame(HoldEmGame, ABC):
     """GreekHoldEmGame is the abstract base class for all greek hold'em games."""
 
@@ -65,14 +57,6 @@ class NoLimitGreekHoldEmGame(GreekHoldEmGame, ABC):
         super().__init__(NoLimit(self), ante, blinds, starting_stacks, lazy)
 
 
-@final
-class FixedLimitGreekHoldEmGame(GreekHoldEmGame, ABC):
-    """FixedLimitGreekHoldEmGame is the abstract base class for all limit greek hold'em games."""
-
-    def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int], lazy: bool) -> None:
-        super().__init__(FixedLimit(self), ante, blinds, starting_stacks, lazy)
-
-
 class OmahaHoldEmGame(HoldEmGame, ABC):
     """OmahaHoldEmGame is the abstract base class for all omaha hold'em games."""
 
@@ -88,12 +72,3 @@ class NoLimitOmahaHoldEmGame(OmahaHoldEmGame, ABC):
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int], lazy: bool) -> None:
         super().__init__(NoLimit(self), ante, blinds, starting_stacks, lazy)
-
-
-@final
-class FixedLimitOmahaHoldEmGame(OmahaHoldEmGame, ABC):
-    """FixedLimitOmahaHoldEmGame is the abstract base class for all limit omaha hold'em games."""
-
-    def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int], lazy: bool) -> None:
-        super().__init__(FixedLimit(self), ante, blinds, starting_stacks, lazy)
-

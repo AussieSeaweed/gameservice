@@ -202,10 +202,10 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
     def __next__(self) -> Union[PokerNature, PokerPlayer]:
         player: Union[PokerNature, PokerPlayer] = super().__next__()
 
-        while not player._relevant and player is not self.game.environment._aggressor:
+        while not player._relevant and player is not self.game.environment._aggressor and player is not self:
             player: Union[PokerNature, PokerPlayer] = Actor.__next__(player)
 
-        return self.game.nature if player is self.game.environment._aggressor else player
+        return self.game.nature if player is self.game.environment._aggressor or player is self else player
 
     @property
     def _commitment(self) -> int:

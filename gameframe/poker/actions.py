@@ -177,7 +177,6 @@ class RoundAction(PokerNatureAction):
             player._stack += player.bet
             player._bet = 0
 
-
     def __side_pot(self, base: int, base_player: PokerPlayer) -> int:
         side_pot: int = 0
 
