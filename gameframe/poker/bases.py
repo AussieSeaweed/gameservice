@@ -38,7 +38,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
 
         self._lazy: bool = lazy
 
-        if not len(self.players) > 1:
+        if len(self.players) < 2:
             raise InsufficientPlayerCountException()
         elif self._blinds != sorted(self._blinds):
             raise InvalidBlindConfigurationException()
