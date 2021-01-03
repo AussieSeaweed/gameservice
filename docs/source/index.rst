@@ -19,7 +19,7 @@ The following games are supported in GameFrame...
 Speed
 -----
 
-Although, GameFrame is entirely written in Python, it should be fast enough for many tasks.
+Although GameFrame is entirely written in Python, it should be fast enough for many tasks.
 
 =================================  ===================
               Game                  Speed (# games/s)
