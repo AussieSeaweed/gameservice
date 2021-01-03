@@ -42,10 +42,10 @@ def pretty_print(o: Any, indent: str = '    ', start: str = '', end: str = '\n')
 
 
 def rotate(collection: Sequence[T], index: int) -> Sequence[T]:
-    """Rotates the list by an index.
+    """Rotates the sequence by an index.
 
-    :param collection: the list to be rotated
+    :param collection: the sequence to be rotated
     :param index: the index of rotation
-    :return: the rotated list
+    :return: the rotated sequence
     """
     return list(collection[index:]) + list(collection[:index])

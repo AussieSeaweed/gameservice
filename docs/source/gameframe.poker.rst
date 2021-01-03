@@ -1,18 +1,6 @@
 gameframe.poker package
 =======================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   gameframe.poker.tests
-   gameframe.poker.utils
-
-Submodules
-----------
-
 gameframe.poker.actions module
 ------------------------------
 
@@ -61,10 +49,34 @@ gameframe.poker.rounds module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+gameframe.poker.utils.cards module
+----------------------------------
 
-.. automodule:: gameframe.poker
+.. automodule:: gameframe.poker.utils.cards
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gameframe.poker.utils.decks module
+----------------------------------
+
+.. automodule:: gameframe.poker.utils.decks
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gameframe.poker.utils.evaluators module
+---------------------------------------
+
+.. automodule:: gameframe.poker.utils.evaluators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gameframe.poker.utils.hands module
+----------------------------------
+
+.. automodule:: gameframe.poker.utils.hands
    :members:
    :undoc-members:
    :show-inheritance:

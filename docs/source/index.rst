@@ -50,7 +50,7 @@ You can contribute on `Github <https://github.com/AussieSeaweed/gameframe>`_.
    install
    create
    interact
-   modules
+   gameframe
 
 
 License

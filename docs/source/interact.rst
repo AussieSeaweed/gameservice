@@ -45,6 +45,7 @@ this way is not ideal. Thus, you can also access individual game elements as fol
     ...
 
     print(nlhe_game.actor)  # Print the current actor (might be nature or one of the players)
+    print(nlhe_game.actor.nature)  # True if the actor is nature, otherwise False
     print(nlhe_game.nature)  # Print the nature
     print(nlhe_game.players)  # Print the list of players
 
@@ -72,3 +73,4 @@ this way is not ideal. Thus, you can also access individual game elements as fol
 
     print(ttt_game.players[0].payoff)  # 1 if the player won, -1 if the player lost, 0 if tied
 
+For more information, you can look at the game api documentations.

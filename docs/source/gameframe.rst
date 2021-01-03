@@ -1,32 +1,11 @@
-gameframe package
-=================
-
-Subpackages
------------
+GameFrame API
+=============
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    gameframe.game
-   gameframe.poker
    gameframe.sequential
+   gameframe.poker
    gameframe.tictactoe
-
-Submodules
-----------
-
-gameframe.utils module
-----------------------
-
-.. automodule:: gameframe.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: gameframe
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   gameframe.utils

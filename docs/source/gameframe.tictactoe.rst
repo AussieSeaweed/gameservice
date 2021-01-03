@@ -1,17 +1,6 @@
 gameframe.tictactoe package
 ===========================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   gameframe.tictactoe.tests
-
-Submodules
-----------
-
 gameframe.tictactoe.actions module
 ----------------------------------
 
@@ -32,14 +21,6 @@ gameframe.tictactoe.exceptions module
 -------------------------------------
 
 .. automodule:: gameframe.tictactoe.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: gameframe.tictactoe
    :members:
    :undoc-members:
    :show-inheritance:
