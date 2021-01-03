@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, Iterator, Optional, Sequence, TypeVar, Union, final
+from typing import Any, Dict, Generic, Iterator, Optional, Sequence, TypeVar, Union, final
 
 from gameframe.game.exceptions import PlayerTypeMismatchException, TerminalityException
 from gameframe.utils import override
