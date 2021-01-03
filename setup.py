@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-"""setuptools based setup script for gameframe."""
 from setuptools import find_packages, setup
 
 setup(
