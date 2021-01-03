@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Optional, Sequence, TypeVar, Union, final
+from typing import Any, Dict, Optional, Sequence, TypeVar, Union, final
 
 from gameframe.game import Action, E, Game, N, P
 from gameframe.sequential.exceptions import ActorOutOfTurnException
@@ -40,7 +40,7 @@ class SequentialGame(Game[SG, E, N, P], ABC):
 
     @property
     @override
-    def _information(self) -> dict[str, Any]:
+    def _information(self) -> Dict[str, Any]:
         return {
             **super()._information,
             'actor': self.actor,

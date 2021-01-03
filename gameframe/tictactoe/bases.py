@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Optional, Sequence, Union, final
+from typing import Any, Dict, List, Optional, Sequence, Union, final
 
 from gameframe.game import Actor, Environment
 from gameframe.sequential import SequentialAction, SequentialGame
@@ -24,7 +24,7 @@ class TicTacToeEnvironment(Environment[TicTacToeGame, 'TicTacToeEnvironment', 'T
     def __init__(self, game: TicTacToeGame) -> None:
         super().__init__(game)
 
-        self._board: list[list[Optional[TicTacToePlayer]]] = [[None, None, None],
+        self._board: List[List[Optional[TicTacToePlayer]]] = [[None, None, None],
                                                               [None, None, None],
                                                               [None, None, None]]
 
@@ -55,7 +55,7 @@ class TicTacToeEnvironment(Environment[TicTacToeGame, 'TicTacToeEnvironment', 'T
 
     @property
     @override
-    def _information(self) -> dict[str, Any]:
+    def _information(self) -> Dict[str, Any]:
         return {
             'board': self.board,
         }

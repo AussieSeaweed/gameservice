@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Optional, Sequence, TYPE_CHECKING, Union, final
+from typing import Any, Dict, List, Optional, Sequence, TYPE_CHECKING, Union, final
 
 from gameframe.game import Actor, Environment
 from gameframe.poker.exceptions import InsufficientPlayerCountException, InvalidBlindConfigurationException
@@ -22,7 +22,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self, deck: Deck, evaluator: Evaluator, limit: Limit, rounds: list[Round],
+    def __init__(self, deck: Deck, evaluator: Evaluator, limit: Limit, rounds: List[Round],
                  ante: int, blinds: Sequence[int], starting_stacks: Sequence[int], lazy: bool) -> None:
         super().__init__(PokerEnvironment(self), PokerNature(self),
                          [PokerPlayer(self) for _ in range(len(starting_stacks))], None)
@@ -30,7 +30,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
         self._deck: Deck = deck
         self._evaluator: Evaluator = evaluator
         self._limit: Limit = limit
-        self._rounds: list[Optional[Round]] = [None, *rounds]
+        self._rounds: List[Optional[Round]] = [None, *rounds]
 
         self._ante: int = ante
         self._blinds: Sequence[int] = blinds
@@ -77,7 +77,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
     @property
     @final
     @override
-    def _information(self) -> dict[str, Any]:
+    def _information(self) -> Dict[str, Any]:
         return {
             **super()._information,
             'ante': self.ante,
@@ -111,10 +111,10 @@ class PokerEnvironment(Environment[PokerGame, 'PokerEnvironment', 'PokerNature',
 
         self._aggressor: Optional[PokerPlayer] = None
         self._max_delta: Optional[int] = None
-        self.__board_cards: list[Card] = []
+        self.__board_cards: List[Card] = []
 
     @property
-    def board_cards(self) -> list[Card]:
+    def board_cards(self) -> List[Card]:
         """
         :return: the board cards of the poker environment
         """
@@ -129,7 +129,7 @@ class PokerEnvironment(Environment[PokerGame, 'PokerEnvironment', 'PokerNature',
 
     @property
     @override
-    def _information(self) -> dict[str, Any]:
+    def _information(self) -> Dict[str, Any]:
         return {
             **super()._information,
             'pot': self.pot,
@@ -163,7 +163,7 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
 
         self._bet: int = 0
         self._stack: int = 0
-        self.__hole_cards: Optional[list[HoleCard]] = []
+        self.__hole_cards: Optional[List[HoleCard]] = []
 
     @property
     def bet(self) -> int:
@@ -173,7 +173,7 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
         return self._bet
 
     @property
-    def hole_cards(self) -> Optional[list[HoleCard]]:
+    def hole_cards(self) -> Optional[List[HoleCard]]:
         """
         :return: the hole cards of the poker player
         """
@@ -238,7 +238,7 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
 
     @property
     @override
-    def _private_information(self) -> dict[str, Any]:
+    def _private_information(self) -> Dict[str, Any]:
         return {
             **super()._private_information,
             'hole_cards': self.hole_cards,
@@ -246,7 +246,7 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
 
     @property
     @override
-    def _public_information(self) -> dict[str, Any]:
+    def _public_information(self) -> Dict[str, Any]:
         return {
             **super()._public_information,
             'bet': self.bet,
@@ -258,7 +258,7 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
         }
 
     def _muck(self) -> None:
-        self.__hole_cards: Optional[list[HoleCard]] = None
+        self.__hole_cards: Optional[List[HoleCard]] = None
 
 
 class PokerAction(SequentialAction[PokerGame, PokerEnvironment, PokerNature, PokerPlayer], ABC):

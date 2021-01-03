@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Sequence, final
 from random import shuffle
+from typing import List, Sequence, final
 
 from gameframe.poker.utils.cards import Card, Rank, Suit
 from gameframe.utils import override
@@ -12,7 +12,7 @@ class Deck(ABC):
     """Deck is the abstract base class for all decks."""
 
     def __init__(self) -> None:
-        self.__cards: list[Card] = self._create_cards()
+        self.__cards: List[Card] = self._create_cards()
 
         shuffle(self.__cards)
 
@@ -39,7 +39,7 @@ class Deck(ABC):
         return self.__cards[:card_count]
 
     @abstractmethod
-    def _create_cards(self) -> list[Card]:
+    def _create_cards(self) -> List[Card]:
         pass
 
 
@@ -48,7 +48,7 @@ class StandardDeck(Deck):
     """StandardDeck is the class for standard decks."""
 
     @override
-    def _create_cards(self) -> list[Card]:
+    def _create_cards(self) -> List[Card]:
         return [Card(rank, suit) for rank in Rank for suit in Suit]
 
 
@@ -57,5 +57,5 @@ class SixPlusDeck(Deck):
     """SixPlusDeck is the class for six-plus decks."""
 
     @override
-    def _create_cards(self) -> list[Card]:
+    def _create_cards(self) -> List[Card]:
         return [Card(rank, suit) for rank in Rank if not rank.isdigit() or int(rank) >= 6 for suit in Suit]

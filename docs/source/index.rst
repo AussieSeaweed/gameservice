@@ -10,10 +10,10 @@ GameFrame is a Python game framework library implementing various poker and othe
 
 The following games are supported in GameFrame...
 
-    - No-Limit Texas Hold'em
-    - No-Limit Omaha Hold'em
-    - No-Limit Greek Hold'em
-    - Tic Tac Toe
+- No-Limit Texas Hold'em
+- No-Limit Omaha Hold'em
+- No-Limit Greek Hold'em
+- Tic Tac Toe
 
 
 Speed
@@ -51,6 +51,11 @@ You can contribute on `Github <https://github.com/AussieSeaweed/gameframe>`_.
    create
    interact
    modules
+
+
+License
+-------
+`MIT <https://choosealicense.com/licenses/mit/>`_
 
 
 Indices and tables

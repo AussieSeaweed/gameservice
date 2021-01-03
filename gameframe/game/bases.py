@@ -77,7 +77,7 @@ class Game(Generic[G, E, N, P], ABC):
         pass
 
     @property
-    def _information(self) -> dict[str, Any]:
+    def _information(self) -> Dict[str, Any]:
         return {}
 
 
@@ -96,7 +96,7 @@ class Environment(Generic[G, E, N, P]):
         return self.__game
 
     @property
-    def _information(self) -> dict[str, Any]:
+    def _information(self) -> Dict[str, Any]:
         return {}
 
 
@@ -132,7 +132,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 
     @property
     @final
-    def information_set(self) -> dict[str, Any]:
+    def information_set(self) -> Dict[str, Any]:
         """
         :return: the information set of the actor
         """
@@ -171,14 +171,14 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
         return 'Nature' if self.nature else f'Player {self.index}'
 
     @property
-    def _private_information(self) -> dict[str, Any]:
+    def _private_information(self) -> Dict[str, Any]:
         return {
             **self._public_information,
             'actions': self.actions,
         }
 
     @property
-    def _public_information(self) -> dict[str, Any]:
+    def _public_information(self) -> Dict[str, Any]:
         return {
             'actions': list(filter(lambda action: action.public, self.actions)),
         }

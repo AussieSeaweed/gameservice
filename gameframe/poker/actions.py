@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Iterable, TYPE_CHECKING, final
+from typing import DefaultDict, Iterable, List, TYPE_CHECKING, final
 
 from gameframe.poker.bases import PokerNatureAction, PokerPlayerAction
 from gameframe.poker.exceptions import AmountOutOfBoundsException, FutileActionException
@@ -138,7 +138,7 @@ class RoundAction(PokerNatureAction):
                 self.game.players, self.game.environment._aggressor.index),
         )
 
-        commitments: defaultdict[Hand, int] = defaultdict(lambda: 0)
+        commitments: DefaultDict[Hand, int] = defaultdict(lambda: 0)
 
         for player in players:
             for hand, commitment in commitments.items():
@@ -154,12 +154,12 @@ class RoundAction(PokerNatureAction):
     def __distribute(self) -> None:
         base: int = 0
 
-        players: list[PokerPlayer] = list(filter(lambda player: not player._mucked, self.game.players))
+        players: List[PokerPlayer] = list(filter(lambda player: not player._mucked, self.game.players))
 
         for base_player in sorted(players, key=lambda player: (player._hand, player._commitment)):
             side_pot: int = self.__side_pot(base, base_player)
 
-            recipients: list[PokerPlayer] = list(filter(lambda player: player._hand == base_player._hand, players))
+            recipients: List[PokerPlayer] = list(filter(lambda player: player._hand == base_player._hand, players))
 
             for recipient in recipients:
                 recipient._bet += side_pot // len(recipients)

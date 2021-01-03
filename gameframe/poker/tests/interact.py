@@ -1,5 +1,5 @@
-from gameframe.sequential.tests import interact_sequential
 from gameframe.poker import NoLimitTexasHoldEmGame
+from gameframe.sequential.tests import interact_sequential
 
 
 def main() -> None:

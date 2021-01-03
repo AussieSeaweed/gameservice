@@ -1,6 +1,6 @@
 from abc import ABC
 from random import randint
-from typing import final, Callable
+from typing import Callable, List, final
 from unittest import TestCase, main
 
 from gameframe.poker import NoLimitGreekHoldEmGame, NoLimitOmahaHoldEmGame, NoLimitTexasHoldEmGame, PokerGame
@@ -8,8 +8,8 @@ from gameframe.sequential.tests import SequentialMonteCarloTestCaseMixin
 from gameframe.utils import override
 
 ante: int = 1
-blinds: list[int] = [1, 2]
-starting_stacks_factory: Callable[[], list[int]] = lambda: [randint(0, 100) for _ in range(randint(2, 6))]
+blinds: List[int] = [1, 2]
+starting_stacks_factory: Callable[[], List[int]] = lambda: [randint(0, 100) for _ in range(randint(2, 6))]
 lazy = True
 
 

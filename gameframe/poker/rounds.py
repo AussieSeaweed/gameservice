@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Sequence, TYPE_CHECKING, Union, final
+from typing import List, Sequence, TYPE_CHECKING, Union, final
 
 from gameframe.poker.actions import AggressiveAction, PassiveAction, SubmissiveAction
 from gameframe.poker.utils import HoleCard
@@ -86,7 +86,7 @@ class BettingRound(Round, ABC):
 
     @override
     def _create_actions(self) -> Sequence[PokerAction]:
-        actions: list[PokerAction] = []
+        actions: List[PokerAction] = []
 
         if self.game.actor.bet < max(player.bet for player in self.game.players):
             actions.append(SubmissiveAction(self.game.actor))
