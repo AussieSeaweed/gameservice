@@ -4,58 +4,34 @@ gameframe.poker.utils package
 Submodules
 ----------
 
-gameframe.poker.utils.card module
----------------------------------
-
-.. automodule:: gameframe.poker.utils.card
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-gameframe.poker.utils.deck module
----------------------------------
-
-.. automodule:: gameframe.poker.utils.deck
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-gameframe.poker.utils.evaluator module
---------------------------------------
-
-.. automodule:: gameframe.poker.utils.evaluator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-gameframe.poker.utils.hand module
----------------------------------
-
-.. automodule:: gameframe.poker.utils.hand
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-gameframe.poker.utils.limit module
+gameframe.poker.utils.cards module
 ----------------------------------
 
-.. automodule:: gameframe.poker.utils.limit
+.. automodule:: gameframe.poker.utils.cards
    :members:
    :undoc-members:
    :show-inheritance:
 
-gameframe.poker.utils.street module
------------------------------------
+gameframe.poker.utils.decks module
+----------------------------------
 
-.. automodule:: gameframe.poker.utils.street
+.. automodule:: gameframe.poker.utils.decks
    :members:
    :undoc-members:
    :show-inheritance:
 
-gameframe.poker.utils.treys\_utils module
------------------------------------------
+gameframe.poker.utils.evaluators module
+---------------------------------------
 
-.. automodule:: gameframe.poker.utils.treys_utils
+.. automodule:: gameframe.poker.utils.evaluators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gameframe.poker.utils.hands module
+----------------------------------
+
+.. automodule:: gameframe.poker.utils.hands
    :members:
    :undoc-members:
    :show-inheritance:

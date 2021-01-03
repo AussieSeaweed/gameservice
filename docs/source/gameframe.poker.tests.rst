@@ -12,18 +12,10 @@ gameframe.poker.tests.interact module
    :undoc-members:
    :show-inheritance:
 
-gameframe.poker.tests.testcasemixins module
--------------------------------------------
+gameframe.poker.tests.test\_monte\_carlo module
+-----------------------------------------------
 
-.. automodule:: gameframe.poker.tests.testcasemixins
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-gameframe.poker.tests.testcases module
---------------------------------------
-
-.. automodule:: gameframe.poker.tests.testcases
+.. automodule:: gameframe.poker.tests.test_monte_carlo
    :members:
    :undoc-members:
    :show-inheritance:

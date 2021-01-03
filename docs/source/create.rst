@@ -1,47 +1,33 @@
-Create Games
-============
+Creating Games
+==============
 
-You can create No-Limit Hold'em and Tic Tac Toe Games with gameframe.
-
-
-Creating No-Limit Texas Hold'em Games
--------------------------------------
-
-To create NLHE games, you first have to define the game parameters, as seen below:
+Creating games are very simple.
 
 .. code-block:: python
 
-    from gameframe.poker import NLHEGame
-
-
-    class TestGame(NLHEGame):
-        @property
-        def starting_stacks(self):
-            return [200, 400, 300]  # Starting stacks also describe the number of players
-
-        @property
-        def blinds(self):
-            return [1, 2]  # Small blind and big blind.
-
-        @property
-        def ante(self):
-            return 1  # Ante
-
-
-    game = TestGame()  # Create a game
-
-
-You can create lazy no-limit hold'em games by replacing NLHEGame with LazyNLHEGame. The difference between NLHEGame and
-LazyNLHEGame is explained in :doc:`gameframe.poker`.
-
-
-Creating Tic Tac Toe Games
---------------------------
-
-Tic Tac Toe games are more straight-forward to create.
-
-.. code-block:: python
-
+    from gameframe.poker import NoLimitTexasHoldEmGame, NoLimitOmahaHoldEmGame, NoLimitGreekHoldEmGame
     from gameframe.tictactoe import TicTacToeGame
 
-    game = TicTacToeGame()
+    ante = 1
+    blinds = [1, 2]
+    starting_stacks = [200, 200, 300]
+
+    # Create a no-limit texas hold'em game
+    nlhe_game = NoLimitTexasHoldEmGame(ante, blinds, starting_stacks, True)
+
+    # Create a no-limit omaha hold'em game
+    nlo_game = NoLimitOmahaHoldEmGame(ante, blinds, starting_stacks, True)
+
+    # Create a no-limit greek hold'em game
+    nlg_game = NoLimitGreekHoldEmGame(ante, blinds, starting_stacks, True)
+
+    # Create a tic tac toe game
+    ttt_game = TicTacToeGame()
+
+The final boolean parameter supplied when creating poker games denote whether or not the poker game is lazy. Lazy poker
+games only create the minimum and maximum bet/raise actions when the actor's actions are queried whereas, in non-lazy
+poker games, every single possible integer amount bet/raise actions are created.
+
+For most purposes, set lazy to True for vastly improved performance. If you want to make a bet/raise action with amount
+in between on a lazy poker game, you can create an AggressiveAction object in gameframe.poker.
+

@@ -1,5 +1,5 @@
-Explore gameframe module
-========================
+gameframe
+=========
 
 .. toctree::
    :maxdepth: 4

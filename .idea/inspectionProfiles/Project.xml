@@ -1,61 +1,23 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project" />
-    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoredPackages">
+    <inspection_tool class="PyArgumentEqualDefaultInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyAugmentAssignmentInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyBehaveInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyClassicStyleClassInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyCompatibilityInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ourVersions">
         <value>
-          <list size="37">
-            <item index="0" class="java.lang.String" itemvalue="Automat" />
-            <item index="1" class="java.lang.String" itemvalue="python-dateutil" />
-            <item index="2" class="java.lang.String" itemvalue="cffi" />
-            <item index="3" class="java.lang.String" itemvalue="pyasn1" />
-            <item index="4" class="java.lang.String" itemvalue="pycparser" />
-            <item index="5" class="java.lang.String" itemvalue="constantly" />
-            <item index="6" class="java.lang.String" itemvalue="sqlparse" />
-            <item index="7" class="java.lang.String" itemvalue="pyasn1-modules" />
-            <item index="8" class="java.lang.String" itemvalue="django-ses" />
-            <item index="9" class="java.lang.String" itemvalue="pyOpenSSL" />
-            <item index="10" class="java.lang.String" itemvalue="txaio" />
-            <item index="11" class="java.lang.String" itemvalue="django-annoying" />
-            <item index="12" class="java.lang.String" itemvalue="urllib3" />
-            <item index="13" class="java.lang.String" itemvalue="daphne" />
-            <item index="14" class="java.lang.String" itemvalue="djangorestframework" />
-            <item index="15" class="java.lang.String" itemvalue="hyperlink" />
-            <item index="16" class="java.lang.String" itemvalue="service-identity" />
-            <item index="17" class="java.lang.String" itemvalue="six" />
-            <item index="18" class="java.lang.String" itemvalue="botocore" />
-            <item index="19" class="java.lang.String" itemvalue="django-crispy-forms" />
-            <item index="20" class="java.lang.String" itemvalue="asgiref" />
-            <item index="21" class="java.lang.String" itemvalue="cryptography" />
-            <item index="22" class="java.lang.String" itemvalue="PyHamcrest" />
-            <item index="23" class="java.lang.String" itemvalue="zope.interface" />
-            <item index="24" class="java.lang.String" itemvalue="incremental" />
-            <item index="25" class="java.lang.String" itemvalue="attrs" />
-            <item index="26" class="java.lang.String" itemvalue="jmespath" />
-            <item index="27" class="java.lang.String" itemvalue="boto3" />
-            <item index="28" class="java.lang.String" itemvalue="autobahn" />
-            <item index="29" class="java.lang.String" itemvalue="django-rest-framework" />
-            <item index="30" class="java.lang.String" itemvalue="s3transfer" />
-            <item index="31" class="java.lang.String" itemvalue="channels" />
-            <item index="32" class="java.lang.String" itemvalue="Django" />
-            <item index="33" class="java.lang.String" itemvalue="future" />
-            <item index="34" class="java.lang.String" itemvalue="pytz" />
-            <item index="35" class="java.lang.String" itemvalue="idna" />
-            <item index="36" class="java.lang.String" itemvalue="Twisted" />
+          <list size="2">
+            <item index="0" class="java.lang.String" itemvalue="3.9" />
+            <item index="1" class="java.lang.String" itemvalue="3.10" />
           </list>
         </value>
       </option>
     </inspection_tool>
+    <inspection_tool class="PyMandatoryEncodingInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyMissingOrEmptyDocstringInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyMissingTypeHintsInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="PyProtectedMemberInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoredIdentifiers">
-        <list>
-          <option value="gameframe.game._initial_player.actions" />
-          <option value="_importlib_modulespec.ModuleType.urlpatterns" />
-          <option value="gameservice.game._initial_player.actions" />
-          <option value="gameframe.sequential._initial_player.actions" />
-        </list>
-      </option>
-    </inspection_tool>
   </profile>
 </component>

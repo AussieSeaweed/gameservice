@@ -12,10 +12,10 @@ gameframe.tictactoe.tests.interact module
    :undoc-members:
    :show-inheritance:
 
-gameframe.tictactoe.tests.testcases module
-------------------------------------------
+gameframe.tictactoe.tests.test\_monte\_carlo module
+---------------------------------------------------
 
-.. automodule:: gameframe.tictactoe.tests.testcases
+.. automodule:: gameframe.tictactoe.tests.test_monte_carlo
    :members:
    :undoc-members:
    :show-inheritance:

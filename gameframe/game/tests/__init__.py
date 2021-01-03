@@ -1,2 +1,1 @@
-from .interact import *
-from .testcases import *
+from gameframe.game.tests.test_monte_carlo import MonteCarloTestCaseMixin
