@@ -18,7 +18,7 @@ class SequentialGame(Game[SG, E, N, P], ABC):
     set to None to denote such.
     """
 
-    def __init__(self, environment: E, nature: N, players: Sequence[P], initial_actor_index: Optional[int]) -> None:
+    def __init__(self: SG, environment: E, nature: N, players: Sequence[P], initial_actor_index: Optional[int]) -> None:
         super().__init__(environment, nature, players)
 
         self._actor: Optional[Union[N, P]] = self.nature if initial_actor_index is None else self.players[
@@ -26,7 +26,7 @@ class SequentialGame(Game[SG, E, N, P], ABC):
 
     @property
     @final
-    def actor(self) -> Optional[Union[N, P]]:
+    def actor(self: SG) -> Optional[Union[N, P]]:
         """
         :return: the actor in turn to act of the sequential game
         """
@@ -35,12 +35,12 @@ class SequentialGame(Game[SG, E, N, P], ABC):
     @property
     @final
     @override
-    def terminal(self) -> bool:
+    def terminal(self: SG) -> bool:
         return self.actor is None
 
     @property
     @override
-    def _information(self) -> Dict[str, Any]:
+    def _information(self: SG) -> Dict[str, Any]:
         return {
             **super()._information,
             'actor': self.actor,

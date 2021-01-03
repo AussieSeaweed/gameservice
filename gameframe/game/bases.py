@@ -39,14 +39,14 @@ class Game(Generic[G, E, N, P], ABC):
     information, all the public information of other actors, and the private information of itself.
     """
 
-    def __init__(self, environment: E, nature: N, players: Sequence[P]) -> None:
+    def __init__(self: G, environment: E, nature: N, players: Sequence[P]) -> None:
         self.__environment: E = environment
         self.__nature: N = nature
         self.__players: Sequence[P] = players
 
     @property
     @final
-    def environment(self) -> E:
+    def environment(self: G) -> E:
         """
         :return: the environment of the game
         """
@@ -54,7 +54,7 @@ class Game(Generic[G, E, N, P], ABC):
 
     @property
     @final
-    def nature(self) -> N:
+    def nature(self: G) -> N:
         """
         :return: the nature of the game
         """
@@ -62,7 +62,7 @@ class Game(Generic[G, E, N, P], ABC):
 
     @property
     @final
-    def players(self) -> Sequence[P]:
+    def players(self: G) -> Sequence[P]:
         """
         :return: the players of the game
         """
@@ -70,45 +70,45 @@ class Game(Generic[G, E, N, P], ABC):
 
     @property
     @abstractmethod
-    def terminal(self) -> bool:
+    def terminal(self: G) -> bool:
         """
         :return: True if the game is terminal, False otherwise
         """
         pass
 
     @property
-    def _information(self) -> Dict[str, Any]:
+    def _information(self: G) -> Dict[str, Any]:
         return {}
 
 
 class Environment(Generic[G, E, N, P]):
     """Environment is the base class for all environments."""
 
-    def __init__(self, game: G) -> None:
+    def __init__(self: E, game: G) -> None:
         self.__game: G = game
 
     @property
     @final
-    def game(self) -> G:
+    def game(self: E) -> G:
         """
         :return: the game of the environment
         """
         return self.__game
 
     @property
-    def _information(self) -> Dict[str, Any]:
+    def _information(self: E) -> Dict[str, Any]:
         return {}
 
 
 class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
     """Actor is the abstract base class for all actors."""
 
-    def __init__(self, game: G) -> None:
+    def __init__(self: Union[N, P], game: G) -> None:
         self.__game: G = game
 
     @property
     @final
-    def game(self) -> G:
+    def game(self: Union[N, P]) -> G:
         """
         :return: the game of the actor
         """
@@ -116,7 +116,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 
     @property
     @final
-    def nature(self) -> bool:
+    def nature(self: Union[N, P]) -> bool:
         """
         :return: True if the actor is nature, False otherwise
         """
@@ -124,7 +124,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 
     @property
     @final
-    def index(self) -> Optional[int]:
+    def index(self: Union[N, P]) -> Optional[int]:
         """
         :return: the index of the actor
         """
@@ -132,7 +132,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 
     @property
     @final
-    def information_set(self) -> Dict[str, Any]:
+    def information_set(self: Union[N, P]) -> Dict[str, Any]:
         """
         :return: the information set of the actor
         """
@@ -148,7 +148,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 
     @property
     @abstractmethod
-    def actions(self) -> Sequence[Action[G, E, N, P]]:
+    def actions(self: Union[N, P]) -> Sequence[Action[G, E, N, P]]:
         """
         :return: the actions of the actor
         """
@@ -156,29 +156,29 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 
     @property
     @abstractmethod
-    def payoff(self) -> int:
+    def payoff(self: Union[N, P]) -> int:
         """
         :return: the payoff of the actor
         """
         pass
 
     @override
-    def __next__(self) -> Union[N, P]:
+    def __next__(self: Union[N, P]) -> Union[N, P]:
         return self if self.index is None else self.game.players[(self.index + 1) % len(self.game.players)]
 
     @override
-    def __str__(self) -> str:
+    def __str__(self: Union[N, P]) -> str:
         return 'Nature' if self.nature else f'Player {self.index}'
 
     @property
-    def _private_information(self) -> Dict[str, Any]:
+    def _private_information(self: Union[N, P]) -> Dict[str, Any]:
         return {
             **self._public_information,
             'actions': self.actions,
         }
 
     @property
-    def _public_information(self) -> Dict[str, Any]:
+    def _public_information(self: Union[N, P]) -> Dict[str, Any]:
         return {
             'actions': list(filter(lambda action: action.public, self.actions)),
         }
