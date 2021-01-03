@@ -38,16 +38,15 @@ class StandardEvaluator(Evaluator):
             return _TreysHand(hole_cards, board_cards)
 
 
-@final
-class OmahaHoldEmEvaluator(StandardEvaluator):
-    """OmahaHoldEmEvaluator is the class for omaha hold'em evaluators"""
+class GreekHoldEmEvaluator(StandardEvaluator):
+    """GreekHoldEmEvaluator is the class for greek hold'em evaluators"""
 
     @override
     def hand(self, hole_cards: Sequence[Card], board_cards: Sequence[Card]) -> Optional[Hand]:
         hand: Optional[Hand] = None
 
-        for combination in combinations(hole_cards, 2):
-            cur_hand: Optional[Hand] = super().hand(combination, board_cards)
+        for combination in combinations(board_cards, 3):
+            cur_hand: Optional[Hand] = super().hand(hole_cards, combination)
 
             if hand is None:
                 hand: Optional[Hand] = cur_hand
@@ -58,15 +57,15 @@ class OmahaHoldEmEvaluator(StandardEvaluator):
 
 
 @final
-class GreekHoldEmEvaluator(StandardEvaluator):
-    """GreekHoldEmEvaluator is the class for greek hold'em evaluators"""
+class OmahaHoldEmEvaluator(GreekHoldEmEvaluator):
+    """OmahaHoldEmEvaluator is the class for omaha hold'em evaluators"""
 
     @override
     def hand(self, hole_cards: Sequence[Card], board_cards: Sequence[Card]) -> Optional[Hand]:
         hand: Optional[Hand] = None
 
-        for combination in combinations(board_cards, 3):
-            cur_hand: Optional[Hand] = super().hand(hole_cards, combination)
+        for combination in combinations(hole_cards, 2):
+            cur_hand: Optional[Hand] = super().hand(combination, board_cards)
 
             if hand is None:
                 hand: Optional[Hand] = cur_hand

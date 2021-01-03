@@ -47,8 +47,43 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
 
     @property
     @final
+    def ante(self) -> int:
+        """
+        :return: the ante of the poker game
+        """
+        return self._ante
+
+    @property
+    @final
+    def blinds(self) -> Sequence[int]:
+        """
+        :return: the blinds of the poker game
+        """
+        return self._blinds
+
+    @property
+    @final
+    def starting_stacks(self) -> Sequence[int]:
+        """
+        :return: the starting stacks of the poker game
+        """
+        return self._starting_stacks
+
+    @property
+    @final
     def _round(self) -> Optional[Round]:
         return self._rounds[0] if self._rounds else None
+
+    @property
+    @final
+    @override
+    def _information(self) -> dict[str, Any]:
+        return {
+            **super()._information,
+            'ante': self.ante,
+            'blinds': self.blinds,
+            'starting_stacks': self.starting_stacks,
+        }
 
     @final
     def _setup(self) -> None:

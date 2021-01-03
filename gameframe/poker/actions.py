@@ -152,8 +152,9 @@ class RoundAction(PokerNatureAction):
                     card._status = True
 
     def __distribute(self) -> None:
-        players: list[PokerPlayer] = list(filter(lambda player: not player._mucked, self.game.players))
         base: int = 0
+
+        players: list[PokerPlayer] = list(filter(lambda player: not player._mucked, self.game.players))
 
         for base_player in sorted(players, key=lambda player: (player._hand, player._commitment)):
             side_pot: int = self.__side_pot(base, base_player)
@@ -165,13 +166,17 @@ class RoundAction(PokerNatureAction):
             else:
                 recipients[0]._bet += side_pot % len(recipients)
 
-            base = max(base, base_player._commitment)
+            base: int = max(base, base_player._commitment)
 
         self.game.environment._pot = 0
 
-        for player in players:
+        for player in self.game.players:
+            if base < player._commitment:
+                player._bet += player._commitment - base
+
             player._stack += player.bet
             player._bet = 0
+
 
     def __side_pot(self, base: int, base_player: PokerPlayer) -> int:
         side_pot: int = 0
