@@ -1,7 +1,7 @@
 from collections.abc import Callable, Collection, Mapping, Sequence
 from typing import Any, TypeVar
 
-__all__ = ['override', 'pretty_print', 'rotate']
+__all__: Sequence[str] = ['override', 'pretty_print', 'rotate']
 
 C = TypeVar('C', bound=Callable)
 T = TypeVar('T')

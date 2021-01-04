@@ -11,7 +11,7 @@ from gameframe.utils import override
 if TYPE_CHECKING:
     from gameframe.poker import Hand, Card
 
-__all__ = ['Evaluator', 'StandardEvaluator', 'GreekHoldEmEvaluator', 'OmahaHoldEmEvaluator']
+__all__: Sequence[str] = ['Evaluator', 'StandardEvaluator', 'GreekHoldEmEvaluator', 'OmahaHoldEmEvaluator']
 
 
 class Evaluator(ABC):

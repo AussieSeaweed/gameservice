@@ -8,7 +8,8 @@ from gameframe.game import Actor, Environment
 from gameframe.sequential import SequentialAction, SequentialGame
 from gameframe.utils import override
 
-__all__ = ['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer', 'TicTacToeAction']
+__all__: Sequence[str] = ['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer',
+                          'TicTacToeAction']
 
 
 @final

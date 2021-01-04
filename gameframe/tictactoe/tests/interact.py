@@ -1,7 +1,9 @@
+from collections.abc import Sequence
+
 from gameframe.sequential.tests import interact_sequential
 from gameframe.tictactoe import TicTacToeGame
 
-__all__ = ['interact_tic_tac_toe']
+__all__: Sequence[str] = ['interact_tic_tac_toe']
 
 
 def interact_tic_tac_toe() -> None:

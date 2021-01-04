@@ -1,8 +1,9 @@
+from collections.abc import Sequence
 from typing import final
 
 from gameframe.game import GameFrameException
 
-__all__ = ['ActorOutOfTurnException']
+__all__: Sequence[str] = ['ActorOutOfTurnException']
 
 
 @final

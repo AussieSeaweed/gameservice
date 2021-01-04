@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from enum import Enum
 from typing import final
 
 from gameframe.utils import override
 
-__all__ = ['Rank', 'Suit', 'Card', 'HoleCard']
+__all__: Sequence[str] = ['Rank', 'Suit', 'Card', 'HoleCard']
 
 
 @final

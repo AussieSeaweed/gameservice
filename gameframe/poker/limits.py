@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, final
 
 from gameframe.utils import override
@@ -8,7 +9,7 @@ from gameframe.utils import override
 if TYPE_CHECKING:
     from gameframe.poker import PokerGame
 
-__all__ = ['Limit', 'NoLimit']
+__all__: Sequence[str] = ['Limit', 'NoLimit']
 
 
 class Limit(ABC):

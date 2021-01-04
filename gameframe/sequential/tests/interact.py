@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from gameframe.game import Action, Actor, Environment
     from gameframe.sequential import SequentialGame
 
-__all__ = ['interact_sequential']
+__all__: Sequence[str] = ['interact_sequential']
 
 
 def interact_sequential(sequential_game_factory: Callable[[], SequentialGame]) -> None:

@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import final
 from unittest import TestCase, main
 
@@ -5,7 +6,7 @@ from gameframe.sequential.tests import SequentialMonteCarloTestCaseMixin
 from gameframe.tictactoe import TicTacToeGame
 from gameframe.utils import override
 
-__all__ = ['TicTacToeMonteCarloTestCase']
+__all__: Sequence[str] = ['TicTacToeMonteCarloTestCase']
 
 
 @final

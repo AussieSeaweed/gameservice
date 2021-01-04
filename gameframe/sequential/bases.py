@@ -6,7 +6,7 @@ from gameframe.game import Action, Actor, Environment, Game
 from gameframe.sequential.exceptions import ActorOutOfTurnException
 from gameframe.utils import override
 
-__all__ = ['SequentialGame', 'SequentialAction']
+__all__: Sequence[str] = ['SequentialGame', 'SequentialAction']
 
 SG = TypeVar('SG', bound='SequentialGame')
 E = TypeVar('E', bound=Environment)

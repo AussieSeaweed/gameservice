@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, final
 
 from gameframe.tictactoe.bases import TicTacToeAction
@@ -9,7 +10,7 @@ from gameframe.utils import override
 if TYPE_CHECKING:
     from gameframe.tictactoe import TicTacToePlayer
 
-__all__ = ['MarkAction']
+__all__: Sequence[str] = ['MarkAction']
 
 
 @final

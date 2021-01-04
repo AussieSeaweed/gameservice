@@ -12,8 +12,9 @@ from gameframe.utils import override
 if TYPE_CHECKING:
     from gameframe.poker import Card, Deck, Evaluator, Hand, HoleCard, Round, Limit
 
-__all__ = ['PokerGame', 'PokerEnvironment', 'PokerNature', 'PokerPlayer', 'PokerAction', 'PokerNatureAction',
-           'PokerPlayerAction']
+__all__: Sequence[str] = ['PokerGame', 'PokerEnvironment', 'PokerNature', 'PokerPlayer', 'PokerAction',
+                          'PokerNatureAction',
+                          'PokerPlayerAction']
 
 
 class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', 'PokerPlayer'], ABC):

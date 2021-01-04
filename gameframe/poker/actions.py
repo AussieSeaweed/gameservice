@@ -12,7 +12,7 @@ from gameframe.utils import rotate
 if TYPE_CHECKING:
     from gameframe.poker import Hand, PokerPlayer
 
-__all__ = ['SubmissiveAction', 'PassiveAction', 'AggressiveAction', 'RoundAction']
+__all__: Sequence[str] = ['SubmissiveAction', 'PassiveAction', 'AggressiveAction', 'RoundAction']
 
 
 @final

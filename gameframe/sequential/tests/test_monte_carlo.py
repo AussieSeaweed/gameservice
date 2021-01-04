@@ -1,4 +1,5 @@
 from abc import ABC
+from collections.abc import Sequence
 from random import choice
 from typing import TypeVar, final
 
@@ -6,7 +7,7 @@ from gameframe.game.tests import MonteCarloTestCaseMixin
 from gameframe.sequential import SequentialGame
 from gameframe.utils import override
 
-__all__ = ['SequentialMonteCarloTestCaseMixin']
+__all__: Sequence[str] = ['SequentialMonteCarloTestCaseMixin']
 
 SG = TypeVar('SG', bound=SequentialGame)
 

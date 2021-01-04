@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from typing import Generic, TypeVar
 
 from gameframe.game import Game
 
-__all__ = ['MonteCarloTestCaseMixin']
+__all__: Sequence[str] = ['MonteCarloTestCaseMixin']
 
 G = TypeVar('G', bound=Game)
 

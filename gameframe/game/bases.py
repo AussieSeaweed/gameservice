@@ -7,7 +7,7 @@ from typing import Any, Generic, Optional, TypeVar, Union, final
 from gameframe.game.exceptions import PlayerTypeMismatchException, TerminalityException
 from gameframe.utils import override
 
-__all__ = ['Game', 'Environment', 'Actor', 'Action']
+__all__: Sequence[str] = ['Game', 'Environment', 'Actor', 'Action']
 
 G = TypeVar('G', bound='Game')
 E = TypeVar('E', bound='Environment')

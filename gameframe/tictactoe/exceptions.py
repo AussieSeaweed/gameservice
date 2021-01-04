@@ -1,8 +1,9 @@
+from collections.abc import Sequence
 from typing import final
 
 from gameframe.game import GameFrameException
 
-__all__ = ['CoordinatesOutOfBoundsException', 'OccupiedCellException']
+__all__: Sequence[str] = ['CoordinatesOutOfBoundsException', 'OccupiedCellException']
 
 
 @final

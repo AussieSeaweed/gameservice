@@ -1,9 +1,10 @@
+from collections.abc import Sequence
 from typing import final
 
 from gameframe.game import GameFrameException
 
-__all__ = ['AmountOutOfBoundsException', 'FutileActionException', 'InsufficientPlayerCountException',
-           'InvalidBlindConfigurationException']
+__all__: Sequence[str] = ['AmountOutOfBoundsException', 'FutileActionException', 'InsufficientPlayerCountException',
+                          'InvalidBlindConfigurationException']
 
 
 @final

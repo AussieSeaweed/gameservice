@@ -1,7 +1,8 @@
 from abc import ABC
+from collections.abc import Sequence
 from typing import final
 
-__all__ = ['GameFrameException', 'PlayerTypeMismatchException', 'TerminalityException']
+__all__: Sequence[str] = ['GameFrameException', 'PlayerTypeMismatchException', 'TerminalityException']
 
 
 class GameFrameException(Exception, ABC):

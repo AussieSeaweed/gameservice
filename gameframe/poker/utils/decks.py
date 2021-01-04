@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import MutableSequence, Sequence
 from random import shuffle
-from collections.abc import Sequence, MutableSequence
 from typing import final
 
 from gameframe.poker.utils.cards import Card, Rank, Suit
 from gameframe.utils import override
 
-__all__ = ['Deck', 'StandardDeck', 'SixPlusDeck']
+__all__: Sequence[str] = ['Deck', 'StandardDeck', 'SixPlusDeck']
 
 
 class Deck(ABC):

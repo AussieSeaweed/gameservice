@@ -1,6 +1,6 @@
 from abc import ABC
-from random import randint
 from collections.abc import Callable, Sequence
+from random import randint
 from typing import final
 from unittest import TestCase, main
 
@@ -8,8 +8,8 @@ from gameframe.poker import NoLimitGreekHoldEmGame, NoLimitOmahaHoldEmGame, NoLi
 from gameframe.sequential.tests import SequentialMonteCarloTestCaseMixin
 from gameframe.utils import override
 
-__all__ = ['PokerMonteCarloTestCaseMixin', 'NoLimitTexasHoldEmMonteCarloTestCase',
-           'NoLimitGreekHoldEmMonteCarloTestCase', 'NoLimitOmahaHoldEmMonteCarloTestCase']
+__all__: Sequence[str] = ['PokerMonteCarloTestCaseMixin', 'NoLimitTexasHoldEmMonteCarloTestCase',
+                          'NoLimitGreekHoldEmMonteCarloTestCase', 'NoLimitOmahaHoldEmMonteCarloTestCase']
 
 ante: int = 1
 blinds: Sequence[int] = [1, 2]

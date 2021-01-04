@@ -1,17 +1,17 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Sequence, MutableSequence
+from collections.abc import MutableSequence, Sequence
 from typing import TYPE_CHECKING, Union, final
 
 from gameframe.poker.actions import AggressiveAction, PassiveAction, SubmissiveAction
 from gameframe.poker.utils import HoleCard
-from gameframe.utils import override
+from gameframe.utils import override, rotate
 
 if TYPE_CHECKING:
     from gameframe.poker import PokerAction, PokerGame, PokerNature, PokerPlayer
 
-__all__ = ['Round', 'BettingRound']
+__all__: Sequence[str] = ['Round', 'BettingRound']
 
 
 class Round(ABC):
@@ -64,7 +64,11 @@ class BettingRound(Round, ABC):
         else:
             opener: PokerPlayer = self.game.players[0]
 
-        return opener if opener._relevant else next(opener)
+        for player in rotate(self.game.players, opener.index):
+            if player._relevant:
+                return player
+        else:
+            return self.game.nature
 
     @override
     def _open(self) -> None:

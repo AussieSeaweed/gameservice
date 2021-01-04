@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from typing import Generic, TYPE_CHECKING, TypeVar, final
-from typing import Sequence
 
 from treys import Card as _TreysCard, Evaluator as _TreysEvaluator
 
@@ -11,7 +11,7 @@ from gameframe.utils import override
 if TYPE_CHECKING:
     from gameframe.poker import Card
 
-__all__ = ['Hand']
+__all__: Sequence[str] = ['Hand']
 
 H = TypeVar('H', bound='Hand')
 

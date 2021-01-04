@@ -4,7 +4,7 @@ from typing import Type
 from gameframe.poker import NoLimitGreekHoldEmGame, NoLimitOmahaHoldEmGame, NoLimitTexasHoldEmGame, PokerGame
 from gameframe.sequential.tests import interact_sequential
 
-__all__ = ['interact_poker']
+__all__: Sequence[str] = ['interact_poker']
 
 
 def interact_poker() -> None:
