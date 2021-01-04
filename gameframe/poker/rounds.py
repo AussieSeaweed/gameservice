@@ -78,7 +78,7 @@ class BettingRound(Round, ABC):
 
         if not self._opener.nature:
             self.game.environment._aggressor = self._opener
-            self.game.environment._max_delta = max(self.game._blinds)
+            self.game.environment._max_delta = max([self.game.ante, *self.game.blinds])
 
     @override
     def _close(self) -> None:

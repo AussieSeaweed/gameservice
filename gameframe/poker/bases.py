@@ -44,7 +44,7 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
 
         if len(self.players) < 2:
             raise InsufficientPlayerCountException()
-        elif self._blinds != sorted(self._blinds):
+        elif blinds != sorted(blinds):
             raise InvalidBlindConfigurationException()
 
         self._setup()
@@ -95,11 +95,11 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
             player._stack = stack
 
         for player in self.players:
-            ante: int = min(self._ante, player._stack)
+            ante: int = min(self.ante, player.stack)
 
             player._stack -= ante
 
-        for player, blind in zip(self.players, reversed(self._blinds) if len(self.players) == 2 else self._blinds):
+        for player, blind in zip(self.players, reversed(self.blinds) if len(self.players) == 2 else self.blinds):
             blind: int = min(blind, player.stack)
 
             player._stack -= blind
