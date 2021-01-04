@@ -159,7 +159,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 
     @property
     @abstractmethod
-    def actions(self: Union[N, P]) -> Sequence[Action[G, E, N, P]]:
+    def actions(self: Union[N, P]) -> Sequence[Action]:
         """
         :return: the actions of the actor
         """

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from gameframe.utils import pretty_print
 
 if TYPE_CHECKING:
-    from gameframe.game import Action, Actor, Environment
+    from gameframe.game import Action
     from gameframe.sequential import SequentialGame
 
 __all__: Sequence[str] = ['interact_sequential']
@@ -23,7 +23,7 @@ def interact_sequential(sequential_game_factory: Callable[[], SequentialGame]) -
     while not sequential_game.terminal:
         pretty_print(sequential_game.actor.information_set)
 
-        actions: Sequence[Action[SequentialGame, Environment, Actor, Actor]] = sequential_game.actor.actions
+        actions: Sequence[Action] = sequential_game.actor.actions
 
         actions[0 if len(actions) == 1 else int(input('Action #: '))].act()
 
