@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import DefaultDict, Iterable, List, TYPE_CHECKING, final
+from collections.abc import Iterable, Sequence
+from typing import TYPE_CHECKING, final
 
 from gameframe.poker.bases import PokerNatureAction, PokerPlayerAction
 from gameframe.poker.exceptions import AmountOutOfBoundsException, FutileActionException
@@ -11,10 +12,16 @@ from gameframe.utils import rotate
 if TYPE_CHECKING:
     from gameframe.poker import Hand, PokerPlayer
 
+__all__ = ['SubmissiveAction', 'PassiveAction', 'AggressiveAction', 'RoundAction']
+
 
 @final
 class SubmissiveAction(PokerPlayerAction):
     """SubmissiveAction is the class for folds."""
+
+    @override
+    def __str__(self) -> str:
+        return 'Fold'
 
     @override
     def act(self) -> None:
@@ -26,10 +33,6 @@ class SubmissiveAction(PokerPlayerAction):
             self.game._actor = self.game.nature
         else:
             self.game._actor = next(self.actor)
-
-    @override
-    def __str__(self) -> str:
-        return 'Fold'
 
     @override
     def _verify(self) -> None:
@@ -44,6 +47,10 @@ class PassiveAction(PokerPlayerAction):
     """PassiveAction is the class for checks and calls."""
 
     @override
+    def __str__(self) -> str:
+        return f'Call {self.__amount}' if self.__amount else 'Check'
+
+    @override
     def act(self) -> None:
         super().act()
 
@@ -53,10 +60,6 @@ class PassiveAction(PokerPlayerAction):
         self.actor._bet += amount
 
         self.game._actor = next(self.actor)
-
-    @override
-    def __str__(self) -> str:
-        return f'Call {self.__amount}' if self.__amount else 'Check'
 
     @property
     def __amount(self) -> int:
@@ -73,6 +76,10 @@ class AggressiveAction(PokerPlayerAction):
         self.__amount: int = amount
 
     @override
+    def __str__(self) -> str:
+        return ('Raise ' if any(player.bet for player in self.game.players) else 'Bet ') + str(self.__amount)
+
+    @override
     def act(self) -> None:
         super().act()
 
@@ -84,10 +91,6 @@ class AggressiveAction(PokerPlayerAction):
 
         self.game.environment._aggressor = self.actor
         self.game._actor = next(self.actor)
-
-    @override
-    def __str__(self) -> str:
-        return ('Raise ' if any(player.bet for player in self.game.players) else 'Bet ') + str(self.__amount)
 
     @override
     def _verify(self) -> None:
@@ -102,6 +105,10 @@ class AggressiveAction(PokerPlayerAction):
 @final
 class RoundAction(PokerNatureAction):
     """RoundAction is the class for round transitions and showdowns."""
+
+    @override
+    def __str__(self) -> str:
+        return 'Next Street'
 
     @override
     def act(self) -> None:
@@ -127,10 +134,6 @@ class RoundAction(PokerNatureAction):
 
             self.game._actor = self.game._round._opener
 
-    @override
-    def __str__(self) -> str:
-        return 'Next Street'
-
     def __show(self) -> None:
         players: Iterable[PokerPlayer] = filter(
             lambda player: not player._mucked,
@@ -138,7 +141,7 @@ class RoundAction(PokerNatureAction):
                 self.game.players, self.game.environment._aggressor.index),
         )
 
-        commitments: DefaultDict[Hand, int] = defaultdict(lambda: 0)
+        commitments: defaultdict[Hand, int] = defaultdict(lambda: 0)
 
         for player in players:
             for hand, commitment in commitments.items():
@@ -154,12 +157,12 @@ class RoundAction(PokerNatureAction):
     def __distribute(self) -> None:
         base: int = 0
 
-        players: List[PokerPlayer] = list(filter(lambda player: not player._mucked, self.game.players))
+        players: Sequence[PokerPlayer] = list(filter(lambda player: not player._mucked, self.game.players))
 
         for base_player in sorted(players, key=lambda player: (player._hand, player._commitment)):
             side_pot: int = self.__side_pot(base, base_player)
 
-            recipients: List[PokerPlayer] = list(filter(lambda player: player._hand == base_player._hand, players))
+            recipients: Sequence[PokerPlayer] = list(filter(lambda player: player._hand == base_player._hand, players))
 
             for recipient in recipients:
                 recipient._bet += side_pot // len(recipients)

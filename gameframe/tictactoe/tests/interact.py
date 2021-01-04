@@ -1,11 +1,13 @@
 from gameframe.sequential.tests import interact_sequential
 from gameframe.tictactoe import TicTacToeGame
 
+__all__ = ['interact_tic_tac_toe']
 
-def main() -> None:
+
+def interact_tic_tac_toe() -> None:
     """Interacts with a tic tac toe game."""
     interact_sequential(TicTacToeGame)
 
 
 if __name__ == '__main__':
-    main()
+    interact_tic_tac_toe()

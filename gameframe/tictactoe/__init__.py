@@ -1,4 +1,3 @@
-from gameframe.tictactoe.actions import MarkAction
-from gameframe.tictactoe.bases import TicTacToeAction, TicTacToeEnvironment, TicTacToeGame, TicTacToeNature, \
-    TicTacToePlayer
-from gameframe.tictactoe.exceptions import CoordinatesOutOfBoundsException, OccupiedCellException
+from gameframe.tictactoe.actions import *
+from gameframe.tictactoe.bases import *
+from gameframe.tictactoe.exceptions import *

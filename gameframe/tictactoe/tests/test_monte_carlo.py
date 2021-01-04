@@ -5,6 +5,8 @@ from gameframe.sequential.tests import SequentialMonteCarloTestCaseMixin
 from gameframe.tictactoe import TicTacToeGame
 from gameframe.utils import override
 
+__all__ = ['TicTacToeMonteCarloTestCase']
+
 
 @final
 class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin[TicTacToeGame]):

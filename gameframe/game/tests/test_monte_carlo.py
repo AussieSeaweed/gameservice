@@ -1,7 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Generic
+from typing import Generic, TypeVar
 
-from gameframe.game import G
+from gameframe.game import Game
+
+__all__ = ['MonteCarloTestCaseMixin']
+
+G = TypeVar('G', bound=Game)
 
 
 class MonteCarloTestCaseMixin(Generic[G], ABC):

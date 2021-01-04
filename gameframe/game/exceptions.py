@@ -1,7 +1,10 @@
+from abc import ABC
 from typing import final
 
+__all__ = ['GameFrameException', 'PlayerTypeMismatchException', 'TerminalityException']
 
-class GameFrameException(Exception):
+
+class GameFrameException(Exception, ABC):
     """GameFrameException is the base exception class for all GameFrame exceptions."""
 
     def __init__(self) -> None:
@@ -9,12 +12,12 @@ class GameFrameException(Exception):
 
 
 @final
-class TerminalityException(GameFrameException):
-    """Action cannot be applied to terminal games."""
+class PlayerTypeMismatchException(GameFrameException):
+    """Natures act chance actions and players act non-chance actions."""
     pass
 
 
 @final
-class PlayerTypeMismatchException(GameFrameException):
-    """Natures act chance actions and players act non-chance actions."""
+class TerminalityException(GameFrameException):
+    """Action cannot be applied to terminal games."""
     pass

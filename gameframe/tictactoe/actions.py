@@ -9,6 +9,8 @@ from gameframe.utils import override
 if TYPE_CHECKING:
     from gameframe.tictactoe import TicTacToePlayer
 
+__all__ = ['MarkAction']
+
 
 @final
 class MarkAction(TicTacToeAction):
@@ -21,6 +23,10 @@ class MarkAction(TicTacToeAction):
         self.__c: int = c
 
     @override
+    def __str__(self) -> str:
+        return f'Mark row {self.__r} column {self.__c}'
+
+    @override
     def act(self) -> None:
         super().act()
 
@@ -30,10 +36,6 @@ class MarkAction(TicTacToeAction):
             self.game._actor = next(self.actor)
         else:
             self.game._actor = None
-
-    @override
-    def __str__(self) -> str:
-        return f'Mark row {self.__r} column {self.__c}'
 
     @override
     def _verify(self) -> None:

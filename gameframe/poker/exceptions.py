@@ -2,16 +2,13 @@ from typing import final
 
 from gameframe.game import GameFrameException
 
-
-@final
-class InsufficientPlayerCountException(GameFrameException):
-    """The number of players are insufficient."""
-    pass
+__all__ = ['AmountOutOfBoundsException', 'FutileActionException', 'InsufficientPlayerCountException',
+           'InvalidBlindConfigurationException']
 
 
 @final
-class InvalidBlindConfigurationException(GameFrameException):
-    """The blind configurations are invalid."""
+class AmountOutOfBoundsException(GameFrameException):
+    """The amount is out of the allowed range."""
     pass
 
 
@@ -22,6 +19,12 @@ class FutileActionException(GameFrameException):
 
 
 @final
-class AmountOutOfBoundsException(GameFrameException):
-    """The amount is out of the allowed range."""
+class InsufficientPlayerCountException(GameFrameException):
+    """The number of players are insufficient."""
+    pass
+
+
+@final
+class InvalidBlindConfigurationException(GameFrameException):
+    """The blind configurations are invalid."""
     pass

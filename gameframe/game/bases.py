@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, Iterator, Optional, Sequence, TypeVar, Union, final
+from collections.abc import Iterator, Mapping, Sequence
+from typing import Any, Generic, Optional, TypeVar, Union, final
 
 from gameframe.game.exceptions import PlayerTypeMismatchException, TerminalityException
 from gameframe.utils import override
+
+__all__ = ['Game', 'Environment', 'Actor', 'Action']
 
 G = TypeVar('G', bound='Game')
 E = TypeVar('E', bound='Environment')
@@ -77,7 +80,7 @@ class Game(Generic[G, E, N, P], ABC):
         pass
 
     @property
-    def _information(self: G) -> Dict[str, Any]:
+    def _information(self: G) -> Mapping[str, Any]:
         return {}
 
 
@@ -96,7 +99,7 @@ class Environment(Generic[G, E, N, P]):
         return self.__game
 
     @property
-    def _information(self: E) -> Dict[str, Any]:
+    def _information(self: E) -> Mapping[str, Any]:
         return {}
 
 
@@ -105,6 +108,14 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 
     def __init__(self: Union[N, P], game: G) -> None:
         self.__game: G = game
+
+    @override
+    def __next__(self: Union[N, P]) -> Union[N, P]:
+        return self if self.index is None else self.game.players[(self.index + 1) % len(self.game.players)]
+
+    @override
+    def __str__(self: Union[N, P]) -> str:
+        return 'Nature' if self.nature else f'Player {self.index}'
 
     @property
     @final
@@ -132,7 +143,7 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
 
     @property
     @final
-    def information_set(self: Union[N, P]) -> Dict[str, Any]:
+    def information_set(self: Union[N, P]) -> Mapping[str, Any]:
         """
         :return: the information set of the actor
         """
@@ -162,23 +173,15 @@ class Actor(Generic[G, E, N, P], Iterator[Union[N, P]], ABC):
         """
         pass
 
-    @override
-    def __next__(self: Union[N, P]) -> Union[N, P]:
-        return self if self.index is None else self.game.players[(self.index + 1) % len(self.game.players)]
-
-    @override
-    def __str__(self: Union[N, P]) -> str:
-        return 'Nature' if self.nature else f'Player {self.index}'
-
     @property
-    def _private_information(self: Union[N, P]) -> Dict[str, Any]:
+    def _private_information(self: Union[N, P]) -> Mapping[str, Any]:
         return {
             **self._public_information,
             'actions': self.actions,
         }
 
     @property
-    def _public_information(self: Union[N, P]) -> Dict[str, Any]:
+    def _public_information(self: Union[N, P]) -> Mapping[str, Any]:
         return {
             'actions': list(filter(lambda action: action.public, self.actions)),
         }
@@ -192,6 +195,11 @@ class Action(Generic[G, E, N, P], ABC):
 
         self.__chance: bool = chance
         self.__public: bool = public
+
+    @abstractmethod
+    @override
+    def __str__(self) -> str:
+        pass
 
     @property
     @final
@@ -235,11 +243,6 @@ class Action(Generic[G, E, N, P], ABC):
         :raise GameFrameException: if the action integrity verification fails prior to the action
         """
         self._verify()
-
-    @abstractmethod
-    @override
-    def __str__(self) -> str:
-        pass
 
     def _verify(self) -> None:
         if self.game.terminal:

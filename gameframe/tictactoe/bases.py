@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Dict, List, Optional, Sequence, Union, final
+from collections.abc import Mapping, MutableSequence, Sequence
+from typing import Any, Optional, Union, final
 
 from gameframe.game import Actor, Environment
 from gameframe.sequential import SequentialAction, SequentialGame
 from gameframe.utils import override
+
+__all__ = ['TicTacToeGame', 'TicTacToeEnvironment', 'TicTacToeNature', 'TicTacToePlayer', 'TicTacToeAction']
 
 
 @final
@@ -24,9 +27,9 @@ class TicTacToeEnvironment(Environment[TicTacToeGame, 'TicTacToeEnvironment', 'T
     def __init__(self, game: TicTacToeGame) -> None:
         super().__init__(game)
 
-        self._board: List[List[Optional[TicTacToePlayer]]] = [[None, None, None],
-                                                              [None, None, None],
-                                                              [None, None, None]]
+        self._board: MutableSequence[MutableSequence[Optional[TicTacToePlayer]]] = [[None, None, None],
+                                                                                    [None, None, None],
+                                                                                    [None, None, None]]
 
     @property
     def board(self) -> Sequence[Sequence[Optional[TicTacToePlayer]]]:
@@ -55,7 +58,7 @@ class TicTacToeEnvironment(Environment[TicTacToeGame, 'TicTacToeEnvironment', 'T
 
     @property
     @override
-    def _information(self) -> Dict[str, Any]:
+    def _information(self) -> Mapping[str, Any]:
         return {
             'board': self.board,
         }

@@ -2,6 +2,8 @@ from typing import final
 
 from gameframe.game import GameFrameException
 
+__all__ = ['CoordinatesOutOfBoundsException', 'OccupiedCellException']
+
 
 @final
 class CoordinatesOutOfBoundsException(GameFrameException):

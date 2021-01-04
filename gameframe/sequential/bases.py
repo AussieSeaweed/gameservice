@@ -1,11 +1,17 @@
 from abc import ABC
-from typing import Any, Dict, Optional, Sequence, TypeVar, Union, final
+from collections.abc import Mapping, Sequence
+from typing import Any, Optional, TypeVar, Union, final
 
-from gameframe.game import Action, E, Game, N, P
+from gameframe.game import Action, Actor, Environment, Game
 from gameframe.sequential.exceptions import ActorOutOfTurnException
 from gameframe.utils import override
 
+__all__ = ['SequentialGame', 'SequentialAction']
+
 SG = TypeVar('SG', bound='SequentialGame')
+E = TypeVar('E', bound=Environment)
+N = TypeVar('N', bound=Actor)
+P = TypeVar('P', bound=Actor)
 
 
 class SequentialGame(Game[SG, E, N, P], ABC):
@@ -40,7 +46,7 @@ class SequentialGame(Game[SG, E, N, P], ABC):
 
     @property
     @override
-    def _information(self: SG) -> Dict[str, Any]:
+    def _information(self: SG) -> Mapping[str, Any]:
         return {
             **super()._information,
             'actor': self.actor,
