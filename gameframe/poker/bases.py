@@ -169,6 +169,15 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
         self._stack: int = 0
         self.__hole_cards: Optional[MutableSequence[HoleCard]] = []
 
+    @override
+    def __next__(self) -> Union[PokerNature, PokerPlayer]:
+        player: Union[PokerNature, PokerPlayer] = super().__next__()
+
+        while not player._relevant and player is not self.game.environment._aggressor and player is not self:
+            player: Union[PokerNature, PokerPlayer] = Actor.__next__(player)
+
+        return self.game.nature if player is self.game.environment._aggressor or player is self else player
+
     @property
     def bet(self) -> int:
         """
@@ -199,15 +208,6 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
     @override
     def payoff(self) -> int:
         return -self._commitment
-
-    @override
-    def __next__(self) -> Union[PokerNature, PokerPlayer]:
-        player: Union[PokerNature, PokerPlayer] = super().__next__()
-
-        while not player._relevant and player is not self.game.environment._aggressor and player is not self:
-            player: Union[PokerNature, PokerPlayer] = Actor.__next__(player)
-
-        return self.game.nature if player is self.game.environment._aggressor or player is self else player
 
     @property
     def _commitment(self) -> int:
