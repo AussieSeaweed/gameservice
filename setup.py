@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='gameframe',
-    version='0.0.5a1',
+    version='0.0.5a2',
     author='Juho Kim',
     author_email='juho-kim@outlook.com',
     description='A package for various game implementations on python',
