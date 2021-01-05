@@ -52,9 +52,9 @@ class GreekHoldEmEvaluator(StandardEvaluator):
             cur_hand: Optional[Hand] = super().hand(hole_cards, combination)
 
             if hand is None:
-                hand: Optional[Hand] = cur_hand
+                hand = cur_hand
             elif cur_hand is not None:
-                hand: Optional[Hand] = min(hand, cur_hand)
+                hand = min(hand, cur_hand)
 
         return hand
 
@@ -71,8 +71,8 @@ class OmahaHoldEmEvaluator(GreekHoldEmEvaluator):
             cur_hand: Optional[Hand] = super().hand(combination, board_cards)
 
             if hand is None:
-                hand: Optional[Hand] = cur_hand
+                hand = cur_hand
             elif cur_hand is not None:
-                hand: Optional[Hand] = min(hand, cur_hand)
+                hand = min(hand, cur_hand)
 
         return hand

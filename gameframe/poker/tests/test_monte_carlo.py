@@ -14,7 +14,7 @@ __all__: Sequence[str] = ['PokerMonteCarloTestCaseMixin', 'NoLimitTexasHoldEmMon
 ante: int = 1
 blinds: Sequence[int] = [1, 2]
 starting_stacks_factory: Callable[[], Sequence[int]] = lambda: [randint(0, 100) for _ in range(randint(2, 6))]
-lazy = True
+lazy: bool = True
 
 
 class PokerMonteCarloTestCaseMixin(SequentialMonteCarloTestCaseMixin[PokerGame], ABC):
