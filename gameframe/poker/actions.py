@@ -6,7 +6,8 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, final
 
 from gameframe.poker.bases import PokerNatureAction, PokerPlayerAction
-from gameframe.poker.exceptions import AmountOutOfBoundsException, FutileActionException, InvalidRoundException, UnavailableActionException
+from gameframe.poker.exceptions import AmountOutOfBoundsException, FutileActionException, InvalidRoundException, \
+    UnavailableActionException
 from gameframe.utils import override
 from gameframe.utils import rotate
 
