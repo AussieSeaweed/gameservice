@@ -33,7 +33,7 @@ class InvalidBlindConfigurationException(GameFrameException):
 
 @final
 class InvalidRoundException(GameFrameException):
-    """The action is not relevant with this round."""
+    """The action or query is not relevant with this round."""
     pass
 
 

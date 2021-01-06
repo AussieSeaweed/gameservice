@@ -28,5 +28,5 @@ class MonteCarloTestCaseMixin(Generic[G], ABC):
         pass
 
     @abstractmethod
-    def _verify_game(self, game: G) -> None:
+    def _verify(self, game: G) -> None:
         pass

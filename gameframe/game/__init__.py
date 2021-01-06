@@ -1,2 +1,1 @@
-from gameframe.game.bases import *
-from gameframe.game.exceptions import *
+from gameframe.game._bases import *
