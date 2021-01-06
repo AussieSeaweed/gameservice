@@ -13,8 +13,7 @@ if TYPE_CHECKING:
     from gameframe.poker import Deck, Evaluator, Limit
 
 __all__: Sequence[str] = ['HoldEmGame', 'TexasHoldEmGame', 'NoLimitTexasHoldEmGame', 'GreekHoldEmGame',
-                          'NoLimitGreekHoldEmGame',
-                          'OmahaHoldEmGame', 'NoLimitOmahaHoldEmGame']
+                          'NoLimitGreekHoldEmGame', 'OmahaHoldEmGame', 'NoLimitOmahaHoldEmGame']
 
 
 class HoldEmGame(PokerGame, ABC):
