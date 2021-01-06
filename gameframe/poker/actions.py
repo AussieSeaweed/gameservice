@@ -1,23 +1,34 @@
 from __future__ import annotations
 
+from abc import ABC
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, final
 
 from gameframe.poker.bases import PokerNatureAction, PokerPlayerAction
-from gameframe.poker.exceptions import AmountOutOfBoundsException, FutileActionException
+from gameframe.poker.exceptions import AmountOutOfBoundsException, FutileActionException, InvalidRoundException
 from gameframe.utils import override
 from gameframe.utils import rotate
 
 if TYPE_CHECKING:
     from gameframe.poker import Hand, PokerPlayer
 
-__all__: Sequence[str] = ['SubmissiveAction', 'PassiveAction', 'AggressiveAction', 'RoundAction']
+__all__: Sequence[str] = ['BettingRoundAction', 'FoldAction', 'CheckCallAction', 'BetRaiseAction', 'ProgressiveAction']
+
+
+class BettingRoundAction(PokerPlayerAction, ABC):
+    """BettingRoundAction is the abstract base class for all player actions in a betting round."""
+
+    def _verify(self) -> None:
+        from gameframe.poker import BettingRound
+
+        if not isinstance(self.game._round, BettingRound):
+            raise InvalidRoundException()
 
 
 @final
-class SubmissiveAction(PokerPlayerAction):
-    """SubmissiveAction is the class for folds."""
+class FoldAction(PokerPlayerAction):
+    """FoldAction is the class for folds."""
 
     @override
     def __str__(self) -> str:
@@ -43,8 +54,8 @@ class SubmissiveAction(PokerPlayerAction):
 
 
 @final
-class PassiveAction(PokerPlayerAction):
-    """PassiveAction is the class for checks and calls."""
+class CheckCallAction(PokerPlayerAction):
+    """CheckCallAction is the class for checks and calls."""
 
     @override
     def __str__(self) -> str:
@@ -67,8 +78,8 @@ class PassiveAction(PokerPlayerAction):
 
 
 @final
-class AggressiveAction(PokerPlayerAction):
-    """AggressiveAction is the class for bets and raises."""
+class BetRaiseAction(PokerPlayerAction):
+    """BetRaiseAction is the class for bets and raises."""
 
     def __init__(self, actor: PokerPlayer, amount: int) -> None:
         super().__init__(actor)
@@ -98,17 +109,17 @@ class AggressiveAction(PokerPlayerAction):
 
         if sum(player._relevant for player in self.game.players) <= 1:
             raise FutileActionException()
-        if not (self.game._limit.min_amount <= self.__amount <= self.game._limit.max_amount):
+        elif not (self.game._limit.min_amount <= self.__amount <= self.game._limit.max_amount):
             raise AmountOutOfBoundsException()
 
 
 @final
-class RoundAction(PokerNatureAction):
-    """RoundAction is the class for round transitions and showdowns."""
+class ProgressiveAction(PokerNatureAction):
+    """ProgressiveAction is the class for round transitions and showdowns."""
 
     @override
     def __str__(self) -> str:
-        return 'Next Street'
+        return 'Progress'
 
     @override
     def act(self) -> None:

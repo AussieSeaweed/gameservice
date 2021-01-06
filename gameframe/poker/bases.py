@@ -148,14 +148,19 @@ class PokerNature(Actor[PokerGame, PokerEnvironment, 'PokerNature', 'PokerPlayer
     @property
     @override
     def actions(self) -> Sequence[PokerAction]:
-        from gameframe.poker import RoundAction
+        from gameframe.poker import ProgressiveAction
 
-        return [RoundAction(self)] if self is self.game.actor else []
+        return [ProgressiveAction(self)] if self is self.game.actor else []
 
     @property
     @override
     def payoff(self) -> int:
         return 0
+
+    def progress(self) -> None:
+        from gameframe.poker import ProgressiveAction
+
+        ProgressiveAction(self).act()
 
 
 @final
@@ -208,6 +213,34 @@ class PokerPlayer(Actor[PokerGame, PokerEnvironment, PokerNature, 'PokerPlayer']
     @override
     def payoff(self) -> int:
         return -self._commitment
+
+    def fold(self) -> None:
+        """Folds.
+
+        :return:
+        """
+        from gameframe.poker import FoldAction
+
+        FoldAction(self).act()
+
+    def check_call(self) -> None:
+        """Checks or calls.
+
+        :return: None
+        """
+        from gameframe.poker import CheckCallAction
+
+        CheckCallAction(self).act()
+
+    def bet_raise(self, amount: int) -> None:
+        """Bets or Raises the amount.
+
+        :param amount: the bet/raise amount
+        :return: None
+        """
+        from gameframe.poker import BetRaiseAction
+
+        BetRaiseAction(self, amount).act()
 
     @property
     def _commitment(self) -> int:

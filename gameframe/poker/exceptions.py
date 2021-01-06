@@ -4,7 +4,7 @@ from typing import final
 from gameframe.game import GameFrameException
 
 __all__: Sequence[str] = ['AmountOutOfBoundsException', 'FutileActionException', 'InsufficientPlayerCountException',
-                          'InvalidBlindConfigurationException']
+                          'InvalidBlindConfigurationException', 'InvalidRoundException']
 
 
 @final
@@ -28,4 +28,10 @@ class InsufficientPlayerCountException(GameFrameException):
 @final
 class InvalidBlindConfigurationException(GameFrameException):
     """The blind configurations are invalid."""
+    pass
+
+
+@final
+class InvalidRoundException(GameFrameException):
+    """The action is unavailable in this round."""
     pass

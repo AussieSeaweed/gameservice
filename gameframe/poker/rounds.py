@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from collections.abc import MutableSequence, Sequence
 from typing import TYPE_CHECKING, Union, final
 
-from gameframe.poker.actions import AggressiveAction, PassiveAction, SubmissiveAction
+from gameframe.poker.actions import BetRaiseAction, CheckCallAction, FoldAction
 from gameframe.poker.utils import HoleCard
 from gameframe.utils import override, rotate
 
@@ -96,9 +96,9 @@ class BettingRound(Round, ABC):
         actions: MutableSequence[PokerAction] = []
 
         if self.game.actor.bet < max(player.bet for player in self.game.players):
-            actions.append(SubmissiveAction(self.game.actor))
+            actions.append(FoldAction(self.game.actor))
 
-        actions.append(PassiveAction(self.game.actor))
+        actions.append(CheckCallAction(self.game.actor))
 
         if sum(player._relevant for player in self.game.players) > 1 and \
                 max(player.bet for player in self.game.players) < self.game.actor.stack:
@@ -107,6 +107,6 @@ class BettingRound(Round, ABC):
             else:
                 bet_amounts: Sequence[int] = range(self.game._limit.min_amount, self.game._limit.max_amount + 1)
 
-            actions.extend(map(lambda amount: AggressiveAction(self.game.actor, amount), bet_amounts))
+            actions.extend(map(lambda amount: BetRaiseAction(self.game.actor, amount), bet_amounts))
 
         return actions

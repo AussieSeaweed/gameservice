@@ -102,6 +102,11 @@ class TicTacToePlayer(Actor[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature
         else:
             return 1 if self is self.game.environment._winner else -1
 
+    def mark(self, r: int, c: int) -> None:
+        from gameframe.tictactoe import MarkAction
+
+        MarkAction(self, r, c).act()
+
 
 class TicTacToeAction(SequentialAction[TicTacToeGame, TicTacToeEnvironment, TicTacToeNature, TicTacToePlayer], ABC):
     """TicTacToeAction is the abstract base class for all tic tac toe actions"""
