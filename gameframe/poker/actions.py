@@ -6,7 +6,7 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, final
 
 from gameframe.poker.bases import PokerNatureAction, PokerPlayerAction
-from gameframe.poker.exceptions import AmountOutOfBoundsException, FutileActionException, InvalidRoundException
+from gameframe.poker.exceptions import AmountOutOfBoundsException, FutileActionException, InvalidRoundException, UnavailableActionException
 from gameframe.utils import override
 from gameframe.utils import rotate
 
@@ -109,6 +109,8 @@ class BetRaiseAction(PokerPlayerAction):
 
         if sum(player._relevant for player in self.game.players) <= 1:
             raise FutileActionException()
+        elif max(player.bet for player in self.game.players) < self.actor.stack:
+            raise UnavailableActionException()
         elif not (self.game._limit.min_amount <= self.__amount <= self.game._limit.max_amount):
             raise AmountOutOfBoundsException()
 

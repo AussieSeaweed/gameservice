@@ -59,10 +59,12 @@ class BettingRound(Round, ABC):
     @property
     @override
     def _opener(self) -> Union[PokerNature, PokerPlayer]:
+        opener: PokerPlayer
+
         if any(player.bet for player in self.game.players):
-            opener: PokerPlayer = min(self.game.players, key=lambda player: (player.bet, player.index))
+            opener = min(self.game.players, key=lambda player: (player.bet, player.index))
         else:
-            opener: PokerPlayer = self.game.players[0]
+            opener = self.game.players[0]
 
         for player in rotate(self.game.players, opener.index):
             if player._relevant:
@@ -102,10 +104,12 @@ class BettingRound(Round, ABC):
 
         if sum(player._relevant for player in self.game.players) > 1 and \
                 max(player.bet for player in self.game.players) < self.game.actor.stack:
+            bet_amounts: Sequence[int]
+
             if self.game._lazy:
-                bet_amounts: Sequence[int] = sorted({self.game._limit.min_amount, self.game._limit.max_amount})
+                bet_amounts = sorted({self.game._limit.min_amount, self.game._limit.max_amount})
             else:
-                bet_amounts: Sequence[int] = range(self.game._limit.min_amount, self.game._limit.max_amount + 1)
+                bet_amounts = range(self.game._limit.min_amount, self.game._limit.max_amount + 1)
 
             actions.extend(map(lambda amount: BetRaiseAction(self.game.actor, amount), bet_amounts))
 

@@ -26,15 +26,16 @@ class PokerGame(SequentialGame['PokerGame', 'PokerEnvironment', 'PokerNature', '
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self, deck: Deck, evaluator: Evaluator, limit: Limit, rounds: MutableSequence[Round],
+    def __init__(self, rounds: MutableSequence[Round], deck: Deck, evaluator: Evaluator, limit: Limit,
                  ante: int, blinds: Sequence[int], starting_stacks: Sequence[int], lazy: bool) -> None:
         super().__init__(PokerEnvironment(self), PokerNature(self),
                          [PokerPlayer(self) for _ in range(len(starting_stacks))], None)
 
+        self._rounds: MutableSequence[Optional[Round]] = [None, *rounds]
         self._deck: Deck = deck
         self._evaluator: Evaluator = evaluator
+
         self._limit: Limit = limit
-        self._rounds: MutableSequence[Optional[Round]] = [None, *rounds]
 
         self._ante: int = ante
         self._blinds: Sequence[int] = blinds

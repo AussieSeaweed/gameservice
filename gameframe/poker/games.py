@@ -22,9 +22,9 @@ class HoldEmGame(PokerGame, ABC):
     def __init__(self, deck: Deck, evaluator: Evaluator, limit: Limit, hole_card_count: int,
                  board_card_counts: Sequence[int], ante: int, blinds: Sequence[int],
                  starting_stacks: Sequence[int], lazy: bool) -> None:
-        super().__init__(deck, evaluator, limit, [BettingRound(self, 0, [False] * hole_card_count)] + list(map(
+        super().__init__([BettingRound(self, 0, [False] * hole_card_count)] + list(map(
             lambda board_card_count: BettingRound(self, board_card_count, []), board_card_counts,
-        )), ante, blinds, starting_stacks, lazy)
+        )), deck, evaluator, limit, ante, blinds, starting_stacks, lazy)
 
 
 class TexasHoldEmGame(HoldEmGame, ABC):

@@ -4,7 +4,7 @@ from typing import final
 from gameframe.game import GameFrameException
 
 __all__: Sequence[str] = ['AmountOutOfBoundsException', 'FutileActionException', 'InsufficientPlayerCountException',
-                          'InvalidBlindConfigurationException', 'InvalidRoundException']
+                          'InvalidBlindConfigurationException', 'InvalidRoundException', 'UnavailableActionException']
 
 
 @final
@@ -33,5 +33,11 @@ class InvalidBlindConfigurationException(GameFrameException):
 
 @final
 class InvalidRoundException(GameFrameException):
-    """The action is unavailable in this round."""
+    """The action is not relevant with this round."""
+    pass
+
+
+@final
+class UnavailableActionException(GameFrameException):
+    """The action is unavailable."""
     pass
