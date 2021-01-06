@@ -24,4 +24,4 @@ class SequentialMonteCarloTestCaseMixin(MonteCarloTestCaseMixin[SG], ABC):
             while not game.terminal:
                 choice(game.actor.actions).act()
 
-            self._verify_game(game)
+            self._verify(game)

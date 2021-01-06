@@ -110,7 +110,7 @@ class BetRaiseAction(PokerPlayerAction):
 
         if sum(player._relevant for player in self.game.players) <= 1:
             raise FutileActionException()
-        elif max(player.bet for player in self.game.players) < self.actor.stack:
+        elif not max(player.bet for player in self.game.players) < self.actor._total:
             raise UnavailableActionException()
         elif not (self.game._limit.min_amount <= self.__amount <= self.game._limit.max_amount):
             raise AmountOutOfBoundsException()

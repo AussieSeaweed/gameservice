@@ -23,7 +23,7 @@ class PokerMonteCarloTestCaseMixin(SequentialMonteCarloTestCaseMixin[PokerGame],
     _test_count: int = 1000
 
     @override
-    def _verify_game(self, game: NoLimitTexasHoldEmGame) -> None:
+    def _verify(self, game: NoLimitTexasHoldEmGame) -> None:
         assert sum(game._starting_stacks) == sum(player.stack for player in game.players)
         assert all(player.stack >= 0 and player.bet == 0 for player in game.players)
         assert game.environment.pot == 0

@@ -63,7 +63,7 @@ class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin[Ti
         return TicTacToeGame()
 
     @override
-    def _verify_game(self, game: TicTacToeGame) -> None:
+    def _verify(self, game: TicTacToeGame) -> None:
         assert game.environment._winner is not None or not game.environment._empty_coordinates
 
 

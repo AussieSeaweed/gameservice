@@ -103,7 +103,7 @@ class BettingRound(Round, ABC):
         actions.append(CheckCallAction(self.game.actor))
 
         if sum(player._relevant for player in self.game.players) > 1 and \
-                max(player.bet for player in self.game.players) < self.game.actor.stack:
+                max(player.bet for player in self.game.players) < self.game.actor._total:
             bet_amounts: Sequence[int]
 
             if self.game._lazy:
