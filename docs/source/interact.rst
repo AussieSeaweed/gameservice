@@ -42,8 +42,6 @@ this way is not ideal. Thus, you can also access individual game elements as fol
     # Create a NLHE game
     nlhe_game = NoLimitTexasHoldEmGame(1, [1, 2], [200, 300, 200], True)
 
-    ...
-
     print(nlhe_game.actor)  # Print the current actor (might be nature or one of the players)
     print(nlhe_game.actor.nature)  # True if the actor is nature, otherwise False
     print(nlhe_game.nature)  # Print the nature
@@ -58,6 +56,16 @@ this way is not ideal. Thus, you can also access individual game elements as fol
 
     ...
 
+    nlhe_game.nature.progress()  # Set up next street
+
+    ...
+
+    nlhe_game.players[2].fold()  # Fold
+    nlhe_game.players[0].bet_raise(6)  # Raise
+    nlhe_game.players[1].check_call()  # Call
+
+    ...
+
     print(nlhe_game.players[0].payoff)  # Print the result of the player (+gain or -loss)
 
     ...
@@ -68,6 +76,10 @@ this way is not ideal. Thus, you can also access individual game elements as fol
     ...
 
     print(ttt_game.environment.board)  # Print the board
+
+    ...
+
+    ttt_game.players[0].mark(0, 0)  # Mark coordinate (0, 0)
 
     ...
 
