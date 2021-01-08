@@ -1,2 +1,2 @@
-from gameframe.tictactoe.tests.interact import *
-from gameframe.tictactoe.tests.test_monte_carlo import *
+from gameframe.tictactoe.tests.interact import interact_tic_tac_toe
+from gameframe.tictactoe.tests.test_monte_carlo import TicTacToeMonteCarloTestCase

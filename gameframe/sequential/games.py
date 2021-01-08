@@ -10,10 +10,10 @@ class SequentialGame(Game, ABC):
     terminal, its actor attribute must be set to None to denote such.
     """
 
-    def __init__(self, environment, nature, players, initial_actor):
+    def __init__(self, environment, nature, players, initial_actor_index):
         super().__init__(environment, nature, players)
 
-        self._actor = initial_actor
+        self._actor = nature if initial_actor_index is None else players[initial_actor_index]
 
     @property
     def actor(self):
