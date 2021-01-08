@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='gameframe',
-    version='0.0.5b2',
+    version='0.0.5b3',
     author='Juho Kim',
     author_email='juho-kim@outlook.com',
     description='A package for various game implementations on python',
@@ -15,9 +15,12 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
-    python_requires='>=3.9',
+    python_requires='>=3.6',
     install_requires=open('requirements.txt', 'r').readlines(),
 )

@@ -1,22 +1,4 @@
-from collections.abc import Callable, Collection, Mapping, Sequence
-from typing import Any, TypeVar
-
-__all__: Sequence[str] = ['override', 'pretty_print', 'rotate']
-
-C = TypeVar('C', bound=Callable)
-T = TypeVar('T')
-
-
-def override(function: C) -> C:
-    """Annotates the function that it overrides the super class's definition
-
-    :param function: the overriding function
-    :return: the overriding function
-    """
-    return function
-
-
-def pretty_print(o: Any, indent: str = '    ', start: str = '', end: str = '\n') -> None:
+def pretty_print(o, indent='    ', start='', end='\n'):
     """Prints the object on the console prettily.
 
     :param o: the object
@@ -25,7 +7,7 @@ def pretty_print(o: Any, indent: str = '    ', start: str = '', end: str = '\n')
     :param end: the suffix string
     :return: None
     """
-    if isinstance(o, Mapping):
+    if isinstance(o, dict):
         print(start + '{')
 
         for key, value in o.items():
@@ -33,7 +15,7 @@ def pretty_print(o: Any, indent: str = '    ', start: str = '', end: str = '\n')
             pretty_print(value, indent, start + indent + indent, end=',\n')
 
         print(start + '}', end=end)
-    elif isinstance(o, Collection):
+    elif isinstance(o, list):
         print(start + '[')
 
         for value in o:
@@ -44,11 +26,11 @@ def pretty_print(o: Any, indent: str = '    ', start: str = '', end: str = '\n')
         print(start + str(o), end=end)
 
 
-def rotate(collection: Sequence[T], index: int) -> Sequence[T]:
+def rotate(collection, index):
     """Rotates the sequence by an index.
 
     :param collection: the sequence to be rotated
     :param index: the index of rotation
     :return: the rotated sequence
     """
-    return tuple(collection[index:]) + tuple(collection[:index])
+    return list(collection[index:]) + list(collection[:index])

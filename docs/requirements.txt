@@ -7,6 +7,7 @@ colorama==0.4.4
 docutils==0.16
 idna==2.10
 imagesize==1.2.0
+importlib-metadata==3.3.0
 Jinja2==2.11.2
 keyring==21.8.0
 MarkupSafe==1.1.1
@@ -22,8 +23,8 @@ requests-toolbelt==0.9.1
 rfc3986==1.4.0
 six==1.15.0
 snowballstemmer==2.0.0
-Sphinx==3.4.1
-sphinx-rtd-theme==0.5.0
+Sphinx==3.4.3
+sphinx-rtd-theme==0.5.1
 sphinxcontrib-applehelp==1.0.2
 sphinxcontrib-devhelp==1.0.2
 sphinxcontrib-htmlhelp==1.0.3
@@ -33,6 +34,8 @@ sphinxcontrib-serializinghtml==1.1.4
 tqdm==4.55.1
 treys==0.1.3
 twine==3.3.0
+typing-extensions==3.7.4.3
 urllib3==1.26.2
-wheel==0.36.2
 webencodings==0.5.1
+wheel==0.36.2
+zipp==3.4.0

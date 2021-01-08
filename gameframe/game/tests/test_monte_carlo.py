@@ -1,21 +1,16 @@
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
-from typing import Generic, TypeVar
-
-from gameframe.game import Game
-
-__all__: Sequence[str] = ['MonteCarloTestCaseMixin']
-
-G = TypeVar('G', bound=Game)
 
 
-class MonteCarloTestCaseMixin(Generic[G], ABC):
+class MonteCarloTestCaseMixin(ABC):
     """MonteCarloTestCaseMixin is the abstract base mixin for all monte carlo test cases."""
 
-    _test_count: int
+    @property
+    @abstractmethod
+    def _test_count(self):
+        pass
 
     @abstractmethod
-    def test_monte_carlo(self) -> None:
+    def test_monte_carlo(self):
         """Runs monte carlo tests of games.
 
         :return: None
@@ -24,9 +19,9 @@ class MonteCarloTestCaseMixin(Generic[G], ABC):
         pass
 
     @abstractmethod
-    def _create_game(self) -> G:
+    def _create_game(self):
         pass
 
     @abstractmethod
-    def _verify(self, game: G) -> None:
+    def _verify(self, game):
         pass
