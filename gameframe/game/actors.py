@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import final
 
 
 class Actor(ABC):
@@ -27,7 +26,6 @@ class Actor(ABC):
         return 'Nature' if self.nature else f'Player {self._game.players.index(self)}'
 
     @property
-    @final
     def information_set(self):
         """
         :return: the information set of this actor
@@ -43,7 +41,6 @@ class Actor(ABC):
         }
 
     @property
-    @final
     def nature(self):
         """
         :return: True if this actor is nature, False otherwise

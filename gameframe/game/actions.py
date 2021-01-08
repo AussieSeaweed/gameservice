@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import final
 
 from gameframe.game.exceptions import TerminalGameException
 
@@ -23,7 +22,6 @@ class Action(ABC):
         pass
 
     @property
-    @final
     def _game(self):
         return self._actor._game
 

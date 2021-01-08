@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import final
 
 
 class GameFrameException(Exception, ABC):
@@ -9,7 +8,6 @@ class GameFrameException(Exception, ABC):
         super().__init__(self.__doc__)
 
 
-@final
 class TerminalGameException(GameFrameException):
     """Actions cannot be applied to terminal games."""
     pass

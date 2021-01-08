@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import final
 
 
 class Game(ABC):
@@ -15,7 +14,6 @@ class Game(ABC):
         self.__players = players
 
     @property
-    @final
     def environment(self):
         """
         :return: the environment of this game
@@ -23,7 +21,6 @@ class Game(ABC):
         return self.__environment
 
     @property
-    @final
     def nature(self):
         """
         :return: the nature of this game
@@ -31,7 +28,6 @@ class Game(ABC):
         return self.__nature
 
     @property
-    @final
     def players(self):
         """
         :return: the players of this game
