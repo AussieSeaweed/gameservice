@@ -1,2 +1,2 @@
-from gameframe.sequential.tests.interact import *
-from gameframe.sequential.tests.test_monte_carlo import *
+from gameframe.sequential.tests.interact import interact_sequential
+from gameframe.sequential.tests.test_monte_carlo import SequentialMonteCarloTestCaseMixin

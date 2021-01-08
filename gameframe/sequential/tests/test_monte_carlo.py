@@ -1,25 +1,15 @@
 from abc import ABC
-from collections.abc import Sequence
 from random import choice
-from typing import TypeVar, final
 
 from gameframe.game.tests import MonteCarloTestCaseMixin
-from gameframe.sequential import SequentialGame
-from gameframe.utils import override
-
-__all__: Sequence[str] = ['SequentialMonteCarloTestCaseMixin']
-
-SG = TypeVar('SG', bound=SequentialGame)
 
 
-class SequentialMonteCarloTestCaseMixin(MonteCarloTestCaseMixin[SG], ABC):
+class SequentialMonteCarloTestCaseMixin(MonteCarloTestCaseMixin, ABC):
     """SequentialMonteCarloTestCaseMixin is the abstract base mixin for all sequential monte carlo test cases."""
 
-    @final
-    @override
-    def test_monte_carlo(self) -> None:
+    def test_monte_carlo(self):
         for i in range(self._test_count):
-            game: SG = self._create_game()
+            game = self._create_game()
 
             while not game.terminal:
                 choice(game.actor.actions).act()
