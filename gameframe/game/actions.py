@@ -17,7 +17,7 @@ class Action(ABC):
     @abstractmethod
     def public(self):
         """
-        :return: True if the action is a public action, False otherwise
+        :return: True if this action is a public action, False otherwise
         """
         pass
 
@@ -26,13 +26,12 @@ class Action(ABC):
         return self._actor._game
 
     def act(self):
-        """Applies the action to the game of the action.
+        """Applies this action to the game.
 
-        The overridden act method should first call the super method and then make the necessary modifications to the
-        game.
+        The overridden act method should first call the super method and then make the changes in the game.
 
         :return: None
-        :raise GameFrameException: if the action integrity verification fails prior to the action
+        :raise GameFrameException: if the action integrity verification fails prior to the application of this action
         """
         self._verify()
 
