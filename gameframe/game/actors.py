@@ -14,29 +14,40 @@ class Actor(ABC):
     """
 
     def __init__(self, game):
-        self._game = game
+        self.__game = game
 
     def __next__(self):
-        if self.nature:
-            return self
-        else:
-            return self._game.players[(self._game.players.index(self) + 1) % len(self._game.players)]
+        return self if self.nature else self.game.players[(self.index + 1) % len(self.game.players)]
 
     def __str__(self):
-        return 'Nature' if self.nature else f'Player {self._game.players.index(self)}'
+        return 'Nature' if self.nature else f'Player {self.index}'
+    
+    @property
+    def game(self):
+        """
+        :return: the game of this actor
+        """
+        return self.__game
 
+    @property
+    def index(self):
+        """
+        :return: the index of this actor
+        """
+        return self.game.players.index(self)
+    
     @property
     def information_set(self):
         """
         :return: the information set of this actor
         """
         return {
-            'game': self._game._information,
-            'environment': self._game.environment._information,
-            'nature': self._private_information if self.nature else self._game.nature._public_information,
+            'game': self.game.information,
+            'environment': self.game.environment.information,
+            'nature': self.private_information if self.nature else self.game.nature.public_information,
             'players': list(map(
-                lambda player: self._private_information if self is player else player._public_information,
-                self._game.players,
+                lambda player: self.private_information if self is player else player.public_information,
+                self.game.players,
             )),
         }
 
@@ -45,7 +56,7 @@ class Actor(ABC):
         """
         :return: True if this actor is nature, False otherwise
         """
-        return self is self._game.nature
+        return self is self.game.nature
 
     @property
     @abstractmethod
@@ -64,14 +75,20 @@ class Actor(ABC):
         pass
 
     @property
-    def _private_information(self):
+    def private_information(self):
+        """
+        :return: the private information of this actor
+        """
         return {
-            **self._public_information,
+            **self.public_information,
             'actions': self.actions,
         }
 
     @property
-    def _public_information(self):
+    def public_information(self):
+        """
+        :return: the public information of this actor
+        """
         return {
             'actions': list(filter(lambda action: action.public, self.actions)),
         }

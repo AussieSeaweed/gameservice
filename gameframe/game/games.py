@@ -35,13 +35,16 @@ class Game(ABC):
         return self.__players
 
     @property
+    def information(self):
+        """
+        :return: the information of this game
+        """
+        return {}
+
+    @property
     @abstractmethod
     def terminal(self):
         """
         :return: True if this game is terminal, False otherwise
         """
         pass
-
-    @property
-    def _information(self):
-        return {}

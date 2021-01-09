@@ -8,6 +8,6 @@ class GameFrameException(Exception, ABC):
         super().__init__(self.__doc__)
 
 
-class TerminalGameException(GameFrameException):
-    """Actions cannot be applied to terminal games."""
+class ActionException(GameFrameException):
+    """The action cannot be applied."""
     pass

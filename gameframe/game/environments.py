@@ -6,8 +6,18 @@ class Environment:
     """
 
     def __init__(self, game):
-        self._game = game
+        self.__game = game
 
     @property
-    def _information(self):
+    def game(self):
+        """
+        :return: the game of this environment
+        """
+        return self.__game
+
+    @property
+    def information(self):
+        """
+        :return: the information of this environment
+        """
         return {}

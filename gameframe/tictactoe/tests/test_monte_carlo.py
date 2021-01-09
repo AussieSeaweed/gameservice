@@ -58,7 +58,7 @@ class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin):
         return TicTacToeGame()
 
     def _verify(self, game):
-        assert game.environment._winner is not None or not game.environment._empty_coordinates
+        assert game.environment.winner is not None or not game.environment.empty_coordinates
 
 
 if __name__ == '__main__':

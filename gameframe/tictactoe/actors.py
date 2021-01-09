@@ -19,19 +19,17 @@ class TicTacToePlayer(Actor):
 
     @property
     def actions(self):
-        from gameframe.tictactoe import MarkAction
-
-        if self is self._game.actor:
-            return [MarkAction(self, r, c) for r, c in self._game.environment._empty_coordinates]
+        if self is self.game.actor:
+            return [MarkAction(self, r, c) for r, c in self.game.environment.empty_coordinates]
         else:
             return []
 
     @property
     def payoff(self):
-        if self._game.environment._winner is None:
-            return 0 if self._game.terminal else -1
+        if self.game.environment.winner is None:
+            return 0 if self.game.terminal else -1
         else:
-            return 1 if self is self._game.environment._winner else -1
+            return 1 if self is self.game.environment.winner else -1
 
     def mark(self, r, c):
         """Marks the cell of the board at the coordinates.

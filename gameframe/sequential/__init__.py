@@ -1,3 +1,2 @@
 from gameframe.sequential.actions import SequentialAction
-from gameframe.sequential.exceptions import ActorOutOfTurnException
 from gameframe.sequential.games import SequentialGame

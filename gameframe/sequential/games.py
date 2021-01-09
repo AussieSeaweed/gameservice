@@ -13,22 +13,15 @@ class SequentialGame(Game, ABC):
     def __init__(self, environment, nature, players, initial_actor_index):
         super().__init__(environment, nature, players)
 
-        self._actor = nature if initial_actor_index is None else players[initial_actor_index]
-
-    @property
-    def actor(self):
-        """
-        :return: the actor in turn to act of this sequential game
-        """
-        return self._actor
+        self.actor = nature if initial_actor_index is None else players[initial_actor_index]
 
     @property
     def terminal(self):
         return self.actor is None
 
     @property
-    def _information(self):
+    def information(self):
         return {
-            **super()._information,
+            **super().information,
             'actor': self.actor,
         }
