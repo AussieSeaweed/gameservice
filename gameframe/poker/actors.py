@@ -1,5 +1,5 @@
 from gameframe.game import Actor
-from gameframe.poker.actions import ProgressiveAction, FoldAction, CheckCallAction, BetRaiseAction
+from gameframe.poker.actions import BetRaiseAction, CheckCallAction, FoldAction, ProgressiveAction
 
 
 class PokerNature(Actor):

@@ -27,8 +27,8 @@ class TreysHand(Hand):
     treys_evaluator = TreysEvaluator()
 
     def __init__(self, hole_cards, board_cards):
-        self.__hand_rank: int = self.treys_evaluator.evaluate(list(map(TreysCard.new, map(str, hole_cards))),
-                                                              list(map(TreysCard.new, map(str, board_cards))))
+        self.__hand_rank = self.treys_evaluator.evaluate(list(map(TreysCard.new, map(str, hole_cards))),
+                                                         list(map(TreysCard.new, map(str, board_cards))))
 
     def __lt__(self, other):
         return self.__hand_rank < other.__hand_rank

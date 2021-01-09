@@ -2,7 +2,7 @@ from abc import ABC
 from random import randint
 from unittest import TestCase, main
 
-from gameframe.poker import NoLimitGreekHoldEmGame, NoLimitOmahaHoldEmGame, NoLimitTexasHoldEmGame, PokerGame
+from gameframe.poker import NoLimitGreekHoldEmGame, NoLimitOmahaHoldEmGame, NoLimitTexasHoldEmGame
 from gameframe.sequential.tests import SequentialMonteCarloTestCaseMixin
 
 

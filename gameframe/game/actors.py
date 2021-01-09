@@ -21,7 +21,7 @@ class Actor(ABC):
 
     def __str__(self):
         return 'Nature' if self.nature else f'Player {self.index}'
-    
+
     @property
     def game(self):
         """
@@ -35,7 +35,7 @@ class Actor(ABC):
         :return: the index of this actor
         """
         return self.game.players.index(self)
-    
+
     @property
     def information_set(self):
         """
