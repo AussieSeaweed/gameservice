@@ -9,7 +9,9 @@ class PokerEnvironment(Environment):
 
         self.aggressor = None
         self.max_delta = None
+
         self.__board_cards = []
+        self.__pots = []
 
     @property
     def board_cards(self):

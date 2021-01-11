@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='gameframe',
-    version='0.0.5b3',
+    version='0.0.1dev0',
     author='Juho Kim',
     author_email='juho-kim@outlook.com',
     description='A package for various game implementations on python',
@@ -22,5 +22,5 @@ setup(
         'Programming Language :: Python :: 3.10',
     ],
     python_requires='>=3.6',
-    install_requires=open('requirements.txt', 'r').readlines(),
+    install_requires=['treys'],
 )

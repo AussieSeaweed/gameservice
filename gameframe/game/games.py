@@ -43,7 +43,7 @@ class Game(ABC):
 
     @property
     @abstractmethod
-    def terminal(self):
+    def is_terminal(self):
         """
         :return: True if this game is terminal, False otherwise
         """

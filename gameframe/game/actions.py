@@ -28,15 +28,15 @@ class Action(ABC):
         return self.actor.game
 
     @property
-    def applicable(self):
+    def is_applicable(self):
         """
         :return: True if this action can be applied else False
         """
-        return not self.game.terminal
+        return not self.game.is_terminal
 
     @property
     @abstractmethod
-    def public(self):
+    def is_public(self):
         """
         :return: True if this action is a public action, False otherwise
         """
@@ -50,5 +50,5 @@ class Action(ABC):
         :return: None
         :raise ActionException: if the action cannot be applied
         """
-        if not self.applicable:
+        if not self.is_applicable:
             raise ActionException()

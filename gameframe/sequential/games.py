@@ -16,12 +16,12 @@ class SequentialGame(Game, ABC):
         self.actor = nature if initial_actor_index is None else players[initial_actor_index]
 
     @property
-    def terminal(self):
-        return self.actor is None
-
-    @property
     def information(self):
         return {
             **super().information,
             'actor': self.actor,
         }
+
+    @property
+    def is_terminal(self):
+        return self.actor is None

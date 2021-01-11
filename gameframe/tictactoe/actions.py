@@ -28,12 +28,12 @@ class MarkAction(SequentialAction):
         return self.__c
 
     @property
-    def applicable(self):
-        return super().applicable and not self.actor.nature and 0 <= self.r < 3 and 0 <= self.c < 3 and \
+    def is_applicable(self):
+        return super().is_applicable and not self.actor.is_nature and 0 <= self.r < 3 and 0 <= self.c < 3 and \
                self.game.environment.board[self.r][self.c] is None
 
     @property
-    def public(self):
+    def is_public(self):
         return True
 
     def act(self):

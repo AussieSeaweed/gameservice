@@ -21,7 +21,7 @@ class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin):
 
         game.actor.actions[4].act()
 
-        while not game.terminal:
+        while not game.is_terminal:
             game.actor.actions[0].act()
 
         self.assertSequenceEqual((0, 0), tuple(map(lambda player: player.payoff, game.players)))
@@ -36,7 +36,7 @@ class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin):
 
         game.actor.actions[8].act()
 
-        while not game.terminal:
+        while not game.is_terminal:
             game.actor.actions[0].act()
 
         self.assertSequenceEqual((-1, 1), tuple(map(lambda player: player.payoff, game.players)))
@@ -49,7 +49,7 @@ class TicTacToeMonteCarloTestCase(TestCase, SequentialMonteCarloTestCaseMixin):
         """
         game = self._create_game()
 
-        while not game.terminal:
+        while not game.is_terminal:
             game.actor.actions[0].act()
 
         self.assertSequenceEqual((1, -1), tuple(map(lambda player: player.payoff, game.players)))

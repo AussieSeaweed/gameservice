@@ -7,5 +7,5 @@ class SequentialAction(Action, ABC):
     """SequentialAction is the abstract base class for all sequential actions."""
 
     @property
-    def applicable(self):
-        return super().applicable and self.actor is self.game.actor
+    def is_applicable(self):
+        return super().is_applicable and self.actor is self.game.actor

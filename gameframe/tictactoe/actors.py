@@ -27,7 +27,7 @@ class TicTacToePlayer(Actor):
     @property
     def payoff(self):
         if self.game.environment.winner is None:
-            return 0 if self.game.terminal else -1
+            return 0 if self.game.is_terminal else -1
         else:
             return 1 if self is self.game.environment.winner else -1
 

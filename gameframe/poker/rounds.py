@@ -62,7 +62,7 @@ class BettingRound(Round, ABC):
     """BettingRound is the class for betting rounds."""
 
     def __init__(self, game, board_card_count, hole_card_statuses):
-        super(BettingRound, self).__init__(game)
+        super().__init__(game)
 
         self.__board_card_count = board_card_count
         self.__hole_card_statuses = hole_card_statuses

@@ -34,7 +34,7 @@ def interact_sequential(sequential_game_factory):
     """
     game = sequential_game_factory()
 
-    while not game.terminal:
+    while not game.is_terminal:
         pretty_print(game.actor.information_set)
 
         actions = game.actor.actions
