@@ -17,7 +17,7 @@ class BettingRoundAction(PokerAction, ABC):
 
     @property
     def applicable(self):
-        return super().applicable and not self.game.actor.nature and self.game.round.betting
+        return super().is_applicable and not self.game.actor.is_nature and self.game.round.is_betting
 
 
 class FoldAction(BettingRoundAction):

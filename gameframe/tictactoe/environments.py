@@ -19,14 +19,14 @@ class TicTacToeEnvironment(Environment):
         return self.__board
 
     @property
-    def empty_coordinates(self):
+    def _empty_coordinates(self):
         """
         :return: the list of empty coordinates of the board
         """
         return [[r, c] for r in range(3) for c in range(3) if self.board[r][c] is None]
 
     @property
-    def winner(self):
+    def _winner(self):
         """
         :return: the winning player of the tic tac toe game if there is one, else None
         """
@@ -43,7 +43,7 @@ class TicTacToeEnvironment(Environment):
         return None
 
     @property
-    def information(self):
+    def _information(self):
         return {
             'board': self.board,
         }

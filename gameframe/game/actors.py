@@ -34,7 +34,7 @@ class Actor(ABC):
         """
         :return: the index of this actor
         """
-        return self.game.players.index(self)
+        return None if self.is_nature else self.game.players.index(self)
 
     @property
     def information_set(self):
@@ -42,32 +42,13 @@ class Actor(ABC):
         :return: the information set of this actor
         """
         return {
-            'game': self.game.information,
-            'environment': self.game.environment.information,
-            'nature': self.private_information if self.is_nature else self.game.nature.public_information,
+            'game': self.game._information,
+            'environment': self.game.environment._information,
+            'nature': self._private_information if self.is_nature else self.game.nature._public_information,
             'players': list(map(
-                lambda player: self.private_information if self is player else player.public_information,
+                lambda player: self._private_information if self is player else player._public_information,
                 self.game.players,
             )),
-        }
-
-    @property
-    def private_information(self):
-        """
-        :return: the private information of this actor
-        """
-        return {
-            **self.public_information,
-            'actions': self.actions,
-        }
-
-    @property
-    def public_information(self):
-        """
-        :return: the public information of this actor
-        """
-        return {
-            'actions': list(filter(lambda action: action.is_public, self.actions)),
         }
 
     @property
@@ -92,3 +73,22 @@ class Actor(ABC):
         :return: True if this actor is nature, False otherwise
         """
         return self is self.game.nature
+
+    @property
+    def _private_information(self):
+        """
+        :return: the private information of this actor
+        """
+        return {
+            **self._public_information,
+            'actions': self.actions,
+        }
+
+    @property
+    def _public_information(self):
+        """
+        :return: the public information of this actor
+        """
+        return {
+            'actions': list(filter(lambda action: action.is_public, self.actions)),
+        }

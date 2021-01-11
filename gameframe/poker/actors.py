@@ -67,13 +67,6 @@ class PokerPlayer(Actor):
         return self.game.evaluator.hand(self.hole_cards, self.game.environment.board_cards)
 
     @property
-    def mucked(self):
-        """
-        :return: True if this poker player has mucked his/her hand, else False
-        """
-        return self.hole_cards is None
-
-    @property
     def relevant(self):
         """
         :return: the relevancy of this poker player
@@ -86,13 +79,6 @@ class PokerPlayer(Actor):
         :return: the starting stack of this poker player
         """
         return self.game.starting_stacks[self.index]
-
-    @property
-    def total(self):
-        """
-        :return: the sum of the bet and the stack of this poker player
-        """
-        return self.bet + self.stack
 
     @property
     def actions(self):
@@ -121,6 +107,13 @@ class PokerPlayer(Actor):
             )),
         }
 
+    @property
+    def is_mucked(self):
+        """
+        :return: True if this poker player has mucked his/her hand, else False
+        """
+        return self.hole_cards is None
+
     def fold(self):
         """Folds.
 
@@ -143,7 +136,7 @@ class PokerPlayer(Actor):
         """
         BetRaiseAction(self, amount).act()
 
-    def muck(self):
+    def _muck(self):
         """Mucks the hand of this poker player.
 
         :return: None

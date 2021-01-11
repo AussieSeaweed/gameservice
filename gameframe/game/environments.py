@@ -16,7 +16,7 @@ class Environment:
         return self.__game
 
     @property
-    def information(self):
+    def _information(self):
         """
         :return: the information of this environment
         """

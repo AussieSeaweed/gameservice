@@ -27,17 +27,17 @@ class Round(ABC):
 
     @property
     @abstractmethod
-    def betting(self):
+    def opener(self):
         """
-        :return: True if this round is a betting round, else False
+        :return: the opener of this round
         """
         pass
 
     @property
     @abstractmethod
-    def opener(self):
+    def is_betting(self):
         """
-        :return: the opener of this round
+        :return: True if this round is a betting round, else False
         """
         pass
 
@@ -68,20 +68,6 @@ class BettingRound(Round, ABC):
         self.__hole_card_statuses = hole_card_statuses
 
     @property
-    def board_card_count(self):
-        """
-        :return: the number of board cards to be dealt in this betting round
-        """
-        return self.__board_card_count
-
-    @property
-    def hole_card_statuses(self):
-        """
-        :return: the number of hole cards to be dealt in this betting round
-        """
-        return self.__hole_card_statuses
-
-    @property
     def actions(self):
         actions = [FoldAction(self.game.actor), CheckCallAction(self.game.actor)]
 
@@ -95,10 +81,6 @@ class BettingRound(Round, ABC):
         return list(filter(lambda action: action.applicable, actions))
 
     @property
-    def betting(self):
-        return True
-
-    @property
     def opener(self):
         opener = min(self.game.players, key=lambda player: (player.bet, player.index))
 
@@ -108,13 +90,17 @@ class BettingRound(Round, ABC):
         else:
             return self.game.nature
 
+    @property
+    def is_betting(self):
+        return True
+
     def open(self):
-        self.game.environment.board_cards.extend(self.game.deck.draw(self.board_card_count))
+        self.game.environment.board_cards.extend(self.game.deck.draw(self.__board_card_count))
 
         for player in self.game.players:
             if not player.mucked:
-                for hole_card, status in zip(self.game.deck.draw(len(self.hole_card_statuses)),
-                                             self.hole_card_statuses):
+                for hole_card, status in zip(self.game.deck.draw(len(self.__hole_card_statuses)),
+                                             self.__hole_card_statuses):
                     player.hole_cards.append(HoleCard(hole_card, status))
 
         if not self.opener.nature:

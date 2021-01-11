@@ -7,7 +7,6 @@ class PokerEnvironment(Environment):
     def __init__(self, game):
         super().__init__(game)
 
-        self.aggressor = None
         self.max_delta = None
 
         self.__board_cards = []
