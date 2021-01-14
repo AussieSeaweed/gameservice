@@ -51,4 +51,8 @@ class HoleCard(Card):
     def __init__(self, card, status):
         super().__init__(card.rank, card.suit)
 
-        self.status = status
+        self._status = status
+
+    @property
+    def status(self):
+        return self._status

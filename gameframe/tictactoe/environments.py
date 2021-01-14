@@ -7,26 +7,26 @@ class TicTacToeEnvironment(Environment):
     def __init__(self, game):
         super().__init__(game)
 
-        self.__board = [[None, None, None],
-                        [None, None, None],
-                        [None, None, None]]
+        self._board = [[None, None, None],
+                       [None, None, None],
+                       [None, None, None]]
 
     @property
     def board(self):
         """
         :return: the board of this tic tac toe environment
         """
-        return self.__board
+        return tuple(map(tuple, self._board))
 
     @property
-    def _empty_coordinates(self):
+    def empty_coordinates(self):
         """
         :return: the list of empty coordinates of the board
         """
         return [[r, c] for r in range(3) for c in range(3) if self.board[r][c] is None]
 
     @property
-    def _winner(self):
+    def winner(self):
         """
         :return: the winning player of the tic tac toe game if there is one, else None
         """

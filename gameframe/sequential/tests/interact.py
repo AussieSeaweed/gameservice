@@ -1,3 +1,6 @@
+from collections.abc import Iterable, Mapping
+
+
 def pretty_print(o, indent='    ', start='', end='\n'):
     """Prints the object on the console prettily.
 
@@ -7,7 +10,7 @@ def pretty_print(o, indent='    ', start='', end='\n'):
     :param end: the suffix string
     :return: None
     """
-    if isinstance(o, dict):
+    if isinstance(o, Mapping):
         print(start + '{')
 
         for key, value in o.items():
@@ -15,7 +18,7 @@ def pretty_print(o, indent='    ', start='', end='\n'):
             pretty_print(value, indent, start + indent + indent, end=',\n')
 
         print(start + '}', end=end)
-    elif isinstance(o, list):
+    elif isinstance(o, Iterable):
         print(start + '[')
 
         for value in o:

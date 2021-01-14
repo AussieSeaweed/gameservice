@@ -38,7 +38,7 @@ class Action(ABC):
     @abstractmethod
     def is_public(self):
         """
-        :return: True if this action is a public action, False otherwise
+        :return: True if this action is a public action, else False
         """
         pass
 

@@ -71,22 +71,22 @@ class BettingRound(Round, ABC):
     def actions(self):
         actions = [FoldAction(self.game.actor), CheckCallAction(self.game.actor)]
 
-        if self.game.lazy:
-            bet_amounts = sorted({self.game.limit.min_amount, self.game.limit.max_amount})
+        if self.game.is_lazy:
+            bet_amounts = sorted({self.game._limit.min_amount, self.game._limit.max_amount})
         else:
-            bet_amounts = range(self.game.limit.min_amount, self.game.limit.max_amount + 1)
+            bet_amounts = range(self.game._limit.min_amount, self.game._limit.max_amount + 1)
 
         actions.extend(map(lambda amount: BetRaiseAction(self.game.actor, amount), bet_amounts))
 
-        return list(filter(lambda action: action.applicable, actions))
+        return list(filter(lambda action: action.is_applicable, actions))
 
     @property
     def opener(self):
         opener = min(self.game.players, key=lambda player: (player.bet, player.index))
 
-        for player in self.game.players[opener.index:] + self.game.players[:opener.index]:
-            if player.relevant:
-                return player
+        for opener in self.game.players[opener.index:] + self.game.players[:opener.index]:
+            if opener._is_relevant:
+                return opener
         else:
             return self.game.nature
 
@@ -95,20 +95,19 @@ class BettingRound(Round, ABC):
         return True
 
     def open(self):
-        self.game.environment.board_cards.extend(self.game.deck.draw(self.__board_card_count))
+        self.game.environment._board_cards.extend(self.game._deck.draw(self.__board_card_count))
 
         for player in self.game.players:
-            if not player.mucked:
-                for hole_card, status in zip(self.game.deck.draw(len(self.__hole_card_statuses)),
-                                             self.__hole_card_statuses):
-                    player.hole_cards.append(HoleCard(hole_card, status))
+            if not player.is_mucked:
+                player._hole_cards.extend(map(
+                    lambda args: HoleCard(*args),
+                    zip(self.game._deck.draw(len(self.__hole_card_statuses)), self.__hole_card_statuses)
+                ))
 
-        if not self.opener.nature:
-            self.game.environment.aggressor = self.opener
-            self.game.environment.max_delta = max(self.game.ante, max(self.game.blinds))
+        if not self.opener.is_nature:
+            self.game.environment._max_delta = max(self.game.ante, max(self.game.blinds))
+            self.game.environment._aggressor = self.opener
 
     def close(self):
-        self.game.environment.max_delta = None
-
-        for player in self.game.players:
-            player.bet = 0
+        self.game.environment._max_delta = None
+        self.game.environment._requirement = max(player._commitment for player in self.game.players)

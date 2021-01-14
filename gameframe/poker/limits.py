@@ -19,8 +19,8 @@ class Limit(ABC):
         """
         :return: the minimum bet/raise amount
         """
-        return min(max(player.bet for player in self.game.players) + self.game.environment.max_delta,
-                   self.game.actor.total)
+        return min(max(player.bet for player in self.game.players) + self.game.environment._max_delta,
+                   self.game.actor.bet + self.game.actor.stack)
 
     @property
     @abstractmethod
@@ -36,4 +36,4 @@ class NoLimit(Limit):
 
     @property
     def max_amount(self):
-        return self.game.actor.total
+        return self.game.actor.bet + self.game.actor.stack

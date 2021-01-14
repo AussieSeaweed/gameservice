@@ -39,9 +39,9 @@ class MarkAction(SequentialAction):
     def act(self):
         super().act()
 
-        self.game.environment.board[self.r][self.c] = self.actor
+        self.game.environment._board[self.r][self.c] = self.actor
 
-        if self.game.environment._empty_coordinates and self.game.environment._winner is None:
+        if self.game.environment.empty_coordinates and self.game.environment.winner is None:
             self.game._actor = next(self.actor)
         else:
             self.game._actor = None

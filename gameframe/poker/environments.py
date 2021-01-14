@@ -7,29 +7,32 @@ class PokerEnvironment(Environment):
     def __init__(self, game):
         super().__init__(game)
 
-        self.max_delta = None
-
-        self.__board_cards = []
-        self.__pots = []
+        self._aggressor = None
+        self._board_cards = []
+        self._max_delta = None
+        self._requirement = 0
 
     @property
     def board_cards(self):
         """
-        :return: the board cards of the poker environment
+        :return: the board cards of this poker environment
         """
-        return self.__board_cards
+        return tuple(self._board_cards)
 
     @property
     def pot(self):
         """
-        :return: the pot of the poker environment
+        :return: the pot of this poker environment
         """
-        return sum(self.game.starting_stacks) - sum(player.total for player in self.game.players)
+        if self.game.is_terminal:
+            return 0
+        else:
+            return sum(min(player._commitment, self._requirement) for player in self.game.players)
 
     @property
-    def information(self):
+    def _information(self):
         return {
-            **super().information,
+            **super()._information,
             'board_cards': self.board_cards,
             'pot': self.pot,
         }

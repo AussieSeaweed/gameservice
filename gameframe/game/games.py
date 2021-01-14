@@ -11,7 +11,7 @@ class Game(ABC):
     def __init__(self, environment, nature, players):
         self.__environment = environment
         self.__nature = nature
-        self.__players = players
+        self.__players = tuple(players)
 
     @property
     def environment(self):
@@ -38,7 +38,7 @@ class Game(ABC):
     @abstractmethod
     def is_terminal(self):
         """
-        :return: True if this game is terminal, False otherwise
+        :return: True if this game is terminal, else False
         """
         pass
 

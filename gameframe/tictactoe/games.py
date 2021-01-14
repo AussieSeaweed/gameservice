@@ -7,5 +7,9 @@ class TicTacToeGame(SequentialGame):
     """TicTacToeGame is the class for tic tac toe games."""
 
     def __init__(self):
-        super().__init__(TicTacToeEnvironment(self), TicTacToeNature(self),
-                         [TicTacToePlayer(self), TicTacToePlayer(self)], 0)
+        super().__init__(
+            TicTacToeEnvironment(self),
+            TicTacToeNature(self),
+            (TicTacToePlayer(self), TicTacToePlayer(self)),
+            0,
+        )

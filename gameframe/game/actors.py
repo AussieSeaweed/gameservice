@@ -70,7 +70,7 @@ class Actor(ABC):
     @property
     def is_nature(self):
         """
-        :return: True if this actor is nature, False otherwise
+        :return: True if this actor is nature, else False
         """
         return self is self.game.nature
 

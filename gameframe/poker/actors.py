@@ -14,6 +14,10 @@ class PokerNature(Actor):
         return 0
 
     def progress(self):
+        """Progresses the poker game.
+
+        :return: None
+        """
         ProgressiveAction(self).act()
 
 
@@ -23,31 +27,40 @@ class PokerPlayer(Actor):
     def __init__(self, game):
         super().__init__(game)
 
-        self.bet = 0
-        self.stack = 0
-        self.__hole_cards = []
+        self._commitment = 0
+        self._revenue = 0
+        self._hole_cards = []
 
     def __next__(self):
         player = super().__next__()
 
-        while not player.relevant and player is not self.game.environment.aggressor and player is not self:
-            player = Actor.__next__(player)
-
-        return self.game.nature if player is self.game.environment.aggressor or player is self else player
+        if player is self.game.environment._aggressor:
+            return self.game.nature
+        elif player._is_relevant:
+            return player
+        else:
+            return next(player)
 
     @property
     def hole_cards(self):
         """
         :return: the hole cards of this poker player
         """
-        return self.__hole_cards
+        return None if self._hole_cards is None else tuple(self._hole_cards)
 
     @property
-    def commitment(self):
+    def bet(self):
         """
-        :return: the commitment of this poker player
+        :return: the bet of this poker player
         """
-        return self.starting_stack - self.stack
+        return max(self._commitment - self.game.environment._requirement, 0)
+
+    @property
+    def stack(self):
+        """
+        :return: the stack of this poker player
+        """
+        return self._revenue + self.starting_stack - self._commitment
 
     @property
     def effective_stack(self):
@@ -55,7 +68,8 @@ class PokerPlayer(Actor):
         :return: the effective stack of this poker player
         """
         try:
-            return min(sorted(player.total for player in self.game.players if not player.mucked)[-2], self.total)
+            return min(sorted(player.starting_stack for player in self.game.players if not player.is_mucked)[-2],
+                       self.starting_stack)
         except IndexError:
             return 0
 
@@ -64,14 +78,7 @@ class PokerPlayer(Actor):
         """
         :return: the hand of this poker player
         """
-        return self.game.evaluator.hand(self.hole_cards, self.game.environment.board_cards)
-
-    @property
-    def relevant(self):
-        """
-        :return: the relevancy of this poker player
-        """
-        return not self.mucked and self.stack > 0 and self.effective_stack > 0
+        return self.game._evaluator.hand(self.hole_cards, self.game.environment.board_cards)
 
     @property
     def starting_stack(self):
@@ -82,30 +89,11 @@ class PokerPlayer(Actor):
 
     @property
     def actions(self):
-        return self.game.round.actions if self is self.game.actor and self.game.round is not None else []
+        return self.game._round.actions if self is self.game.actor and self.game._round is not None else []
 
     @property
     def payoff(self):
-        return -self.commitment
-
-    @property
-    def private_information(self):
-        return {
-            **super().private_information,
-            'hole_cards': self.hole_cards,
-        }
-
-    @property
-    def public_information(self):
-        return {
-            **super().public_information,
-            'bet': self.bet,
-            'stack': self.stack,
-            'hole_cards': None if self.hole_cards is None else list(map(
-                lambda hole_card: hole_card if hole_card.status else None,
-                self.hole_cards,
-            )),
-        }
+        return self._revenue - self._commitment
 
     @property
     def is_mucked(self):
@@ -113,6 +101,29 @@ class PokerPlayer(Actor):
         :return: True if this poker player has mucked his/her hand, else False
         """
         return self.hole_cards is None
+
+    @property
+    def _is_relevant(self):
+        return not self.is_mucked and self._commitment < self.effective_stack
+
+    @property
+    def _private_information(self):
+        return {
+            **super()._private_information,
+            'hole_cards': self.hole_cards,
+        }
+
+    @property
+    def _public_information(self):
+        return {
+            **super()._public_information,
+            'bet': self.bet,
+            'stack': self.stack,
+            'hole_cards': None if self.hole_cards is None else list(map(
+                lambda hole_card: hole_card if hole_card.status else None,
+                self.hole_cards,
+            )),
+        }
 
     def fold(self):
         """Folds.
@@ -141,4 +152,4 @@ class PokerPlayer(Actor):
 
         :return: None
         """
-        self.__hole_cards = None
+        self._hole_cards = None

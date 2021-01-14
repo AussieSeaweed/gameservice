@@ -20,16 +20,16 @@ class TicTacToePlayer(Actor):
     @property
     def actions(self):
         if self is self.game.actor:
-            return [MarkAction(self, r, c) for r, c in self.game.environment._empty_coordinates]
+            return [MarkAction(self, r, c) for r, c in self.game.environment.empty_coordinates]
         else:
             return []
 
     @property
     def payoff(self):
-        if self.game.environment._winner is None:
+        if self.game.environment.winner is None:
             return 0 if self.game.is_terminal else -1
         else:
-            return 1 if self is self.game.environment._winner else -1
+            return 1 if self is self.game.environment.winner else -1
 
     def mark(self, r, c):
         """Marks the cell of the board at the coordinates.
