@@ -57,9 +57,6 @@ this way is not ideal. Thus, you can also access individual game elements as fol
     ...
 
     nlhe_game.nature.progress()  # Set up next street
-
-    ...
-
     nlhe_game.players[2].fold()  # Fold
     nlhe_game.players[0].bet_raise(6)  # Raise
     nlhe_game.players[1].check_call()  # Call
@@ -85,4 +82,4 @@ this way is not ideal. Thus, you can also access individual game elements as fol
 
     print(ttt_game.players[0].payoff)  # 1 if the player won, -1 if the player lost, 0 if tied
 
-For more information, you can look at the game api documentations.
+For more information, you can look at the gameframe api documentations.

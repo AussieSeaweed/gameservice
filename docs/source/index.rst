@@ -11,8 +11,8 @@ GameFrame is a Python game framework library implementing various poker and othe
 The following games are supported in GameFrame...
 
 - No-Limit Texas Hold'em
-- No-Limit Omaha Hold'em
 - No-Limit Greek Hold'em
+- No-Limit Omaha Hold'em
 - Tic Tac Toe
 
 
@@ -24,13 +24,13 @@ Although GameFrame is entirely written in Python, it should be fast enough for m
 =================================  ===================
               Game                  Speed (# games/s)
 ---------------------------------  -------------------
- 6-Max No-Limit Texas Hold'em             ~1000
+ 6-Max No-Limit Texas Hold'em             ~500
+ 6-Max No-Limit Greek Hold'em             ~300
  6-Max No-Limit Omaha Hold'em             ~100
- 6-Max No-Limit Greek Hold'em             ~500
- Heads-Up No-Limit Texas Hold'em          ~3000
+ Heads-Up No-Limit Texas Hold'em          ~2000
+ Heads-Up No-Limit Greek Hold'em          ~1500
  Heads-Up No-Limit Omaha Hold'em          ~500
- Heads-Up No-Limit Greek Hold'em          ~2000
- Tic Tac Toe                              ~10000
+ Tic Tac Toe                              ~3000
 =================================  ===================
 
 Contributing

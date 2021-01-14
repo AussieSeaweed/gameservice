@@ -1,16 +1,25 @@
 gameframe.game package
 ======================
 
-gameframe.game.bases module
----------------------------
-
-.. automodule:: gameframe.game.bases
+.. automodule:: gameframe.game.games
    :members:
    :undoc-members:
    :show-inheritance:
 
-gameframe.game.exceptions module
---------------------------------
+.. automodule:: gameframe.game.environments
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: gameframe.game.actors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: gameframe.game.actions
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 .. automodule:: gameframe.game.exceptions
    :members:

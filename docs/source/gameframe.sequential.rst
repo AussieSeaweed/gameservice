@@ -1,18 +1,12 @@
 gameframe.sequential package
 ============================
 
-gameframe.sequential.bases module
----------------------------------
-
-.. automodule:: gameframe.sequential.bases
+.. automodule:: gameframe.sequential.games
    :members:
    :undoc-members:
    :show-inheritance:
 
-gameframe.sequential.exceptions module
---------------------------------------
-
-.. automodule:: gameframe.sequential.exceptions
+.. automodule:: gameframe.sequential.actions
    :members:
    :undoc-members:
    :show-inheritance:
