@@ -48,7 +48,7 @@ class Action(ABC):
         The overridden act method should first call the super method and then make the changes in the game.
 
         :return: None
-        :raise ActionException: if the action cannot be applied
+        :raise ActionException: if this action cannot be applied
         """
         if not self.is_applicable:
             raise ActionException()

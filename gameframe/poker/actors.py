@@ -5,6 +5,9 @@ from gameframe.poker.actions import BetRaiseAction, CheckCallAction, FoldAction,
 class PokerNature(Actor):
     """PokerNature is the class for poker natures."""
 
+    def __next__(self):
+        return self.game._round.opener
+
     @property
     def actions(self):
         return [ProgressiveAction(self)] if self is self.game.actor else []
@@ -119,7 +122,7 @@ class PokerPlayer(Actor):
             **super()._public_information,
             'bet': self.bet,
             'stack': self.stack,
-            'hole_cards': None if self.hole_cards is None else list(map(
+            'hole_cards': None if self.is_mucked else tuple(map(
                 lambda hole_card: hole_card if hole_card.status else None,
                 self.hole_cards,
             )),

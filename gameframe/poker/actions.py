@@ -119,7 +119,7 @@ class ProgressiveAction(PokerAction):
             self.game._actor = None
         else:
             self.game._round.open()
-            self.game._actor = self.game._round.opener
+            self.game._actor = next(self.actor)
 
     def __show(self):
         index = 0 if self.game.environment._aggressor is None else self.game.environment._aggressor.index

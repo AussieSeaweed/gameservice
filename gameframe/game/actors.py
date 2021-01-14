@@ -45,7 +45,7 @@ class Actor(ABC):
             'game': self.game._information,
             'environment': self.game.environment._information,
             'nature': self._private_information if self.is_nature else self.game.nature._public_information,
-            'players': list(map(
+            'players': tuple(map(
                 lambda player: self._private_information if self is player else player._public_information,
                 self.game.players,
             )),
@@ -81,7 +81,7 @@ class Actor(ABC):
         """
         return {
             **self._public_information,
-            'actions': self.actions,
+            'actions': tuple(self.actions),
         }
 
     @property
@@ -90,5 +90,5 @@ class Actor(ABC):
         :return: the public information of this actor
         """
         return {
-            'actions': list(filter(lambda action: action.is_public, self.actions)),
+            'actions': tuple(filter(lambda action: action.is_public, self.actions)),
         }

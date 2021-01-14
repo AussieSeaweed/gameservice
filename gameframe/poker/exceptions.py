@@ -7,5 +7,5 @@ class InsufficientPlayerCountException(GameFrameException):
 
 
 class InvalidBlindConfigurationException(GameFrameException):
-    """The blind configurations are invalid."""
+    """The blind configuration is invalid."""
     pass
