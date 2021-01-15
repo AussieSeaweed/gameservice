@@ -44,7 +44,4 @@ class Game(ABC):
 
     @property
     def _information(self):
-        """
-        :return: the information of this game
-        """
         return {}

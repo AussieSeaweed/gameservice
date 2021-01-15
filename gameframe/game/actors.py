@@ -76,9 +76,6 @@ class Actor(ABC):
 
     @property
     def _private_information(self):
-        """
-        :return: the private information of this actor
-        """
         return {
             **self._public_information,
             'actions': tuple(self.actions),
@@ -86,9 +83,6 @@ class Actor(ABC):
 
     @property
     def _public_information(self):
-        """
-        :return: the public information of this actor
-        """
         return {
             'actions': tuple(filter(lambda action: action.is_public, self.actions)),
         }

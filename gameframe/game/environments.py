@@ -17,7 +17,4 @@ class Environment:
 
     @property
     def _information(self):
-        """
-        :return: the information of this environment
-        """
         return {}
