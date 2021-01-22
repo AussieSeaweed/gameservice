@@ -1,4 +1,4 @@
-from gameframe.poker import NoLimitTexasHoldEmGame
+from gameframe.poker import NoLimitGreekHoldEmGame, NoLimitOmahaHoldEmGame, NoLimitTexasHoldEmGame
 from gameframe.sequential.tests import interact_sequential
 
 
@@ -6,6 +6,8 @@ def interact_poker():
     """Interacts with a poker game."""
     game_types = [
         NoLimitTexasHoldEmGame,
+        NoLimitGreekHoldEmGame,
+        NoLimitOmahaHoldEmGame,
     ]
 
     print('Choose a game: ')
