@@ -21,12 +21,8 @@ class PokerGame(SequentialGame, ABC):
     """
 
     def __init__(self, deck, evaluator, rounds, limit, ante, blinds, starting_stacks, laziness=False):
-        super().__init__(
-            PokerEnvironment(self),
-            PokerNature(self),
-            (PokerPlayer(self) for _ in range(len(starting_stacks))),
-            None,
-        )
+        super().__init__(PokerEnvironment(self), PokerNature(self),
+                         (PokerPlayer(self) for _ in range(len(starting_stacks))), None)
 
         self._deck = deck
         self._evaluator = evaluator
