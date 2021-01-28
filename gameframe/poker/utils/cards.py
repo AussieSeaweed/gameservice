@@ -29,30 +29,30 @@ class Suit(Enum):
 class Card:
     """Card is the base class for all cards."""
 
-    def __init__(self, rank, suit):
+    def __init__(self, rank: Rank, suit: Suit):
         self.__rank = rank
         self.__suit = suit
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.rank.value + self.suit.value
 
     @property
-    def rank(self):
+    def rank(self) -> Rank:
         return self.__rank
 
     @property
-    def suit(self):
+    def suit(self) -> Suit:
         return self.__suit
 
 
 class HoleCard(Card):
     """HoleCard is the class for hole cards."""
 
-    def __init__(self, card, status):
+    def __init__(self, card: Card, status: bool):
         super().__init__(card.rank, card.suit)
 
         self._status = status
 
     @property
-    def status(self):
+    def status(self) -> bool:
         return self._status
