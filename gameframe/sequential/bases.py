@@ -17,6 +17,8 @@ class SequentialGame(Game[E, N, P], ABC):
                  initial_actor_index: int):
         super().__init__(env, nature, players)
 
+        self._actor: Union[N, P]
+
         if initial_actor_index is None:
             self._actor = nature
         else:
