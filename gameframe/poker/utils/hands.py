@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Iterable
+from typing import Iterable, Any
 
 from treys import Card as TreysCard, Evaluator as TreysEvaluator
 
@@ -10,11 +10,11 @@ class Hand(ABC):
     """Hand is the abstract base class for all hands."""
 
     @abstractmethod
-    def __lt__(self, other: object) -> bool:
+    def __lt__(self, other: Any) -> bool:
         pass
 
     @abstractmethod
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         pass
 
     @abstractmethod
@@ -36,13 +36,13 @@ class TreysHand(Hand):
             list(map(TreysCard.new, map(str, board_cards))),
         )
 
-    def __lt__(self, other: object) -> bool:
+    def __lt__(self, other: Any) -> bool:
         if isinstance(other, TreysHand):
             return self.__hand_rank < other.__hand_rank
         else:
             raise NotImplemented
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, TreysHand):
             return self.__hand_rank == other.__hand_rank
         else:

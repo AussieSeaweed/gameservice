@@ -1,15 +1,6 @@
 from abc import ABC
 from collections import defaultdict
 
-from gameframe.sequential import SequentialAction
-
-
-class PokerAction(SequentialAction, ABC):
-    """PokerAction is the abstract base class for all poker actions."""
-
-    @property
-    def is_public(self):
-        return True
 
 
 class BettingRoundAction(PokerAction, ABC):

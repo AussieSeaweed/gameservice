@@ -95,7 +95,6 @@ class TTTGame(SeqGame[TTTEnv, TTTNature, TTTPlayer]):
 
     def __init__(self) -> None:
         players = (TTTPlayer(self), TTTPlayer(self))
-
         super().__init__(TTTEnv(players[0]), TTTNature(), players)
 
 

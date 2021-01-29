@@ -43,6 +43,6 @@ class SixPlusDeck(Deck):
 
     def _create_cards(self) -> MutableSequence[Card]:
         return [
-            Card(rank, suit) for rank in Rank if
-            not str(rank).isdigit() or int(str(rank)) >= 6 for suit in Suit
+            Card(rank, suit) for rank in Rank
+            if not str(rank).isdigit() or int(str(rank)) >= 6 for suit in Suit
         ]
