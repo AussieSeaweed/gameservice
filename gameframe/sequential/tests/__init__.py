@@ -1,2 +1,3 @@
-from gameframe.sequential.tests.interact import interact_sequential
-from gameframe.sequential.tests.test_monte_carlo import SequentialMonteCarloTestCaseMixin
+from gameframe.sequential.tests.test_monte_carlo import MonteCarloTestCaseMixin
+
+__all__ = ['MonteCarloTestCaseMixin']

@@ -3,7 +3,7 @@ from typing import Generic, Iterable, Sequence, TypeVar
 
 from gameframe.game.exceptions import ActionException
 
-E = TypeVar('E', bound='Environment')
+E = TypeVar('E', bound='Env')
 N = TypeVar('N', bound='Nature')
 P = TypeVar('P', bound='Player')
 
@@ -15,17 +15,17 @@ class Game(Generic[E, N, P], ABC):
     environment, the nature, and the players.
     """
 
-    def __init__(self, environment: E, nature: N, players: Iterable[P]):
-        self.__environment: E = environment
+    def __init__(self, env: E, nature: N, players: Iterable[P]):
+        self.__env: E = env
         self.__nature: N = nature
         self.__players: Sequence[P] = tuple(players)
 
     @property
-    def environment(self) -> E:
+    def env(self) -> E:
         """
         :return: the environment of this game
         """
-        return self.__environment
+        return self.__env
 
     @property
     def nature(self) -> N:
@@ -80,8 +80,8 @@ class Action(ABC):
             raise ActionException()
 
 
-class Environment(ABC):
-    """Environment is the base class for all environments.
+class Env(ABC):
+    """Env is the base class for all environments.
 
     The environment contains global information about a game state that does
     not belong to any actor in particular and is public.
@@ -109,7 +109,7 @@ class Actor(ABC):
 
     @property
     @abstractmethod
-    def actions(self) -> Iterable[Action]:
+    def actions(self) -> Sequence[Action]:
         """
         :return: the actions of this actor
         """
