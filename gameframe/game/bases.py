@@ -6,36 +6,6 @@ from typing import Generic, Sequence, TypeVar
 from gameframe.game.exceptions import ActionException
 
 
-class Action(ABC):
-    """Action is the abstract base class for all actions."""
-
-    def __init__(self, game: Game[E, N, P]):
-        self.__game = game
-
-    @abstractmethod
-    def __str__(self) -> str:
-        pass
-
-    @property
-    def is_applicable(self) -> bool:
-        """
-        :return: True if this action can be applied else False
-        """
-        return not self.__game.is_terminal
-
-    def act(self) -> None:
-        """Applies this action to the game.
-
-        The overridden act method should first call the super method and then
-        make the changes in the game.
-
-        :return: None
-        :raise ActionException: if this action cannot be applied
-        """
-        if not self.is_applicable:
-            raise ActionException()
-
-
 class Env(ABC):
     """Env is the base class for all environments.
 
@@ -51,8 +21,12 @@ class Actor(ABC):
     The nature and the player are the types of actors in the game.
     """
 
+    @property
     @abstractmethod
-    def __str__(self) -> str:
+    def actions(self: A) -> Sequence[Action[Env, Nature, Player, A]]:
+        """
+        :return: the actions of this actor
+        """
         pass
 
     @property
@@ -60,14 +34,6 @@ class Actor(ABC):
     def is_nature(self) -> bool:
         """
         :return: True if this actor is nature, else False
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def actions(self) -> Sequence[Action]:
-        """
-        :return: the actions of this actor
         """
         pass
 
@@ -79,9 +45,6 @@ class Nature(Actor, ABC):
     chance actions. The nature may hold private information regarding a game
     state that no other player knows about.
     """
-
-    def __str__(self) -> str:
-        return 'Nature'
 
     @property
     def is_nature(self) -> bool:
@@ -96,27 +59,15 @@ class Player(Actor, ABC):
     of other actors, and the private information of itself.
     """
 
-    def __init__(self: P, game: Game[E, N, P]):
-        self.__game = game
-
-    def __next__(self) -> P:
-        return self.__game.players[(self.index + 1) % len(self.__game.players)]
-
-    def __str__(self) -> str:
-        return f'Player {self.index}'
-
-    @property
-    def index(self) -> int:
-        return self.__game.players.index(self)
-
     @property
     def is_nature(self) -> bool:
         return False
 
 
-E = TypeVar('E', bound=Env)
-N = TypeVar('N', bound=Nature)
-P = TypeVar('P', bound=Player)
+E = TypeVar('E', bound=Env, covariant=True)
+N = TypeVar('N', bound=Nature, covariant=True)
+P = TypeVar('P', bound=Player, covariant=True)
+A = TypeVar('A', bound=Actor, covariant=True)
 
 
 class Game(Generic[E, N, P], ABC):
@@ -159,3 +110,32 @@ class Game(Generic[E, N, P], ABC):
         :return: True if this game is terminal, else False
         """
         pass
+
+
+class Action(Generic[E, N, P, A], ABC):
+    """Action is the abstract base class for all actions."""
+
+    def __init__(self, game: Game[E, N, P], actor: A):
+        self._game = game
+        self._actor = actor
+
+    @property
+    def is_applicable(self) -> bool:
+        """
+        :return: True if this action can be applied else False
+        """
+        return not self._game.is_terminal and (
+                self._actor is self._game.nature or self._actor
+                in self._game.players)
+
+    def act(self) -> None:
+        """Applies this action to the game.
+
+        The overridden act method should first call the super method and then
+        make the changes in the game.
+
+        :return: None
+        :raise ActionException: if this action cannot be applied
+        """
+        if not self.is_applicable:
+            raise ActionException()

@@ -1,4 +1,4 @@
-from gameframe.tictactoe.actions import MarkAction
-from gameframe.tictactoe.actors import TicTacToeNature, TicTacToePlayer
-from gameframe.tictactoe.env import TicTacToeEnvironment
-from gameframe.tictactoe.games import TicTacToeGame
+from gameframe.tictactoe.bases import (MarkAction, TTTEnv, TTTGame, TTTNature,
+                                       TTTPlayer)
+
+__all__ = ['MarkAction', 'TTTEnv', 'TTTGame', 'TTTNature', 'TTTPlayer']

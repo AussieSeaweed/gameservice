@@ -1,3 +1,3 @@
-from gameframe.sequential.tests.test_monte_carlo import MonteCarloTestCaseMixin
+from gameframe.sequential.tests.test_monte_carlo import MCTestCaseMixin
 
-__all__ = ['MonteCarloTestCaseMixin']
+__all__ = ['MCTestCaseMixin']
