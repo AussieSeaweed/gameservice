@@ -1,53 +1,9 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Generic, Iterable, Sequence, TypeVar
+from typing import Generic, Sequence, TypeVar
 
 from gameframe.game.exceptions import ActionException
-
-E = TypeVar('E', bound='Env')
-N = TypeVar('N', bound='Nature')
-P = TypeVar('P', bound='Player')
-
-
-class Game(Generic[E, N, P], ABC):
-    """Game is the abstract base class for all games.
-
-    Every game has the following elements that need to be defined: the
-    environment, the nature, and the players.
-    """
-
-    def __init__(self, env: E, nature: N, players: Iterable[P]):
-        self.__env: E = env
-        self.__nature: N = nature
-        self.__players: Sequence[P] = tuple(players)
-
-    @property
-    def env(self) -> E:
-        """
-        :return: the environment of this game
-        """
-        return self.__env
-
-    @property
-    def nature(self) -> N:
-        """
-        :return: the nature of this game
-        """
-        return self.__nature
-
-    @property
-    def players(self) -> Sequence[P]:
-        """
-        :return: the players of this game
-        """
-        return self.__players
-
-    @property
-    @abstractmethod
-    def is_terminal(self) -> bool:
-        """
-        :return: True if this game is terminal, else False
-        """
-        pass
 
 
 class Action(ABC):
@@ -156,3 +112,50 @@ class Player(Actor, ABC):
     @property
     def is_nature(self) -> bool:
         return False
+
+
+E = TypeVar('E', bound=Env)
+N = TypeVar('N', bound=Nature)
+P = TypeVar('P', bound=Player)
+
+
+class Game(Generic[E, N, P], ABC):
+    """Game is the abstract base class for all games.
+
+    Every game has the following elements that need to be defined: the
+    environment, the nature, and the players.
+    """
+
+    def __init__(self, env: E, nature: N, players: Sequence[P]):
+        self.__env: E = env
+        self.__nature: N = nature
+        self.__players: Sequence[P] = tuple(players)
+
+    @property
+    def env(self) -> E:
+        """
+        :return: the environment of this game
+        """
+        return self.__env
+
+    @property
+    def nature(self) -> N:
+        """
+        :return: the nature of this game
+        """
+        return self.__nature
+
+    @property
+    def players(self) -> Sequence[P]:
+        """
+        :return: the players of this game
+        """
+        return self.__players
+
+    @property
+    @abstractmethod
+    def is_terminal(self) -> bool:
+        """
+        :return: True if this game is terminal, else False
+        """
+        pass

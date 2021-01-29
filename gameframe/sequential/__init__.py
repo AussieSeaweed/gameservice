@@ -1,3 +1,3 @@
-from gameframe.sequential.bases import SequentialGame, SequentialAction
+from gameframe.sequential.bases import SequentialGame
 
-__all__ = ['SequentialGame', 'SequentialAction']
+__all__ = ['SequentialGame']
