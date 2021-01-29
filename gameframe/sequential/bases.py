@@ -7,8 +7,8 @@ from gameframe.game.bases import A, Action, Actor, Env, Game, N, P
 class SeqEnv(Env, ABC):
     """SeqEnv is the abstract base class for all sequential environments."""
 
-    def __init__(self, actor: Actor):
-        self._actor: Optional[Actor] = actor
+    def __init__(self, actor: Optional[Actor]):
+        self._actor = actor
 
     @property
     def actor(self) -> Optional[Actor]:

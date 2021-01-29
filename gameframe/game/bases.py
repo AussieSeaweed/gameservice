@@ -52,9 +52,9 @@ class Game(Generic[E, N, P], ABC):
     """
 
     def __init__(self, env: E, nature: N, players: Sequence[P]):
-        self.__env: E = env
-        self.__nature: N = nature
-        self.__players: Sequence[P] = tuple(players)
+        self.__env = env
+        self.__nature = nature
+        self.__players = tuple(players)
 
     @property
     def env(self) -> E:
