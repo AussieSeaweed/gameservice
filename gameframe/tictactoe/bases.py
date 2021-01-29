@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List, Optional, Sequence, Union
 
-from gameframe.game import Action, Env, Nature, Player
+from gameframe.game import Action, Actor
 from gameframe.sequential import SeqAction, SeqEnv, SeqGame
 from gameframe.utils import next_player
 
@@ -56,22 +56,23 @@ class TTTEnv(SeqEnv):
         return None
 
 
-class TTTNature(Nature):
+class TTTNature(Actor):
     """TTTNature is the class for tic tac toe natures."""
 
     @property
-    def actions(self) -> Sequence[Action[Env, Nature, Player, TTTNature]]:
+    def actions(self) -> Sequence[Action[TTTEnv, TTTNature, TTTPlayer,
+                                         TTTNature]]:
         return []
 
 
-class TTTPlayer(Player):
+class TTTPlayer(Actor):
     """TTTPlayer is the class for tic tac toe players."""
 
     def __init__(self, game: TTTGame):
         self.__game = game
 
     @property
-    def actions(self) -> Sequence[Action[Env, Nature, Player, TTTPlayer]]:
+    def actions(self) -> Sequence[MarkAction]:
         if self is self.__game.env.actor:
             return [MarkAction(self.__game, self, r, c)
                     for r, c in self.__game.env.empty_coords]

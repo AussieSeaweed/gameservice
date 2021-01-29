@@ -19,40 +19,10 @@ class Actor(ABC):
     """Actor is the abstract base class for all actors.
 
     The nature and the player are the types of actors in the game.
-    """
-
-    @property
-    @abstractmethod
-    def actions(self: A) -> Sequence[Action[Env, Nature, Player, A]]:
-        """
-        :return: the actions of this actor
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def is_nature(self) -> bool:
-        """
-        :return: True if this actor is nature, else False
-        """
-        pass
-
-
-class Nature(Actor, ABC):
-    """Nature is the abstract base class for all nature actors.
 
     The nature is an actor that represents the environment and carries out
     chance actions. The nature may hold private information regarding a game
     state that no other player knows about.
-    """
-
-    @property
-    def is_nature(self) -> bool:
-        return True
-
-
-class Player(Actor, ABC):
-    """Player is the abstract base class for all players.
 
     The players of the game are the actors that act non-chance actions. A
     player is aware of the environment information, all the public information
@@ -60,13 +30,17 @@ class Player(Actor, ABC):
     """
 
     @property
-    def is_nature(self) -> bool:
-        return False
+    @abstractmethod
+    def actions(self: A) -> Sequence[Action[Env, Actor, Actor, A]]:
+        """
+        :return: the actions of this actor
+        """
+        pass
 
 
 E = TypeVar('E', bound=Env, covariant=True)
-N = TypeVar('N', bound=Nature, covariant=True)
-P = TypeVar('P', bound=Player, covariant=True)
+N = TypeVar('N', bound=Actor, covariant=True)
+P = TypeVar('P', bound=Actor, covariant=True)
 A = TypeVar('A', bound=Actor, covariant=True)
 
 
@@ -125,8 +99,8 @@ class Action(Generic[E, N, P, A], ABC):
         :return: True if this action can be applied else False
         """
         return not self._game.is_terminal and (
-                self._actor is self._game.nature or self._actor
-                in self._game.players)
+                self._actor is self._game.nature
+                or self._actor in self._game.players)
 
     def act(self) -> None:
         """Applies this action to the game.

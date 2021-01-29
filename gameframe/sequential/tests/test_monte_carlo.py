@@ -29,12 +29,12 @@ class MCTestCaseMixin(Generic[E, N, P], ABC):
 
             while game.env.actor is not None:
                 choice(game.env.actor.actions).act()
-
-            self._verify(game)
+                self._verify(game)
 
     @abstractmethod
     def _create_game(self) -> SeqGame[E, N, P]:
         pass
 
+    @abstractmethod
     def _verify(self, game: SeqGame[E, N, P]) -> None:
-        assert game.is_terminal
+        pass

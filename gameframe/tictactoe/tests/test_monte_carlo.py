@@ -19,7 +19,8 @@ class TTTMonteCarloTestCase(TestCase,
     def _verify(self, game: SeqGame[TTTEnv, TTTNature, TTTPlayer]) -> None:
         super()._verify(game)
 
-        assert game.env.winner is not None or not game.env.empty_coords
+        if game.is_terminal:
+            assert game.env.winner is not None or not game.env.empty_coords
 
 
 if __name__ == '__main__':

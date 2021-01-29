@@ -1,8 +1,7 @@
 from abc import ABC
-from typing import TypeVar, Optional
+from typing import Optional, TypeVar
 
-from gameframe.game import Action, Actor, Env, Game
-from gameframe.game.bases import A, N, P
+from gameframe.game.bases import A, Action, Actor, Env, Game, N, P
 
 
 class SeqEnv(Env, ABC):
