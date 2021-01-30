@@ -5,7 +5,7 @@ from typing import Generic, Sequence, TypeVar
 
 
 class BaseGame(ABC):
-    """BaseGame is the generic base class for all games.
+    """BaseGame is the abstract base class for all games.
 
     Every game has the following elements that need to be defined: the environment, the nature, and the players.
     """

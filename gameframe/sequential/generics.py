@@ -13,6 +13,7 @@ E = TypeVar('E', bound=BaseSeqEnv, covariant=True)
 
 class SeqGame(Game[E, N, P], BaseSeqGame, ABC):
     """SeqGame is the generic abstract base class for all sequential games."""
+    pass
 
 
 class SeqEnv(Env[G], BaseSeqEnv, Generic[G, N, P], ABC):

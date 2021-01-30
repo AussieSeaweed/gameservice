@@ -1,19 +1,9 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Optional
 
 from gameframe.game.bases import BaseActor, BaseEnv, BaseGame
-
-
-class BaseSeqEnv(BaseEnv, ABC):
-    """BaseSeqEnv is the abstract base class for all sequential environments."""
-
-    @property
-    @abstractmethod
-    def actor(self) -> Optional[BaseActor]:
-        """
-        :return: the actor of the sequential game of this environment
-        """
-        pass
 
 
 class BaseSeqGame(BaseGame, ABC):
@@ -31,3 +21,15 @@ class BaseSeqGame(BaseGame, ABC):
     @property
     def is_terminal(self) -> bool:
         return self.env.actor is None
+
+
+class BaseSeqEnv(BaseEnv, ABC):
+    """BaseSeqEnv is the abstract base class for all sequential environments."""
+
+    @property
+    @abstractmethod
+    def actor(self) -> Optional[BaseActor]:
+        """
+        :return: the actor of the sequential game of this environment
+        """
+        pass

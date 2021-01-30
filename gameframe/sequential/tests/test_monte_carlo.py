@@ -26,7 +26,6 @@ class MCTestCaseMixin(Generic[G], ABC):
 
             while game.env.actor is not None:
                 choice(game.env.actor.actions).act()
-
                 self._verify(game)
 
     @abstractmethod
