@@ -53,6 +53,11 @@ class HoleCard(Card):
 
         self._status = status
 
+    def __str__(self) -> str:
+        value = super().__str__()
+
+        return value if self._status else value + ' (hidden)'
+
     @property
     def status(self) -> bool:
         return self._status

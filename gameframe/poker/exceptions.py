@@ -1,11 +1,16 @@
 from gameframe.game import GameFrameException
 
 
-class InsufficientPlayerCountException(GameFrameException):
+class BlindException(GameFrameException):
+    """The blind configuration is invalid."""
+    pass
+
+
+class PlayerCountException(GameFrameException):
     """The number of players are insufficient."""
     pass
 
 
-class InvalidBlindConfigurationException(GameFrameException):
-    """The blind configuration is invalid."""
+class IllegalStateException(GameFrameException):
+    """The state is illegal."""
     pass

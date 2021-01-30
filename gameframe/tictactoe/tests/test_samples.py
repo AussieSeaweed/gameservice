@@ -22,8 +22,7 @@ class TTTSampleGameTestCase(TestCase):
         self.assertIsNone(game.env.winner)
 
     def test_loss(self) -> None:
-        """Tests if tic tac toe properly detects a case of the first player
-        losing.
+        """Tests if tic tac toe properly detects a case of the first player losing.
 
         :return: None
         :raise AssertionError: if the winner is wrongly detected
@@ -38,8 +37,7 @@ class TTTSampleGameTestCase(TestCase):
         self.assertEqual(game.players[1], game.env.winner)
 
     def test_win(self) -> None:
-        """Tests if tic tac toe properly detects a case of the first player
-        winning.
+        """Tests if tic tac toe properly detects a case of the first player winning.
 
         :return: None
         :raise AssertionError: if the winner is wrongly detected

@@ -2,22 +2,19 @@ from __future__ import annotations
 
 from typing import List, Optional, Sequence, Union
 
-from gameframe.game import Action, Actor
+from gameframe.game import Actor
 from gameframe.sequential import SeqAction, SeqEnv, SeqGame
-from gameframe.utils import next_player
 
 
 class TTTEnv(SeqEnv):
     """TTTEnv is the class for tic tac toe environments."""
 
-    def __init__(self, actor: Union[TTTNature, TTTPlayer]) -> None:
+    def __init__(self, actor: Union[TTTNature, TTTPlayer]):
         super().__init__(actor)
 
-        self._board: List[List[Optional[TTTPlayer]]] = [
-            [None, None, None],
-            [None, None, None],
-            [None, None, None],
-        ]
+        self._board: List[List[Optional[TTTPlayer]]] = [[None, None, None],
+                                                        [None, None, None],
+                                                        [None, None, None]]
 
     @property
     def board(self) -> Sequence[Sequence[Optional[TTTPlayer]]]:
@@ -31,26 +28,21 @@ class TTTEnv(SeqEnv):
         """
         :return: the list of empty coordinates of the board
         """
-        return [[r, c] for r in range(3) for c in range(3)
-                if self.board[r][c] is None]
+        return [[r, c] for r in range(3) for c in range(3) if self.board[r][c] is None]
 
     @property
     def winner(self) -> Optional[TTTPlayer]:
         """
-        :return: the winning player of the tic tac toe game if there is one,
-        else None
+        :return: the winning player of the tic tac toe game if there is one, else None
         """
         for i in range(3):
-            if self.board[i][0] is self.board[i][1] is self.board[i][2] \
-                    is not None:
+            if self.board[i][0] is self.board[i][1] is self.board[i][2] is not None:
                 return self.board[i][0]
-            elif self.board[0][i] is self.board[1][i] is self.board[2][i] \
-                    is not None:
+            elif self.board[0][i] is self.board[1][i] is self.board[2][i] is not None:
                 return self.board[0][i]
 
-        if self.board[0][0] is self.board[1][1] is self.board[2][2] \
-                is not None or self.board[0][2] is self.board[1][1] \
-                is self.board[2][0] is not None:
+        if self.board[0][0] is self.board[1][1] is self.board[2][2] is not None \
+                or self.board[0][2] is self.board[1][1] is self.board[2][0] is not None:
             return self.board[1][1]
 
         return None
@@ -60,8 +52,7 @@ class TTTNature(Actor):
     """TTTNature is the class for tic tac toe natures."""
 
     @property
-    def actions(self) -> Sequence[Action[TTTEnv, TTTNature, TTTPlayer,
-                                         TTTNature]]:
+    def actions(self) -> Sequence[SeqAction[TTTEnv, TTTNature, TTTPlayer, TTTNature]]:
         return []
 
 
@@ -74,8 +65,7 @@ class TTTPlayer(Actor):
     @property
     def actions(self) -> Sequence[MarkAction]:
         if self is self.__game.env.actor:
-            return [MarkAction(self.__game, self, r, c)
-                    for r, c in self.__game.env.empty_coords]
+            return [MarkAction(self.__game, self, r, c) for r, c in self.__game.env.empty_coords]
         else:
             return []
 
@@ -95,6 +85,7 @@ class TTTGame(SeqGame[TTTEnv, TTTNature, TTTPlayer]):
 
     def __init__(self) -> None:
         players = (TTTPlayer(self), TTTPlayer(self))
+
         super().__init__(TTTEnv(players[0]), TTTNature(), players)
 
 
@@ -112,10 +103,8 @@ class MarkAction(SeqAction[TTTEnv, TTTNature, TTTPlayer, TTTPlayer]):
 
     @property
     def is_applicable(self) -> bool:
-        return super().is_applicable \
-               and isinstance(self._game.env.actor, TTTPlayer) \
-               and 0 <= self.__r < 3 and 0 <= self.__c < 3 \
-               and self._game.env.board[self.__r][self.__c] is None
+        return super().is_applicable and isinstance(self._game.env.actor, TTTPlayer) \
+               and 0 <= self.__r < 3 and 0 <= self.__c < 3 and self._game.env.board[self.__r][self.__c] is None
 
     @property
     def is_public(self) -> bool:
@@ -127,6 +116,6 @@ class MarkAction(SeqAction[TTTEnv, TTTNature, TTTPlayer, TTTPlayer]):
         self._game.env._board[self.__r][self.__c] = self._actor
 
         if self._game.env.empty_coords and self._game.env.winner is None:
-            self._game.env._actor = next_player(self._game, self._actor)
+            self._game.env._actor = self.next_actor(self._actor)
         else:
             self._game.env._actor = None

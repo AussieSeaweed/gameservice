@@ -5,8 +5,7 @@ from gameframe.sequential.tests import MCTestCaseMixin
 from gameframe.tictactoe import TTTEnv, TTTGame, TTTNature, TTTPlayer
 
 
-class TTTMonteCarloTestCase(TestCase,
-                            MCTestCaseMixin[TTTEnv, TTTNature, TTTPlayer]):
+class TTTMonteCarloTestCase(TestCase, MCTestCaseMixin[TTTEnv, TTTNature, TTTPlayer]):
     """TTTMonteCarloTestCase is the class for tic tac toe test cases."""
 
     @property
@@ -21,6 +20,8 @@ class TTTMonteCarloTestCase(TestCase,
 
         if game.is_terminal:
             assert game.env.winner is not None or not game.env.empty_coords
+        else:
+            assert game.env.winner is None and game.env.empty_coords
 
 
 if __name__ == '__main__':
