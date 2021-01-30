@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from random import choice
 from typing import Generic
 
-from gameframe.game.bases import N, P
-from gameframe.sequential.bases import SeqGame, E
+from gameframe.game.generics import N, P
+from gameframe.sequential.generics import E, SeqGame
 
 
 class MCTestCaseMixin(Generic[E, N, P], ABC):
@@ -36,6 +36,8 @@ class MCTestCaseMixin(Generic[E, N, P], ABC):
         if game.is_terminal:
             assert game.env.actor is None
         else:
+            assert game.env.actor is not None
+
             if game.nature is not game.env.actor:
                 assert not game.nature.actions
 
