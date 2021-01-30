@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 from random import choice
-from typing import Generic
+from typing import Generic, TypeVar
 
-from gameframe.game.generics import N, P
-from gameframe.sequential.generics import E, SeqGame
+from gameframe.sequential.bases import BaseSeqGame
+
+G = TypeVar('G', bound=BaseSeqGame)
 
 
-class MCTestCaseMixin(Generic[E, N, P], ABC):
+class MCTestCaseMixin(Generic[G], ABC):
     """MCTestCaseMixin is the abstract base mixin for all monte carlo test cases."""
 
     @property
@@ -29,10 +30,10 @@ class MCTestCaseMixin(Generic[E, N, P], ABC):
                 self._verify(game)
 
     @abstractmethod
-    def _create_game(self) -> SeqGame[E, N, P]:
+    def _create_game(self) -> G:
         pass
 
-    def _verify(self, game: SeqGame[E, N, P]) -> None:
+    def _verify(self, game: G) -> None:
         if game.is_terminal:
             assert game.env.actor is None
         else:

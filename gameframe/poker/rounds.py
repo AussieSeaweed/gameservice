@@ -1,25 +1,22 @@
 from abc import ABC, abstractmethod
+from typing import MutableSequence, Sequence, Union
 
-from gameframe.poker.actions import BetRaiseAction, CheckCallAction, FoldAction
+from gameframe.poker.actions import BetRaiseAction, BettingAction, CheckCallAction, FoldAction
 from gameframe.poker.utils import HoleCard
+from gameframe.poker.bases import PokerGame, PokerAction, PokerNature, PokerPlayer
+from gameframe.poker.exceptions import IllegalStateException
+from gameframe.utils import rotate
 
 
 class Round(ABC):
     """Round is the abstract base class for all rounds."""
 
-    def __init__(self, game):
-        self.__game = game
-
-    @property
-    def game(self):
-        """
-        :return: the game of this round
-        """
-        return self.__game
+    def __init__(self, game: PokerGame):
+        self._game = game
 
     @property
     @abstractmethod
-    def actions(self):
+    def actions(self) -> Sequence[PokerAction[PokerPlayer]]:
         """
         :return: the actions of this round
         """
@@ -27,22 +24,21 @@ class Round(ABC):
 
     @property
     @abstractmethod
-    def opener(self):
+    def opener(self) -> Union[PokerNature, PokerPlayer]:
         """
         :return: the opener of this round
         """
         pass
 
     @property
-    @abstractmethod
-    def is_betting(self):
-        """
-        :return: True if this round is a betting round, else False
-        """
-        pass
+    def _player(self) -> PokerPlayer:
+        if isinstance(self._game.env.actor, PokerPlayer):
+            return self._game.env.actor
+        else:
+            raise IllegalStateException()
 
     @abstractmethod
-    def open(self):
+    def open(self) -> None:
         """Opens this round.
 
         :return: None
@@ -50,7 +46,7 @@ class Round(ABC):
         pass
 
     @abstractmethod
-    def close(self):
+    def close(self) -> None:
         """Closes this round.
 
         :return: None
@@ -61,53 +57,55 @@ class Round(ABC):
 class BettingRound(Round, ABC):
     """BettingRound is the class for betting rounds."""
 
-    def __init__(self, game, board_card_count, hole_card_statuses):
+    def __init__(self, game: PokerGame, board_card_count: int, hole_card_statuses: Sequence[bool]):
         super().__init__(game)
 
         self.__board_card_count = board_card_count
         self.__hole_card_statuses = hole_card_statuses
 
     @property
-    def actions(self):
-        actions = [FoldAction(self.game.actor), CheckCallAction(self.game.actor)]
+    def actions(self) -> Sequence[BettingAction]:
+        actions = [FoldAction(self._game, self._player), CheckCallAction(self._game, self._player)]
 
-        if self.game.is_lazy:
-            bet_amounts = sorted({self.game._limit.min_amount, self.game._limit.max_amount})
-        else:
-            bet_amounts = range(self.game._limit.min_amount, self.game._limit.max_amount + 1)
-
-        actions.extend(map(lambda amount: BetRaiseAction(self.game.actor, amount), bet_amounts))
+        for amount in range(self._game.env._limit.min_amount(self._player),
+                            self._game.env._limit.max_amount(self._player) + 1):
+            actions.append(BetRaiseAction(self._game, self._player, amount))
 
         return list(filter(lambda action: action.is_applicable, actions))
 
     @property
-    def opener(self):
-        opener = min(self.game.players, key=lambda player: (player.bet, player.index))
+    def opener(self) -> Union[PokerNature, PokerPlayer]:
+        opener = min(self._game.players, key=lambda player: (player.bet, self._game.players.index(player)))
 
-        for opener in self.game.players[opener.index:] + self.game.players[:opener.index]:
+        for opener in rotate(self._game.players, self._game.players.index(opener)):
             if opener._is_relevant:
                 return opener
         else:
-            return self.game.nature
+            return self._game.nature
 
-    @property
-    def is_betting(self):
-        return True
+    def open(self) -> None:
+        dealt_cards = list(self._game.env._deck)[:self.__board_card_count]
+        self._game.env._board_cards.extend(dealt_cards)
 
-    def open(self):
-        self.game.environment._board_cards.extend(self.game._deck.draw(self.__board_card_count))
-
-        for player in self.game.players:
+        for player in self._game.players:
             if not player.is_mucked:
-                player._hole_cards.extend(map(
-                    lambda args: HoleCard(*args),
-                    zip(self.game._deck.draw(len(self.__hole_card_statuses)), self.__hole_card_statuses)
-                ))
+                hole_cards: MutableSequence[HoleCard] = []
 
-        if not self.opener.is_nature:
-            self.game.environment._max_delta = max(self.game.ante, max(self.game.blinds))
-            self.game.environment._aggressor = self.opener
+                for card, status in zip(tuple(self._game.env._deck)[:len(self.__hole_card_statuses)],
+                                        self.__hole_card_statuses):
+                    hole_cards.append(HoleCard(card, status))
 
-    def close(self):
-        self.game.environment._max_delta = None
-        self.game.environment._requirement = max(player._commitment for player in self.game.players)
+                dealt_cards.extend(hole_cards)
+
+                if player._hole_cards is not None:
+                    player._hole_cards.extend(hole_cards)
+
+        self._game.env._deck.remove(dealt_cards)
+
+        if isinstance(self.opener, PokerPlayer):
+            self._game.env._max_delta = max(self._game._ante, max(self._game._blinds))
+            self._game.env._aggressor = self.opener
+
+    def close(self) -> None:
+        self._game.env._max_delta = 0
+        self._game.env._requirement = max(player._commitment for player in self._game.players)

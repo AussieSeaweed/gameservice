@@ -1,16 +1,24 @@
 from __future__ import annotations
 
-from typing import List, Optional, Sequence, Union
+from typing import Iterator, List, Optional, Sequence
 
 from gameframe.game import Actor
 from gameframe.sequential import SeqAction, SeqEnv, SeqGame
 
 
-class TTTEnv(SeqEnv):
+class TTTGame(SeqGame['TTTEnv', 'TTTNature', 'TTTPlayer']):
+    """TTTGame is the class for tic tac toe games."""
+
+    def __init__(self) -> None:
+        players = (TTTPlayer(self), TTTPlayer(self))
+        super().__init__(TTTEnv(self, players[0]), TTTNature(self), players)
+
+
+class TTTEnv(SeqEnv[TTTGame, 'TTTNature', 'TTTPlayer']):
     """TTTEnv is the class for tic tac toe environments."""
 
-    def __init__(self, actor: Union[TTTNature, TTTPlayer]):
-        super().__init__(actor)
+    def __init__(self, game: TTTGame, actor: TTTPlayer):
+        super().__init__(game, actor)
 
         self._board: List[List[Optional[TTTPlayer]]] = [[None, None, None],
                                                         [None, None, None],
@@ -48,24 +56,24 @@ class TTTEnv(SeqEnv):
         return None
 
 
-class TTTNature(Actor):
+class TTTNature(Actor[TTTGame]):
     """TTTNature is the class for tic tac toe natures."""
 
     @property
-    def actions(self) -> Sequence[SeqAction[TTTEnv, TTTNature, TTTPlayer, TTTNature]]:
+    def actions(self) -> Sequence[SeqAction[TTTGame, TTTNature]]:
         return []
 
 
-class TTTPlayer(Actor):
+class TTTPlayer(Actor[TTTGame], Iterator['TTTPlayer']):
     """TTTPlayer is the class for tic tac toe players."""
 
-    def __init__(self, game: TTTGame):
-        self.__game = game
+    def __next__(self) -> TTTPlayer:
+        return self._game.players[(self._game.players.index(self) + 1) % len(self._game.players)]
 
     @property
     def actions(self) -> Sequence[MarkAction]:
-        if self is self.__game.env.actor:
-            return [MarkAction(self.__game, self, r, c) for r, c in self.__game.env.empty_coords]
+        if self is self._game.env.actor:
+            return [MarkAction(self._game, self, r, c) for r, c in self._game.env.empty_coords]
         else:
             return []
 
@@ -77,19 +85,10 @@ class TTTPlayer(Actor):
         :return: None
         :raise: GameFrameException if the player cannot mark the cell
         """
-        MarkAction(self.__game, self, r, c).act()
+        MarkAction(self._game, self, r, c).act()
 
 
-class TTTGame(SeqGame[TTTEnv, TTTNature, TTTPlayer]):
-    """TTTGame is the class for tic tac toe games."""
-
-    def __init__(self) -> None:
-        players = (TTTPlayer(self), TTTPlayer(self))
-
-        super().__init__(TTTEnv(players[0]), TTTNature(), players)
-
-
-class MarkAction(SeqAction[TTTEnv, TTTNature, TTTPlayer, TTTPlayer]):
+class MarkAction(SeqAction[TTTGame, TTTPlayer]):
     """MarkAction is the class for mark actions."""
 
     def __init__(self, game: TTTGame, actor: TTTPlayer, r: int, c: int):
@@ -106,16 +105,12 @@ class MarkAction(SeqAction[TTTEnv, TTTNature, TTTPlayer, TTTPlayer]):
         return super().is_applicable and isinstance(self._game.env.actor, TTTPlayer) \
                and 0 <= self.__r < 3 and 0 <= self.__c < 3 and self._game.env.board[self.__r][self.__c] is None
 
-    @property
-    def is_public(self) -> bool:
-        return True
-
     def act(self) -> None:
         super().act()
 
         self._game.env._board[self.__r][self.__c] = self._actor
 
         if self._game.env.empty_coords and self._game.env.winner is None:
-            self._game.env._actor = self.next_actor(self._actor)
+            self._game.env._actor = next(self._actor)
         else:
             self._game.env._actor = None

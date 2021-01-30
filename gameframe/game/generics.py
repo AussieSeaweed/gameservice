@@ -1,22 +1,19 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from typing import Generic, Iterator, Sequence, TypeVar, Union
+from abc import ABC
+from typing import Generic, Sequence, TypeVar
 
-from gameframe.game.bases import BaseAction, BaseActor, BaseEnv
+from gameframe.game.bases import A, BaseAction, BaseActor, BaseEnv, BaseGame
 from gameframe.game.exceptions import ActionException
 
+G = TypeVar('G', bound=BaseGame, covariant=True)
 E = TypeVar('E', bound=BaseEnv, covariant=True)
 N = TypeVar('N', bound=BaseActor, covariant=True)
 P = TypeVar('P', bound=BaseActor, covariant=True)
-A = TypeVar('A', bound=BaseActor, covariant=True)
 
 
 class Game(Generic[E, N, P], ABC):
-    """Game is the generic abstract base class for all games.
-
-    Every game has the following elements that need to be defined: the environment, the nature, and the players.
-    """
+    """Game is the generic abstract base class for all games."""
 
     def __init__(self, env: E, nature: N, players: Sequence[P]):
         self.__env = env
@@ -25,58 +22,35 @@ class Game(Generic[E, N, P], ABC):
 
     @property
     def env(self) -> E:
-        """
-        :return: the environment of this game
-        """
         return self.__env
 
     @property
     def nature(self) -> N:
-        """
-        :return: the nature of this game
-        """
         return self.__nature
 
     @property
     def players(self) -> Sequence[P]:
-        """
-        :return: the players of this game
-        """
         return self.__players
 
-    @property
-    @abstractmethod
-    def is_terminal(self) -> bool:
-        """
-        :return: True if this game is terminal, else False
-        """
-        pass
 
-
-class Env(BaseEnv, Generic[E, N, P], ABC):
+class Env(BaseEnv, Generic[G], ABC):
     """Env is the generic abstract base class for all environments."""
 
-    def __init__(self, game: Game[E, N, P]):
+    def __init__(self, game: G):
         self._game = game
 
 
-class Actor(BaseActor, Iterator[Union[N, P]], Generic[E, N, P], ABC):
+class Actor(BaseActor, Generic[G], ABC):
     """Actor is the generic abstract base class for all actors."""
 
-    def __init__(self, game: Game[E, N, P]):
+    def __init__(self, game: G):
         self._game = game
 
-    def __next__(self) -> Union[N, P]:
-        if self is self._game.nature:
-            return self._game.nature
-        else:
-            return self._game.players[(self._game.players.index(self) + 1) % len(self._game.players)]
 
-
-class Action(BaseAction, Generic[E, N, P, A], ABC):
+class Action(BaseAction[A], Generic[G, A], ABC):
     """Action is the generic abstract base class for all actions."""
 
-    def __init__(self, game: Game[E, N, P], actor: A):
+    def __init__(self, game: G, actor: A):
         self._game = game
         self._actor = actor
 

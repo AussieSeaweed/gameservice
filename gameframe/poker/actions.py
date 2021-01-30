@@ -1,130 +1,128 @@
 from abc import ABC
 from collections import defaultdict
+from typing import DefaultDict, Optional
 
-from gameframe.sequential import SequentialAction
-
-
-class PokerAction(SequentialAction, ABC):
-    """PokerAction is the abstract base class for all poker actions."""
-
-    @property
-    def is_public(self):
-        return True
+from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
+from gameframe.poker.rounds import BettingRound
+from gameframe.poker.utils import Hand
+from gameframe.utils import rotate
 
 
-class BettingRoundAction(PokerAction, ABC):
+class BettingAction(PokerAction[PokerPlayer], ABC):
     """BettingRoundAction is the abstract base class for all player actions in a betting round."""
 
     @property
-    def is_applicable(self):
-        return super().is_applicable and not self.game.actor.is_nature and self.game._round.is_betting
+    def is_applicable(self) -> bool:
+        return super().is_applicable and isinstance(self._game.env.actor, PokerPlayer) \
+               and isinstance(self._game.env._round, BettingRound)
 
 
-class FoldAction(BettingRoundAction):
+class FoldAction(BettingAction):
     """FoldAction is the class for folds."""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Fold'
 
     @property
-    def is_applicable(self):
-        return super().is_applicable and self.actor.bet < max(player.bet for player in self.game.players)
+    def is_applicable(self) -> bool:
+        return super().is_applicable and self._actor.bet < max(player.bet for player in self._game.players)
 
-    def act(self):
+    def act(self) -> None:
         super().act()
 
-        self.actor._muck()
+        self._actor._muck()
 
-        if sum(not player.is_mucked for player in self.game.players) == 1:
-            self.game._actor = self.game.nature
+        if sum(not player.is_mucked for player in self._game.players) == 1:
+            self._game.env._actor = self._game.nature
         else:
-            self.game._actor = next(self.actor)
+            self._game.env._actor = next(self._actor)
 
 
-class CheckCallAction(BettingRoundAction):
+class CheckCallAction(BettingAction):
     """CheckCallAction is the class for checks and calls."""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Call {self.amount}' if self.amount else 'Check'
 
     @property
-    def amount(self):
-        return min(self.actor.stack, max(player.bet for player in self.game.players) - self.actor.bet)
+    def amount(self) -> int:
+        return min(self._actor.stack, max(player.bet for player in self._game.players) - self._actor.bet)
 
-    def act(self):
+    def act(self) -> None:
         super().act()
 
-        self.actor._commitment += self.amount
-        self.game._actor = next(self.actor)
+        self._actor._commitment += self.amount
+        self._game.env._actor = next(self._actor)
 
 
-class BetRaiseAction(BettingRoundAction):
+class BetRaiseAction(BettingAction):
     """BetRaiseAction is the class for bets and raises."""
 
-    def __init__(self, actor, amount):
-        super().__init__(actor)
+    def __init__(self, game: PokerGame, actor: PokerPlayer, amount: int):
+        super().__init__(game, actor)
 
         self.__amount = amount
 
-    def __str__(self):
-        return ('Raise ' if any(player.bet for player in self.game.players) else 'Bet ') + str(self.amount)
+    def __str__(self) -> str:
+        return ('Raise ' if any(player.bet for player in self._game.players) else 'Bet ') + str(self.amount)
 
     @property
-    def amount(self):
+    def amount(self) -> int:
         return self.__amount
 
     @property
-    def is_applicable(self):
+    def is_applicable(self) -> bool:
         return super().is_applicable and \
-               max(player._commitment for player in self.game.players) < self.actor.starting_stack and \
-               any(player._is_relevant for player in self.game.players if player is not self.actor) and \
-               self.game._limit.min_amount <= self.amount <= self.game._limit.max_amount
+               max(player._commitment for player in self._game.players) < self._actor._starting_stack and \
+               any(player._is_relevant for player in self._game.players if player is not self._actor) and \
+               self._game.env._limit.min_amount(self._actor) <= self.amount \
+               <= self._game.env._limit.max_amount(self._actor)
 
-    def act(self):
+    def act(self) -> None:
         super().act()
 
-        self.game.environment._aggressor = self.actor
-        self.game.environment._max_delta = max(self.game.environment._max_delta,
-                                               self.amount - max(player.bet for player in self.game.players))
-        self.actor._commitment += self.amount - self.actor.bet
-        self.game._actor = next(self.actor)
+        self._game.env._aggressor = self._actor
+        self._game.env._max_delta = max(self._game.env._max_delta,
+                                        self.amount - max(player.bet for player in self._game.players))
+        self._actor._commitment += self.amount - self._actor.bet
+        self._game.env._actor = next(self._actor)
 
 
-class ProgressiveAction(PokerAction):
+class ProgressiveAction(PokerAction[PokerNature]):
     """ProgressiveAction is the class for round transitions and showdowns."""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Progress'
 
     @property
-    def is_applicable(self):
-        return super().is_applicable and self.actor.is_nature
+    def is_applicable(self) -> bool:
+        return super().is_applicable and isinstance(self._actor, PokerNature)
 
-    def act(self):
+    def act(self) -> None:
         super().act()
 
-        if self.game._round is not None:
-            self.game._round.close()
+        if self._game.env._round is not None:
+            self._game.env._round.close()
 
-        if sum(not player.is_mucked for player in self.game.players) == 1:
-            self.game._rounds.clear()
+        if sum(not player.is_mucked for player in self._game.players) == 1:
+            self._game.env._rounds.clear()
         else:
-            self.game._rounds.pop(0)
+            self._game.env._rounds.pop(0)
 
-        if self.game._round is None:
-            if sum(not player.is_mucked for player in self.game.players) > 1:
+        if self._game.env._round is None:
+            if sum(not player.is_mucked for player in self._game.players) > 1:
                 self.__show()
 
             self.__distribute()
-            self.game._actor = None
+            self._game.env._actor = None
         else:
-            self.game._round.open()
-            self.game._actor = next(self.actor)
+            self._game.env._round.open()
+            self._game.env._actor = next(self._actor)
 
-    def __show(self):
-        index = 0 if self.game.environment._aggressor is None else self.game.environment._aggressor.index
-        players = filter(lambda player: not player.is_mucked, self.game.players[index:] + self.game.players[:index])
-        commitments = defaultdict(int)
+    def __show(self) -> None:
+        index = 0 if self._game.env._aggressor is None else self._game.players.index(self._game.env._aggressor)
+        players = filter(lambda p: not p.is_mucked, rotate(self._game.players, index))
+        commitments: DefaultDict[Hand, int] = defaultdict(int)
 
         for player in players:
             for hand, commitment in commitments.items():
@@ -132,13 +130,15 @@ class ProgressiveAction(PokerAction):
                     player._muck()
                     break
             else:
-                commitments[player.hand] = max(commitments[player.hand], player._commitment)
+                if player.hand is not None:
+                    commitments[player.hand] = max(commitments[player.hand], player._commitment)
 
-                for card in player.hole_cards:
-                    card._status = True
+                if player.hole_cards is not None:
+                    for card in player.hole_cards:
+                        card._status = True
 
-    def __distribute(self):
-        players = list(filter(lambda player: not player.is_mucked, self.game.players))
+    def __distribute(self) -> None:
+        players = list(filter(lambda player: not player.is_mucked, self._game.players))
         base = 0
 
         for base_player in sorted(players, key=lambda player: (player.hand, player._commitment)):
@@ -153,10 +153,10 @@ class ProgressiveAction(PokerAction):
 
             base = max(base, base_player._commitment)
 
-    def __side_pot(self, base, base_player):
+    def __side_pot(self, base: int, base_player: PokerPlayer) -> int:
         side_pot = 0
 
-        for player in self.game.players:
+        for player in self._game.players:
             entitlement = min(player._commitment, base_player._commitment)
 
             if base < entitlement:

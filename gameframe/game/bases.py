@@ -1,7 +1,46 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Iterator, Sequence
+from typing import Generic, Sequence, TypeVar
+
+
+class BaseGame(ABC):
+    """BaseGame is the generic base class for all games.
+
+    Every game has the following elements that need to be defined: the environment, the nature, and the players.
+    """
+
+    @property
+    @abstractmethod
+    def env(self) -> BaseEnv:
+        """
+        :return: the environment of this game
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def nature(self) -> BaseActor:
+        """
+        :return: the nature of this game
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def players(self) -> Sequence[BaseActor]:
+        """
+        :return: the players of this game
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def is_terminal(self) -> bool:
+        """
+        :return: True if this game is terminal, else False
+        """
+        pass
 
 
 class BaseEnv(ABC):
@@ -13,7 +52,7 @@ class BaseEnv(ABC):
     pass
 
 
-class BaseActor(Iterator['BaseActor'], ABC):
+class BaseActor(ABC):
     """BaseActor is the abstract base class for all actors.
 
     The nature and the player are the types of actors in the game.
@@ -25,20 +64,19 @@ class BaseActor(Iterator['BaseActor'], ABC):
     information, all the public information of other actors, and the private information of itself.
     """
 
-    @abstractmethod
-    def __next__(self) -> BaseActor:
-        pass
-
     @property
     @abstractmethod
-    def actions(self) -> Sequence[BaseAction]:
+    def actions(self: A) -> Sequence[BaseAction[A]]:
         """
         :return: the actions of this actor
         """
         pass
 
 
-class BaseAction(ABC):
+A = TypeVar('A', bound=BaseActor, covariant=True)
+
+
+class BaseAction(Generic[A], ABC):
     """BaseAction is the abstract base class for all actions."""
 
     @property

@@ -1,11 +1,10 @@
 from unittest import TestCase, main
 
-from gameframe.sequential import SeqGame
 from gameframe.sequential.tests import MCTestCaseMixin
-from gameframe.tictactoe import TTTEnv, TTTGame, TTTNature, TTTPlayer
+from gameframe.tictactoe import TTTGame
 
 
-class TTTMonteCarloTestCase(TestCase, MCTestCaseMixin[TTTEnv, TTTNature, TTTPlayer]):
+class TTTMonteCarloTestCase(TestCase, MCTestCaseMixin[TTTGame]):
     """TTTMonteCarloTestCase is the class for tic tac toe test cases."""
 
     @property
@@ -15,7 +14,7 @@ class TTTMonteCarloTestCase(TestCase, MCTestCaseMixin[TTTEnv, TTTNature, TTTPlay
     def _create_game(self) -> TTTGame:
         return TTTGame()
 
-    def _verify(self, game: SeqGame[TTTEnv, TTTNature, TTTPlayer]) -> None:
+    def _verify(self, game: TTTGame) -> None:
         super()._verify(game)
 
         if game.is_terminal:
