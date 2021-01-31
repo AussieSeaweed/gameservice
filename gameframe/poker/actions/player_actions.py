@@ -21,7 +21,7 @@ class FoldAction(BettingAction):
         self.actor._muck()
 
         if sum(not player.is_mucked for player in self.game.players) == 1:
-            self.change_stage(DistributionStage(self.game))
+            self.change_stage()
         else:
             self.game.env._actor = next(self.actor)
 
@@ -90,8 +90,8 @@ class ShowdownAction(PokerAction[PokerPlayer]):
         players = [player for player in rotate(self.game.players, index) if not player.is_mucked]
 
         for player in players[:players.index(self.actor)]:
-            if player.hand < self.actor.hand and player._commitment >= self.actor._commitment:
-                player._muck()
+            if player.hand > self.actor.hand and player._commitment >= self.actor._commitment:
+                self.actor._muck()
                 break
         else:
             self.show = True

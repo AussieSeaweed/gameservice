@@ -21,7 +21,22 @@ class SetupStage(Stage):
     pass
 
 
-class DealingStage(Stage):
+class DistributionStage(Stage, OpenMixin):
+    def open(self) -> None:
+        self.game.env._actor = self.game.nature
+
+
+class MidStage(Stage, OpenMixin):
+    @property
+    def skip(self) -> bool:
+        return sum(not player.is_mucked for player in self.game.players) == 1
+
+    def open(self) -> None:
+        if self.skip:
+            raise ValueError('Cannot open skipped round')
+
+
+class DealingStage(MidStage):
     def __init__(self, game: PokerGame, hole_card_statuses: Sequence[bool], board_card_count: int):
         super().__init__(game)
 
@@ -49,15 +64,12 @@ class DealingStage(Stage):
         return count
 
     def open(self) -> None:
+        super().open()
+
         self.game.env._actor = self.game.nature
 
 
-class DistributionStage(Stage, OpenMixin):
-    def open(self) -> None:
-        self.game.env._actor = self.game.nature
-
-
-class BettingStage(Stage, OpenMixin, CloseMixin, ABC):
+class BettingStage(MidStage, CloseMixin, ABC):
     @property
     def min_amount(self) -> int:
         player = cast(PokerPlayer, self.game.env.actor)
@@ -70,24 +82,25 @@ class BettingStage(Stage, OpenMixin, CloseMixin, ABC):
         pass
 
     @property
-    def opener(self) -> Union[PokerNature, PokerPlayer]:
-        try:
-            opener = min(self.game.players, key=lambda player: player.bet)
+    def opener(self) -> PokerPlayer:
+        opener = min(self.game.players, key=lambda player: player.bet)
 
-            return next(player for player in rotate(self.game.players, opener.index) if player._is_relevant)
-        except StopIteration:
-            return self.game.nature
+        return next(player for player in rotate(self.game.players, opener.index) if player._is_relevant)
 
     @property
     def initial_max_delta(self) -> int:
         return max(self.game.env.blinds)
 
-    def open(self) -> None:
-        self.game.env._actor = self.opener
+    @property
+    def skip(self) -> bool:
+        return super().skip or all(not player._is_relevant for player in self.game.players)
 
-        if isinstance(self.game.env._actor, PokerPlayer):
-            self.game.env._max_delta = self.initial_max_delta
-            self.game.env._aggressor = self.game.env._actor
+    def open(self) -> None:
+        super().open()
+
+        self.game.env._actor = self.opener
+        self.game.env._max_delta = self.initial_max_delta
+        self.game.env._aggressor = self.game.env._actor
 
     def close(self) -> None:
         self.game.env._requirement = max(player._commitment for player in self.game.players)
@@ -101,6 +114,8 @@ class NLBettingStage(BettingStage):
         return player.bet + player.stack
 
 
-class ShowdownStage(Stage, OpenMixin):
+class ShowdownStage(MidStage):
     def open(self) -> None:
+        super().open()
+
         self.game.env._actor = self.game.env._aggressor

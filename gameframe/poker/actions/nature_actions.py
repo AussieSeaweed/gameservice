@@ -21,7 +21,6 @@ class SetupAction(PokerAction[PokerNature]):
 
         self.change_stage()
 
-    @property
     def verify(self) -> None:
         super().verify()
 
@@ -30,7 +29,7 @@ class SetupAction(PokerAction[PokerNature]):
 
 
 class DealingAction(PokerAction[PokerNature], ABC):
-    def __init__(self, game: PokerGame, actor: PokerNature, cards: Sequence[CardLike]):
+    def __init__(self, game: PokerGame, actor: PokerNature, *cards: CardLike):
         super().__init__(game, actor)
 
         self.cards = [parse(card) for card in cards]
@@ -64,8 +63,8 @@ class DealingAction(PokerAction[PokerNature], ABC):
 
 
 class HoleCardDealingAction(DealingAction):
-    def __init__(self, game: PokerGame, actor: PokerNature, player: PokerPlayer, cards: Sequence[CardLike]):
-        super().__init__(game, actor, cards)
+    def __init__(self, game: PokerGame, actor: PokerNature, player: PokerPlayer, *cards: CardLike):
+        super().__init__(game, actor, *cards)
 
         self.player = player
 
@@ -138,5 +137,5 @@ class DistributionAction(PokerAction[PokerNature]):
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.actor, DistributionStage):
+        if not isinstance(self.game.env._stage, DistributionStage):
             raise ValueError('Cannot distribute yet')

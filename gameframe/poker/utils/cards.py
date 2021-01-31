@@ -67,6 +67,9 @@ class Card:
         else:
             return NotImplemented
 
+    def __hash__(self) -> int:
+        return hash(self.rank) ^ hash(self.suit)
+
     @property
     def rank(self) -> Rank:
         """
@@ -90,8 +93,8 @@ class HoleCard(Card):
 
         self._status = status
 
-    def __repr__(self) -> str:
-        return super().__repr__() if self._status else f'({super().__repr__()})'
+    def __str__(self) -> str:
+        return repr(self) if self._status else f'{repr(self)} (hidden)'
 
     @property
     def status(self) -> bool:
