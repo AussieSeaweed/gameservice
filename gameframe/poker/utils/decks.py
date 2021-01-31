@@ -40,8 +40,11 @@ class StandardDeck(Deck):
         return [Card(rank, suit) for rank in Rank for suit in Suit]
 
 
-class SixPlusDeck(Deck):
-    """SixPlusDeck is the class for six-plus decks."""
+class ShortDeck(Deck):
+    """ShortDeck is the class for short decks.
+
+    The minimum rank of cards in short decks is 6.
+    """
 
     def _create_cards(self) -> MutableSequence[Card]:
         return [Card(rank, suit) for rank in Rank if not str(rank).isdigit() or int(str(rank)) >= 6 for suit in Suit]

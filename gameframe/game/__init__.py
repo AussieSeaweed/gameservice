@@ -1,4 +1,3 @@
-from gameframe.game.exceptions import ActionException, GameFrameException
-from gameframe.game.generics import Action, Actor, Env, Game
+from gameframe.game.bases import BaseActor, BaseEnv, BaseGame
 
-__all__ = ['ActionException', 'GameFrameException', 'Action', 'Actor', 'Env', 'Game']
+__all__ = ['BaseActor', 'BaseEnv', 'BaseGame']

@@ -1,3 +1,3 @@
-from gameframe.tictactoe.bases import TTTAction, TTTEnv, TTTGame, TTTNature, TTTPlayer
+from gameframe.tictactoe.bases import TTTEnv, TTTGame, TTTPlayer
 
-__all__ = ['TTTAction', 'TTTEnv', 'TTTGame', 'TTTNature', 'TTTPlayer']
+__all__ = ['TTTEnv', 'TTTGame', 'TTTPlayer']

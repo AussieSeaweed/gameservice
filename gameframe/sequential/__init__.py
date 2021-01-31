@@ -1,3 +1,3 @@
-from gameframe.sequential.generics import SeqAction, SeqEnv, SeqGame
+from gameframe.sequential.bases import BaseSeqEnv, BaseSeqGame
 
-__all__ = ['SeqAction', 'SeqEnv', 'SeqGame']
+__all__ = ['BaseSeqEnv', 'BaseSeqGame']

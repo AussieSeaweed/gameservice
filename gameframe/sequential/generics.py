@@ -9,13 +9,10 @@ E = TypeVar('E', bound=BaseSeqEnv, covariant=True)
 
 
 class SeqGame(Game[E, N, P], BaseSeqGame, ABC):
-    """SeqGame is the generic abstract base class for all sequential games."""
     pass
 
 
 class SeqEnv(Env[G], BaseSeqEnv, Generic[G, N, P], ABC):
-    """SeqEnv is the generic abstract base class for all sequential environments."""
-
     def __init__(self, game: G, actor: Optional[Union[N, P]]):
         super().__init__(game)
 
@@ -27,8 +24,8 @@ class SeqEnv(Env[G], BaseSeqEnv, Generic[G, N, P], ABC):
 
 
 class SeqAction(Action[G, A], ABC):
-    """SeqAction is the generic abstract base class for all sequential actions."""
+    def verify(self) -> None:
+        super().verify()
 
-    @property
-    def is_applicable(self) -> bool:
-        return super().is_applicable and self.game.env.actor is self.actor
+        if self.game.env.actor is not self.actor:
+            raise ValueError('Actor not in turn')

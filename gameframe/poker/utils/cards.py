@@ -1,7 +1,8 @@
-from enum import Enum
-from typing import Any
+from enum import Enum, unique
+from typing import Any, Union
 
 
+@unique
 class Rank(Enum):
     """Rank is the enum for ranks."""
     TWO = '2'
@@ -18,13 +19,30 @@ class Rank(Enum):
     KING = 'K'
     ACE = 'A'
 
+    def __lt__(self, other: Any) -> bool:
+        if isinstance(other, Rank):
+            ranks = list(Rank)
 
+            return ranks.index(self) < ranks.index(other)
+        else:
+            return NotImplemented
+
+
+@unique
 class Suit(Enum):
     """Suit is the enum for suits."""
     CLUB = 'c'
     DIAMOND = 'd'
     HEART = 'h'
     SPADE = 's'
+
+    def __lt__(self, other: Any) -> bool:
+        if isinstance(other, Suit):
+            suits = list(Suit)
+
+            return suits.index(self) < suits.index(other)
+        else:
+            return NotImplemented
 
 
 class Card:
@@ -39,27 +57,28 @@ class Card:
 
     def __lt__(self, other: Any) -> bool:
         if isinstance(other, Card):
-            ranks, suits = list(Rank), list(Suit)
-
-            if ranks.index(self.__rank) == ranks.index(other.__rank):
-                return suits.index(self.__suit) < suits.index(other.__suit)
-            else:
-                return ranks.index(self.__rank) < ranks.index(other.__rank)
+            return self.__suit < other.__suit if self.__rank == other.__rank else self.__rank < other.__rank
         else:
-            raise NotImplemented
+            return NotImplemented
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Card):
             return self.rank == other.rank and self.suit == other.suit
         else:
-            raise NotImplemented
+            return NotImplemented
 
     @property
     def rank(self) -> Rank:
+        """
+        :return: the rank of this card
+        """
         return self.__rank
 
     @property
     def suit(self) -> Suit:
+        """
+        :return: the suit of this card
+        """
         return self.__suit
 
 
@@ -72,10 +91,28 @@ class HoleCard(Card):
         self._status = status
 
     def __repr__(self) -> str:
-        value = super().__repr__()
-
-        return value if self._status else value + ' (hidden)'
+        return super().__repr__() if self._status else f'({super().__repr__()})'
 
     @property
     def status(self) -> bool:
+        """
+        :return: the status of this card
+        """
         return self._status
+
+
+CardLike = Union[str, Card]
+
+
+def parse(card: CardLike) -> Card:
+    """Parses the card-like object.
+
+    :param card: the card-like object
+    :return: the parsed card
+    """
+    if isinstance(card, str) and len(card) == 2:
+        return Card(Rank(card[0]), Suit(card[1]))
+    elif isinstance(card, Card):
+        return card
+    else:
+        raise TypeError('Invalid card type')

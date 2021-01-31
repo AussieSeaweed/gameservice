@@ -37,7 +37,7 @@ class TreysHand(Hand):
         if isinstance(other, TreysHand):
             return self.__hand_rank > other.__hand_rank
         else:
-            raise NotImplemented
+            return NotImplemented
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, TreysHand):

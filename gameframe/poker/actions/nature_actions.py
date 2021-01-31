@@ -1,24 +1,14 @@
+from abc import ABC, abstractmethod
 from itertools import zip_longest
-from typing import Generic, Sequence, TypeVar, cast
+from typing import Sequence, cast
 
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
-from gameframe.poker.rounds import DealingRound, SetupRound, ShowdownRound
-from gameframe.poker.utils import Card, HoleCard
+from gameframe.poker.stages import DealingStage, DistributionStage, SetupStage
+from gameframe.poker.utils import HoleCard
+from gameframe.poker.utils.cards import CardLike, parse
 
-C = TypeVar('C', bound=Card)
 
-
-class SetupAction(PokerAction[PokerNature], Generic[C]):
-    """SetupAction is the class for game setups."""
-
-    def __repr__(self) -> str:
-        return 'Set up'
-
-    @property
-    def is_applicable(self) -> bool:
-        return super().is_applicable and isinstance(self.actor, PokerNature) \
-               and isinstance(self.game.env._round, SetupRound)
-
+class SetupAction(PokerAction[PokerNature]):
     def act(self) -> None:
         super().act()
 
@@ -29,86 +19,91 @@ class SetupAction(PokerAction[PokerNature], Generic[C]):
 
         self.game.env._requirement = self.game.env.ante
 
-        self._change_round()
+        self.change_stage()
+
+    @property
+    def verify(self) -> None:
+        super().verify()
+
+        if not isinstance(self.game.env._stage, SetupStage):
+            raise ValueError('Already set up')
 
 
-class DealingAction(PokerAction[PokerNature], Generic[C]):
-    """DealingAction is the class for card dealings."""
-
-    def __init__(self, game: PokerGame, actor: PokerNature, cards: Sequence[C]):
+class DealingAction(PokerAction[PokerNature], ABC):
+    def __init__(self, game: PokerGame, actor: PokerNature, cards: Sequence[CardLike]):
         super().__init__(game, actor)
 
-        self._cards = cards
-
-    def __repr__(self) -> str:
-        return 'Deal (' + ', '.join(map(str, self._cards)) + ')'
-
-    @property
-    def is_applicable(self) -> bool:
-        return super().is_applicable and isinstance(self.actor, PokerNature) \
-               and isinstance(self.game.env._round, DealingRound) \
-               and all(card in self.game.env._deck for card in self._cards)
+        self.cards = [parse(card) for card in cards]
 
     def act(self) -> None:
         super().act()
 
-        self.game.env._deck.remove(self._cards)
+        self.deal()
+        self.game.env._deck.remove(self.cards)
+
+        stage = cast(DealingStage, self.game.env._stage)
+
+        if all(len(player._hole_cards) == stage.target_hole_card_count
+               for player in self.game.players if not player.is_mucked) \
+                and len(self.game.env.board_cards) == stage.target_board_card_count:
+            self.change_stage()
+
+    def verify(self) -> None:
+        super().verify()
+
+        if not isinstance(self.game.env._stage, DealingStage):
+            raise ValueError('Dealing not allowed')
+        elif any(card not in self.game.env._deck for card in self.cards):
+            raise ValueError('Card not in deck')
+        elif len(self.cards) != len(set(self.cards)):
+            raise ValueError('Duplicates in cards')
+
+    @abstractmethod
+    def deal(self) -> None:
+        pass
 
 
-class HoleCardDealingAction(DealingAction[HoleCard]):
-    """HoleCardDealingAction is the class for hole card dealings."""
+class HoleCardDealingAction(DealingAction):
+    def __init__(self, game: PokerGame, actor: PokerNature, player: PokerPlayer, cards: Sequence[CardLike]):
+        super().__init__(game, actor, cards)
 
-    def __repr__(self) -> str:
-        return super().__repr__() + ' as hole cards'
+        self.player = player
 
-    @property
-    def is_applicable(self) -> bool:
-        return super().is_applicable \
-               and any(len(player.hole_cards) < cast(DealingRound, self.game.env._round)._target_hole_card_count
-                       for player in self.game.players if not player.is_mucked)
+    def deal(self) -> None:
+        stage = cast(DealingStage, self.game.env._stage)
 
-    def act(self) -> None:
-        super().act()
+        self.player._hole_cards.extend(
+            HoleCard(card, status) for card, status in zip(self.cards, stage.hole_card_statuses))
 
-        active_players = list(filter(lambda player: not player.is_mucked, self.game.players))
-        hole_card_count = min(len(player.hole_cards) for player in active_players)
+    def verify(self) -> None:
+        super().verify()
 
-        player = next(player for player in active_players if len(player.hole_cards) == hole_card_count)
-        player._hole_cards.extend(self._cards)
+        stage = cast(DealingStage, self.game.env._stage)
+
+        if len(self.player._hole_cards) >= stage.target_hole_card_count:
+            raise ValueError('The player already has enough hole cards')
+        elif len(self.cards) != len(stage.hole_card_statuses):
+            raise ValueError('Invalid number of hole cards are dealt')
+        elif self.player.is_mucked:
+            raise ValueError('Cannot deal to mucked player')
 
 
-class BoardCardDealingAction(DealingAction[Card]):
-    """BoardCardDealingAction is the class for board card dealings."""
+class BoardCardDealingAction(DealingAction):
+    def deal(self) -> None:
+        self.game.env._board_cards.extend(self.cards)
 
-    def __repr__(self) -> str:
-        return super().__repr__() + ' as board cards'
+    def verify(self) -> None:
+        super().verify()
 
-    @property
-    def is_applicable(self) -> bool:
-        return super().is_applicable \
-               and any(len(player.hole_cards) == cast(DealingRound, self.game.env._round)._target_hole_card_count
-                       for player in self.game.players if not player.is_mucked) \
-               and len(self.game.env.board_cards) < cast(DealingRound, self.game.env._round)._target_board_card_count
+        stage = cast(DealingStage, self.game.env._stage)
 
-    def act(self) -> None:
-        super().act()
-
-        self.game.env._board_cards.extend(self._cards)
-
-        self._change_round()
+        if len(self.game.env.board_cards) >= stage.target_board_card_count:
+            raise ValueError('The board already has enough cards')
+        elif len(self.cards) != stage.board_card_count:
+            raise ValueError('Invalid number of board cards are dealt')
 
 
 class DistributionAction(PokerAction[PokerNature]):
-    """DistributionAction is the class for pot distributions."""
-
-    def __repr__(self) -> str:
-        return 'Distribute'
-
-    @property
-    def is_applicable(self) -> bool:
-        return super().is_applicable and isinstance(self.actor, PokerNature) \
-               and isinstance(self.game.env._round, ShowdownRound)
-
     def act(self) -> None:
         super().act()
 
@@ -139,3 +134,9 @@ class DistributionAction(PokerAction[PokerNature]):
                 side_pot += entitlement - base
 
         return side_pot
+
+    def verify(self) -> None:
+        super().verify()
+
+        if not isinstance(self.actor, DistributionStage):
+            raise ValueError('Cannot distribute yet')

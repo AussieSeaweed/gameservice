@@ -1,10 +1,7 @@
-from __future__ import annotations
-
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Generic, Sequence, TypeVar
 
-from gameframe.game.bases import BaseAction, BaseActor, BaseEnv, BaseGame
-from gameframe.game.exceptions import ActionException
+from gameframe.game.bases import BaseActor, BaseEnv, BaseGame
 
 G = TypeVar('G', bound=BaseGame, covariant=True)
 E = TypeVar('E', bound=BaseEnv, covariant=True)
@@ -13,9 +10,7 @@ P = TypeVar('P', bound=BaseActor, covariant=True)
 A = TypeVar('A', bound=BaseActor, covariant=True)
 
 
-class Game(Generic[E, N, P], ABC):
-    """Game is the generic abstract base class for all games."""
-
+class Game(BaseGame, Generic[E, N, P], ABC):
     def __init__(self, env: E, nature: N, players: Sequence[P]):
         self.__env = env
         self.__nature = nature
@@ -35,8 +30,6 @@ class Game(Generic[E, N, P], ABC):
 
 
 class Env(BaseEnv, Generic[G], ABC):
-    """Env is the generic abstract base class for all environments."""
-
     def __init__(self, game: G):
         self.__game = game
 
@@ -46,8 +39,6 @@ class Env(BaseEnv, Generic[G], ABC):
 
 
 class Actor(BaseActor, Generic[G], ABC):
-    """Actor is the generic abstract base class for all actors."""
-
     def __init__(self, game: G):
         self.__game = game
 
@@ -55,31 +46,17 @@ class Actor(BaseActor, Generic[G], ABC):
     def game(self) -> G:
         return self.__game
 
-    @property
-    @abstractmethod
-    def actions(self: A) -> Sequence[Action[G, A]]:
-        pass
 
-
-class Action(BaseAction, Generic[G, A], ABC):
-    """Action is the generic abstract base class for all actions."""
-
+class Action(Generic[G, A], ABC):
     def __init__(self, game: G, actor: A):
-        self.__game = game
-        self.__actor = actor
-
-    @property
-    def game(self) -> G:
-        return self.__game
-
-    @property
-    def actor(self) -> A:
-        return self.__actor
-
-    @property
-    def is_applicable(self) -> bool:
-        return not self.game.is_terminal and (self.actor is self.game.nature or self.actor in self.game.players)
+        self.game = game
+        self.actor = actor
 
     def act(self) -> None:
-        if not self.is_applicable:
-            raise ActionException()
+        self.verify()
+
+    def verify(self) -> None:
+        if self.game.is_terminal:
+            raise ValueError('Action applied to a terminal game')
+        elif self.actor is not self.game.nature and self.actor not in self.game.players:
+            raise ValueError('Actor is not in the game')

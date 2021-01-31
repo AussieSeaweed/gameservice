@@ -50,9 +50,6 @@ class BaseEnv(ABC):
     is public.
     """
 
-    def __repr__(self) -> str:
-        return 'Env'
-
     @property
     @abstractmethod
     def game(self) -> BaseGame:
@@ -74,74 +71,10 @@ class BaseActor(ABC):
     information, all the public information of other actors, and the private information of itself.
     """
 
-    def __repr__(self) -> str:
-        try:
-            return f'Player {self.index}'
-        except ValueError:
-            return 'Nature'
-
-    @property
-    def index(self) -> int:
-        try:
-            return self.game.players.index(self)
-        except ValueError:
-            raise ValueError('The nature does not have an associated index')
-
     @property
     @abstractmethod
     def game(self) -> BaseGame:
         """
         :return: the game of this actor
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def actions(self) -> Sequence[BaseAction]:
-        """
-        :return: the actions of this actor
-        """
-        pass
-
-
-class BaseAction(ABC):
-    """BaseAction is the abstract base class for all actions."""
-
-    @abstractmethod
-    def __repr__(self) -> str:
-        pass
-
-    @property
-    @abstractmethod
-    def game(self) -> BaseGame:
-        """
-        :return: the game of this action
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def actor(self) -> BaseActor:
-        """
-        :return: the actor of this action
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def is_applicable(self) -> bool:
-        """
-        :return: True if this action can be applied else False
-        """
-        pass
-
-    @abstractmethod
-    def act(self) -> None:
-        """Applies this action to the game.
-
-        The overridden act method should first call the super method and then make the changes in the game.
-
-        :return: None
-        :raise ActionException: if this action cannot be applied
         """
         pass
