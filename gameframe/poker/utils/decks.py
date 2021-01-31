@@ -1,21 +1,23 @@
 from abc import ABC, abstractmethod
-from random import shuffle
-from typing import Iterable, Iterator
-from typing import MutableSequence
+from typing import Collection, Iterable, Iterator, MutableSequence
 
 from gameframe.poker.utils.cards import Card, Rank, Suit
 
 
-class Deck(Iterable[Card], ABC):
+class Deck(Collection[Card], ABC):
     """Deck is the abstract base class for all decks."""
 
     def __init__(self) -> None:
         self.__cards = self._create_cards()
 
-        shuffle(self.__cards)
-
     def __iter__(self) -> Iterator[Card]:
         return iter(self.__cards)
+
+    def __len__(self) -> int:
+        return len(self.__cards)
+
+    def __contains__(self, __x: object) -> bool:
+        return __x in self.__cards
 
     def remove(self, cards: Iterable[Card]) -> None:
         """Removes the cards from the deck.

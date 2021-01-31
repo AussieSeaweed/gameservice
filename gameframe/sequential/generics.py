@@ -1,10 +1,7 @@
-from __future__ import annotations
-
 from abc import ABC
 from typing import Generic, Optional, TypeVar, Union
 
-from gameframe.game.bases import A
-from gameframe.game.generics import Action, Env, Game, N, P
+from gameframe.game.generics import A, Action, Env, Game, N, P
 from gameframe.sequential.bases import BaseSeqEnv, BaseSeqGame
 
 G = TypeVar('G', bound=BaseSeqGame, covariant=True)
@@ -34,4 +31,4 @@ class SeqAction(Action[G, A], ABC):
 
     @property
     def is_applicable(self) -> bool:
-        return super().is_applicable and self._game.env.actor is self._actor
+        return super().is_applicable and self.game.env.actor is self.actor

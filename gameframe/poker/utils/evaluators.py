@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from itertools import combinations
-from typing import Collection, Optional
+from typing import Collection
 
 from gameframe.poker.utils.cards import Card
 from gameframe.poker.utils.hands import Hand, TreysHand
@@ -10,7 +10,7 @@ class Evaluator(ABC):
     """Evaluator is the abstract base class for all evaluators."""
 
     @abstractmethod
-    def hand(self, hole_cards: Collection[Card], board_cards: Collection[Card]) -> Optional[Hand]:
+    def hand(self, hole_cards: Collection[Card], board_cards: Collection[Card]) -> Hand:
         """Evaluates the hand of the combinations of the hole cards and the board cards.
 
         If the number of cards are insufficient, None is returned
@@ -25,9 +25,9 @@ class Evaluator(ABC):
 class StandardEvaluator(Evaluator):
     """StandardEvaluator is the class for standard evaluators"""
 
-    def hand(self, hole_cards: Collection[Card], board_cards: Collection[Card]) -> Optional[Hand]:
+    def hand(self, hole_cards: Collection[Card], board_cards: Collection[Card]) -> Hand:
         if len(hole_cards) + len(board_cards) < 5:
-            return None
+            raise ValueError('Insufficient number of cards')
         else:
             return TreysHand(hole_cards, board_cards)
 
@@ -35,32 +35,12 @@ class StandardEvaluator(Evaluator):
 class GreekHoldEmEvaluator(StandardEvaluator):
     """GreekHoldEmEvaluator is the class for greek hold'em evaluators"""
 
-    def hand(self, hole_cards: Collection[Card], board_cards: Collection[Card]) -> Optional[Hand]:
-        hand = None
-
-        for combination in combinations(board_cards, 3):
-            cur_hand = super().hand(hole_cards, combination)
-
-            if hand is None:
-                hand = cur_hand
-            elif cur_hand is not None:
-                hand = min(hand, cur_hand)
-
-        return hand
+    def hand(self, hole_cards: Collection[Card], board_cards: Collection[Card]) -> Hand:
+        return max(super().hand(hole_cards, combination) for combination in combinations(board_cards, 3))
 
 
 class OmahaHoldEmEvaluator(GreekHoldEmEvaluator):
     """OmahaHoldEmEvaluator is the class for omaha hold'em evaluators"""
 
-    def hand(self, hole_cards: Collection[Card], board_cards: Collection[Card]) -> Optional[Hand]:
-        hand = None
-
-        for combination in combinations(hole_cards, 2):
-            cur_hand = super().hand(combination, board_cards)
-
-            if hand is None:
-                hand = cur_hand
-            elif cur_hand is not None:
-                hand = min(hand, cur_hand)
-
-        return hand
+    def hand(self, hole_cards: Collection[Card], board_cards: Collection[Card]) -> Hand:
+        return max(super().hand(combination, board_cards) for combination in combinations(hole_cards, 2))

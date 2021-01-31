@@ -9,8 +9,3 @@ class PlayerCountException(GameFrameException):
 class BlindConfigException(GameFrameException):
     """The blind configuration is invalid."""
     pass
-
-
-class IllegalStateException(GameFrameException):
-    """The program is in an invalid state."""
-    pass

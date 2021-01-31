@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Any
 
 
 class Rank(Enum):
@@ -35,6 +36,23 @@ class Card:
 
     def __str__(self) -> str:
         return self.rank.value + self.suit.value
+
+    def __lt__(self, other: Any) -> bool:
+        if isinstance(other, Card):
+            ranks, suits = list(Rank), list(Suit)
+
+            if ranks.index(self.__rank) == ranks.index(other.__rank):
+                return suits.index(self.__suit) < suits.index(other.__suit)
+            else:
+                return ranks.index(self.__rank) < ranks.index(other.__rank)
+        else:
+            raise NotImplemented
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, Card):
+            return self.rank == other.rank and self.suit == other.suit
+        else:
+            raise NotImplemented
 
     @property
     def rank(self) -> Rank:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generic, Sequence, TypeVar
+from typing import Sequence
 
 
 class BaseGame(ABC):
@@ -49,7 +49,14 @@ class BaseEnv(ABC):
     The environment contains global information about a game state that does not belong to any actor in particular and
     is public.
     """
-    pass
+
+    @property
+    @abstractmethod
+    def game(self) -> BaseGame:
+        """
+        :return: the game of this environment
+        """
+        pass
 
 
 class BaseActor(ABC):
@@ -66,18 +73,39 @@ class BaseActor(ABC):
 
     @property
     @abstractmethod
-    def actions(self: A) -> Sequence[BaseAction[A]]:
+    def game(self) -> BaseGame:
+        """
+        :return: the game of this actor
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def actions(self) -> Sequence[BaseAction]:
         """
         :return: the actions of this actor
         """
         pass
 
 
-A = TypeVar('A', bound=BaseActor, covariant=True)
-
-
-class BaseAction(Generic[A], ABC):
+class BaseAction(ABC):
     """BaseAction is the abstract base class for all actions."""
+
+    @property
+    @abstractmethod
+    def game(self) -> BaseGame:
+        """
+        :return: the game of this action
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def actor(self) -> BaseActor:
+        """
+        :return: the actor of this action
+        """
+        pass
 
     @property
     @abstractmethod
@@ -87,6 +115,7 @@ class BaseAction(Generic[A], ABC):
         """
         pass
 
+    @abstractmethod
     def act(self) -> None:
         """Applies this action to the game.
 
