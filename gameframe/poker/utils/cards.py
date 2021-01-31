@@ -34,7 +34,7 @@ class Card:
         self.__rank = rank
         self.__suit = suit
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return self.rank.value + self.suit.value
 
     def __lt__(self, other: Any) -> bool:
@@ -71,8 +71,8 @@ class HoleCard(Card):
 
         self._status = status
 
-    def __str__(self) -> str:
-        value = super().__str__()
+    def __repr__(self) -> str:
+        value = super().__repr__()
 
         return value if self._status else value + ' (hidden)'
 

@@ -22,7 +22,7 @@ class Hand(ABC):
         pass
 
     @abstractmethod
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         pass
 
 
@@ -48,5 +48,5 @@ class TreysHand(Hand):
     def __hash__(self) -> int:
         return hash(self.__hand_rank)
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return str(self.treys_evaluator.class_to_string(self.treys_evaluator.get_rank_class(self.__hand_rank)))

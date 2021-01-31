@@ -18,7 +18,7 @@ class BettingAction(PokerAction[PokerPlayer], ABC):
 class FoldAction(BettingAction):
     """FoldAction is the class for folds."""
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return 'Fold'
 
     @property
@@ -43,7 +43,7 @@ class FoldAction(BettingAction):
 class CheckCallAction(BettingAction):
     """CheckCallAction is the class for checks and calls."""
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f'Call {self.__amount}' if self.__amount else 'Check'
 
     @property
@@ -68,7 +68,7 @@ class BetRaiseAction(BettingAction):
 
         self.__amount = amount
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return ('Raise ' if any(player.bet for player in self.game.players) else 'Bet ') + str(self.__amount)
 
     @property
@@ -97,7 +97,7 @@ class ShowdownAction(PokerAction[PokerPlayer]):
 
         self.__show = show
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return 'Show Cards' if self.__show else 'Showdown'
 
     @property
@@ -106,8 +106,8 @@ class ShowdownAction(PokerAction[PokerPlayer]):
                and isinstance(self.game.env._round, ShowdownRound)
 
     def act(self) -> None:
-        players = list(filter(lambda p: not p.is_mucked, rotate(self.game.players, self.game.players.index(
-            self.game.env._aggressor))))
+        index = 0 if self.game.env._aggressor is None else self.game.env._aggressor.index
+        players = list(filter(lambda p: not p.is_mucked, rotate(self.game.players, index)))
 
         for player in players[:players.index(self.actor)]:
             if player.hand < self.actor.hand and player._commitment >= self.actor._commitment:

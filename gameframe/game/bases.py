@@ -50,6 +50,9 @@ class BaseEnv(ABC):
     is public.
     """
 
+    def __repr__(self) -> str:
+        return 'Env'
+
     @property
     @abstractmethod
     def game(self) -> BaseGame:
@@ -71,6 +74,19 @@ class BaseActor(ABC):
     information, all the public information of other actors, and the private information of itself.
     """
 
+    def __repr__(self) -> str:
+        try:
+            return f'Player {self.index}'
+        except ValueError:
+            return 'Nature'
+
+    @property
+    def index(self) -> int:
+        try:
+            return self.game.players.index(self)
+        except ValueError:
+            raise ValueError('The nature does not have an associated index')
+
     @property
     @abstractmethod
     def game(self) -> BaseGame:
@@ -90,6 +106,10 @@ class BaseActor(ABC):
 
 class BaseAction(ABC):
     """BaseAction is the abstract base class for all actions."""
+
+    @abstractmethod
+    def __repr__(self) -> str:
+        pass
 
     @property
     @abstractmethod

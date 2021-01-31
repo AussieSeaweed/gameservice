@@ -1,5 +1,5 @@
-from typing import Generic, Sequence, TypeVar, cast
 from itertools import zip_longest
+from typing import Generic, Sequence, TypeVar, cast
 
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
 from gameframe.poker.rounds import DealingRound, SetupRound, ShowdownRound
@@ -11,7 +11,7 @@ C = TypeVar('C', bound=Card)
 class SetupAction(PokerAction[PokerNature], Generic[C]):
     """SetupAction is the class for game setups."""
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return 'Set up'
 
     @property
@@ -40,7 +40,7 @@ class DealingAction(PokerAction[PokerNature], Generic[C]):
 
         self._cards = cards
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return 'Deal (' + ', '.join(map(str, self._cards)) + ')'
 
     @property
@@ -58,8 +58,8 @@ class DealingAction(PokerAction[PokerNature], Generic[C]):
 class HoleCardDealingAction(DealingAction[HoleCard]):
     """HoleCardDealingAction is the class for hole card dealings."""
 
-    def __str__(self) -> str:
-        return super().__str__() + ' as hole cards'
+    def __repr__(self) -> str:
+        return super().__repr__() + ' as hole cards'
 
     @property
     def is_applicable(self) -> bool:
@@ -73,15 +73,15 @@ class HoleCardDealingAction(DealingAction[HoleCard]):
         active_players = list(filter(lambda player: not player.is_mucked, self.game.players))
         hole_card_count = min(len(player.hole_cards) for player in active_players)
 
-        player = next(player for player in active_players if len(player.hole_cards) != hole_card_count)
+        player = next(player for player in active_players if len(player.hole_cards) == hole_card_count)
         player._hole_cards.extend(self._cards)
 
 
 class BoardCardDealingAction(DealingAction[Card]):
     """BoardCardDealingAction is the class for board card dealings."""
 
-    def __str__(self) -> str:
-        return super().__str__() + ' as board cards'
+    def __repr__(self) -> str:
+        return super().__repr__() + ' as board cards'
 
     @property
     def is_applicable(self) -> bool:
@@ -101,7 +101,7 @@ class BoardCardDealingAction(DealingAction[Card]):
 class DistributionAction(PokerAction[PokerNature]):
     """DistributionAction is the class for pot distributions."""
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return 'Distribute'
 
     @property

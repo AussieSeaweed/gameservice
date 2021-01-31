@@ -19,12 +19,12 @@ class PokerGame(SeqGame['PokerEnv', 'PokerNature', 'PokerPlayer'], ABC):
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self, deck: Deck, evaluator: Evaluator, rounds: Sequence[BaseRound], ante: int, blinds: Sequence[int],
+    def __init__(self, rounds: Sequence[BaseRound], deck: Deck, evaluator: Evaluator, ante: int, blinds: Sequence[int],
                  stacks: Sequence[int]):
         nature = PokerNature(self)
 
-        super().__init__(PokerEnv(self, nature, deck, evaluator, rounds, ante, blinds), nature,
-                         [PokerPlayer(self, stack) for stack in range(len(stacks))])
+        super().__init__(PokerEnv(self, nature, rounds, deck, evaluator, ante, blinds), nature,
+                         [PokerPlayer(self, stack) for stack in stacks])
 
         if len(self.players) < 2:
             raise PlayerCountException()
@@ -35,23 +35,27 @@ class PokerGame(SeqGame['PokerEnv', 'PokerNature', 'PokerPlayer'], ABC):
 class PokerEnv(SeqEnv[PokerGame, 'PokerNature', 'PokerPlayer']):
     """PokerEnv is the class for poker environments."""
 
-    def __init__(self, game: PokerGame, actor: PokerNature, deck: Deck, evaluator: Evaluator,
-                 rounds: Sequence[BaseRound], ante: int, blinds: Sequence[int]):
+    def __init__(self, game: PokerGame, actor: PokerNature, rounds: Sequence[BaseRound], deck: Deck,
+                 evaluator: Evaluator, ante: int, blinds: Sequence[int]):
         from gameframe.poker.rounds import SetupRound
+
         super().__init__(game, actor)
+
+        self._rounds: Sequence[BaseRound] = rounds
+        self._round: BaseRound = SetupRound(game)
 
         self._deck = deck
         self._evaluator = evaluator
-        self._rounds: Sequence[BaseRound] = rounds
         self.__ante = ante
         self.__blinds = blinds
 
-        self._round: BaseRound = SetupRound(game)
-
         self._board_cards: MutableSequence[Card] = []
-        self._aggressor: Optional[PokerPlayer] = game.players[0]
+        self._aggressor: Optional[PokerPlayer] = None
         self._max_delta = 0
         self._requirement = 0
+
+    def __str__(self) -> str:
+        return repr(self) + f' (pot: {self.pot}, board cards: (' + ', '.join(map(str, self.board_cards)) + '))'
 
     @property
     def ante(self) -> int:
@@ -148,7 +152,7 @@ class PokerPlayer(Actor[PokerGame], Iterator[Union[PokerNature, 'PokerPlayer']])
         self.__is_mucked = False
 
     def __next__(self) -> Union[PokerNature, PokerPlayer]:
-        player = self.game.players[(self.game.players.index(self) + 1) % len(self.game.players)]
+        player = self.game.players[(self.index + 1) % len(self.game.players)]
 
         if player is self.game.env._aggressor:
             return self.game.nature
@@ -156,6 +160,10 @@ class PokerPlayer(Actor[PokerGame], Iterator[Union[PokerNature, 'PokerPlayer']])
             return player
         else:
             return next(player)
+
+    def __str__(self) -> str:
+        return repr(self) + f' (stack: {self.stack}, bet: {self.bet}, hole cards: (' \
+               + ', '.join(map(str, self.hole_cards)) + '))'
 
     @property
     def bet(self) -> int:
