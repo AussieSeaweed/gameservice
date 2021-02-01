@@ -55,7 +55,11 @@ class TTTSimTestCase(TestCase):
         game = TTTGame()
 
         for i, (r, c) in enumerate(coords):
-            game.players[i % 2].mark(r, c)
+            try:
+                game.players[i % 2].mark(r, c)
+            except ActionException as exception:
+                assert i == len(coords) - 1, 'An exception was raised before all commands were parsed'
+                raise exception
 
         return game
 

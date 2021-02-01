@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Sequence, Union, cast
+from typing import Sequence, cast
 
-from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
-from gameframe.poker.exceptions import StageException
+from gameframe.poker.bases import PokerGame, PokerPlayer, Stage
 from gameframe.utils import rotate
 
 

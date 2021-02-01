@@ -3,8 +3,6 @@ from typing import cast
 
 from gameframe.game import ActionException
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
-from gameframe.poker.exceptions import (AmountOutOfBoundsException, CoveredStackException, RedundancyException,
-                                        StageException)
 from gameframe.poker.stages import BettingStage, ShowdownStage
 from gameframe.utils import rotate
 
@@ -14,7 +12,7 @@ class BettingAction(PokerAction[PokerPlayer], ABC):
         super().verify()
 
         if not isinstance(self.game.env._stage, BettingStage):
-            raise StageException('Not a betting round')
+            raise ActionException('Not a betting round')
 
 
 class FoldAction(BettingAction):
@@ -35,7 +33,7 @@ class FoldAction(BettingAction):
         super().verify()
 
         if self.actor.bet >= max(player.bet for player in self.game.players):
-            raise RedundancyException('Folding is redundant')
+            raise ActionException('Folding is redundant')
 
 
 class CheckCallAction(BettingAction):
@@ -75,11 +73,11 @@ class BetRaiseAction(BettingAction):
         stage = cast(BettingStage, self.game.env._stage)
 
         if max(player._commitment for player in self.game.players) >= self.actor._total:
-            raise CoveredStackException('The stack of the acting player is covered')
+            raise ActionException('The stack of the acting player is covered')
         elif all(not player._is_relevant for player in self.game.players if player is not self.actor):
-            raise RedundancyException('Betting/Raising is redundant')
+            raise ActionException('Betting/Raising is redundant')
         elif not stage.min_amount <= self.amount <= stage.max_amount:
-            raise AmountOutOfBoundsException('The bet/raise amount is not allowed')
+            raise ActionException('The bet/raise amount is not allowed')
 
 
 class ShowdownAction(PokerAction[PokerPlayer]):
