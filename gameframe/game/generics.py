@@ -2,6 +2,7 @@ from abc import ABC
 from typing import Generic, Sequence, TypeVar
 
 from gameframe.game.bases import BaseActor, BaseEnv, BaseGame
+from gameframe.game.exceptions import ActionException
 
 G = TypeVar('G', bound=BaseGame, covariant=True)
 E = TypeVar('E', bound=BaseEnv, covariant=True)
@@ -57,6 +58,4 @@ class Action(Generic[G, A], ABC):
 
     def verify(self) -> None:
         if self.game.is_terminal:
-            raise ValueError('Action applied to a terminal game')
-        elif self.actor is not self.game.nature and self.actor not in self.game.players:
-            raise ValueError('Actor is not in the game')
+            raise ActionException('Action applied to a terminal game')

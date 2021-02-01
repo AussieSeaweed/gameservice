@@ -9,11 +9,11 @@ G = TypeVar('G', bound=BaseSeqGame)
 class MCTestCaseMixin(Generic[G], ABC):
     @property
     @abstractmethod
-    def test_count(self) -> int:
+    def mc_test_count(self) -> int:
         pass
 
     def test_monte_carlo(self) -> None:
-        for i in range(self.test_count):
+        for i in range(self.mc_test_count):
             game = self.create_game()
 
             while game.env.actor is not None:

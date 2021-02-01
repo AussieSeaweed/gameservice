@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Sequence, Union, cast
 
 from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
+from gameframe.poker.exceptions import StageException
 from gameframe.utils import rotate
 
 
@@ -32,8 +33,7 @@ class MidStage(Stage, OpenMixin):
         return sum(not player.is_mucked for player in self.game.players) == 1
 
     def open(self) -> None:
-        if self.skip:
-            raise ValueError('Cannot open skipped round')
+        assert not self.skip, 'Cannot open skipped round'
 
 
 class DealingStage(MidStage):

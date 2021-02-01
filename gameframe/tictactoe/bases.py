@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Iterator, MutableSequence, Optional, Sequence
 
+from gameframe.game import ActionException
 from gameframe.game.generics import Actor
 from gameframe.sequential.generics import SeqAction, SeqEnv, SeqGame
 
@@ -97,6 +98,6 @@ class MarkAction(SeqAction[TTTGame, TTTPlayer]):
         super().verify()
 
         if not (0 <= self.r < 3 and 0 <= self.c < 3):
-            raise ValueError('The coords are out of bounds')
+            raise ActionException('The coords are out of bounds')
         elif self.game.env.board[self.r][self.c] is not None:
-            raise ValueError('The cell is not empty')
+            raise ActionException('The cell is not empty')

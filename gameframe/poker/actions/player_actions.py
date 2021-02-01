@@ -1,8 +1,11 @@
 from abc import ABC
 from typing import cast
 
+from gameframe.game import ActionException
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
-from gameframe.poker.stages import BettingStage, DistributionStage, ShowdownStage
+from gameframe.poker.exceptions import (AmountOutOfBoundsException, CoveredStackException, RedundancyException,
+                                        StageException)
+from gameframe.poker.stages import BettingStage, ShowdownStage
 from gameframe.utils import rotate
 
 
@@ -11,7 +14,7 @@ class BettingAction(PokerAction[PokerPlayer], ABC):
         super().verify()
 
         if not isinstance(self.game.env._stage, BettingStage):
-            raise ValueError('Not a betting round')
+            raise StageException('Not a betting round')
 
 
 class FoldAction(BettingAction):
@@ -32,7 +35,7 @@ class FoldAction(BettingAction):
         super().verify()
 
         if self.actor.bet >= max(player.bet for player in self.game.players):
-            raise ValueError('Folding is redundant')
+            raise RedundancyException('Folding is redundant')
 
 
 class CheckCallAction(BettingAction):
@@ -72,11 +75,11 @@ class BetRaiseAction(BettingAction):
         stage = cast(BettingStage, self.game.env._stage)
 
         if max(player._commitment for player in self.game.players) >= self.actor._total:
-            raise ValueError('The stack of the acting player is covered')
+            raise CoveredStackException('The stack of the acting player is covered')
         elif all(not player._is_relevant for player in self.game.players if player is not self.actor):
-            raise ValueError('Betting/Raising is redundant')
+            raise RedundancyException('Betting/Raising is redundant')
         elif not stage.min_amount <= self.amount <= stage.max_amount:
-            raise ValueError('The bet/raise amount is not allowed')
+            raise AmountOutOfBoundsException('The bet/raise amount is not allowed')
 
 
 class ShowdownAction(PokerAction[PokerPlayer]):
@@ -86,6 +89,8 @@ class ShowdownAction(PokerAction[PokerPlayer]):
         self.show = show
 
     def act(self) -> None:
+        super().act()
+
         index = 0 if self.game.env._aggressor is None else self.game.env._aggressor.index
         players = [player for player in rotate(self.game.players, index) if not player.is_mucked]
 
@@ -109,4 +114,4 @@ class ShowdownAction(PokerAction[PokerPlayer]):
         super().verify()
 
         if not isinstance(self.game.env._stage, ShowdownStage):
-            raise ValueError('Game not in showdown')
+            raise ActionException('Game not in showdown')

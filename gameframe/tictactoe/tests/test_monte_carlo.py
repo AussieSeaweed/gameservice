@@ -3,13 +3,12 @@ from typing import cast
 from unittest import TestCase, main
 
 from gameframe.sequential.tests.test_monte_carlo import MCTestCaseMixin
-from gameframe.tictactoe import TTTGame
-from gameframe.tictactoe.bases import MarkAction, TTTPlayer
+from gameframe.tictactoe import TTTGame, TTTPlayer
 
 
 class TTTMCTestCase(TestCase, MCTestCaseMixin[TTTGame]):
     @property
-    def test_count(self) -> int:
+    def mc_test_count(self) -> int:
         return 2000
 
     def verify(self, game: TTTGame) -> None:
@@ -21,7 +20,7 @@ class TTTMCTestCase(TestCase, MCTestCaseMixin[TTTGame]):
             assert game.env.winner is None and game.env.empty_coords
 
     def act(self, game: TTTGame) -> None:
-        choice([MarkAction(game, cast(TTTPlayer, game.env.actor), r, c) for r, c in game.env.empty_coords]).act()
+        cast(TTTPlayer, game.env.actor).mark(*choice([(r, c) for r, c in game.env.empty_coords]))
 
     def create_game(self) -> TTTGame:
         return TTTGame()

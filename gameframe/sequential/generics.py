@@ -1,6 +1,7 @@
 from abc import ABC
 from typing import Generic, Optional, TypeVar, Union
 
+from gameframe.game import ActionException
 from gameframe.game.generics import A, Action, Env, Game, N, P
 from gameframe.sequential.bases import BaseSeqEnv, BaseSeqGame
 
@@ -28,4 +29,4 @@ class SeqAction(Action[G, A], ABC):
         super().verify()
 
         if self.game.env.actor is not self.actor:
-            raise ValueError('Actor not in turn')
+            raise ActionException('Actor not in turn')

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC
+from itertools import zip_longest
 from typing import Iterator, MutableSequence, Optional, Sequence, TypeVar, Union
 
+from gameframe.game import ParamException
 from gameframe.game.generics import Actor
 from gameframe.poker.utils import Card, Deck, Evaluator, Hand, HoleCard
 from gameframe.poker.utils.cards import CardLike
@@ -27,13 +29,13 @@ class PokerGame(SeqGame['PokerEnv', 'PokerNature', 'PokerPlayer'], ABC):
                          [PokerPlayer(self, stack) for stack in stacks])
 
         if len(self.players) < 2:
-            raise ValueError('Poker needs at least 2 players')
-        elif blinds != sorted(blinds):
-            raise ValueError('Blinds have to be sorted')
+            raise ParamException('Poker needs at least 2 players')
+        elif any(a != b for a, b in zip_longest(blinds, sorted(blinds))):
+            raise ParamException('Blinds have to be sorted')
         elif ante > min(blinds):
-            raise ValueError('All blinds have to be greater than equal to the ante')
+            raise ParamException('All blinds have to be greater than equal to the ante')
         elif len(blinds) > len(self.players):
-            raise ValueError('There are more blinds than players')
+            raise ParamException('There are more blinds than players')
 
 
 class PokerEnv(SeqEnv[PokerGame, 'PokerNature', 'PokerPlayer']):

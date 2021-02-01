@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from itertools import zip_longest
-from typing import Sequence, cast
+from typing import cast
 
+from gameframe.game import ActionException
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
 from gameframe.poker.stages import DealingStage, DistributionStage, SetupStage
 from gameframe.poker.utils import HoleCard
@@ -25,7 +26,7 @@ class SetupAction(PokerAction[PokerNature]):
         super().verify()
 
         if not isinstance(self.game.env._stage, SetupStage):
-            raise ValueError('Already set up')
+            raise ActionException('Already set up')
 
 
 class DealingAction(PokerAction[PokerNature], ABC):
@@ -51,11 +52,11 @@ class DealingAction(PokerAction[PokerNature], ABC):
         super().verify()
 
         if not isinstance(self.game.env._stage, DealingStage):
-            raise ValueError('Dealing not allowed')
+            raise ActionException('Dealing not allowed')
         elif any(card not in self.game.env._deck for card in self.cards):
-            raise ValueError('Card not in deck')
+            raise ActionException('Card not in deck')
         elif len(self.cards) != len(set(self.cards)):
-            raise ValueError('Duplicates in cards')
+            raise ActionException('Duplicates in cards')
 
     @abstractmethod
     def deal(self) -> None:
@@ -80,11 +81,11 @@ class HoleCardDealingAction(DealingAction):
         stage = cast(DealingStage, self.game.env._stage)
 
         if len(self.player._hole_cards) >= stage.target_hole_card_count:
-            raise ValueError('The player already has enough hole cards')
+            raise ActionException('The player already has enough hole cards')
         elif len(self.cards) != len(stage.hole_card_statuses):
-            raise ValueError('Invalid number of hole cards are dealt')
+            raise ActionException('Invalid number of hole cards are dealt')
         elif self.player.is_mucked:
-            raise ValueError('Cannot deal to mucked player')
+            raise ActionException('Cannot deal to mucked player')
 
 
 class BoardCardDealingAction(DealingAction):
@@ -97,9 +98,9 @@ class BoardCardDealingAction(DealingAction):
         stage = cast(DealingStage, self.game.env._stage)
 
         if len(self.game.env.board_cards) >= stage.target_board_card_count:
-            raise ValueError('The board already has enough cards')
+            raise ActionException('The board already has enough cards')
         elif len(self.cards) != stage.board_card_count:
-            raise ValueError('Invalid number of board cards are dealt')
+            raise ActionException('Invalid number of board cards are dealt')
 
 
 class DistributionAction(PokerAction[PokerNature]):
@@ -138,4 +139,4 @@ class DistributionAction(PokerAction[PokerNature]):
         super().verify()
 
         if not isinstance(self.game.env._stage, DistributionStage):
-            raise ValueError('Cannot distribute yet')
+            raise ActionException('Cannot distribute yet')
