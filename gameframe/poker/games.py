@@ -5,8 +5,8 @@ from gameframe.poker.stages import DealingStage, NLBettingStage
 from gameframe.poker.utils import StandardDeck, StandardEvaluator
 
 
-class NLTexasHEGame(PokerGame):
-    """NLTexasHEGame is the class for no-limit texas hold'em games."""
+class NLTHEGame(PokerGame):
+    """NLTHEGame is the class for no-limit texas hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], stacks: Sequence[int]):
         super().__init__([

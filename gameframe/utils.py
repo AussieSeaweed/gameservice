@@ -1,6 +1,7 @@
+from typing import Sequence, TypeVar
+
 from gameframe.game import BaseGame
 from gameframe.sequential import BaseSeqGame
-from typing import Sequence, TypeVar
 
 T = TypeVar('T')
 

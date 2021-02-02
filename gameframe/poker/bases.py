@@ -33,7 +33,7 @@ class PokerGame(SeqGame['PokerEnv', 'PokerNature', 'PokerPlayer'], ABC):
         elif any(a != b for a, b in zip_longest(blinds, sorted(blinds))):
             raise ParamException('Blinds have to be sorted')
         elif ante > min(blinds):
-            raise ParamException('All blinds have to be greater than equal to the ante')
+            raise ParamException('All blinds have to be greater than or equal to the ante')
         elif len(blinds) > len(self.players):
             raise ParamException('There are more blinds than players')
 
@@ -163,7 +163,10 @@ class PokerPlayer(Actor[PokerGame], Iterator[Union[PokerNature, 'PokerPlayer']])
             return next(player)
 
     def __repr__(self) -> str:
-        return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self._hole_cards)) + '])'
+        if self.hole_cards is None:
+            return f'PokerPlayer({self.bet}, {self.stack})'
+        else:
+            return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self.hole_cards)) + '])'
 
     @property
     def bet(self) -> int:
@@ -274,7 +277,7 @@ A = TypeVar('A', PokerPlayer, PokerNature)
 
 class PokerAction(SeqAction[PokerGame, A], ABC):
     def change_stage(self) -> None:
-        from gameframe.poker.stages import OpenMixin, CloseMixin
+        from gameframe.poker.stages import CloseMixin, OpenMixin
 
         if isinstance(self.game.env._stage, CloseMixin):
             self.game.env._stage.close()
@@ -290,7 +293,7 @@ class Stage(Iterator['Stage'], ABC):
         self.game = game
 
     def __next__(self) -> Stage:
-        from gameframe.poker.stages import SetupStage, ShowdownStage, DistributionStage, MidStage
+        from gameframe.poker.stages import DistributionStage, MidStage, SetupStage, ShowdownStage
 
         if isinstance(self, SetupStage):
             stage = self.game.env._stages[0]

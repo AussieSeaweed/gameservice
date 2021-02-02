@@ -32,12 +32,14 @@ class MidStage(Stage, OpenMixin):
         return sum(not player.is_mucked for player in self.game.players) == 1
 
     def open(self) -> None:
-        assert not self.skip, 'Cannot open skipped round'
+        assert not self.skip, 'DEBUG: Cannot open skipped round'
 
 
 class DealingStage(MidStage):
     def __init__(self, game: PokerGame, hole_card_statuses: Sequence[bool], board_card_count: int):
         super().__init__(game)
+
+        assert hole_card_statuses or board_card_count, 'DEBUG: Need to deal at least one hole or board card'
 
         self.hole_card_statuses = hole_card_statuses
         self.board_card_count = board_card_count
@@ -71,9 +73,9 @@ class DealingStage(MidStage):
 class BettingStage(MidStage, CloseMixin, ABC):
     @property
     def min_amount(self) -> int:
-        player = cast(PokerPlayer, self.game.env.actor)
+        actor = cast(PokerPlayer, self.game.env.actor)
 
-        return min(max(p.bet for p in self.game.players) + self.game.env._max_delta, player.bet + player.stack)
+        return min(max(player.bet for player in self.game.players) + self.game.env._max_delta, actor.bet + actor.stack)
 
     @property
     @abstractmethod
@@ -116,5 +118,10 @@ class NLBettingStage(BettingStage):
 class ShowdownStage(MidStage):
     def open(self) -> None:
         super().open()
+
+        if self.game.env._aggressor is None:
+            self.game.env._aggressor = next(player for player in self.game.players if not player.is_mucked)
+
+            assert self.game.env._aggressor is self.game.players[0], 'DEBUG: the first player cannot be mucked'
 
         self.game.env._actor = self.game.env._aggressor

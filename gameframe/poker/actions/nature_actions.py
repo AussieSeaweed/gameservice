@@ -107,20 +107,24 @@ class DistributionAction(PokerAction[PokerNature]):
     def act(self) -> None:
         super().act()
 
-        players = list(filter(lambda p: not p.is_mucked, self.game.players))
+        players = list(filter(lambda player: not player.is_mucked, self.game.players))
+
+        if len(players) > 1:
+            players.sort(key=lambda player: (player.hand, -player._commitment), reverse=True)
+
         base = 0
 
-        for player in sorted(players, key=lambda p: (p.hand, -p._commitment), reverse=True):
-            side_pot = self.__side_pot(base, player)
+        for base_player in players:
+            side_pot = self.__side_pot(base, base_player)
 
-            recipients = list(filter(lambda p: p.hand == player.hand, players))
+            recipients = list(filter(lambda player: player is base_player or player.hand == base_player.hand, players))
 
             for recipient in recipients:
                 recipient._total += side_pot // len(recipients)
             else:
                 recipients[0]._total += side_pot % len(recipients)
 
-            base = max(base, player._commitment)
+            base = max(base, base_player._commitment)
 
         self.game.env._actor = None
 

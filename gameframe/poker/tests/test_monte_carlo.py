@@ -1,13 +1,13 @@
-# from random import choices, randint, random
+# from random import choices, randint
 # from typing import cast
 # from unittest import TestCase, main
 #
-# from gameframe.poker import NLTexasHEGame, PokerPlayer
+# from gameframe.poker import NLTHEGame, PokerPlayer
 # from gameframe.poker.stages import BettingStage, DealingStage, SetupStage, ShowdownStage
 # from gameframe.sequential.tests.test_monte_carlo import MCTestCaseMixin
 #
 #
-# class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTexasHEGame]):
+# class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
 #     ANTE = 1
 #     BLINDS = [1, 2]
 #     PLAYER_COUNT = 4
@@ -18,13 +18,13 @@
 #     def mc_test_count(self) -> int:
 #         return 10
 #
-#     def verify(self, game: NLTexasHEGame) -> None:
+#     def verify(self, game: NLTHEGame) -> None:
 #         super().verify(game)
 #
 #         assert game.env.pot + sum(player.bet + player.stack for player in game.players) \
 #                == sum(player._total for player in game.players), f'{game.players}\n{game.env}'
 #
-#     def act(self, game: NLTexasHEGame) -> None:
+#     def act(self, game: NLTHEGame) -> None:
 #         if isinstance(game.env._stage, SetupStage):
 #             game.nature.setup()
 #         elif isinstance(game.env._stage, DealingStage):
@@ -60,9 +60,9 @@
 #         else:
 #             game.nature.distribute()
 #
-#     def create_game(self) -> NLTexasHEGame:
-#         return NLTexasHEGame(self.ANTE, self.BLINDS,
-#                              [randint(self.MIN_STACK, self.MAX_STACK) for _ in range(self.PLAYER_COUNT)])
+#     def create_game(self) -> NLTHEGame:
+#         return NLTHEGame(self.ANTE, self.BLINDS,
+#                          [randint(self.MIN_STACK, self.MAX_STACK) for _ in range(self.PLAYER_COUNT)])
 #
 #
 # if __name__ == '__main__':
