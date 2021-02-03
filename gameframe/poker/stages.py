@@ -1,48 +1,28 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Sequence, Union, cast
+from typing import Optional, Sequence, cast
 
-from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
+from gameframe.poker.bases import MidStage, OpenStage, PokerGame, PokerNature, PokerPlayer, Stage
+from gameframe.poker.mixins import Closeable, Openable
 from gameframe.utils import rotate
 
 
-class OpenMixin(ABC):
-    @abstractmethod
-    def open(self) -> None:
-        pass
-
-
-class CloseMixin(ABC):
-    @abstractmethod
-    def close(self) -> None:
-        pass
-
-
-class OpenStage(Stage, OpenMixin, ABC):
-    @property
-    @abstractmethod
-    def opener(self) -> Union[PokerNature, PokerPlayer]:
-        pass
-
-    def open(self) -> None:
-        self.game.env._actor = self.opener
-
-
-class MidStage(OpenStage, ABC):
-    @property
-    def skip(self) -> bool:
-        return sum(not player.is_mucked for player in self.game.players) == 1
-
-    def open(self) -> None:
-        super().open()
-
-        assert not self.skip, 'DEBUG: Cannot open skipped round'
-
-
 class SetupStage(Stage):
-    pass
+    def __next__(self) -> MidStage:
+        return self.game.env._mid_stages[0]
+
+    @property
+    def is_skippable(self) -> bool:
+        return True
 
 
-class DistributionStage(OpenStage, OpenMixin):
+class DistributionStage(OpenStage, Openable):
+    def __next__(self) -> Stage:
+        raise StopIteration
+
+    @property
+    def is_skippable(self) -> bool:
+        return False
+
     @property
     def opener(self) -> PokerNature:
         return self.game.nature
@@ -52,8 +32,6 @@ class DealingStage(MidStage):
     def __init__(self, game: PokerGame, hole_card_statuses: Sequence[bool], board_card_count: int):
         super().__init__(game)
 
-        assert hole_card_statuses or board_card_count, 'DEBUG: Need to deal at least one hole or board card'
-
         self.hole_card_statuses = hole_card_statuses
         self.board_card_count = board_card_count
 
@@ -61,7 +39,7 @@ class DealingStage(MidStage):
     def target_hole_card_count(self) -> int:
         count = len(self.hole_card_statuses)
 
-        for stage in self.game.env._stages[:self.index]:
+        for stage in self.game.env._mid_stages[:self.index]:
             if isinstance(stage, DealingStage):
                 count += len(stage.hole_card_statuses)
 
@@ -71,18 +49,25 @@ class DealingStage(MidStage):
     def target_board_card_count(self) -> int:
         count = self.board_card_count
 
-        for stage in self.game.env._stages[:self.index]:
+        for stage in self.game.env._mid_stages[:self.index]:
             if isinstance(stage, DealingStage):
                 count += stage.board_card_count
 
         return count
 
     @property
+    def is_skippable(self) -> bool:
+        return super().is_skippable \
+               or (all(len(player._hole_cards) == self.target_hole_card_count for player in self.game.players if
+                       not player.is_mucked)
+                   and len(self.game.env.board_cards) == self.target_board_card_count)
+
+    @property
     def opener(self) -> PokerNature:
         return self.game.nature
 
 
-class BettingStage(MidStage, CloseMixin, ABC):
+class BettingStage(MidStage, Closeable, ABC):
     def __init__(self, game: PokerGame, initial_max_delta: int):
         super().__init__(game)
 
@@ -101,14 +86,16 @@ class BettingStage(MidStage, CloseMixin, ABC):
         pass
 
     @property
+    def is_skippable(self) -> bool:
+        return super().is_skippable \
+               or all(not player._is_relevant for player in self.game.players) \
+               or self.game.env.actor is self.aggressor
+
+    @property
     def opener(self) -> PokerPlayer:
         opener = min(self.game.players, key=lambda player: player.bet)
 
         return next(player for player in rotate(self.game.players, opener.index) if player._is_relevant)
-
-    @property
-    def skip(self) -> bool:
-        return super().skip or all(not player._is_relevant for player in self.game.players)
 
     def open(self) -> None:
         super().open()
@@ -127,16 +114,18 @@ class BettingStage(MidStage, CloseMixin, ABC):
 class NLBettingStage(BettingStage):
     @property
     def max_amount(self) -> int:
-        player = cast(PokerPlayer, self.game.env.actor)
-
-        return player.bet + player.stack
+        return cast(PokerPlayer, self.game.env.actor).bet + cast(PokerPlayer, self.game.env.actor).stack
 
 
 class ShowdownStage(MidStage):
     @property
+    def is_skippable(self) -> bool:
+        return super().is_skippable or all(player.is_mucked or player.is_shown for player in self.game.players)
+
+    @property
     def opener(self) -> PokerPlayer:
         if not all(player.is_mucked or player.stack == 0 for player in self.game.players):
-            for stage in reversed(self.game.env._stages):
+            for stage in reversed(self.game.env._mid_stages):
                 if isinstance(stage, BettingStage) and stage.aggressor is not None:
                     return stage.aggressor
 

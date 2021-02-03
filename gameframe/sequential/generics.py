@@ -17,7 +17,7 @@ class SeqEnv(Env[G], BaseSeqEnv, Generic[G, N, P], ABC):
     def __init__(self, game: G, actor: Optional[Union[N, P]]):
         super().__init__(game)
 
-        self._actor: Optional[Union[N, P]] = actor  # TODO: REMOVE REDUNDANT TYPE HINT WHEN MYPY GETS SMARTER
+        self._actor: Optional[Union[N, P]] = actor
 
     @property
     def actor(self) -> Optional[Union[N, P]]:

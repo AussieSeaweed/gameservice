@@ -22,7 +22,9 @@ class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
     def verify(self, game: NLTHEGame) -> None:
         super().verify(game)
 
-        assert game.env.pot == 0
+        if game.is_terminal:
+            assert game.env.pot == 0
+            assert all(player.bet == 0 for player in game.players)
 
     def act(self, game: NLTHEGame) -> None:
         if isinstance(game.env._stage, SetupStage):

@@ -30,8 +30,10 @@ class TreysHand(Hand):
     treys_evaluator = TreysEvaluator()
 
     def __init__(self, hole_cards: Iterable[Card], board_cards: Iterable[Card]):
-        self.__hand_rank: int = self.treys_evaluator.evaluate(list(map(TreysCard.new, map(str, hole_cards))),
-                                                              list(map(TreysCard.new, map(str, board_cards))))
+        self.__hand_rank: int = self.treys_evaluator.evaluate(
+            list(map(TreysCard.new, map(lambda card: f'{card.rank.value}{card.suit.value}', hole_cards))),
+            list(map(TreysCard.new, map(lambda card: f'{card.rank.value}{card.suit.value}', board_cards))),
+        )
 
     def __lt__(self, other: Any) -> bool:
         if isinstance(other, TreysHand):

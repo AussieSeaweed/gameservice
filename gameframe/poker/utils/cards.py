@@ -1,5 +1,5 @@
 from enum import Enum, unique
-from typing import Any, Union
+from typing import Any, Sequence, Union
 
 
 @unique
@@ -93,8 +93,8 @@ class HoleCard(Card):
 
         self._status = status
 
-    def __str__(self) -> str:
-        return repr(self) if self._status else f'{repr(self)} (hidden)'
+    def __repr__(self) -> str:
+        return super().__repr__() if self._status else '??'
 
     @property
     def status(self) -> bool:
@@ -107,10 +107,10 @@ class HoleCard(Card):
 CardLike = Union[str, Card]
 
 
-def parse(card: CardLike) -> Card:
+def parse_card(card: CardLike) -> Card:
     """Parses the card-like object.
 
-    :param card: the card-like object
+    :param card: the card-like object.
     :return: the parsed card
     """
     if isinstance(card, str) and len(card) == 2:
