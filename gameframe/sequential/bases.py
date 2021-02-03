@@ -26,6 +26,8 @@ class BaseSeqGame(BaseGame, ABC):
 class BaseSeqEnv(BaseEnv, ABC):
     """BaseSeqEnv is the abstract base class for all sequential environments."""
 
+    _actor: Optional[BaseActor] = None
+
     @property
     @abstractmethod
     def actor(self) -> Optional[BaseActor]:

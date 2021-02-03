@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterator, MutableSequence, Optional, Sequence
+from typing import MutableSequence, Optional, Sequence
 
 from gameframe.game import ActionException
 from gameframe.game.generics import Actor
@@ -58,11 +58,8 @@ class TTTEnv(SeqEnv[TTTGame, Actor['TTTGame'], 'TTTPlayer']):
         return None
 
 
-class TTTPlayer(Actor[TTTGame], Iterator['TTTPlayer']):
+class TTTPlayer(Actor[TTTGame]):
     """TTTPlayer is the class for tic tac toe players."""
-
-    def __next__(self) -> TTTPlayer:
-        return self.game.players[(self.game.players.index(self) + 1) % len(self.game.players)]
 
     def __repr__(self) -> str:
         return 'O' if self.game.players[0] is self else 'X'
@@ -74,7 +71,7 @@ class TTTPlayer(Actor[TTTGame], Iterator['TTTPlayer']):
         :param c: the column number of the cell
         :return: None
         """
-        MarkAction(self.game, self, r, c).act()
+        MarkAction(self.game, self, r, c).apply()
 
 
 class MarkAction(SeqAction[TTTGame, TTTPlayer]):
@@ -84,15 +81,15 @@ class MarkAction(SeqAction[TTTGame, TTTPlayer]):
         self.r = r
         self.c = c
 
-    def act(self) -> None:
-        super().act()
-
-        self.game.env._board[self.r][self.c] = self.actor
-
+    @property
+    def next_actor(self) -> Optional[TTTPlayer]:
         if self.game.env.empty_coords and self.game.env.winner is None:
-            self.game.env._actor = next(self.actor)
+            return self.game.players[(self.game.players.index(self.actor) + 1) % len(self.game.players)]
         else:
-            self.game.env._actor = None
+            return None
+
+    def act(self) -> None:
+        self.game.env._board[self.r][self.c] = self.actor
 
     def verify(self) -> None:
         super().verify()

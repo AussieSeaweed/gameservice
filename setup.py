@@ -12,7 +12,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/x-rst',
     url='https://github.com/AussieSeaweed/gameframe',
-    packages=find_packages(),
+    packages=find_packages(exclude=('examples',)),
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',

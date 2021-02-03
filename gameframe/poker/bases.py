@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from abc import ABC
 from itertools import zip_longest
-from typing import Iterator, MutableSequence, Optional, Sequence, TypeVar, Union
+from typing import Generic, Iterator, MutableSequence, Optional, Sequence, TypeVar, Union, cast
 
 from gameframe.game import ParamException
-from gameframe.game.generics import Actor
+from gameframe.game.generics import A, Actor
 from gameframe.poker.utils import Card, Deck, Evaluator, Hand, HoleCard
 from gameframe.poker.utils.cards import CardLike
 from gameframe.sequential.generics import SeqAction, SeqEnv, SeqGame
@@ -32,8 +32,6 @@ class PokerGame(SeqGame['PokerEnv', 'PokerNature', 'PokerPlayer'], ABC):
             raise ParamException('Poker needs at least 2 players')
         elif any(a != b for a, b in zip_longest(blinds, sorted(blinds))):
             raise ParamException('Blinds have to be sorted')
-        elif ante > min(blinds):
-            raise ParamException('All blinds have to be greater than or equal to the ante')
         elif len(blinds) > len(self.players):
             raise ParamException('There are more blinds than players')
 
@@ -47,8 +45,8 @@ class PokerEnv(SeqEnv[PokerGame, 'PokerNature', 'PokerPlayer']):
 
         super().__init__(game, actor)
 
-        self._stages: Sequence[Stage] = stages
         self._stage: Stage = SetupStage(game)
+        self._stages = stages
 
         self._deck = deck
         self._evaluator = evaluator
@@ -56,8 +54,6 @@ class PokerEnv(SeqEnv[PokerGame, 'PokerNature', 'PokerPlayer']):
         self.__blinds = blinds
 
         self._board_cards: MutableSequence[Card] = []
-        self._aggressor: Optional[PokerPlayer] = None
-        self._max_delta = 0
         self._requirement = 0
 
     def __repr__(self) -> str:
@@ -89,10 +85,7 @@ class PokerEnv(SeqEnv[PokerGame, 'PokerNature', 'PokerPlayer']):
         """
         :return: the pot of this poker environment
         """
-        if self.game.is_terminal:
-            return 0
-        else:
-            return sum(min(player._commitment, self._requirement) for player in self.game.players)
+        return sum(min(player._commitment, self._requirement) for player in self.game.players)
 
 
 class PokerNature(Actor[PokerGame]):
@@ -152,21 +145,35 @@ class PokerPlayer(Actor[PokerGame], Iterator[Union[PokerNature, 'PokerPlayer']])
         self._hole_cards: MutableSequence[HoleCard] = []
         self.__is_mucked = False
 
-    def __next__(self) -> Union[PokerNature, PokerPlayer]:
-        player = self.game.players[(self.index + 1) % len(self.game.players)]
+    def __next__(self) -> PokerPlayer:
+        from gameframe.poker.stages import BettingStage, OpenStage
 
-        if player is self.game.env._aggressor:
-            return self.game.nature
-        elif player._is_relevant:
-            return player
-        else:
-            return next(player)
+        if isinstance(self.game.env._stage, BettingStage):
+            if self is self.game.env._stage.aggressor:
+                return self
+
+            player = self.game.players[(self.index + 1) % len(self.game.players)]
+
+            if player._is_relevant:
+                return player
+            else:
+                return next(player)
+        elif isinstance(self.game.env._stage, OpenStage):
+            if self is self.game.env._stage.opener:
+                return self
+
+            player = self.game.players[(self.index + 1) % len(self.game.players)]
+
+            if not player.is_mucked:
+                return player
+            else:
+                return next(player)
 
     def __repr__(self) -> str:
-        if self.hole_cards is None:
+        if self.is_mucked:
             return f'PokerPlayer({self.bet}, {self.stack})'
         else:
-            return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self.hole_cards)) + '])'
+            return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self._hole_cards)) + '])'
 
     @property
     def bet(self) -> int:
@@ -181,16 +188,6 @@ class PokerPlayer(Actor[PokerGame], Iterator[Union[PokerNature, 'PokerPlayer']])
         :return: the stack of this poker player
         """
         return self._total - self._commitment
-
-    @property
-    def effective_stack(self) -> int:
-        """
-        :return: the effective stack of this poker player
-        """
-        try:
-            return min(sorted(player._total for player in self.game.players if not player.is_mucked)[-2], self._total)
-        except IndexError:
-            return 0
 
     @property
     def hand(self) -> Hand:
@@ -221,11 +218,12 @@ class PokerPlayer(Actor[PokerGame], Iterator[Union[PokerNature, 'PokerPlayer']])
         return self.__is_mucked
 
     @property
+    def _effective_total(self) -> int:
+        return min(sorted(player._total for player in self.game.players if not player.is_mucked)[-2], self._total)
+
+    @property
     def _is_relevant(self) -> bool:
-        """
-        :return: True if this poker player can make a non-redundant bet, else False
-        """
-        return not self.is_mucked and self._commitment < self.effective_stack
+        return not self.is_mucked and self._commitment < self._effective_total
 
     def fold(self) -> None:
         """Folds.
@@ -272,10 +270,38 @@ class PokerPlayer(Actor[PokerGame], Iterator[Union[PokerNature, 'PokerPlayer']])
             card._status = False
 
 
-A = TypeVar('A', PokerPlayer, PokerNature)
+class Stage(Iterator['Stage'], ABC):
+    def __init__(self, game: PokerGame):
+        self.game = game
+
+    def __next__(self) -> Stage:
+        from gameframe.poker.stages import DistributionStage, MidStage, SetupStage, ShowdownStage
+
+        if isinstance(self, SetupStage):
+            stage = self.game.env._stages[0]
+        elif isinstance(self, ShowdownStage):
+            stage = DistributionStage(self.game)
+        elif self is self.game.env._stages[-1]:
+            stage = ShowdownStage(self.game)
+        else:
+            stage = self.game.env._stages[self.index + 1]
+
+        return next(stage) if isinstance(stage, MidStage) and stage.skip else stage
+
+    @property
+    def index(self) -> int:
+        return self.game.env._stages.index(self)
 
 
-class PokerAction(SeqAction[PokerGame, A], ABC):
+S = TypeVar('S', bound=Stage)
+
+
+class PokerAction(SeqAction[PokerGame, A], Generic[A, S], ABC):
+    def __init__(self, game: PokerGame, actor: A) -> None:
+        super().__init__(game, actor)
+
+        self.stage = cast(S, game.env._stage)
+
     def change_stage(self) -> None:
         from gameframe.poker.stages import CloseMixin, OpenMixin
 
@@ -286,26 +312,3 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
 
         if isinstance(self.game.env._stage, OpenMixin):
             self.game.env._stage.open()
-
-
-class Stage(Iterator['Stage'], ABC):
-    def __init__(self, game: PokerGame):
-        self.game = game
-
-    def __next__(self) -> Stage:
-        from gameframe.poker.stages import DistributionStage, MidStage, SetupStage, ShowdownStage
-
-        if isinstance(self, SetupStage):
-            stage = self.game.env._stages[0]
-        elif self is self.game.env._stages[-1]:
-            stage = ShowdownStage(self.game)
-        elif isinstance(self, ShowdownStage):
-            stage = DistributionStage(self.game)
-        else:
-            stage = self.game.env._stages[self.index + 1]
-
-        return next(stage) if isinstance(stage, MidStage) and stage.skip else stage
-
-    @property
-    def index(self) -> int:
-        return self.game.env._stages.index(self)

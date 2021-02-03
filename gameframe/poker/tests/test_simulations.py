@@ -101,6 +101,8 @@ class NLTexasHESimTestCase(TestCase):
                                      'ccccccccb2ccccccc', False), 0)
         self.assert_actor(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
                                      'ccccccccccccb6b12b297ccc', False), 2)
+        self.assert_actor(self.parse([100] * 4, ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
+                                     'b99ccc', False), 0)
 
     def test_showdown(self) -> None:
         self.assert_mucks(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b6b199c'), [False, False])
@@ -124,7 +126,9 @@ class NLTexasHESimTestCase(TestCase):
         self.assert_mucks(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'JcJh', 'TsTh'],
                                      [], 'b50fffff'), [True, True, False, True, True, True])
         self.assert_mucks(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'TsTh', 'JcTc'],
-                                     ['AcAsKc', 'Qs', 'Qc'], 'b50b199ccccf'), [False, True, True, False, False, False])
+                                     ['AcAsKc', 'Qs', 'Qc'], 'b50b199ccccf'), [False, False, True, True, True, False])
+        self.assert_mucks(self.parse([100] * 4, ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b99ccc'),
+                          [False, False, True, True])
 
     def test_distribution(self) -> None:
         self.assert_stacks(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b6b199c'), [100, 200])

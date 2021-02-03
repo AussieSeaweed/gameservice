@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Sequence, cast
+from typing import Optional, Sequence, Union, cast
 
-from gameframe.poker.bases import PokerGame, PokerPlayer, Stage
+from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
 from gameframe.utils import rotate
 
 
@@ -17,22 +17,35 @@ class CloseMixin(ABC):
         pass
 
 
-class SetupStage(Stage):
-    pass
+class OpenStage(Stage, OpenMixin, ABC):
+    @property
+    @abstractmethod
+    def opener(self) -> Union[PokerNature, PokerPlayer]:
+        pass
 
-
-class DistributionStage(Stage, OpenMixin):
     def open(self) -> None:
-        self.game.env._actor = self.game.nature
+        self.game.env._actor = self.opener
 
 
-class MidStage(Stage, OpenMixin):
+class MidStage(OpenStage, ABC):
     @property
     def skip(self) -> bool:
         return sum(not player.is_mucked for player in self.game.players) == 1
 
     def open(self) -> None:
+        super().open()
+
         assert not self.skip, 'DEBUG: Cannot open skipped round'
+
+
+class SetupStage(Stage):
+    pass
+
+
+class DistributionStage(OpenStage, OpenMixin):
+    @property
+    def opener(self) -> PokerNature:
+        return self.game.nature
 
 
 class DealingStage(MidStage):
@@ -64,18 +77,23 @@ class DealingStage(MidStage):
 
         return count
 
-    def open(self) -> None:
-        super().open()
-
-        self.game.env._actor = self.game.nature
+    @property
+    def opener(self) -> PokerNature:
+        return self.game.nature
 
 
 class BettingStage(MidStage, CloseMixin, ABC):
+    def __init__(self, game: PokerGame, initial_max_delta: int):
+        super().__init__(game)
+
+        self.aggressor: Optional[PokerPlayer] = None
+        self.max_delta = initial_max_delta
+
     @property
     def min_amount(self) -> int:
         actor = cast(PokerPlayer, self.game.env.actor)
 
-        return min(max(player.bet for player in self.game.players) + self.game.env._max_delta, actor.bet + actor.stack)
+        return min(max(player.bet for player in self.game.players) + self.max_delta, actor.bet + actor.stack)
 
     @property
     @abstractmethod
@@ -89,22 +107,21 @@ class BettingStage(MidStage, CloseMixin, ABC):
         return next(player for player in rotate(self.game.players, opener.index) if player._is_relevant)
 
     @property
-    def initial_max_delta(self) -> int:
-        return max(self.game.env.blinds)
-
-    @property
     def skip(self) -> bool:
         return super().skip or all(not player._is_relevant for player in self.game.players)
 
     def open(self) -> None:
         super().open()
 
-        self.game.env._actor = self.opener
-        self.game.env._max_delta = self.initial_max_delta
-        self.game.env._aggressor = self.game.env._actor
+        self.aggressor = self.opener
 
     def close(self) -> None:
-        self.game.env._requirement = max(player._commitment for player in self.game.players)
+        requirement = sorted(player._commitment for player in self.game.players)[-2]
+
+        for player in self.game.players:
+            player._commitment = min(player._commitment, requirement)
+
+        self.game.env._requirement = requirement
 
 
 class NLBettingStage(BettingStage):
@@ -116,12 +133,11 @@ class NLBettingStage(BettingStage):
 
 
 class ShowdownStage(MidStage):
-    def open(self) -> None:
-        super().open()
+    @property
+    def opener(self) -> PokerPlayer:
+        if not all(player.is_mucked or player.stack == 0 for player in self.game.players):
+            for stage in reversed(self.game.env._stages):
+                if isinstance(stage, BettingStage) and stage.aggressor is not None:
+                    return stage.aggressor
 
-        if self.game.env._aggressor is None:
-            self.game.env._aggressor = next(player for player in self.game.players if not player.is_mucked)
-
-            assert self.game.env._aggressor is self.game.players[0], 'DEBUG: the first player cannot be mucked'
-
-        self.game.env._actor = self.game.env._aggressor
+        return next(player for player in self.game.players if not player.is_mucked)

@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Generic, Sequence, TypeVar
 
 from gameframe.game.bases import BaseActor, BaseEnv, BaseGame
@@ -53,9 +53,14 @@ class Action(Generic[G, A], ABC):
         self.game = game
         self.actor = actor
 
-    def act(self) -> None:
+    def apply(self) -> None:
         self.verify()
+        self.act()
 
     def verify(self) -> None:
         if self.game.is_terminal:
             raise ActionException('Action applied to a terminal game')
+
+    @abstractmethod
+    def act(self) -> None:
+        pass

@@ -1,7 +1,7 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Generic, Optional, TypeVar, Union
 
-from gameframe.game import ActionException
+from gameframe.game import ActionException, BaseActor
 from gameframe.game.generics import A, Action, Env, Game, N, P
 from gameframe.sequential.bases import BaseSeqEnv, BaseSeqGame
 
@@ -17,7 +17,7 @@ class SeqEnv(Env[G], BaseSeqEnv, Generic[G, N, P], ABC):
     def __init__(self, game: G, actor: Optional[Union[N, P]]):
         super().__init__(game)
 
-        self._actor = actor
+        self._actor: Optional[Union[N, P]] = actor  # TODO: REMOVE REDUNDANT TYPE HINT WHEN MYPY GETS SMARTER
 
     @property
     def actor(self) -> Optional[Union[N, P]]:
@@ -25,6 +25,16 @@ class SeqEnv(Env[G], BaseSeqEnv, Generic[G, N, P], ABC):
 
 
 class SeqAction(Action[G, A], ABC):
+    @property
+    @abstractmethod
+    def next_actor(self) -> Optional[BaseActor]:
+        pass
+
+    def apply(self) -> None:
+        super().apply()
+
+        self.game.env._actor = self.next_actor
+
     def verify(self) -> None:
         super().verify()
 

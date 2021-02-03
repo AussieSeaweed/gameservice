@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from itertools import zip_longest
-from typing import cast
 
 from gameframe.game import ActionException
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
@@ -9,7 +8,7 @@ from gameframe.poker.utils import HoleCard
 from gameframe.poker.utils.cards import CardLike, parse
 
 
-class SetupAction(PokerAction[PokerNature]):
+class SetupAction(PokerAction[PokerNature, SetupStage]):
     def act(self) -> None:
         super().act()
 
@@ -29,7 +28,7 @@ class SetupAction(PokerAction[PokerNature]):
             raise ActionException('Already set up')
 
 
-class DealingAction(PokerAction[PokerNature], ABC):
+class DealingAction(PokerAction[PokerNature, DealingStage], ABC):
     def __init__(self, game: PokerGame, actor: PokerNature, *cards: CardLike):
         super().__init__(game, actor)
 
@@ -41,11 +40,9 @@ class DealingAction(PokerAction[PokerNature], ABC):
         self.deal()
         self.game.env._deck.remove(self.cards)
 
-        stage = cast(DealingStage, self.game.env._stage)
-
-        if all(len(player._hole_cards) == stage.target_hole_card_count
+        if all(len(player._hole_cards) == self.stage.target_hole_card_count
                for player in self.game.players if not player.is_mucked) \
-                and len(self.game.env.board_cards) == stage.target_board_card_count:
+                and len(self.game.env.board_cards) == self.stage.target_board_card_count:
             self.change_stage()
 
     def verify(self) -> None:
@@ -70,19 +67,15 @@ class HoleCardDealingAction(DealingAction):
         self.player = player
 
     def deal(self) -> None:
-        stage = cast(DealingStage, self.game.env._stage)
-
-        self.player._hole_cards.extend(
-            HoleCard(card, status) for card, status in zip(self.cards, stage.hole_card_statuses))
+        self.player._hole_cards.extend(HoleCard(card, status) for card, status in zip(self.cards,
+                                                                                      self.stage.hole_card_statuses))
 
     def verify(self) -> None:
         super().verify()
 
-        stage = cast(DealingStage, self.game.env._stage)
-
-        if len(self.player._hole_cards) >= stage.target_hole_card_count:
+        if len(self.player._hole_cards) >= self.stage.target_hole_card_count:
             raise ActionException('The player already has enough hole cards')
-        elif len(self.cards) != len(stage.hole_card_statuses):
+        elif len(self.cards) != len(self.stage.hole_card_statuses):
             raise ActionException('Invalid number of hole cards are dealt')
         elif self.player.is_mucked:
             raise ActionException('Cannot deal to mucked player')
@@ -95,26 +88,21 @@ class BoardCardDealingAction(DealingAction):
     def verify(self) -> None:
         super().verify()
 
-        stage = cast(DealingStage, self.game.env._stage)
-
-        if len(self.game.env.board_cards) >= stage.target_board_card_count:
+        if len(self.game.env.board_cards) >= self.stage.target_board_card_count:
             raise ActionException('The board already has enough cards')
-        elif len(self.cards) != stage.board_card_count:
+        elif len(self.cards) != self.stage.board_card_count:
             raise ActionException('Invalid number of board cards are dealt')
 
 
-class DistributionAction(PokerAction[PokerNature]):
+class DistributionAction(PokerAction[PokerNature, DistributionStage]):
     def act(self) -> None:
         super().act()
 
         players = list(filter(lambda player: not player.is_mucked, self.game.players))
 
-        if len(players) > 1:
-            players.sort(key=lambda player: (player.hand, -player._commitment), reverse=True)
-
         base = 0
 
-        for base_player in players:
+        for base_player in sorted(players, key=lambda player: (player.hand, -player._commitment), reverse=True):
             side_pot = self.__side_pot(base, base_player)
 
             recipients = list(filter(lambda player: player is base_player or player.hand == base_player.hand, players))

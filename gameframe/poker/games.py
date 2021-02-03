@@ -10,8 +10,8 @@ class NLTHEGame(PokerGame):
 
     def __init__(self, ante: int, blinds: Sequence[int], stacks: Sequence[int]):
         super().__init__([
-            DealingStage(self, [False, False], 0), NLBettingStage(self),  # Pre-flop
-            DealingStage(self, [], 3), NLBettingStage(self),  # Flop
-            DealingStage(self, [], 1), NLBettingStage(self),  # Turn
-            DealingStage(self, [], 1), NLBettingStage(self),  # River
+            DealingStage(self, [False, False], 0), NLBettingStage(self, max(ante, max(blinds))),  # Pre-flop
+            DealingStage(self, [], 3), NLBettingStage(self, max(ante, max(blinds))),  # Flop
+            DealingStage(self, [], 1), NLBettingStage(self, max(ante, max(blinds))),  # Turn
+            DealingStage(self, [], 1), NLBettingStage(self, max(ante, max(blinds))),  # River
         ], StandardDeck(), StandardEvaluator(), ante, blinds, stacks)
