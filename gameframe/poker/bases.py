@@ -42,7 +42,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         self._deck = deck
         self.__evaluator = evaluator
         self.__ante = ante
-        self.__blinds = blinds
+        self.__blinds = tuple(blinds)
 
         self._board_cards: MutableSequence[Card] = []
         self._aggressor: PokerPlayer = players[len(blinds) - 1]
@@ -84,7 +84,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         """
         :return: the blinds of this poker game
         """
-        return tuple(self.__blinds)
+        return self.__blinds
 
     @property
     def board_cards(self) -> Sequence[Card]:
@@ -306,9 +306,9 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
                 self.__distribute()
 
     def __distribute(self) -> None:
-        players = list(filter(lambda player: player.is_shown, self.game.players))
+        players = list(filter(lambda player: not player.is_mucked, self.game.players))
 
-        if len(players) == 1:
+        if len(players) != 1:
             players.sort(key=lambda player: (player.hand, -player._commitment), reverse=True)
 
         base = 0
