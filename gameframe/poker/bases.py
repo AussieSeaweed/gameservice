@@ -45,7 +45,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         self.__blinds = tuple(blinds)
 
         self._board_cards: MutableSequence[Card] = []
-        self._aggressor: PokerPlayer = players[len(blinds) - 1]
+        self._aggressor = players[len(blinds) - 1]
         self._max_delta = 0
         self._requirement = ante
 
@@ -132,7 +132,7 @@ class PokerNature(Actor[PokerGame]):
         BoardCardDealingAction(self.game, self, *cards).apply()
 
 
-class PokerPlayer(Actor[PokerGame]):
+class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
     """PokerPlayer is the class for poker players."""
 
     def __init__(self, game: PokerGame, stack: int):
@@ -142,6 +142,9 @@ class PokerPlayer(Actor[PokerGame]):
         self._commitment = 0
         self._hole_cards: MutableSequence[HoleCard] = []
         self.__is_mucked = False
+
+    def __next__(self) -> PokerPlayer:
+        return self.game.players[(self.index + 1) % len(self.game.players)]
 
     def __repr__(self) -> str:
         if self.is_mucked:
@@ -267,6 +270,30 @@ class Stage(Iterator['Stage'], ABC):
             return self.game._stages[self.index + 1]
         except IndexError:
             raise StopIteration
+
+    @property
+    def target_hole_card_count(self) -> int:
+        from gameframe.poker.stages import DealingStage
+
+        count = 0
+
+        for stage in self.game._stages[:self.index + 1]:
+            if isinstance(stage, DealingStage):
+                count += len(stage.hole_card_statuses)
+
+        return count
+
+    @property
+    def target_board_card_count(self) -> int:
+        from gameframe.poker.stages import DealingStage
+
+        count = 0
+
+        for stage in self.game._stages[:self.index + 1]:
+            if isinstance(stage, DealingStage):
+                count += stage.board_card_count
+
+        return count
 
     @property
     def is_skippable(self) -> bool:

@@ -5,12 +5,9 @@ Video: https://www.youtube.com/watch?v=GnxFohpljqM
 """
 
 from gameframe.poker import NLTHEGame
-from gameframe.utils import pprint
 
 game = NLTHEGame(500, [1000, 2000], [1125600, 2000000, 553500])  # Antonius's stack is unknown
 ivey, antonius, dwan = game.players
-
-game.nature.setup()
 
 # Pre-flop
 
@@ -18,7 +15,7 @@ game.nature.deal_player(ivey, 'Ac', '2d')
 game.nature.deal_player(antonius, '5h', '7s')  # Unknown
 game.nature.deal_player(dwan, '7h', '6h')
 
-dwan.bet_raise(6000)  # Unknown
+dwan.bet_raise(7000)
 ivey.bet_raise(23000)
 antonius.fold()
 dwan.check_call()
@@ -46,8 +43,10 @@ game.nature.deal_board('Jh')
 ivey.showdown()
 dwan.showdown()
 
-# Pot: 1108500
+# Pot: 1109500 (1000 was probably collected as rake in the actual game)
 
-game.nature.distribute()
-
-pprint(game)
+print('Players:')
+print('\n'.join(map(str, game.players)))
+print('Board:', ' '.join(map(str, game.board_cards)))
+print(f'Pot: {game.pot}')
+print(f'Actor: {game.actor}')

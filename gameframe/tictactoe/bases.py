@@ -33,24 +33,22 @@ class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer']):
         """
         :return: the list of empty coordinates of the board
         """
-        return [[r, c] for r in range(3) for c in range(3) if self.board[r][c] is None]
+        return [[r, c] for r in range(3) for c in range(3) if self._board[r][c] is None]
 
     @property
     def winner(self) -> Optional[TTTPlayer]:
         """
         :return: the winning player of the tic tac toe game if there is one, else None
         """
-        board = self.board
-
         for i in range(3):
-            if board[i][0] is board[i][1] is board[i][2] is not None:
-                return board[i][0]
-            elif board[0][i] is board[1][i] is board[2][i] is not None:
-                return board[0][i]
+            if self._board[i][0] is self._board[i][1] is self._board[i][2] is not None:
+                return self._board[i][0]
+            elif self._board[0][i] is self._board[1][i] is self._board[2][i] is not None:
+                return self._board[0][i]
 
-        if board[1][1] is not None and (board[0][0] is board[1][1] is board[2][2]
-                                        or board[0][2] is board[1][1] is board[2][0]):
-            return board[1][1]
+        if self._board[1][1] is not None and (self._board[0][0] is self._board[1][1] is self._board[2][2]
+                                              or self._board[0][2] is self._board[1][1] is self._board[2][0]):
+            return self._board[1][1]
 
         return None
 
@@ -81,7 +79,7 @@ class MarkAction(SeqAction[TTTGame, TTTPlayer]):
     @property
     def next_actor(self) -> Optional[TTTPlayer]:
         if self.game.empty_coords and self.game.winner is None:
-            return self.game.players[(self.game.players.index(self.actor) + 1) % 2]
+            return self.game.players[not self.game.players.index(self.actor)]
         else:
             return None
 
@@ -93,5 +91,5 @@ class MarkAction(SeqAction[TTTGame, TTTPlayer]):
 
         if not (0 <= self.r < 3 and 0 <= self.c < 3):
             raise ActionException('The coordinates are out of bounds')
-        elif self.game.board[self.r][self.c] is not None:
+        elif self.game._board[self.r][self.c] is not None:
             raise ActionException('The cell is not empty')

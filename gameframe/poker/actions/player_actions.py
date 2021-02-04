@@ -9,10 +9,10 @@ from gameframe.poker.stages import BettingStage, ShowdownStage
 class BettingAction(PokerAction[PokerPlayer], ABC):
     @property
     def next_actor(self) -> PokerPlayer:
-        actor = self.game.players[(self.actor.index + 1) % len(self.game.players)]
+        actor = next(self.actor)
 
         while not actor._is_relevant and actor is not self.game._aggressor:
-            actor = self.game.players[(actor.index + 1) % len(self.game.players)]
+            actor = next(actor)
 
         return actor
 
@@ -76,10 +76,10 @@ class ShowdownAction(PokerAction[PokerPlayer]):
 
     @property
     def next_actor(self) -> PokerPlayer:
-        actor = self.game.players[(self.actor.index + 1) % len(self.game.players)]
+        actor = next(self.actor)
 
         while actor.is_mucked:
-            actor = self.game.players[(actor.index + 1) % len(self.game.players)]
+            actor = next(actor)
 
         return actor
 

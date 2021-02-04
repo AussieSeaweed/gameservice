@@ -13,26 +13,6 @@ class DealingStage(Stage):
         self.board_card_count = board_card_count
 
     @property
-    def target_hole_card_count(self) -> int:
-        count = len(self.hole_card_statuses)
-
-        for stage in self.game._stages[:self.index]:
-            if isinstance(stage, DealingStage):
-                count += len(stage.hole_card_statuses)
-
-        return count
-
-    @property
-    def target_board_card_count(self) -> int:
-        count = self.board_card_count
-
-        for stage in self.game._stages[:self.index]:
-            if isinstance(stage, DealingStage):
-                count += stage.board_card_count
-
-        return count
-
-    @property
     def is_skippable(self) -> bool:
         return super().is_skippable \
                or (all(len(player._hole_cards) == self.target_hole_card_count for player in self.game.players if
