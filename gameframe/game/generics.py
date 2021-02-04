@@ -26,11 +26,11 @@ class Game(BaseGame, Generic[N, P], ABC):
 
 class Actor(BaseActor, Generic[G], ABC):
     def __init__(self, game: G):
-        self.__game = game
+        self._game: G = game
 
     @property
     def game(self) -> G:
-        return self.__game
+        return self._game
 
 
 class Action(Generic[G, A], ABC):

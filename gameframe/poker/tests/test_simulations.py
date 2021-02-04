@@ -3,7 +3,7 @@ from unittest import TestCase, main
 
 from gameframe.game import ActionException
 from gameframe.poker import NLTHEGame, PokerGame, PokerPlayer
-from gameframe.poker.stages import DistributionStage, ShowdownStage
+from gameframe.poker.stages import ShowdownStage
 
 
 class NLTexasHESimTestCase(TestCase):
@@ -165,8 +165,8 @@ class NLTexasHESimTestCase(TestCase):
                            [0, 4, 8, 0])
 
     def assert_actor(self, game: PokerGame, index: Optional[int]) -> None:
-        if isinstance(game.env.actor, PokerPlayer):
-            self.assertEqual(game.env.actor.index, index)
+        if isinstance(game.actor, PokerPlayer):
+            self.assertEqual(game.actor.index, index)
         else:
             self.assertIsNone(index)
 
@@ -179,14 +179,13 @@ class NLTexasHESimTestCase(TestCase):
     def parse(self, stacks: Sequence[int], hole_card_sets: Sequence[str], board_card_sets: Sequence[str], tokens: str,
               terminate: bool = True) -> NLTHEGame:
         game = NLTHEGame(self.ANTE, self.BLINDS, stacks)
-        game.nature.setup()
 
         for player, hole_cards in zip(game.players, hole_card_sets):
             game.nature.deal_player(player, *self.split_cards(hole_cards))
 
         try:
             while tokens or board_card_sets:
-                if isinstance(game.env.actor, PokerPlayer):
+                if isinstance(game.actor, PokerPlayer):
                     token, tokens = tokens[0], tokens[1:]
 
                     if token == 'b':
@@ -196,11 +195,11 @@ class NLTexasHESimTestCase(TestCase):
                             index = next(i for i, c in enumerate(tokens) if not c.isdigit())
 
                         amount, tokens = int(tokens[:index]), tokens[index:]
-                        game.env.actor.bet_raise(amount)
+                        game.actor.bet_raise(amount)
                     elif token == 'c':
-                        game.env.actor.check_call()
+                        game.actor.check_call()
                     elif token == 'f':
-                        game.env.actor.fold()
+                        game.actor.fold()
                     else:
                         self.fail()
                 else:
@@ -210,12 +209,8 @@ class NLTexasHESimTestCase(TestCase):
             assert not tokens and not board_card_sets, 'DEBUG: An exception was raised before all commands were parsed'
             raise exception
 
-        if terminate:
-            while isinstance(game.env._stage, ShowdownStage):
-                cast(PokerPlayer, game.env.actor).showdown()
-
-            if isinstance(game.env._stage, DistributionStage):
-                game.nature.distribute()
+        while terminate and not game.is_terminal and isinstance(game._stage, ShowdownStage):
+            cast(PokerPlayer, game.actor).showdown()
 
         return game
 

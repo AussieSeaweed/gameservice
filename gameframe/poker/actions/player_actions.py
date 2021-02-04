@@ -11,7 +11,7 @@ class BettingAction(PokerAction[PokerPlayer], ABC):
     def next_actor(self) -> PokerPlayer:
         actor = self.game.players[(self.actor.index + 1) % len(self.game.players)]
 
-        while not actor._is_relevant and actor is not cast(BettingStage, self.game.env._stage).aggressor:
+        while not actor._is_relevant and actor is not self.game._aggressor:
             actor = self.game.players[(actor.index + 1) % len(self.game.players)]
 
         return actor
@@ -19,7 +19,7 @@ class BettingAction(PokerAction[PokerPlayer], ABC):
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.game.env._stage, BettingStage):
+        if not isinstance(self.game._stage, BettingStage):
             raise ActionException('Not a betting round')
 
 
@@ -50,16 +50,15 @@ class BetRaiseAction(BettingAction):
         self.amount = amount
 
     def act(self) -> None:
-        stage = cast(BettingStage, self.game.env._stage)
-        stage.aggressor = self.actor
-        stage.max_delta = max(stage.max_delta, self.amount - max(player.bet for player in self.game.players))
+        self.game._aggressor = self.actor
+        self.game._max_delta = max(self.game._max_delta, self.amount - max(player.bet for player in self.game.players))
 
         self.actor._commitment += self.amount - self.actor.bet
 
     def verify(self) -> None:
         super().verify()
 
-        stage = cast(BettingStage, self.game.env._stage)
+        stage = cast(BettingStage, self.game._stage)
 
         if max(player._commitment for player in self.game.players) >= self.actor._total:
             raise ActionException('The stack of the acting player is covered')
@@ -85,18 +84,14 @@ class ShowdownAction(PokerAction[PokerPlayer]):
         return actor
 
     def act(self) -> None:
-        for player in self.game.players:
-            if player.is_shown and player.hand > self.actor.hand and player._commitment >= self.actor._commitment:
-                self.actor._muck()
-                break
-        else:
-            self.show = True
-
-        if self.show:
+        if self.show or all(not (player.hand > self.actor.hand and player._commitment >= self.actor._commitment)
+                            for player in self.game.players if player.is_shown):
             self.actor._show()
+        else:
+            self.actor._muck()
 
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.game.env._stage, ShowdownStage):
+        if not isinstance(self.game._stage, ShowdownStage):
             raise ActionException('Game not in showdown')

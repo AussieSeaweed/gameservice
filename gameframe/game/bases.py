@@ -7,7 +7,7 @@ from typing import Sequence
 class BaseGame(ABC):
     """BaseGame is the abstract base class for all games.
 
-    Every game has the following elements that need to be defined: the environment, the nature, and the players.
+    Every game has to define its nature, and players.
     """
 
     @property

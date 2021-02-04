@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from itertools import zip_longest
 from typing import Iterator, MutableSequence, Optional, Sequence, Set, Union
 
 from gameframe.game import ParamException
-from gameframe.game.generics import A, Actor, Env
+from gameframe.game.generics import A, Actor
 from gameframe.poker.utils import Card, Deck, Evaluator, Hand, HoleCard
 from gameframe.poker.utils.cards import CardLike
 from gameframe.sequential.generics import SeqAction, SeqGame
 
 
-class PokerGame(SeqGame['PokerEnv', 'PokerNature', 'PokerPlayer'], ABC):
+class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
     """PokerGame is the abstract base class for all poker games.
 
     When a PokerGame instance is created, its deck, evaluator, limit, and streets are also created through the
@@ -20,57 +21,87 @@ class PokerGame(SeqGame['PokerEnv', 'PokerNature', 'PokerPlayer'], ABC):
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self, stages: Sequence[Stage], deck: Deck, evaluator: Evaluator, stacks: Sequence[int]):
-        env = PokerEnv(self)
+    def __init__(self, stages: Sequence[Stage], deck: Deck, evaluator: Evaluator, ante: int, blinds: Sequence[int],
+                 stacks: Sequence[int]):
         nature = PokerNature(self)
         players = [PokerPlayer(self, stack) for stack in stacks]
-        actor = self._nature
+        actor = nature
 
-        super().__init__(env, nature, players, actor)
+        if len(players) < 2:
+            raise ParamException('Poker needs at least 2 players')
+        elif any(a != b for a, b in zip_longest(blinds, sorted(blinds))):
+            raise ParamException('Blinds have to be sorted')
+        elif len(blinds) > len(players):
+            raise ParamException('There are more blinds than players')
+
+        super().__init__(nature, players, actor)
 
         self._stages = stages
-        self._stage: Stage = stages[0]
+        self._stage = stages[0]
+
         self._deck = deck
-        self._evaluator = evaluator
+        self.__evaluator = evaluator
+        self.__ante = ante
+        self.__blinds = blinds
 
-        if len(self.players) < 2:
-            raise ParamException('Poker needs at least 2 players')
+        self._board_cards: MutableSequence[Card] = []
+        self._aggressor: PokerPlayer = players[len(blinds) - 1]
+        self._max_delta = 0
+        self._requirement = ante
 
-        self._stage.open()
+        if len(players) == 2:
+            blinds = list(reversed(blinds))
+
+        for player, blind in zip_longest(players, blinds, fillvalue=0):
+            player._commitment = min(ante + blind, player._total)
+
+        if not self._stage.is_skippable:
+            self._stage.open()
 
     @property
     def deck(self) -> Set[Card]:
+        """
+        :return: the deck of this poker game
+        """
         return set(self._deck)
 
+    @property
+    def evaluator(self) -> Evaluator:
+        """
+        :return: the evaluator of this poker game
+        """
+        return self.__evaluator
 
-class PokerEnv(Env[PokerGame]):
-    """PokerEnv is the class for poker environments."""
+    @property
+    def ante(self) -> int:
+        """
+        :return: the ante of this poker game
+        """
+        return self.__ante
 
-    def __init__(self, game: PokerGame):
-        super().__init__(game)
-
-        self._board_cards: MutableSequence[Card] = []
-        self._requirement = 0
-
-    def __repr__(self) -> str:
-        return f'PokerEnv({self.pot}, [' + ', '.join(map(str, self.board_cards)) + '])'
+    @property
+    def blinds(self) -> Sequence[int]:
+        """
+        :return: the blinds of this poker game
+        """
+        return tuple(self.__blinds)
 
     @property
     def board_cards(self) -> Sequence[Card]:
         """
-        :return: the board cards of this poker environment
+        :return: the board cards of this poker game
         """
         return tuple(self._board_cards)
 
     @property
     def pot(self) -> int:
         """
-        :return: the pot of this poker environment
+        :return: the pot of this poker game
         """
-        if self.game.is_terminal:
+        if self.is_terminal:
             return 0
         else:
-            return sum(min(player._commitment, self._requirement) for player in self.game.players)
+            return sum(min(player._commitment, self._requirement) for player in self.players)
 
 
 class PokerNature(Actor[PokerGame]):
@@ -78,15 +109,6 @@ class PokerNature(Actor[PokerGame]):
 
     def __repr__(self) -> str:
         return 'PokerNature'
-
-    def setup(self) -> None:
-        """Sets up the poker game of this nature.
-
-        :return: None
-        """
-        from gameframe.poker.actions import SetupAction
-
-        SetupAction(self.game, self).apply()
 
     def deal_player(self, player: PokerPlayer, *hole_cards: CardLike) -> None:
         """Deals the hole cards to a player.
@@ -108,15 +130,6 @@ class PokerNature(Actor[PokerGame]):
         from gameframe.poker.actions import BoardCardDealingAction
 
         BoardCardDealingAction(self.game, self, *cards).apply()
-
-    def distribute(self) -> None:
-        """Distributes the pot.
-
-        :return: None
-        """
-        from gameframe.poker.actions import DistributionAction
-
-        DistributionAction(self.game, self).apply()
 
 
 class PokerPlayer(Actor[PokerGame]):
@@ -141,7 +154,7 @@ class PokerPlayer(Actor[PokerGame]):
         """
         :return: the bet of this poker player
         """
-        return max(self._commitment - self.game.env._requirement, 0)
+        return max(self._commitment - self.game._requirement, 0)
 
     @property
     def stack(self) -> int:
@@ -151,18 +164,18 @@ class PokerPlayer(Actor[PokerGame]):
         return self._total - self._commitment
 
     @property
-    def hand(self) -> Hand:
-        """
-        :return: the hand of this poker player
-        """
-        return self.game.env._evaluator.hand(self._hole_cards, self.game.env.board_cards)
-
-    @property
     def hole_cards(self) -> Optional[Sequence[HoleCard]]:
         """
         :return: the hole cards of this poker player
         """
         return None if self.is_mucked else tuple(self._hole_cards)
+
+    @property
+    def hand(self) -> Hand:
+        """
+        :return: the hand of this poker player
+        """
+        return self.game.evaluator.hand(self._hole_cards, self.game.board_cards)
 
     @property
     def index(self) -> int:
@@ -251,7 +264,7 @@ class Stage(Iterator['Stage'], ABC):
 
     def __next__(self) -> Stage:
         try:
-            return self.game.env._stages[self.index + 1]
+            return self.game._stages[self.index + 1]
         except IndexError:
             raise StopIteration
 
@@ -261,7 +274,7 @@ class Stage(Iterator['Stage'], ABC):
 
     @property
     def index(self) -> int:
-        return self.game.env._stages.index(self)
+        return self.game._stages.index(self)
 
     @property
     @abstractmethod
@@ -269,23 +282,58 @@ class Stage(Iterator['Stage'], ABC):
         pass
 
     def open(self) -> None:
-        self.game.env._actor = self.opener
+        self.game._actor = self.opener
+
+    def close(self) -> None:
+        pass
 
 
 class PokerAction(SeqAction[PokerGame, A], ABC):
     def apply(self) -> None:
-        from gameframe.poker.mixins import Closeable, Openable
-
         super().apply()
 
-        if self.game.env._stage.is_skippable:
-            if isinstance(self.game.env._stage, Closeable):
-                self.game.env._stage.close()
+        if self.game._stage.is_skippable:
+            self.game._stage.close()
 
-            self.game.env._stage = next(self.game.env._stage)
+            try:
+                self.game._stage = next(self.game._stage)
 
-            while self.game.env._stage.is_skippable:
-                self.game.env._stage = next(self.game.env._stage)
+                while self.game._stage.is_skippable:
+                    self.game._stage = next(self.game._stage)
 
-            if isinstance(self.game.env._stage, Openable):
-                self.game.env._stage.open()
+                self.game._stage.open()
+            except StopIteration:
+                self.__distribute()
+
+    def __distribute(self) -> None:
+        players = list(filter(lambda player: player.is_shown, self.game.players))
+
+        if len(players) == 1:
+            players.sort(key=lambda player: (player.hand, -player._commitment), reverse=True)
+
+        base = 0
+
+        for base_player in players:
+            side_pot = self.__side_pot(base, base_player)
+
+            recipients = list(filter(lambda player: player is base_player or player.hand == base_player.hand, players))
+
+            for recipient in recipients:
+                recipient._total += side_pot // len(recipients)
+            else:
+                recipients[0]._total += side_pot % len(recipients)
+
+            base = max(base, base_player._commitment)
+
+        self.game._actor = None
+
+    def __side_pot(self, base: int, base_player: PokerPlayer) -> int:
+        side_pot = 0
+
+        for player in self.game.players:
+            entitlement = min(player._commitment, base_player._commitment)
+
+            if base < entitlement:
+                side_pot += entitlement - base
+
+        return side_pot

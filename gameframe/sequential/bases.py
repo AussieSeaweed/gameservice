@@ -17,12 +17,12 @@ class BaseSeqGame(BaseGame, ABC):
 
     @property
     def is_terminal(self) -> bool:
-        return self.actor is None
+        return self._actor is None
 
     @property
     @abstractmethod
     def actor(self) -> Optional[BaseActor]:
         """
-        :return: the actor of the sequential game of this environment
+        :return: the actor of this sequential game
         """
         pass
