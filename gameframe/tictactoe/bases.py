@@ -3,24 +3,27 @@ from __future__ import annotations
 from typing import MutableSequence, Optional, Sequence
 
 from gameframe.game import ActionException
-from gameframe.game.generics import Actor
-from gameframe.sequential.generics import SeqAction, SeqEnv, SeqGame
+from gameframe.game.generics import Actor, Env
+from gameframe.sequential.generics import SeqAction, SeqGame
 
 
 class TTTGame(SeqGame['TTTEnv', Actor['TTTGame'], 'TTTPlayer']):
     """TTTGame is the class for tic tac toe games."""
 
     def __init__(self) -> None:
-        players = (TTTPlayer(self), TTTPlayer(self))
+        env = TTTEnv(self)
+        nature = Actor(self)
+        players = [TTTPlayer(self), TTTPlayer(self)]
+        actor = players[0]
 
-        super().__init__(TTTEnv(self, players[0]), Actor(self), players)
+        super().__init__(env, nature, players, actor)
 
 
-class TTTEnv(SeqEnv[TTTGame, Actor['TTTGame'], 'TTTPlayer']):
+class TTTEnv(Env[TTTGame]):
     """TTTEnv is the class for tic tac toe environments."""
 
-    def __init__(self, game: TTTGame, actor: TTTPlayer):
-        super().__init__(game, actor)
+    def __init__(self, game: TTTGame):
+        super().__init__(game)
 
         self._board: MutableSequence[MutableSequence[Optional[TTTPlayer]]] = [[None, None, None],
                                                                               [None, None, None],
@@ -38,7 +41,7 @@ class TTTEnv(SeqEnv[TTTGame, Actor['TTTGame'], 'TTTPlayer']):
         """
         :return: the list of empty coordinates of the board
         """
-        return [[r, c] for r in range(3) for c in range(3) if self.board[r][c] is None]
+        return [[r, c] for r in range(3) for c in range(3) if self._board[r][c] is None]
 
     @property
     def winner(self) -> Optional[TTTPlayer]:
@@ -46,14 +49,14 @@ class TTTEnv(SeqEnv[TTTGame, Actor['TTTGame'], 'TTTPlayer']):
         :return: the winning player of the tic tac toe game if there is one, else None
         """
         for i in range(3):
-            if self.board[i][0] is self.board[i][1] is self.board[i][2] is not None:
-                return self.board[i][0]
-            elif self.board[0][i] is self.board[1][i] is self.board[2][i] is not None:
-                return self.board[0][i]
+            if self._board[i][0] is self._board[i][1] is self._board[i][2] is not None:
+                return self._board[i][0]
+            elif self._board[0][i] is self._board[1][i] is self._board[2][i] is not None:
+                return self._board[0][i]
 
-        if self.board[0][0] is self.board[1][1] is self.board[2][2] is not None \
-                or self.board[0][2] is self.board[1][1] is self.board[2][0] is not None:
-            return self.board[1][1]
+        if self._board[1][1] is not None and (self._board[0][0] is self._board[1][1] is self._board[2][2]
+                                              or self._board[0][2] is self._board[1][1] is self._board[2][0]):
+            return self._board[1][1]
 
         return None
 
@@ -84,7 +87,7 @@ class MarkAction(SeqAction[TTTGame, TTTPlayer]):
     @property
     def next_actor(self) -> Optional[TTTPlayer]:
         if self.game.env.empty_coords and self.game.env.winner is None:
-            return self.game.players[(self.game.players.index(self.actor) + 1) % len(self.game.players)]
+            return self.game.players[(self.game.players.index(self.actor) + 1) % 2]
         else:
             return None
 
@@ -95,6 +98,6 @@ class MarkAction(SeqAction[TTTGame, TTTPlayer]):
         super().verify()
 
         if not (0 <= self.r < 3 and 0 <= self.c < 3):
-            raise ActionException('The coords are out of bounds')
-        elif self.game.env.board[self.r][self.c] is not None:
+            raise ActionException('The coordinates are out of bounds')
+        elif self.game.env._board[self.r][self.c] is not None:
             raise ActionException('The cell is not empty')

@@ -1,21 +1,16 @@
 from abc import ABC, abstractmethod
-from typing import Generic, Optional, TypeVar, Union
+from typing import Optional, Sequence, TypeVar, Union
 
 from gameframe.game import ActionException, BaseActor
-from gameframe.game.generics import A, Action, Env, Game, N, P
-from gameframe.sequential.bases import BaseSeqEnv, BaseSeqGame
+from gameframe.game.generics import A, Action, E, Game, N, P
+from gameframe.sequential.bases import BaseSeqGame
 
 G = TypeVar('G', bound=BaseSeqGame, covariant=True)
-E = TypeVar('E', bound=BaseSeqEnv, covariant=True)
 
 
 class SeqGame(Game[E, N, P], BaseSeqGame, ABC):
-    pass
-
-
-class SeqEnv(Env[G], BaseSeqEnv, Generic[G, N, P], ABC):
-    def __init__(self, game: G, actor: Optional[Union[N, P]]):
-        super().__init__(game)
+    def __init__(self, env: E, nature: N, players: Sequence[P], actor: Optional[Union[N, P]]):
+        super().__init__(env, nature, players)
 
         self._actor: Optional[Union[N, P]] = actor
 
@@ -33,10 +28,10 @@ class SeqAction(Action[G, A], ABC):
     def apply(self) -> None:
         super().apply()
 
-        self.game.env._actor = self.next_actor
+        self.game._actor = self.next_actor
 
     def verify(self) -> None:
         super().verify()
 
-        if self.game.env.actor is not self.actor:
-            raise ActionException('Actor not in turn')
+        if self.game.actor is not self.actor:
+            raise ActionException('The actor is not in turn')

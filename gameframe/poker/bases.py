@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from itertools import zip_longest
-from typing import Iterator, MutableSequence, Optional, Sequence, Union
+from typing import Iterator, MutableSequence, Optional, Sequence, Set, Union
 
 from gameframe.game import ParamException
-from gameframe.game.generics import A, Actor
-from gameframe.poker.mixins import Openable
+from gameframe.game.generics import A, Actor, Env
 from gameframe.poker.utils import Card, Deck, Evaluator, Hand, HoleCard
 from gameframe.poker.utils.cards import CardLike
-from gameframe.sequential.generics import SeqAction, SeqEnv, SeqGame
+from gameframe.sequential.generics import SeqAction, SeqGame
 
 
 class PokerGame(SeqGame['PokerEnv', 'PokerNature', 'PokerPlayer'], ABC):
@@ -22,57 +20,40 @@ class PokerGame(SeqGame['PokerEnv', 'PokerNature', 'PokerPlayer'], ABC):
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self, mid_stages: Sequence[MidStage], deck: Deck, evaluator: Evaluator, ante: int,
-                 blinds: Sequence[int], stacks: Sequence[int]):
+    def __init__(self, stages: Sequence[Stage], deck: Deck, evaluator: Evaluator, stacks: Sequence[int]):
+        env = PokerEnv(self, stages, deck, evaluator)
         nature = PokerNature(self)
+        players = [PokerPlayer(self, stack) for stack in stacks]
+        actor = self._nature
 
-        super().__init__(PokerEnv(self, nature, mid_stages, deck, evaluator, ante, blinds), nature,
-                         [PokerPlayer(self, stack) for stack in stacks])
+        super().__init__(env, nature, players, actor)
 
         if len(self.players) < 2:
             raise ParamException('Poker needs at least 2 players')
-        elif any(a != b for a, b in zip_longest(blinds, sorted(blinds))):
-            raise ParamException('Blinds have to be sorted')
-        elif len(blinds) > len(self.players):
-            raise ParamException('There are more blinds than players')
 
 
-class PokerEnv(SeqEnv[PokerGame, 'PokerNature', 'PokerPlayer']):
+class PokerEnv(Env[PokerGame]):
     """PokerEnv is the class for poker environments."""
 
-    def __init__(self, game: PokerGame, actor: PokerNature, mid_stages: Sequence[MidStage], deck: Deck,
-                 evaluator: Evaluator, ante: int, blinds: Sequence[int]):
-        from gameframe.poker.stages import SetupStage
+    def __init__(self, game: PokerGame, stages: Sequence[Stage], deck: Deck, evaluator: Evaluator):
+        super().__init__(game)
 
-        super().__init__(game, actor)
-
-        self._stage: Stage = SetupStage(game)
-        self._mid_stages = mid_stages
-
+        self._stages = stages
+        self._stage: Stage = stages[0]
         self._deck = deck
         self._evaluator = evaluator
-        self.__ante = ante
-        self.__blinds = blinds
 
         self._board_cards: MutableSequence[Card] = []
         self._requirement = 0
+
+        self._stage.open()
 
     def __repr__(self) -> str:
         return f'PokerEnv({self.pot}, [' + ', '.join(map(str, self.board_cards)) + '])'
 
     @property
-    def ante(self) -> int:
-        """
-        :return: the ante of this poker environment
-        """
-        return self.__ante
-
-    @property
-    def blinds(self) -> Sequence[int]:
-        """
-        :return: the blinds of this poker environment
-        """
-        return tuple(self.__blinds)
+    def deck(self) -> Set[Card]:
+        return set(self._deck)
 
     @property
     def board_cards(self) -> Sequence[Card]:
@@ -268,13 +249,20 @@ class Stage(Iterator['Stage'], ABC):
     def __init__(self, game: PokerGame):
         self.game = game
 
+    def __next__(self) -> Stage:
+        try:
+            return self.game.env._stages[self.index + 1]
+        except IndexError:
+            raise StopIteration
+
     @property
-    @abstractmethod
     def is_skippable(self) -> bool:
-        pass
+        return sum(not player.is_mucked for player in self.game.players) == 1
 
+    @property
+    def index(self) -> int:
+        return self.game.env._stages.index(self)
 
-class OpenStage(Stage, Openable, ABC):
     @property
     @abstractmethod
     def opener(self) -> Union[PokerNature, PokerPlayer]:
@@ -282,24 +270,6 @@ class OpenStage(Stage, Openable, ABC):
 
     def open(self) -> None:
         self.game.env._actor = self.opener
-
-
-class MidStage(OpenStage, ABC):
-    @property
-    def is_skippable(self) -> bool:
-        return sum(not player.is_mucked for player in self.game.players) == 1
-
-    def __next__(self) -> Stage:
-        from gameframe.poker.stages import DistributionStage
-
-        if self is self.game.env._mid_stages[-1]:
-            return DistributionStage(self.game)
-        else:
-            return self.game.env._mid_stages[self.index + 1]
-
-    @property
-    def index(self) -> int:
-        return self.game.env._mid_stages.index(self)
 
 
 class PokerAction(SeqAction[PokerGame, A], ABC):

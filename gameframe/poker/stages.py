@@ -1,34 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Sequence, cast
 
-from gameframe.poker.bases import MidStage, OpenStage, PokerGame, PokerNature, PokerPlayer, Stage
-from gameframe.poker.mixins import Closeable, Openable
+from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
+from gameframe.poker.mixins import Closeable
 from gameframe.utils import rotate
+from gameframe.game import ParamException
+from itertools import zip_longest
 
 
-class SetupStage(Stage):
-    def __next__(self) -> MidStage:
-        return self.game.env._mid_stages[0]
-
-    @property
-    def is_skippable(self) -> bool:
-        return True
-
-
-class DistributionStage(OpenStage, Openable):
-    def __next__(self) -> Stage:
-        raise StopIteration
-
-    @property
-    def is_skippable(self) -> bool:
-        return False
-
-    @property
-    def opener(self) -> PokerNature:
-        return self.game.nature
-
-
-class DealingStage(MidStage):
+class DealingStage(Stage):
     def __init__(self, game: PokerGame, hole_card_statuses: Sequence[bool], board_card_count: int):
         super().__init__(game)
 
@@ -39,7 +19,7 @@ class DealingStage(MidStage):
     def target_hole_card_count(self) -> int:
         count = len(self.hole_card_statuses)
 
-        for stage in self.game.env._mid_stages[:self.index]:
+        for stage in self.game.env._stages[:self.index]:
             if isinstance(stage, DealingStage):
                 count += len(stage.hole_card_statuses)
 
@@ -49,7 +29,7 @@ class DealingStage(MidStage):
     def target_board_card_count(self) -> int:
         count = self.board_card_count
 
-        for stage in self.game.env._mid_stages[:self.index]:
+        for stage in self.game.env._stages[:self.index]:
             if isinstance(stage, DealingStage):
                 count += stage.board_card_count
 
@@ -74,6 +54,11 @@ class BettingStage(MidStage, Closeable, ABC):
         self.aggressor: Optional[PokerPlayer] = None
         self.max_delta = initial_max_delta
 
+        if any(a != b for a, b in zip_longest(blinds, sorted(blinds))):
+            raise ParamException('Blinds have to be sorted')
+        elif len(blinds) > len(self.players):
+            raise ParamException('There are more blinds than players')
+
     @property
     def min_amount(self) -> int:
         actor = cast(PokerPlayer, self.game.env.actor)
@@ -93,9 +78,10 @@ class BettingStage(MidStage, Closeable, ABC):
 
     @property
     def opener(self) -> PokerPlayer:
-        opener = min(self.game.players, key=lambda player: player.bet)
+        index = (max(self.game.players, key=lambda player: (player.bet, player.index)).index + 1) \
+                % len(self.game.players)
 
-        return next(player for player in rotate(self.game.players, opener.index) if player._is_relevant)
+        return next(player for player in rotate(self.game.players, index) if player._is_relevant)
 
     def open(self) -> None:
         super().open()

@@ -13,7 +13,7 @@ class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
     BLINDS = [1, 2]
     PLAYER_COUNT = 4
     MIN_STACK = 0
-    MAX_STACK = 100
+    MAX_STACK = 10
 
     @property
     def mc_test_count(self) -> int:
@@ -25,6 +25,7 @@ class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
         if game.is_terminal:
             assert game.env.pot == 0
             assert all(player.bet == 0 for player in game.players)
+            assert all(player.stack >= 0 for player in game.players)
 
     def act(self, game: NLTHEGame) -> None:
         if isinstance(game.env._stage, SetupStage):

@@ -1,5 +1,5 @@
 from enum import Enum, unique
-from typing import Any, Sequence, Union
+from typing import Any, Union
 
 
 @unique

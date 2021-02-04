@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Generic, Sequence, TypeVar
+from typing import Generic, MutableSequence, Sequence, TypeVar
 
 from gameframe.game.bases import BaseActor, BaseEnv, BaseGame
 from gameframe.game.exceptions import ActionException
@@ -13,21 +13,21 @@ A = TypeVar('A', bound=BaseActor, covariant=True)
 
 class Game(BaseGame, Generic[E, N, P], ABC):
     def __init__(self, env: E, nature: N, players: Sequence[P]):
-        self.__env = env
-        self.__nature = nature
-        self.__players = tuple(players)
+        self._env: E = env
+        self._nature: N = nature
+        self._players: MutableSequence[P] = list(players)
 
     @property
     def env(self) -> E:
-        return self.__env
+        return self._env
 
     @property
     def nature(self) -> N:
-        return self.__nature
+        return self._nature
 
     @property
     def players(self) -> Sequence[P]:
-        return self.__players
+        return tuple(self._players)
 
 
 class Env(BaseEnv, Generic[G], ABC):
@@ -59,7 +59,7 @@ class Action(Generic[G, A], ABC):
 
     def verify(self) -> None:
         if self.game.is_terminal:
-            raise ActionException('Action applied to a terminal game')
+            raise ActionException('The action is applied to a terminal game')
 
     @abstractmethod
     def act(self) -> None:

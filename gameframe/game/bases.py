@@ -10,6 +10,10 @@ class BaseGame(ABC):
     Every game has the following elements that need to be defined: the environment, the nature, and the players.
     """
 
+    _env: BaseEnv
+    _nature: BaseActor
+    _players: Sequence[BaseActor]
+
     @property
     @abstractmethod
     def env(self) -> BaseEnv:

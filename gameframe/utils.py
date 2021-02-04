@@ -17,4 +17,4 @@ def pprint(game: BaseGame) -> None:
     print(f'Env: {game.env}')
 
     if isinstance(game, BaseSeqGame):
-        print(f'Actor: {game.env.actor}')
+        print(f'Actor: {game.actor}')
