@@ -16,7 +16,7 @@ class TTTSimTestCase(TestCase):
         ]
 
         for game in games:
-            self.assertIsNone(game.env.winner)
+            self.assertIsNone(game.winner)
 
     def test_losses(self) -> None:
         games = [
@@ -28,7 +28,7 @@ class TTTSimTestCase(TestCase):
         ]
 
         for game in games:
-            self.assertEqual(game.players[1], game.env.winner)
+            self.assertEqual(game.players[1], game.winner)
 
     def test_wins(self) -> None:
         games = [
@@ -40,7 +40,7 @@ class TTTSimTestCase(TestCase):
         ]
 
         for game in games:
-            self.assertEqual(game.players[0], game.env.winner)
+            self.assertEqual(game.players[0], game.winner)
 
     def test_illegal_actions(self) -> None:
         self.assertRaises(ActionException, self.parse, [0, 0], [0, 0])

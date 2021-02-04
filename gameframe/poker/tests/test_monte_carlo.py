@@ -41,7 +41,7 @@ class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
             if board_card_count:
                 game.nature.deal_board(*sample(list(game.env._deck), board_card_count))
         elif isinstance(game.env._stage, BettingStage):
-            actor = cast(PokerPlayer, game.env.actor)
+            actor = cast(PokerPlayer, game.actor)
 
             try:
                 actor.bet_raise(2 * max(player.bet for player in game.players))

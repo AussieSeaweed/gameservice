@@ -13,12 +13,12 @@ class TTTMCTestCase(TestCase, MCTestCaseMixin[TTTGame]):
         super().verify(game)
 
         if game.is_terminal:
-            assert not game.env.empty_coords or game.env.winner is not None
+            assert not game.empty_coords or game.winner is not None
         else:
-            assert game.env.empty_coords and game.env.winner is None
+            assert game.empty_coords and game.winner is None
 
     def act(self, game: TTTGame) -> None:
-        cast(TTTPlayer, game.actor).mark(*choice([(r, c) for r, c in game.env.empty_coords]))
+        cast(TTTPlayer, game.actor).mark(*choice([(r, c) for r, c in game.empty_coords]))
 
     def create_game(self) -> TTTGame:
         return TTTGame()

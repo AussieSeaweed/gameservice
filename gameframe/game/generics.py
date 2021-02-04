@@ -1,25 +1,19 @@
 from abc import ABC, abstractmethod
 from typing import Generic, MutableSequence, Sequence, TypeVar
 
-from gameframe.game.bases import BaseActor, BaseEnv, BaseGame
+from gameframe.game.bases import BaseActor, BaseGame
 from gameframe.game.exceptions import ActionException
 
 G = TypeVar('G', bound=BaseGame, covariant=True)
-E = TypeVar('E', bound=BaseEnv, covariant=True)
 N = TypeVar('N', bound=BaseActor, covariant=True)
 P = TypeVar('P', bound=BaseActor, covariant=True)
 A = TypeVar('A', bound=BaseActor, covariant=True)
 
 
-class Game(BaseGame, Generic[E, N, P], ABC):
-    def __init__(self, env: E, nature: N, players: Sequence[P]):
-        self._env: E = env
+class Game(BaseGame, Generic[N, P], ABC):
+    def __init__(self, nature: N, players: Sequence[P]):
         self._nature: N = nature
         self._players: MutableSequence[P] = list(players)
-
-    @property
-    def env(self) -> E:
-        return self._env
 
     @property
     def nature(self) -> N:
@@ -28,15 +22,6 @@ class Game(BaseGame, Generic[E, N, P], ABC):
     @property
     def players(self) -> Sequence[P]:
         return tuple(self._players)
-
-
-class Env(BaseEnv, Generic[G], ABC):
-    def __init__(self, game: G):
-        self.__game = game
-
-    @property
-    def game(self) -> G:
-        return self.__game
 
 
 class Actor(BaseActor, Generic[G], ABC):

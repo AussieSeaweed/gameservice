@@ -2,15 +2,15 @@ from abc import ABC, abstractmethod
 from typing import Optional, Sequence, TypeVar, Union
 
 from gameframe.game import ActionException, BaseActor
-from gameframe.game.generics import A, Action, E, Game, N, P
+from gameframe.game.generics import A, Action, Game, N, P
 from gameframe.sequential.bases import BaseSeqGame
 
 G = TypeVar('G', bound=BaseSeqGame, covariant=True)
 
 
-class SeqGame(Game[E, N, P], BaseSeqGame, ABC):
-    def __init__(self, env: E, nature: N, players: Sequence[P], actor: Optional[Union[N, P]]):
-        super().__init__(env, nature, players)
+class SeqGame(Game[N, P], BaseSeqGame, ABC):
+    def __init__(self, nature: N, players: Sequence[P], actor: Optional[Union[N, P]]):
+        super().__init__(nature, players)
 
         self._actor: Optional[Union[N, P]] = actor
 

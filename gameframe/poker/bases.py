@@ -21,39 +21,39 @@ class PokerGame(SeqGame['PokerEnv', 'PokerNature', 'PokerPlayer'], ABC):
     """
 
     def __init__(self, stages: Sequence[Stage], deck: Deck, evaluator: Evaluator, stacks: Sequence[int]):
-        env = PokerEnv(self, stages, deck, evaluator)
+        env = PokerEnv(self)
         nature = PokerNature(self)
         players = [PokerPlayer(self, stack) for stack in stacks]
         actor = self._nature
 
         super().__init__(env, nature, players, actor)
 
-        if len(self.players) < 2:
-            raise ParamException('Poker needs at least 2 players')
-
-
-class PokerEnv(Env[PokerGame]):
-    """PokerEnv is the class for poker environments."""
-
-    def __init__(self, game: PokerGame, stages: Sequence[Stage], deck: Deck, evaluator: Evaluator):
-        super().__init__(game)
-
         self._stages = stages
         self._stage: Stage = stages[0]
         self._deck = deck
         self._evaluator = evaluator
 
-        self._board_cards: MutableSequence[Card] = []
-        self._requirement = 0
+        if len(self.players) < 2:
+            raise ParamException('Poker needs at least 2 players')
 
         self._stage.open()
-
-    def __repr__(self) -> str:
-        return f'PokerEnv({self.pot}, [' + ', '.join(map(str, self.board_cards)) + '])'
 
     @property
     def deck(self) -> Set[Card]:
         return set(self._deck)
+
+
+class PokerEnv(Env[PokerGame]):
+    """PokerEnv is the class for poker environments."""
+
+    def __init__(self, game: PokerGame):
+        super().__init__(game)
+
+        self._board_cards: MutableSequence[Card] = []
+        self._requirement = 0
+
+    def __repr__(self) -> str:
+        return f'PokerEnv({self.pot}, [' + ', '.join(map(str, self.board_cards)) + '])'
 
     @property
     def board_cards(self) -> Sequence[Card]:

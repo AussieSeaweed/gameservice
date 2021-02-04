@@ -10,18 +10,6 @@ class BaseGame(ABC):
     Every game has the following elements that need to be defined: the environment, the nature, and the players.
     """
 
-    _env: BaseEnv
-    _nature: BaseActor
-    _players: Sequence[BaseActor]
-
-    @property
-    @abstractmethod
-    def env(self) -> BaseEnv:
-        """
-        :return: the environment of this game
-        """
-        pass
-
     @property
     @abstractmethod
     def nature(self) -> BaseActor:
@@ -43,22 +31,6 @@ class BaseGame(ABC):
     def is_terminal(self) -> bool:
         """
         :return: True if this game is terminal, else False
-        """
-        pass
-
-
-class BaseEnv(ABC):
-    """BaseEnv is the abstract base class for all environments.
-
-    The environment contains global information about a game state that does not belong to any actor in particular and
-    is public.
-    """
-
-    @property
-    @abstractmethod
-    def game(self) -> BaseGame:
-        """
-        :return: the game of this environment
         """
         pass
 

@@ -3,27 +3,19 @@ from __future__ import annotations
 from typing import MutableSequence, Optional, Sequence
 
 from gameframe.game import ActionException
-from gameframe.game.generics import Actor, Env
+from gameframe.game.generics import Actor
 from gameframe.sequential.generics import SeqAction, SeqGame
 
 
-class TTTGame(SeqGame['TTTEnv', Actor['TTTGame'], 'TTTPlayer']):
+class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer']):
     """TTTGame is the class for tic tac toe games."""
 
     def __init__(self) -> None:
-        env = TTTEnv(self)
         nature = Actor(self)
         players = [TTTPlayer(self), TTTPlayer(self)]
         actor = players[0]
 
-        super().__init__(env, nature, players, actor)
-
-
-class TTTEnv(Env[TTTGame]):
-    """TTTEnv is the class for tic tac toe environments."""
-
-    def __init__(self, game: TTTGame):
-        super().__init__(game)
+        super().__init__(nature, players, actor)
 
         self._board: MutableSequence[MutableSequence[Optional[TTTPlayer]]] = [[None, None, None],
                                                                               [None, None, None],
@@ -86,18 +78,18 @@ class MarkAction(SeqAction[TTTGame, TTTPlayer]):
 
     @property
     def next_actor(self) -> Optional[TTTPlayer]:
-        if self.game.env.empty_coords and self.game.env.winner is None:
+        if self.game.empty_coords and self.game.winner is None:
             return self.game.players[(self.game.players.index(self.actor) + 1) % 2]
         else:
             return None
 
     def act(self) -> None:
-        self.game.env._board[self.r][self.c] = self.actor
+        self.game._board[self.r][self.c] = self.actor
 
     def verify(self) -> None:
         super().verify()
 
         if not (0 <= self.r < 3 and 0 <= self.c < 3):
             raise ActionException('The coordinates are out of bounds')
-        elif self.game.env._board[self.r][self.c] is not None:
+        elif self.game._board[self.r][self.c] is not None:
             raise ActionException('The cell is not empty')
