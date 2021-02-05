@@ -45,7 +45,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         self.__blinds = tuple(blinds)
 
         self._board_cards: MutableSequence[Card] = []
-        self._aggressor = players[len(blinds) - 1]
+        self._aggressor = players[0] if len(players) == 2 else players[len(blinds) - 1]
         self._max_delta = 0
         self._requirement = ante
 
@@ -55,7 +55,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         for player, blind in zip_longest(players, blinds, fillvalue=0):
             player._commitment = min(ante + blind, player._total)
 
-        if not self._stage.is_skippable:
+        if not self._stage.is_closeable:
             self._stage.open()
 
     @property
@@ -296,7 +296,7 @@ class Stage(Iterator['Stage'], ABC):
         return count
 
     @property
-    def is_skippable(self) -> bool:
+    def is_closeable(self) -> bool:
         return sum(not player.is_mucked for player in self.game.players) == 1
 
     @property
@@ -319,18 +319,15 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
     def apply(self) -> None:
         super().apply()
 
-        if self.game._stage.is_skippable:
-            self.game._stage.close()
-
-            try:
-                self.game._stage = next(self.game._stage)
-
-                while self.game._stage.is_skippable:
+        try:
+            if self.game._stage.is_closeable:
+                while self.game._stage.is_closeable:
+                    self.game._stage.close()
                     self.game._stage = next(self.game._stage)
 
                 self.game._stage.open()
-            except StopIteration:
-                self.__distribute()
+        except StopIteration:
+            self.__distribute()
 
     def __distribute(self) -> None:
         players = list(filter(lambda player: not player.is_mucked, self.game.players))

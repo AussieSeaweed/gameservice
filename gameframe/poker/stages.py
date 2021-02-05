@@ -13,8 +13,8 @@ class DealingStage(Stage):
         self.board_card_count = board_card_count
 
     @property
-    def is_skippable(self) -> bool:
-        return super().is_skippable \
+    def is_closeable(self) -> bool:
+        return super().is_closeable \
                or (all(len(player._hole_cards) == self.target_hole_card_count for player in self.game.players if
                        not player.is_mucked)
                    and len(self.game.board_cards) == self.target_board_card_count)
@@ -41,9 +41,8 @@ class BettingStage(Stage, ABC):
         pass
 
     @property
-    def is_skippable(self) -> bool:
-        return super().is_skippable \
-               or all(not player._is_relevant for player in self.game.players) \
+    def is_closeable(self) -> bool:
+        return super().is_closeable or all(not player._is_relevant for player in self.game.players) \
                or self.game.actor is self.game._aggressor
 
     @property
@@ -80,8 +79,8 @@ class NLBettingStage(BettingStage):
 
 class ShowdownStage(Stage):
     @property
-    def is_skippable(self) -> bool:
-        return super().is_skippable or all(player.is_mucked or player.is_shown for player in self.game.players)
+    def is_closeable(self) -> bool:
+        return super().is_closeable or all(player.is_mucked or player.is_shown for player in self.game.players)
 
     @property
     def opener(self) -> PokerPlayer:
