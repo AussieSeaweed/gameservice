@@ -169,7 +169,18 @@ class NLTexasHESimTestCase(TestCase):
         self.assert_stacks(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'TsTh', 'JcTc'],
                                       ['AcAsKc', 'Qs', 'Qc'], 'b50b199ccccf'), [150, 0, 249, 0, 0, 751])
 
-    def test_short_stacks(self) -> None:
+    def test_short_stacks_showdown(self) -> None:
+        self.assert_shows(self.parse([0, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
+        self.assert_shows(self.parse([1, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
+        self.assert_shows(self.parse([0, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
+        self.assert_shows(self.parse([2, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
+        self.assert_shows(self.parse([50, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
+        self.assert_shows(self.parse([0, 0, 0, 0], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], ''),
+                          [True, True, False, False])
+        self.assert_shows(self.parse([1, 1, 5, 5], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b4c'),
+                          [True, True, True, False])
+
+    def test_short_stacks_distribution(self) -> None:
         self.assert_stacks(self.parse([0, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [0, 0])
         self.assert_stacks(self.parse([1, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [1, 0])
         self.assert_stacks(self.parse([0, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [0, 1])
