@@ -12,8 +12,8 @@ class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
     ANTE = 1
     BLINDS = [1, 2]
     PLAYER_COUNT = 4
-    MIN_STACK = 0
-    MAX_STACK = 10
+    MIN_STACK = 10  # TODO: MAKE ZERO
+    MAX_STACK = 50
 
     mc_test_count = 1000
 
@@ -21,8 +21,11 @@ class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
         super().verify(game)
 
         if game.is_terminal:
-            assert game.pot == 0
-            assert all(player.bet == 0 and player.stack >= 0 for player in game.players)
+            self.assertEqual(game.pot, 0)
+            self.assertTrue(all(player.bet == 0 and player.stack >= 0 for player in game.players))
+
+        self.assertEqual(game.pot + sum(player.bet + player.stack for player in game.players),
+                         sum(player.starting_stack for player in game.players))
 
     def act(self, game: NLTHEGame) -> None:
         if isinstance(game._stage, DealingStage):

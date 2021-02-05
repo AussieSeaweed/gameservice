@@ -179,6 +179,8 @@ class NLTexasHESimTestCase(TestCase):
                           [True, True, False, False])
         self.assert_shows(self.parse([1, 1, 5, 5], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b4c'),
                           [True, True, True, False])
+        # self.assert_shows(self.parse([7, 0, 9, 7], ['4h8s', 'AsQs', 'Ac8d', 'AhQh'], ['Ad3s2h', '8h', 'Ts'], 'ff'),
+        #                   [False, True, False, False])  # TODO: ENABLE
 
     def test_short_stacks_distribution(self) -> None:
         self.assert_stacks(self.parse([0, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [0, 0])
@@ -190,6 +192,8 @@ class NLTexasHESimTestCase(TestCase):
                            [0, 0, 0, 0])
         self.assert_stacks(self.parse([1, 1, 5, 5], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b4c'),
                            [0, 4, 8, 0])
+        # self.assert_stacks(self.parse([7, 0, 9, 7], ['4h8s', 'AsQs', 'Ac8d', 'AhQh'], ['Ad3s2h', '8h', 'Ts'], 'ff'),
+        #                    [7, 0, 9, 7])  # TODO: ENABLE
 
     def assert_actor(self, game: PokerGame, index: Optional[int]) -> None:
         if isinstance(game.actor, PokerPlayer):

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Sequence, cast
+from typing import Sequence, cast
 
 from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
 from gameframe.utils import rotate
@@ -13,8 +13,8 @@ class DealingStage(Stage):
         self.board_card_count = board_card_count
 
     @property
-    def is_closeable(self) -> bool:
-        return super().is_closeable \
+    def is_skippable(self) -> bool:
+        return super().is_skippable \
                or (all(len(player._hole_cards) == self.target_hole_card_count for player in self.game.players if
                        not player.is_mucked)
                    and len(self.game.board_cards) == self.target_board_card_count)
@@ -25,7 +25,7 @@ class DealingStage(Stage):
 
 
 class BettingStage(Stage, ABC):
-    def __init__(self, game: PokerGame, initial_max_delta: Optional[int] = None):
+    def __init__(self, game: PokerGame, initial_max_delta: int):
         super().__init__(game)
 
         self.initial_max_delta = initial_max_delta
@@ -41,8 +41,8 @@ class BettingStage(Stage, ABC):
         pass
 
     @property
-    def is_closeable(self) -> bool:
-        return super().is_closeable or all(not player._is_relevant for player in self.game.players) \
+    def is_skippable(self) -> bool:
+        return super().is_skippable or all(not player._is_relevant for player in self.game.players) \
                or self.game.actor is self.game._aggressor
 
     @property
@@ -56,13 +56,11 @@ class BettingStage(Stage, ABC):
         super().open()
 
         self.game._aggressor = self.opener
-
-        if self.initial_max_delta is None:
-            self.game._max_delta = max(self.game.ante, max(self.game.blinds))
-        else:
-            self.game._max_delta = self.initial_max_delta
+        self.game._max_delta = self.initial_max_delta
 
     def close(self) -> None:
+        super().close()
+
         requirement = sorted(player._commitment for player in self.game.players)[-2]
 
         for player in self.game.players:
@@ -79,8 +77,8 @@ class NLBettingStage(BettingStage):
 
 class ShowdownStage(Stage):
     @property
-    def is_closeable(self) -> bool:
-        return super().is_closeable or all(player.is_mucked or player.is_shown for player in self.game.players)
+    def is_skippable(self) -> bool:
+        return super().is_skippable or all(player.is_mucked or player.is_shown for player in self.game.players)
 
     @property
     def opener(self) -> PokerPlayer:

@@ -60,7 +60,7 @@ class BetRaiseAction(BettingAction):
 
         stage = cast(BettingStage, self.game._stage)
 
-        if max(player._commitment for player in self.game.players) >= self.actor._total:
+        if max(player._commitment for player in self.game.players) >= self.actor.starting_stack:
             raise ActionException('The stack of the acting player is covered')
         elif all(not player._is_relevant for player in self.game.players if player is not self.actor):
             raise ActionException('Betting/Raising is redundant')

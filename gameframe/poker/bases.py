@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from itertools import zip_longest
-from typing import Iterator, MutableSequence, Optional, Sequence, Set, Union
+from typing import DefaultDict, Iterator, MutableSequence, Optional, Sequence, Set, Union
 
 from gameframe.game import ParamException
 from gameframe.game.generics import A, Actor
@@ -22,9 +23,9 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
     """
 
     def __init__(self, stages: Sequence[Stage], deck: Deck, evaluator: Evaluator, ante: int, blinds: Sequence[int],
-                 stacks: Sequence[int]):
+                 starting_stacks: Sequence[int]):
         nature = PokerNature(self)
-        players = [PokerPlayer(self, stack) for stack in stacks]
+        players = [PokerPlayer(self) for _ in starting_stacks]
         actor = nature
 
         if len(players) < 2:
@@ -43,6 +44,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         self.__evaluator = evaluator
         self.__ante = ante
         self.__blinds = tuple(blinds)
+        self.__starting_stacks = tuple(starting_stacks)
 
         self._board_cards: MutableSequence[Card] = []
         self._aggressor = players[0] if len(players) == 2 else players[len(blinds) - 1]
@@ -52,10 +54,10 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         if len(players) == 2:
             blinds = list(reversed(blinds))
 
-        for player, blind in zip_longest(players, blinds, fillvalue=0):
-            player._commitment = min(ante + blind, player._total)
+        for player, blind, starting_stack in zip_longest(players, blinds, starting_stacks, fillvalue=0):
+            player._commitment = min(ante + blind, starting_stack)
 
-        if not self._stage.is_closeable:
+        if not self._stage.is_skippable:
             self._stage.open()
 
     @property
@@ -87,6 +89,13 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return self.__blinds
 
     @property
+    def starting_stacks(self) -> Sequence[int]:
+        """
+        :return: the starting stacks of this poker game
+        """
+        return self.__starting_stacks
+
+    @property
     def board_cards(self) -> Sequence[Card]:
         """
         :return: the board cards of this poker game
@@ -98,10 +107,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         """
         :return: the pot of this poker game
         """
-        if self.is_terminal:
-            return 0
-        else:
-            return sum(min(player._commitment, self._requirement) for player in self.players)
+        return sum(min(player._commitment, self._requirement) for player in self.players)
 
 
 class PokerNature(Actor[PokerGame]):
@@ -135,10 +141,9 @@ class PokerNature(Actor[PokerGame]):
 class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
     """PokerPlayer is the class for poker players."""
 
-    def __init__(self, game: PokerGame, stack: int):
+    def __init__(self, game: PokerGame):
         super().__init__(game)
 
-        self._total = stack
         self._commitment = 0
         self._hole_cards: MutableSequence[HoleCard] = []
         self.__is_mucked = False
@@ -153,6 +158,13 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
             return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self._hole_cards)) + '])'
 
     @property
+    def starting_stack(self) -> int:
+        """
+        :return: the starting stack of this poker player
+        """
+        return self.game.starting_stacks[self.index]
+
+    @property
     def bet(self) -> int:
         """
         :return: the bet of this poker player
@@ -164,7 +176,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         """
         :return: the stack of this poker player
         """
-        return self._total - self._commitment
+        return self.starting_stack - self._commitment
 
     @property
     def hole_cards(self) -> Optional[Sequence[HoleCard]]:
@@ -202,15 +214,16 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         return all(hole_card.status for hole_card in self._hole_cards)
 
     @property
-    def _effective_total(self) -> int:
+    def _effective_stack(self) -> int:
         try:
-            return min(sorted(player._total for player in self.game.players if not player.is_mucked)[-2], self._total)
+            return min(sorted(player.starting_stack for player in self.game.players if not player.is_mucked)[-2],
+                       self.starting_stack)
         except IndexError:
             return 0
 
     @property
     def _is_relevant(self) -> bool:
-        return not self.is_mucked and self._commitment < self._effective_total
+        return not self.is_mucked and self._commitment < self._effective_stack
 
     def fold(self) -> None:
         """Folds.
@@ -296,7 +309,7 @@ class Stage(Iterator['Stage'], ABC):
         return count
 
     @property
-    def is_closeable(self) -> bool:
+    def is_skippable(self) -> bool:
         return sum(not player.is_mucked for player in self.game.players) == 1
 
     @property
@@ -318,19 +331,20 @@ class Stage(Iterator['Stage'], ABC):
 class PokerAction(SeqAction[PokerGame, A], ABC):
     def apply(self) -> None:
         super().apply()
+        if self.game._stage.is_skippable:
+            self.game._stage.close()
 
-        try:
-            if self.game._stage.is_closeable:
-                while self.game._stage.is_closeable:
-                    self.game._stage.close()
+            try:
+                while self.game._stage.is_skippable:
                     self.game._stage = next(self.game._stage)
 
                 self.game._stage.open()
-        except StopIteration:
-            self.__distribute()
+            except StopIteration:
+                self.__distribute()
 
     def __distribute(self) -> None:
         players = list(filter(lambda player: not player.is_mucked, self.game.players))
+        revenues: DefaultDict[PokerPlayer, int] = defaultdict(int)
 
         if len(players) != 1:
             players.sort(key=lambda player: (player.hand, -player._commitment), reverse=True)
@@ -343,11 +357,14 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
             recipients = list(filter(lambda player: player is base_player or player.hand == base_player.hand, players))
 
             for recipient in recipients:
-                recipient._total += side_pot // len(recipients)
+                revenues[recipient] += side_pot // len(recipients)
             else:
-                recipients[0]._total += side_pot % len(recipients)
+                revenues[recipients[0]] += side_pot % len(recipients)
 
             base = max(base, base_player._commitment)
+
+        for player in players:
+            player._commitment = min(base, player._commitment - revenues[player])
 
         self.game._actor = None
 
