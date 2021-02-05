@@ -364,7 +364,7 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
             base = max(base, base_player._commitment)
 
         for player in players:
-            player._commitment = min(base, player._commitment - revenues[player])
+            player._commitment -= revenues[player]  # TODO: SOMETIMES, b < c => so, chg to c = min(b, c - r)
 
         self.game._actor = None
 
