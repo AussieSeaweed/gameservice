@@ -141,6 +141,22 @@ class NLTexasHESimTestCase(TestCase):
         self.assert_shows(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'TsTh', 'JcTc'],
                                      ['AcAsKc', 'Qs', 'Qc'], 'b50b199ccccf'), [True, True, False, False, False, True])
 
+        self.assert_shows(self.parse([0, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
+        self.assert_shows(self.parse([1, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
+        self.assert_shows(self.parse([0, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
+        self.assert_shows(self.parse([2, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
+        self.assert_shows(self.parse([50, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
+        self.assert_shows(self.parse([0, 0, 0, 0], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], ''),
+                          [True, True, False, False])
+        self.assert_shows(self.parse([1, 1, 5, 5], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b4c'),
+                          [True, True, True, False])
+        self.assert_shows(self.parse([7, 0, 9, 7], ['4h8s', 'AsQs', 'Ac8d', 'AhQh'], ['Ad3s2h', '8h', 'Ts'], 'ff'),
+                          [True, True, False, False])
+        self.assert_shows(self.parse([1, 17, 0, 1], ['3d6c', '8sAh', 'Ad8c', 'KcQs'], ['4c7h5s', 'Ts', '3c'], ''),
+                          [True, True, True, False])
+        self.assert_shows(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], ''),
+                          [False, True, False, True])
+
     def test_distribution(self) -> None:
         self.assert_stacks(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b6b199c'), [100, 200])
         self.assert_stacks(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b99c'), [100, 200])
@@ -169,24 +185,6 @@ class NLTexasHESimTestCase(TestCase):
         self.assert_stacks(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'TsTh', 'JcTc'],
                                       ['AcAsKc', 'Qs', 'Qc'], 'b50b199ccccf'), [150, 0, 249, 0, 0, 751])
 
-    def test_short_stacks_showdown(self) -> None:
-        self.assert_shows(self.parse([0, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
-        self.assert_shows(self.parse([1, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
-        self.assert_shows(self.parse([0, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
-        self.assert_shows(self.parse([2, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
-        self.assert_shows(self.parse([50, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
-        self.assert_shows(self.parse([0, 0, 0, 0], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], ''),
-                          [True, True, False, False])
-        self.assert_shows(self.parse([1, 1, 5, 5], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b4c'),
-                          [True, True, True, False])
-        self.assert_shows(self.parse([7, 0, 9, 7], ['4h8s', 'AsQs', 'Ac8d', 'AhQh'], ['Ad3s2h', '8h', 'Ts'], 'ff'),
-                          [True, True, False, False])
-        self.assert_shows(self.parse([1, 17, 0, 1], ['3d6c', '8sAh', 'Ad8c', 'KcQs'], ['4c7h5s', 'Ts', '3c'], ''),
-                          [True, True, True, False])
-        self.assert_shows(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], ''),
-                          [False, True, False, True])
-
-    def test_short_stacks_distribution(self) -> None:
         self.assert_stacks(self.parse([0, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [0, 0])
         self.assert_stacks(self.parse([1, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [1, 0])
         self.assert_stacks(self.parse([0, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [0, 1])
@@ -204,6 +202,18 @@ class NLTexasHESimTestCase(TestCase):
                            [0, 16, 0, 3])
 
     def test_pot(self) -> None:
+        self.assertEqual(self.parse([0, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
+        self.assertEqual(self.parse([1, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
+        self.assertEqual(self.parse([0, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
+        self.assertEqual(self.parse([2, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
+        self.assertEqual(self.parse([50, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
+        self.assertEqual(self.parse([0, 0, 0, 0], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
+        self.assertEqual(self.parse([1, 1, 5, 5], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b4c').pot,
+                         0)
+        self.assertEqual(self.parse([7, 0, 9, 7], ['4h8s', 'AsQs', 'Ac8d', 'AhQh'], ['Ad3s2h', '8h', 'Ts'], 'ff').pot,
+                         0)
+        self.assertEqual(self.parse([1, 17, 0, 1], ['3d6c', '8sAh', 'Ad8c', 'KcQs'], ['4c7h5s', 'Ts', '3c'], '').pot, 0)
+        self.assertEqual(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], '').pot, 0)
         self.assertEqual(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], '').pot, 0)
 
     def assert_actor(self, game: PokerGame, index: Optional[int]) -> None:
