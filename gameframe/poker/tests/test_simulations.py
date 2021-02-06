@@ -6,7 +6,7 @@ from gameframe.poker import NLTHEGame, PokerGame, PokerPlayer
 from gameframe.poker.stages import ShowdownStage
 
 
-class NLTexasHESimCase(TestCase):
+class NLTexasHESimTestCase(TestCase):
     ANTE = 1
     BLINDS = 1, 2
 

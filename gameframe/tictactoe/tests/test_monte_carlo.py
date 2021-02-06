@@ -2,11 +2,11 @@ from random import choice
 from typing import cast
 from unittest import TestCase, main
 
-from gameframe.sequential.tests.test_monte_carlo import MCCaseMixin
+from gameframe.sequential.tests.test_monte_carlo import MCTestCaseMixin
 from gameframe.tictactoe import TTTGame, TTTPlayer
 
 
-class TTTMCCase(TestCase, MCCaseMixin[TTTGame]):
+class TTTMCTestCase(TestCase, MCTestCaseMixin[TTTGame]):
     mc_test_count = 10000
 
     def verify(self, game: TTTGame) -> None:
