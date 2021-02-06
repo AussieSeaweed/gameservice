@@ -5,10 +5,10 @@ from unittest import TestCase, main
 from gameframe.game import ActionException
 from gameframe.poker import NLTHEGame, PokerPlayer
 from gameframe.poker.stages import BettingStage, DealingStage, ShowdownStage
-from gameframe.sequential.tests.test_monte_carlo import MCTestCaseMixin
+from gameframe.sequential.tests.test_monte_carlo import MCCaseMixin
 
 
-class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
+class NLTexasHEMCCase(TestCase, MCCaseMixin[NLTHEGame]):
     ANTE = 1
     BLINDS = [1, 2]
     PLAYER_COUNT = 4

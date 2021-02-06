@@ -6,7 +6,7 @@ from gameframe.sequential.bases import BaseSeqGame
 G = TypeVar('G', bound=BaseSeqGame)
 
 
-class MCTestCaseMixin(Generic[G], ABC):
+class MCCaseMixin(Generic[G], ABC):
     mc_test_count: int
 
     def test_monte_carlo(self) -> None:
