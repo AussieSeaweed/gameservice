@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from enum import Enum, unique
 from typing import Sequence, cast
 
 from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
@@ -29,8 +30,7 @@ class BettingStage(Stage, ABC):
         super().__init__(game)
 
         self.initial_max_delta = initial_max_delta
-        self.ignore_flag = False
-        self.final_flag = False
+        self.flag = self.Flag.DEFAULT
 
     @property
     def min_amount(self) -> int:
@@ -45,8 +45,8 @@ class BettingStage(Stage, ABC):
     @property
     def is_skippable(self) -> bool:
         return super().is_skippable or all(not player._is_relevant for player in self.game.players) \
-               or (self.game.actor is self.game._aggressor and not self.ignore_flag) \
-               or self.final_flag
+               or (self.game.actor is self.game._aggressor and self.flag != self.Flag.IGNORE) \
+               or self.flag == self.Flag.FINAL
 
     @property
     def opener(self) -> PokerPlayer:
@@ -59,7 +59,7 @@ class BettingStage(Stage, ABC):
         super().open()
 
         if any(player.bet for player in self.game.players):
-            self.ignore_flag = True
+            self.flag = self.Flag.IGNORE
         else:
             self.game._aggressor = self.opener
 
@@ -68,17 +68,17 @@ class BettingStage(Stage, ABC):
     def close(self) -> None:
         super().close()
 
-        requirement = sorted(player._commitment for player in self.game.players)[-2]
-
-        for player in self.game.players:
-            player._commitment = min(player._commitment, requirement)
-
-        self.game._requirement = requirement
+        self.game._trim()
 
     def update(self) -> None:
         if self.game.actor is self.game._aggressor:
-            self.ignore_flag = False
-            self.final_flag = True
+            self.flag = self.Flag.FINAL
+
+    @unique
+    class Flag(Enum):
+        DEFAULT = 0
+        IGNORE = 1
+        FINAL = 2
 
 
 class NLBettingStage(BettingStage):

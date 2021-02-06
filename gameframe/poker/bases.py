@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from enum import Enum, unique
 from itertools import zip_longest
 from typing import DefaultDict, Iterator, MutableSequence, Optional, Sequence, Set, Union
 
 from gameframe.game import ParamException
 from gameframe.game.generics import A, Actor
-from gameframe.poker.utils import Card, CardLike, Deck, Evaluator, Hand, HoleCardStatus
+from gameframe.poker.utils import Card, CardLike, Deck, Evaluator, Hand
 from gameframe.sequential.generics import SeqAction, SeqGame
 
 
@@ -27,13 +28,6 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         players = [PokerPlayer(self) for _ in starting_stacks]
         actor = nature
 
-        if len(players) < 2:
-            raise ParamException('Poker needs at least 2 players')
-        elif any(a != b for a, b in zip_longest(blinds, sorted(blinds))):
-            raise ParamException('Blinds have to be sorted')
-        elif len(blinds) > len(players):
-            raise ParamException('There are more blinds than players')
-
         super().__init__(nature, players, actor)
 
         self._stages = stages
@@ -49,6 +43,15 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         self._aggressor = players[0] if len(players) == 2 else players[blinds.index(max(blinds))]
         self._max_delta = 0
         self._requirement = ante
+
+        if len(players) < 2:
+            raise ParamException('Poker needs at least 2 players')
+        elif any(a != b for a, b in zip_longest(blinds, sorted(blinds))):
+            raise ParamException('Blinds have to be sorted')
+        elif len(blinds) > len(players):
+            raise ParamException('There are more blinds than players')
+        elif len(blinds) != len(set(blinds)):
+            raise ParamException('Each blind value must be unique')
 
         if len(players) == 2:
             blinds = list(reversed(blinds))
@@ -108,6 +111,14 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         """
         return sum(min(player._commitment, self._requirement) for player in self.players)
 
+    def _trim(self) -> None:
+        requirement = sorted(player._commitment for player in self.players)[-2]
+
+        for player in self.players:
+            player._commitment = min(player._commitment, requirement)
+
+        self._requirement = requirement
+
 
 class PokerNature(Actor[PokerGame]):
     """PokerNature is the class for poker natures."""
@@ -145,7 +156,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         self._commitment = 0
         self._hole_cards: MutableSequence[Card] = []
-        self._status = HoleCardStatus.DEFAULT
+        self._status = self.HoleCardStatus.DEFAULT
 
     def __next__(self) -> PokerPlayer:
         return self.game.players[(self.index + 1) % len(self.game.players)]
@@ -203,14 +214,14 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         """
         :return: True if this poker player has mucked his/her hand, else False
         """
-        return self._status == HoleCardStatus.MUCKED
+        return self._status == self.HoleCardStatus.MUCKED
 
     @property
     def is_shown(self) -> bool:
         """
         :return: True if this poker player has shown his/her hand, else False
         """
-        return self._status == HoleCardStatus.SHOWN
+        return self._status == self.HoleCardStatus.SHOWN
 
     @property
     def _effective_stack(self) -> int:
@@ -261,6 +272,12 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         from gameframe.poker.actions import ShowdownAction
 
         ShowdownAction(self.game, self, show).act()
+
+    @unique
+    class HoleCardStatus(Enum):
+        DEFAULT = 0
+        SHOWN = 1
+        MUCKED = 2
 
 
 class Stage(Iterator['Stage'], ABC):
@@ -333,18 +350,10 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
 
                 self.game._stage.open()
             except StopIteration:
-                self.__trim()
+                self.game._trim()
                 self.__distribute()
         else:
             self.game._stage.update()
-
-    def __trim(self) -> None:
-        requirement = sorted(player._commitment for player in self.game.players)[-2]
-
-        for player in self.game.players:
-            player._commitment = min(player._commitment, requirement)
-
-        self.game._requirement = requirement
 
     def __distribute(self) -> None:
         players = list(filter(lambda player: not player.is_mucked, self.game.players))
@@ -367,8 +376,8 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
 
             base = max(base, base_player._commitment)
 
-        for player in players:
-            player._commitment -= revenues[player]
+        for player, revenue in revenues.items():
+            player._commitment -= revenue
 
         self.game._actor = None
 

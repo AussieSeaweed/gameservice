@@ -4,17 +4,14 @@ from typing import cast
 from gameframe.game import ActionException
 from gameframe.poker.bases import PokerAction, PokerGame, PokerPlayer
 from gameframe.poker.stages import BettingStage, ShowdownStage
-from gameframe.poker.utils import HoleCardStatus
 
 
 class BettingAction(PokerAction[PokerPlayer], ABC):
     @property
     def next_actor(self) -> PokerPlayer:
         actor = next(self.actor)
-        stage = cast(BettingStage, self.game._stage)
 
-        while not actor._is_relevant and any(player._is_relevant for player in self.game.players) \
-                and not (actor is self.game._aggressor and not stage.ignore_flag):
+        while not actor._is_relevant and actor is not self.game._aggressor:
             actor = next(actor)
 
         return actor
@@ -28,7 +25,7 @@ class BettingAction(PokerAction[PokerPlayer], ABC):
 
 class FoldAction(BettingAction):
     def apply(self) -> None:
-        self.actor._status = HoleCardStatus.MUCKED
+        self.actor._status = PokerPlayer.HoleCardStatus.MUCKED
 
     def verify(self) -> None:
         super().verify()
@@ -53,10 +50,7 @@ class BetRaiseAction(BettingAction):
         self.amount = amount
 
     def apply(self) -> None:
-        stage = cast(BettingStage, self.game._stage)
-
-        stage.final_flag = False
-        stage.ignore_flag = False
+        cast(BettingStage, self.game._stage).flag = BettingStage.Flag.DEFAULT
 
         self.game._aggressor = self.actor
         self.game._max_delta = max(self.game._max_delta, self.amount - max(player.bet for player in self.game.players))
@@ -94,9 +88,9 @@ class ShowdownAction(PokerAction[PokerPlayer]):
     def apply(self) -> None:
         if self.show or all(not (player.hand > self.actor.hand and player._commitment >= self.actor._commitment)
                             for player in self.game.players if player.is_shown):
-            self.actor._status = HoleCardStatus.SHOWN
+            self.actor._status = PokerPlayer.HoleCardStatus.SHOWN
         else:
-            self.actor._status = HoleCardStatus.MUCKED
+            self.actor._status = PokerPlayer.HoleCardStatus.MUCKED
 
     def verify(self) -> None:
         super().verify()
