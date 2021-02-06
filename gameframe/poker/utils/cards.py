@@ -85,25 +85,6 @@ class Card:
         return self.__suit
 
 
-class HoleCard(Card):
-    """HoleCard is the class for hole cards."""
-
-    def __init__(self, card: Card, status: bool):
-        super().__init__(card.rank, card.suit)
-
-        self._status = status
-
-    def __repr__(self) -> str:
-        return super().__repr__() if self._status else '??'
-
-    @property
-    def status(self) -> bool:
-        """
-        :return: the status of this card
-        """
-        return self._status
-
-
 CardLike = Union[str, Card]
 
 

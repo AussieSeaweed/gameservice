@@ -4,8 +4,7 @@ from typing import cast
 from gameframe.game import ActionException
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
 from gameframe.poker.stages import DealingStage
-from gameframe.poker.utils import HoleCard
-from gameframe.poker.utils.cards import CardLike, parse_card
+from gameframe.poker.utils import CardLike, parse_card
 
 
 class DealingAction(PokerAction[PokerNature], ABC):
@@ -14,7 +13,7 @@ class DealingAction(PokerAction[PokerNature], ABC):
 
         self.cards = list(map(parse_card, cards))
 
-    def act(self) -> None:
+    def apply(self) -> None:
         self.deal()
         self.game._deck.remove(self.cards)
 
@@ -44,8 +43,7 @@ class HoleCardDealingAction(DealingAction):
         self.player = player
 
     def deal(self) -> None:
-        self.player._hole_cards.extend(HoleCard(card, status) for card, status in
-                                       zip(self.cards, cast(DealingStage, self.game._stage).hole_card_statuses))
+        self.player._hole_cards.extend(self.cards)
 
     def verify(self) -> None:
         super().verify()

@@ -12,10 +12,10 @@ class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
     ANTE = 1
     BLINDS = [1, 2]
     PLAYER_COUNT = 4
-    MIN_STACK = 10  # TODO: MAKE ZERO
-    MAX_STACK = 50
+    MIN_STACK = 0
+    MAX_STACK = 20
 
-    mc_test_count = 1000
+    mc_test_count = 10000
 
     def verify(self, game: NLTHEGame) -> None:
         super().verify(game)

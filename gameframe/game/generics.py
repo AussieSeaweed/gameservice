@@ -38,14 +38,14 @@ class Action(Generic[G, A], ABC):
         self.game = game
         self.actor = actor
 
-    def apply(self) -> None:
+    def act(self) -> None:
         self.verify()
-        self.act()
+        self.apply()
 
     def verify(self) -> None:
         if self.game.is_terminal:
             raise ActionException('The action is applied to a terminal game')
 
     @abstractmethod
-    def act(self) -> None:
+    def apply(self) -> None:
         pass

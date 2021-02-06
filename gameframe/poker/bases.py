@@ -7,8 +7,7 @@ from typing import DefaultDict, Iterator, MutableSequence, Optional, Sequence, S
 
 from gameframe.game import ParamException
 from gameframe.game.generics import A, Actor
-from gameframe.poker.utils import Card, Deck, Evaluator, Hand, HoleCard
-from gameframe.poker.utils.cards import CardLike
+from gameframe.poker.utils import Card, CardLike, Deck, Evaluator, Hand, HoleCardStatus
 from gameframe.sequential.generics import SeqAction, SeqGame
 
 
@@ -47,7 +46,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         self.__starting_stacks = tuple(starting_stacks)
 
         self._board_cards: MutableSequence[Card] = []
-        self._aggressor = players[0] if len(players) == 2 else players[len(blinds) - 1]
+        self._aggressor = players[0] if len(players) == 2 else players[blinds.index(max(blinds))]
         self._max_delta = 0
         self._requirement = ante
 
@@ -125,7 +124,7 @@ class PokerNature(Actor[PokerGame]):
         """
         from gameframe.poker.actions import HoleCardDealingAction
 
-        HoleCardDealingAction(self.game, self, player, *hole_cards).apply()
+        HoleCardDealingAction(self.game, self, player, *hole_cards).act()
 
     def deal_board(self, *cards: CardLike) -> None:
         """Deals the cards to the board.
@@ -135,7 +134,7 @@ class PokerNature(Actor[PokerGame]):
         """
         from gameframe.poker.actions import BoardCardDealingAction
 
-        BoardCardDealingAction(self.game, self, *cards).apply()
+        BoardCardDealingAction(self.game, self, *cards).act()
 
 
 class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
@@ -145,8 +144,8 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         super().__init__(game)
 
         self._commitment = 0
-        self._hole_cards: MutableSequence[HoleCard] = []
-        self.__is_mucked = False
+        self._hole_cards: MutableSequence[Card] = []
+        self._status = HoleCardStatus.DEFAULT
 
     def __next__(self) -> PokerPlayer:
         return self.game.players[(self.index + 1) % len(self.game.players)]
@@ -179,7 +178,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         return self.starting_stack - self._commitment
 
     @property
-    def hole_cards(self) -> Optional[Sequence[HoleCard]]:
+    def hole_cards(self) -> Optional[Sequence[Card]]:
         """
         :return: the hole cards of this poker player
         """
@@ -204,14 +203,14 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         """
         :return: True if this poker player has mucked his/her hand, else False
         """
-        return self.__is_mucked
+        return self._status == HoleCardStatus.MUCKED
 
     @property
     def is_shown(self) -> bool:
         """
         :return: True if this poker player has shown his/her hand, else False
         """
-        return all(hole_card.status for hole_card in self._hole_cards)
+        return self._status == HoleCardStatus.SHOWN
 
     @property
     def _effective_stack(self) -> int:
@@ -232,7 +231,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         """
         from gameframe.poker.actions import FoldAction
 
-        FoldAction(self.game, self).apply()
+        FoldAction(self.game, self).act()
 
     def check_call(self) -> None:
         """Checks or calls.
@@ -241,7 +240,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         """
         from gameframe.poker.actions import CheckCallAction
 
-        CheckCallAction(self.game, self).apply()
+        CheckCallAction(self.game, self).act()
 
     def bet_raise(self, amount: int) -> None:
         """Bets or Raises the amount.
@@ -251,7 +250,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         """
         from gameframe.poker.actions import BetRaiseAction
 
-        BetRaiseAction(self.game, self, amount).apply()
+        BetRaiseAction(self.game, self, amount).act()
 
     def showdown(self, show: bool = False) -> None:
         """Showdowns the hand of this player if necessary or specified.
@@ -261,17 +260,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         """
         from gameframe.poker.actions import ShowdownAction
 
-        ShowdownAction(self.game, self, show).apply()
-
-    def _muck(self) -> None:
-        self.__is_mucked = True
-
-        for card in self._hole_cards:
-            card._status = False
-
-    def _show(self) -> None:
-        for card in self._hole_cards:
-            card._status = True
+        ShowdownAction(self.game, self, show).act()
 
 
 class Stage(Iterator['Stage'], ABC):
@@ -327,10 +316,14 @@ class Stage(Iterator['Stage'], ABC):
     def close(self) -> None:
         pass
 
+    def update(self) -> None:
+        pass
+
 
 class PokerAction(SeqAction[PokerGame, A], ABC):
-    def apply(self) -> None:
-        super().apply()
+    def act(self) -> None:
+        super().act()
+
         if self.game._stage.is_skippable:
             self.game._stage.close()
 
@@ -340,7 +333,18 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
 
                 self.game._stage.open()
             except StopIteration:
+                self.__trim()
                 self.__distribute()
+        else:
+            self.game._stage.update()
+
+    def __trim(self) -> None:
+        requirement = sorted(player._commitment for player in self.game.players)[-2]
+
+        for player in self.game.players:
+            player._commitment = min(player._commitment, requirement)
+
+        self.game._requirement = requirement
 
     def __distribute(self) -> None:
         players = list(filter(lambda player: not player.is_mucked, self.game.players))
@@ -364,7 +368,7 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
             base = max(base, base_player._commitment)
 
         for player in players:
-            player._commitment -= revenues[player]  # TODO: SOMETIMES, b < c => so, chg to c = min(b, c - r)
+            player._commitment -= revenues[player]
 
         self.game._actor = None
 

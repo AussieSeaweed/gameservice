@@ -29,6 +29,8 @@ class BettingStage(Stage, ABC):
         super().__init__(game)
 
         self.initial_max_delta = initial_max_delta
+        self.ignore_flag = False
+        self.final_flag = False
 
     @property
     def min_amount(self) -> int:
@@ -43,7 +45,8 @@ class BettingStage(Stage, ABC):
     @property
     def is_skippable(self) -> bool:
         return super().is_skippable or all(not player._is_relevant for player in self.game.players) \
-               or self.game.actor is self.game._aggressor
+               or (self.game.actor is self.game._aggressor and not self.ignore_flag) \
+               or self.final_flag
 
     @property
     def opener(self) -> PokerPlayer:
@@ -55,7 +58,11 @@ class BettingStage(Stage, ABC):
     def open(self) -> None:
         super().open()
 
-        self.game._aggressor = self.opener
+        if any(player.bet for player in self.game.players):
+            self.ignore_flag = True
+        else:
+            self.game._aggressor = self.opener
+
         self.game._max_delta = self.initial_max_delta
 
     def close(self) -> None:
@@ -67,6 +74,11 @@ class BettingStage(Stage, ABC):
             player._commitment = min(player._commitment, requirement)
 
         self.game._requirement = requirement
+
+    def update(self) -> None:
+        if self.game.actor is self.game._aggressor:
+            self.ignore_flag = False
+            self.final_flag = True
 
 
 class NLBettingStage(BettingStage):

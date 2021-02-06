@@ -66,7 +66,7 @@ class TTTPlayer(Actor[TTTGame]):
         :param c: the column number of the cell
         :return: None
         """
-        MarkAction(self.game, self, r, c).apply()
+        MarkAction(self.game, self, r, c).act()
 
 
 class MarkAction(SeqAction[TTTGame, TTTPlayer]):
@@ -83,7 +83,7 @@ class MarkAction(SeqAction[TTTGame, TTTPlayer]):
         else:
             return None
 
-    def act(self) -> None:
+    def apply(self) -> None:
         self.game._board[self.r][self.c] = self.actor
 
     def verify(self) -> None:

@@ -25,8 +25,8 @@ class SeqAction(Action[G, A], ABC):
     def next_actor(self) -> Optional[BaseActor]:
         pass
 
-    def apply(self) -> None:
-        super().apply()
+    def act(self) -> None:
+        super().act()
 
         self.game._actor = self.next_actor
 
