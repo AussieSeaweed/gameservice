@@ -40,10 +40,10 @@ dwan.check_call()
 
 game.nature.deal_board('Jh')
 
+# Pot: 1109500 (1000 was probably collected as rake in the actual game)
+
 ivey.showdown()
 dwan.showdown()
-
-# Pot: 1109500 (1000 was probably collected as rake in the actual game)
 
 print('Players:')
 print('\n'.join(map(str, game.players)))

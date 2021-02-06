@@ -1,12 +1,7 @@
 gameframe.sequential package
 ============================
 
-.. automodule:: gameframe.sequential.games
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: gameframe.sequential.actions
+.. automodule:: gameframe.sequential.bases
    :members:
    :undoc-members:
    :show-inheritance:

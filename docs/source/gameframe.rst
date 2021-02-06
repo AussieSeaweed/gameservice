@@ -2,7 +2,7 @@ GameFrame API
 =============
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    gameframe.game
    gameframe.sequential
