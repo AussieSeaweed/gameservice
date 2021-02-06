@@ -32,15 +32,15 @@ class StandardEvaluator(Evaluator):
             return TreysHand(hole_cards, board_cards)
 
 
-class GreekHEEvaluator(StandardEvaluator):
-    """GreekHEEvaluator is the class for greek hold'em evaluators."""
+class GreekEvaluator(StandardEvaluator):
+    """GreekEvaluator is the class for greek evaluators."""
 
     def hand(self, hole_cards: Collection[Card], board_cards: Collection[Card]) -> Hand:
         return max(super().hand(hole_cards, combination) for combination in combinations(board_cards, 3))
 
 
-class OmahaHEEvaluator(GreekHEEvaluator):
-    """OmahaHEEvaluator is the class for omaha hold'em evaluators."""
+class OmahaEvaluator(GreekEvaluator):
+    """OmahaEvaluator is the class for omaha evaluators."""
 
     def hand(self, hole_cards: Collection[Card], board_cards: Collection[Card]) -> Hand:
         return max(super().hand(combination, board_cards) for combination in combinations(hole_cards, 2))
