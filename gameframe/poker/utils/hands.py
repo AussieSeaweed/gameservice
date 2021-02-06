@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Iterable
+from typing import Any, Iterable, cast
 
 from treys import Card as TreysCard, Evaluator as TreysEvaluator
 
@@ -51,4 +51,4 @@ class TreysHand(Hand):
         return hash(self.__hand_rank)
 
     def __repr__(self) -> str:
-        return str(self.treys_evaluator.class_to_string(self.treys_evaluator.get_rank_class(self.__hand_rank)))
+        return cast(str, self.treys_evaluator.class_to_string(self.treys_evaluator.get_rank_class(self.__hand_rank)))
