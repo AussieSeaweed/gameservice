@@ -8,3 +8,4 @@ GameFrame API
    gameframe.sequential
    gameframe.poker
    gameframe.tictactoe
+   gameframe.rockpaperscissors

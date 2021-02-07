@@ -12,7 +12,7 @@ class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer']):
 
     def __init__(self) -> None:
         nature = Actor(self)
-        players = [TTTPlayer(self), TTTPlayer(self)]
+        players = TTTPlayer(self), TTTPlayer(self)
         actor = players[0]
 
         super().__init__(nature, players, actor)
@@ -73,8 +73,7 @@ class MarkAction(SeqAction[TTTGame, TTTPlayer]):
     def __init__(self, game: TTTGame, actor: TTTPlayer, r: int, c: int):
         super().__init__(game, actor)
 
-        self.r = r
-        self.c = c
+        self.r, self.c = r, c
 
     @property
     def next_actor(self) -> Optional[TTTPlayer]:

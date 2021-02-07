@@ -43,7 +43,7 @@ class Action(Generic[G, A], ABC):
         self.apply()
 
     def verify(self) -> None:
-        if self.game.is_terminal:
+        if self.game.terminal:
             raise ActionException('The action is applied to a terminal game')
 
     @abstractmethod

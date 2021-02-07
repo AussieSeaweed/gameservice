@@ -5,10 +5,10 @@ from unittest import TestCase, main
 from gameframe.game import ActionException
 from gameframe.poker import NLTHEGame, PokerPlayer
 from gameframe.poker.stages import BettingStage, DealingStage, ShowdownStage
-from gameframe.sequential.tests.test_monte_carlo import MCTestCaseMixin
+from gameframe.sequential.tests.test_monte_carlo import SeqMCTestCaseMixin
 
 
-class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
+class NLTexasHEMCTestCase(TestCase, SeqMCTestCaseMixin[NLTHEGame]):
     ANTE = 1
     BLINDS = [1, 2]
     PLAYER_COUNT = 4
@@ -20,7 +20,7 @@ class NLTexasHEMCTestCase(TestCase, MCTestCaseMixin[NLTHEGame]):
     def verify(self, game: NLTHEGame) -> None:
         super().verify(game)
 
-        if game.is_terminal:
+        if game.terminal:
             self.assertEqual(game.pot, 0)
             self.assertTrue(all(player.bet == 0 and player.stack >= 0 for player in game.players))
 

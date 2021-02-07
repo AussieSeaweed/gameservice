@@ -28,7 +28,7 @@ class BaseGame(ABC):
 
     @property
     @abstractmethod
-    def is_terminal(self) -> bool:
+    def terminal(self) -> bool:
         """
         :return: True if this game is terminal, else False
         """

@@ -14,6 +14,7 @@ The following games are supported in GameFrame...
 - No-Limit Greek Hold'em
 - No-Limit Omaha Hold'em
 - Tic Tac Toe
+- Rock Paper Scissors
 
 
 Speed
@@ -31,6 +32,7 @@ Although GameFrame is entirely written in Python, it should be fast enough for m
  Heads-Up No-Limit Greek Hold'em          ~3000
  Heads-Up No-Limit Omaha Hold'em          ~1000
  Tic Tac Toe                              ~10000
+ Rock Paper Scissors                      ~100000
 =================================  ===================
 
 Contributing

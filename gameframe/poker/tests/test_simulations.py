@@ -223,7 +223,7 @@ class NLTexasHESimTestCase(TestCase):
             self.assertIsNone(index)
 
     def assert_shows(self, game: PokerGame, shows: Sequence[bool]) -> None:
-        self.assertSequenceEqual([player.is_shown for player in game.players], shows)
+        self.assertSequenceEqual([player.shown for player in game.players], shows)
 
     def assert_stacks(self, game: PokerGame, stacks: Sequence[int]) -> None:
         self.assertSequenceEqual([player.stack for player in game.players], stacks)
@@ -260,7 +260,7 @@ class NLTexasHESimTestCase(TestCase):
             assert not tokens and not board_card_sets, 'DEBUG: An exception was raised before all commands were parsed'
             raise exception
 
-        while terminate and not game.is_terminal and isinstance(game._stage, ShowdownStage):
+        while terminate and not game.terminal and isinstance(game._stage, ShowdownStage):
             cast(PokerPlayer, game.actor).showdown()
 
         return game

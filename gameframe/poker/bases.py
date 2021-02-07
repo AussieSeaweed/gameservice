@@ -59,7 +59,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         for player, blind, starting_stack in zip_longest(players, blinds, starting_stacks, fillvalue=0):
             player._commitment = min(ante + blind, starting_stack)
 
-        if not self._stage.is_skippable:
+        if not self._stage.skippable:
             self._stage.open()
 
     @property
@@ -156,13 +156,13 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         self._commitment = 0
         self._hole_cards: MutableSequence[Card] = []
-        self._status = self.HoleCardStatus.DEFAULT
+        self._status = HoleCardStatus.DEFAULT
 
     def __next__(self) -> PokerPlayer:
         return self.game.players[(self.index + 1) % len(self.game.players)]
 
     def __repr__(self) -> str:
-        if self.is_mucked:
+        if self.mucked:
             return f'PokerPlayer({self.bet}, {self.stack})'
         else:
             return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self._hole_cards)) + '])'
@@ -193,7 +193,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         """
         :return: the hole cards of this poker player
         """
-        return None if self.is_mucked else tuple(self._hole_cards)
+        return None if self.mucked else tuple(self._hole_cards)
 
     @property
     def hand(self) -> Hand:
@@ -210,30 +210,30 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         return self.game.players.index(self)
 
     @property
-    def is_mucked(self) -> bool:
+    def mucked(self) -> bool:
         """
         :return: True if this poker player has mucked his/her hand, else False
         """
-        return self._status == self.HoleCardStatus.MUCKED
+        return self._status == HoleCardStatus.MUCKED
 
     @property
-    def is_shown(self) -> bool:
+    def shown(self) -> bool:
         """
         :return: True if this poker player has shown his/her hand, else False
         """
-        return self._status == self.HoleCardStatus.SHOWN
+        return self._status == HoleCardStatus.SHOWN
 
     @property
     def _effective_stack(self) -> int:
         try:
-            return min(sorted(player.starting_stack for player in self.game.players if not player.is_mucked)[-2],
+            return min(sorted(player.starting_stack for player in self.game.players if not player.mucked)[-2],
                        self.starting_stack)
         except IndexError:
             return 0
 
     @property
-    def _is_relevant(self) -> bool:
-        return not self.is_mucked and self._commitment < self._effective_stack
+    def _relevant(self) -> bool:
+        return not self.mucked and self._commitment < self._effective_stack
 
     def fold(self) -> None:
         """Folds.
@@ -273,12 +273,6 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         ShowdownAction(self.game, self, show).act()
 
-    @unique
-    class HoleCardStatus(Enum):
-        DEFAULT = 0
-        SHOWN = 1
-        MUCKED = 2
-
 
 class Stage(Iterator['Stage'], ABC):
     def __init__(self, game: PokerGame):
@@ -315,8 +309,8 @@ class Stage(Iterator['Stage'], ABC):
         return count
 
     @property
-    def is_skippable(self) -> bool:
-        return sum(not player.is_mucked for player in self.game.players) == 1
+    def skippable(self) -> bool:
+        return sum(not player.mucked for player in self.game.players) == 1
 
     @property
     def index(self) -> int:
@@ -341,11 +335,11 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
     def act(self) -> None:
         super().act()
 
-        if self.game._stage.is_skippable:
+        if self.game._stage.skippable:
             self.game._stage.close()
 
             try:
-                while self.game._stage.is_skippable:
+                while self.game._stage.skippable:
                     self.game._stage = next(self.game._stage)
 
                 self.game._stage.open()
@@ -356,7 +350,7 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
             self.game._stage.update()
 
     def __distribute(self) -> None:
-        players = list(filter(lambda player: not player.is_mucked, self.game.players))
+        players = list(filter(lambda player: not player.mucked, self.game.players))
         revenues: DefaultDict[PokerPlayer, int] = defaultdict(int)
 
         if len(players) != 1:
@@ -391,3 +385,10 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
                 side_pot += entitlement - base
 
         return side_pot
+
+
+@unique
+class HoleCardStatus(Enum):
+    DEFAULT = 0
+    SHOWN = 1
+    MUCKED = 2

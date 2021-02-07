@@ -16,7 +16,7 @@ class BaseSeqGame(BaseGame, ABC):
     _actor: Optional[BaseActor]
 
     @property
-    def is_terminal(self) -> bool:
+    def terminal(self) -> bool:
         return self._actor is None
 
     @property

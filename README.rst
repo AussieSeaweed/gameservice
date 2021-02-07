@@ -9,6 +9,7 @@ The following games are supported in GameFrame...
 - No-Limit Omaha Hold'em
 - No-Limit Greek Hold'em
 - Tic Tac Toe
+- Rock Paper Scissors
 
 The full documentation is available at `read the docs <https://gameframe.readthedocs.io/>`_.
 

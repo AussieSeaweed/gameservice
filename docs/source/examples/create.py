@@ -1,4 +1,5 @@
-from gameframe.poker import NLTHEGame, NLOHEGame, NLGHEGame
+from gameframe.poker import NLGHEGame, NLOHEGame, NLTHEGame
+from gameframe.rockpaperscissors import RPSGame
 from gameframe.tictactoe import TTTGame
 
 ante = 1
@@ -16,3 +17,6 @@ nlghe_game = NLGHEGame(ante, blinds, starting_stacks)
 
 # Create a tic tac toe game
 ttt_game = TTTGame()
+
+# Create a rock paper scissors game
+rps_game = RPSGame()

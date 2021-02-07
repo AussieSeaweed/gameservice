@@ -54,7 +54,7 @@ class HoleCardDealingAction(DealingAction):
             raise ActionException('The player already has enough hole cards')
         elif len(self.cards) != len(stage.hole_card_statuses):
             raise ActionException('Invalid number of hole cards are dealt')
-        elif self.player.is_mucked:
+        elif self.player.mucked:
             raise ActionException('Cannot deal to mucked player')
 
 

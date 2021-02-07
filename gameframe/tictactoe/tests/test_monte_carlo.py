@@ -2,17 +2,17 @@ from random import choice
 from typing import cast
 from unittest import TestCase, main
 
-from gameframe.sequential.tests.test_monte_carlo import MCTestCaseMixin
+from gameframe.sequential.tests.test_monte_carlo import SeqMCTestCaseMixin
 from gameframe.tictactoe import TTTGame, TTTPlayer
 
 
-class TTTMCTestCase(TestCase, MCTestCaseMixin[TTTGame]):
+class TTTMCTestCase(TestCase, SeqMCTestCaseMixin[TTTGame]):
     mc_test_count = 10000
 
     def verify(self, game: TTTGame) -> None:
         super().verify(game)
 
-        if game.is_terminal:
+        if game.terminal:
             assert not game.empty_coords or game.winner is not None
         else:
             assert game.empty_coords and game.winner is None
