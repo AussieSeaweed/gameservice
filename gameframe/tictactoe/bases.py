@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import MutableSequence, Optional, Sequence
+from collections import MutableSequence, Sequence
+from typing import Optional
 
 from gameframe.game import ActionException
 from gameframe.game.generics import Actor

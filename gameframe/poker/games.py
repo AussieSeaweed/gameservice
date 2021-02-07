@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Sequence
+from collections import Sequence
 
 from gameframe.poker.bases import PokerGame
 from gameframe.poker.stages import DealingStage, NLBettingStage, ShowdownStage

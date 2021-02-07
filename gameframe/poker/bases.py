@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections import defaultdict
+from collections import Iterator, MutableSequence, Sequence, defaultdict
 from enum import Enum, unique
 from itertools import zip_longest
-from typing import DefaultDict, Iterator, MutableSequence, Optional, Sequence, Set, Union
+from typing import Optional, Union
 
 from gameframe.game import ParamException
 from gameframe.game.generics import A, Actor
@@ -63,7 +63,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
             self._stage.open()
 
     @property
-    def deck(self) -> Set[Card]:
+    def deck(self) -> set[Card]:
         """
         :return: the deck of this poker game
         """
@@ -351,7 +351,7 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
 
     def __distribute(self) -> None:
         players = list(filter(lambda player: not player.mucked, self.game.players))
-        revenues: DefaultDict[PokerPlayer, int] = defaultdict(int)
+        revenues: defaultdict[PokerPlayer, int] = defaultdict(int)
 
         if len(players) != 1:
             players.sort(key=lambda player: (player.hand, -player._commitment), reverse=True)

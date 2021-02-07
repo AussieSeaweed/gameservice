@@ -1,4 +1,4 @@
-from typing import Sequence
+from collections import Sequence
 from unittest import TestCase, main
 
 from gameframe.game import ActionException

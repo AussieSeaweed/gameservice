@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Sequence, TypeVar, Union
+from collections import Sequence
+from typing import Optional, TypeVar, Union
 
 from gameframe.game import ActionException, BaseActor
 from gameframe.game.generics import A, Action, Game, N, P

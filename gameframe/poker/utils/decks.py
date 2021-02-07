@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Collection, Iterable, Iterator, MutableSequence
+from collections import Collection, Iterable, Iterator, MutableSequence
+from typing import Any
 
 from gameframe.poker.utils.cards import Card, Rank, Suit
 
@@ -16,7 +17,7 @@ class Deck(Collection[Card], ABC):
     def __len__(self) -> int:
         return len(self.__cards)
 
-    def __contains__(self, __x: object) -> bool:
+    def __contains__(self, __x: Any) -> bool:
         return __x in self.__cards
 
     def remove(self, cards: Iterable[Card]) -> None:

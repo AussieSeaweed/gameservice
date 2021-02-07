@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
+from collections import Collection
 from itertools import combinations
-from typing import Collection
 
 from gameframe.poker.utils.cards import Card
 from gameframe.poker.utils.hands import Hand, TreysHand

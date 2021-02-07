@@ -1,4 +1,5 @@
-from typing import Optional, Sequence, cast
+from collections import Sequence
+from typing import Optional, cast
 from unittest import TestCase, main
 
 from gameframe.game import ActionException

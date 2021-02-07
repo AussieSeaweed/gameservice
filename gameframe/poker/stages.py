@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
+from collections import Sequence
 from enum import Enum, unique
-from typing import Sequence, cast
+from typing import cast
 
 from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
 from gameframe.utils import rotate

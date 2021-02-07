@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Any, Iterable, cast
+from collections import Iterable
+from typing import Any, cast
 
 from treys import Card as TreysCard, Evaluator as TreysEvaluator
 
