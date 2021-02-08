@@ -5,7 +5,7 @@ with open('README.rst', 'r') as long_description_file:
 
 setup(
     name='gameframe',
-    version='0.0.1a4',
+    version='0.0.1',
     author='Juho Kim',
     author_email='juho-kim@outlook.com',
     description='A package for various game implementations on python',
@@ -13,6 +13,7 @@ setup(
     long_description_content_type='text/x-rst',
     url='https://github.com/AussieSeaweed/gameframe',
     packages=find_packages(),
+    package_data={'gameframe': ['py.typed']},
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
