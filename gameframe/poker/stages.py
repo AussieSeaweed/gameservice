@@ -50,8 +50,7 @@ class BettingStage(Stage, ABC):
 
     @property
     def opener(self) -> PokerPlayer:
-        index = (max(self.game.players, key=lambda player: (player.bet, player.index)).index + 1) \
-                % len(self.game.players)
+        index: int = next(max(self.game.players, key=lambda player: (player.bet, player.index))).index  # type: ignore
 
         return next(player for player in rotate(self.game.players, index) if player._relevant)
 
