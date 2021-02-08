@@ -359,7 +359,7 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
         base = 0
 
         for base_player in players:
-            side_pot = self.__side_pot(base, base_player)
+            side_pot = self.__get_side_pot(base, base_player)
 
             recipients = list(filter(lambda player: player is base_player or player.hand == base_player.hand, players))
 
@@ -375,7 +375,7 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
 
         self.game._actor = None
 
-    def __side_pot(self, base: int, base_player: PokerPlayer) -> int:
+    def __get_side_pot(self, base: int, base_player: PokerPlayer) -> int:
         side_pot = 0
 
         for player in self.game.players:
