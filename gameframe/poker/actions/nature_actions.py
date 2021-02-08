@@ -50,7 +50,7 @@ class HoleCardDealingAction(DealingAction):
 
         stage = cast(DealingStage, self.game._stage)
 
-        if len(self.player._hole_cards) >= stage.target_hole_card_count:
+        if len(self.player._hole_cards) >= stage.hole_card_target:
             raise ActionException('The player already has enough hole cards')
         elif len(self.cards) != len(stage.hole_card_statuses):
             raise ActionException('Invalid number of hole cards are dealt')
@@ -67,7 +67,7 @@ class BoardCardDealingAction(DealingAction):
 
         stage = cast(DealingStage, self.game._stage)
 
-        if len(self.game.board_cards) >= stage.target_board_card_count:
+        if len(self.game.board_cards) >= stage.board_card_target:
             raise ActionException('The board already has enough cards')
         elif len(self.cards) != stage.board_card_count:
             raise ActionException('Invalid number of board cards are dealt')

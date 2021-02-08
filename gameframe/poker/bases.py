@@ -285,7 +285,7 @@ class Stage(Iterator['Stage'], ABC):
             raise StopIteration
 
     @property
-    def target_hole_card_count(self) -> int:
+    def hole_card_target(self) -> int:
         from gameframe.poker.stages import DealingStage
 
         count = 0
@@ -297,7 +297,7 @@ class Stage(Iterator['Stage'], ABC):
         return count
 
     @property
-    def target_board_card_count(self) -> int:
+    def board_card_target(self) -> int:
         from gameframe.poker.stages import DealingStage
 
         count = 0
