@@ -63,11 +63,11 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
             self._stage.open()
 
     @property
-    def deck(self) -> set[Card]:
+    def deck(self) -> Sequence[Card]:
         """
         :return: the deck of this poker game
         """
-        return set(self._deck)
+        return tuple(self._deck)
 
     @property
     def evaluator(self) -> Evaluator:
