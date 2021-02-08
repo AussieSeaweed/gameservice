@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import Iterator, MutableSequence, Sequence, defaultdict
 from enum import Enum, unique
+from functools import cached_property
 from itertools import zip_longest
 from typing import Optional, Union
 
@@ -167,6 +168,13 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         else:
             return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self._hole_cards)) + '])'
 
+    @cached_property
+    def index(self) -> int:
+        """
+        :return: the index of this poker player
+        """
+        return self.game.players.index(self)
+
     @property
     def starting_stack(self) -> int:
         """
@@ -201,13 +209,6 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         :return: the hand of this poker player
         """
         return self.game.evaluator.hand(self._hole_cards, self.game.board_cards)
-
-    @property
-    def index(self) -> int:
-        """
-        :return: the index of this poker player
-        """
-        return self.game.players.index(self)
 
     @property
     def mucked(self) -> bool:
@@ -284,7 +285,7 @@ class Stage(Iterator['Stage'], ABC):
         except IndexError:
             raise StopIteration
 
-    @property
+    @cached_property
     def hole_card_target(self) -> int:
         from gameframe.poker.stages import DealingStage
 
@@ -296,7 +297,7 @@ class Stage(Iterator['Stage'], ABC):
 
         return count
 
-    @property
+    @cached_property
     def board_card_target(self) -> int:
         from gameframe.poker.stages import DealingStage
 
