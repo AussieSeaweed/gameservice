@@ -379,9 +379,7 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
         side_pot = 0
 
         for player in self.game.players:
-            entitlement = min(player._commitment, base_player._commitment)
-
-            if base < entitlement:
+            if base < (entitlement := min(player._commitment, base_player._commitment)):
                 side_pot += entitlement - base
 
         return side_pot
