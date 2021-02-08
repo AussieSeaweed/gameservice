@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections import Iterable
 from typing import Any, cast
 
-from treys import Card as TreysCard, Evaluator as TreysEvaluator
+from treys import Card as TreysCard, Evaluator as TreysEvaluator  # type: ignore
 
 from gameframe.poker.utils.cards import Card
 

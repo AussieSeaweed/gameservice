@@ -75,12 +75,14 @@ class ThrowAction(Action[RPSGame, RPSPlayer]):
 @unique
 class Hand(Enum):
     """Hand is the enum for rock paper scissors hands."""
-    ROCK = 0
-    PAPER = 1
-    SCISSORS = 2
+    ROCK = 'Rock'
+    PAPER = 'Paper'
+    SCISSORS = 'Scissors'
 
     def __lt__(self, other: Any) -> bool:
         if isinstance(other, Hand):
-            return (self.value + 1) % 3 == other.value
+            hands = tuple(Hand)
+
+            return (hands.index(self) + 1) % 3 == hands.index(other)
         else:
             return NotImplemented

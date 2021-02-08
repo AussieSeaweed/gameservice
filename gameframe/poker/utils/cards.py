@@ -19,14 +19,6 @@ class Rank(Enum):
     KING = 'K'
     ACE = 'A'
 
-    def __lt__(self, other: Any) -> bool:
-        if isinstance(other, Rank):
-            ranks = list(Rank)
-
-            return ranks.index(self) < ranks.index(other)
-        else:
-            return NotImplemented
-
 
 @unique
 class Suit(Enum):
@@ -35,14 +27,6 @@ class Suit(Enum):
     DIAMOND = 'd'
     HEART = 'h'
     SPADE = 's'
-
-    def __lt__(self, other: Any) -> bool:
-        if isinstance(other, Suit):
-            suits = list(Suit)
-
-            return suits.index(self) < suits.index(other)
-        else:
-            return NotImplemented
 
 
 class Card:
@@ -54,12 +38,6 @@ class Card:
 
     def __repr__(self) -> str:
         return self.rank.value + self.suit.value
-
-    def __lt__(self, other: Any) -> bool:
-        if isinstance(other, Card):
-            return self.__suit < other.__suit if self.__rank == other.__rank else self.__rank < other.__rank
-        else:
-            return NotImplemented
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Card):
