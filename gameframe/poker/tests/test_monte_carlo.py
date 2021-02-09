@@ -1,4 +1,5 @@
-from random import randint, sample
+from collections import Callable
+from random import randint, sample, shuffle
 from typing import cast
 from unittest import TestCase, main
 
@@ -11,11 +12,11 @@ from gameframe.sequential.tests.test_monte_carlo import SeqMCTestCaseMixin
 class NLTexasHEMCTestCase(TestCase, SeqMCTestCaseMixin[NLTHEGame]):
     ANTE = 1
     BLINDS = [1, 2]
-    PLAYER_COUNT = 4
+    PLAYER_COUNT = 6
     MIN_STACK = 0
     MAX_STACK = 20
 
-    mc_test_count = 1000
+    MC_TEST_COUNT = 1000
 
     def verify(self, game: NLTHEGame) -> None:
         super().verify(game)
@@ -40,15 +41,21 @@ class NLTexasHEMCTestCase(TestCase, SeqMCTestCaseMixin[NLTHEGame]):
                 game.nature.deal_board(*sample(list(game._deck), board_card_count))
         elif isinstance(game._stage, BettingStage):
             actor = cast(PokerPlayer, game.actor)
+            actions: list[Callable[[PokerPlayer], None]] = [
+                lambda actor: actor.bet_raise(2 * max(player.bet for player in game.players)),
+                lambda actor: actor.fold(),
+            ]
+
+            shuffle(actions)
 
             try:
-                actor.bet_raise(2 * max(player.bet for player in game.players))
+                actions[0](actor)
                 return
             except ActionException:
                 pass
 
             try:
-                actor.fold()
+                actions[1](actor)
                 return
             except ActionException:
                 pass

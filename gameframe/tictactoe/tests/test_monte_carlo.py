@@ -7,7 +7,7 @@ from gameframe.tictactoe import TTTGame, TTTPlayer
 
 
 class TTTMCTestCase(TestCase, SeqMCTestCaseMixin[TTTGame]):
-    mc_test_count = 10000
+    MC_TEST_COUNT = 10000
 
     def verify(self, game: TTTGame) -> None:
         super().verify(game)

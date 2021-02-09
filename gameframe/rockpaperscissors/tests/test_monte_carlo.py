@@ -6,7 +6,7 @@ from gameframe.game.tests.test_monte_carlo import MCTestCaseMixin
 
 
 class RPSMCTestCase(TestCase, MCTestCaseMixin[RPSGame]):
-    mc_test_count = 100000
+    MC_TEST_COUNT = 100000
 
     def act(self, game: RPSGame) -> None:
         for player in game.players:

@@ -7,10 +7,10 @@ G = TypeVar('G', bound=BaseGame)
 
 
 class MCTestCaseMixin(Generic[G], ABC):
-    mc_test_count: int
+    MC_TEST_COUNT: int
 
     def test_monte_carlo(self) -> None:
-        for i in range(self.mc_test_count):
+        for i in range(self.MC_TEST_COUNT):
             game = self.create_game()
             self.verify(game)
 

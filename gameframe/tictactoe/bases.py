@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections import MutableSequence, Sequence
+from collections import Sequence
 from typing import Optional
 
 from gameframe.game import ActionException
@@ -18,9 +18,9 @@ class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer']):
 
         super().__init__(nature, players, actor)
 
-        self._board: MutableSequence[MutableSequence[Optional[TTTPlayer]]] = [[None, None, None],
-                                                                              [None, None, None],
-                                                                              [None, None, None]]
+        self._board: list[list[Optional[TTTPlayer]]] = [[None, None, None],
+                                                        [None, None, None],
+                                                        [None, None, None]]
 
     @property
     def board(self) -> Sequence[Sequence[Optional[TTTPlayer]]]:
