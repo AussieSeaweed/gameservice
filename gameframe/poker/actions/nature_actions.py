@@ -48,11 +48,9 @@ class HoleCardDealingAction(DealingAction):
     def verify(self) -> None:
         super().verify()
 
-        stage = cast(DealingStage, self.game._stage)
-
-        if len(self.player._hole_cards) >= stage.hole_card_target:
+        if len(self.player._hole_cards) >= self.game.hole_card_target:
             raise ActionException('The player already has enough hole cards')
-        elif len(self.cards) != len(stage.hole_card_statuses):
+        elif len(self.cards) != len(cast(DealingStage, self.game._stage).hole_card_statuses):
             raise ActionException('Invalid number of hole cards are dealt')
         elif self.player.mucked:
             raise ActionException('Cannot deal to mucked player')
@@ -65,9 +63,7 @@ class BoardCardDealingAction(DealingAction):
     def verify(self) -> None:
         super().verify()
 
-        stage = cast(DealingStage, self.game._stage)
-
-        if len(self.game.board_cards) >= stage.board_card_target:
+        if len(self.game.board_cards) >= self.game.board_card_target:
             raise ActionException('The board already has enough cards')
-        elif len(self.cards) != stage.board_card_count:
+        elif len(self.cards) != cast(DealingStage, self.game._stage).board_card_count:
             raise ActionException('Invalid number of board cards are dealt')

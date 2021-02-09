@@ -17,8 +17,8 @@ class DealingStage(Stage):
     @property
     def skippable(self) -> bool:
         return super().skippable \
-               or (all(len(player._hole_cards) == self.hole_card_target for player in self.game.players if
-                       not player.mucked) and len(self.game.board_cards) == self.board_card_target)
+               or (all(len(player._hole_cards) == self.game.hole_card_target for player in self.game.players if
+                       not player.mucked) and len(self.game.board_cards) == self.game.board_card_target)
 
     @property
     def opener(self) -> PokerNature:

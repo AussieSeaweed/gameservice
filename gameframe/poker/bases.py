@@ -113,6 +113,36 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return sum(min(player._commitment, self._requirement) for player in self.players)
 
     @property
+    def hole_card_target(self) -> int:
+        """
+        :return: the target number of hole cards
+        """
+        from gameframe.poker.stages import DealingStage
+
+        count = 0
+
+        for stage in self._stages[:self._stage.index + 1]:
+            if isinstance(stage, DealingStage):
+                count += len(stage.hole_card_statuses)
+
+        return count
+
+    @property
+    def board_card_target(self) -> int:
+        """
+        :return: the target number of board cards
+        """
+        from gameframe.poker.stages import DealingStage
+
+        count = 0
+
+        for stage in self._stages[:self._stage.index + 1]:
+            if isinstance(stage, DealingStage):
+                count += stage.board_card_count
+
+        return count
+
+    @property
     def _hole_card_statuses(self) -> Sequence[bool]:
         from gameframe.poker.stages import DealingStage
 
@@ -381,30 +411,6 @@ class Stage(Iterator['Stage'], ABC):
             return self.game._stages[self.index + 1]
         except IndexError:
             raise StopIteration
-
-    @cached_property
-    def hole_card_target(self) -> int:
-        from gameframe.poker.stages import DealingStage
-
-        count = 0
-
-        for stage in self.game._stages[:self.index + 1]:
-            if isinstance(stage, DealingStage):
-                count += len(stage.hole_card_statuses)
-
-        return count
-
-    @cached_property
-    def board_card_target(self) -> int:
-        from gameframe.poker.stages import DealingStage
-
-        count = 0
-
-        for stage in self.game._stages[:self.index + 1]:
-            if isinstance(stage, DealingStage):
-                count += stage.board_card_count
-
-        return count
 
     @property
     def skippable(self) -> bool:
