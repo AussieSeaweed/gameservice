@@ -1,5 +1,4 @@
-"""
-This shows the 1.1 million dollar pot played between Dwan and Ivey
+"""This shows the 1.1 million dollar pot played between Dwan and Ivey.
 
 Video: https://www.youtube.com/watch?v=GnxFohpljqM
 """
@@ -48,5 +47,3 @@ dwan.showdown()
 print('Players:')
 print('\n'.join(map(str, game.players)))
 print('Board:', ' '.join(map(str, game.board_cards)))
-print(f'Pot: {game.pot}')
-print(f'Actor: {game.actor}')

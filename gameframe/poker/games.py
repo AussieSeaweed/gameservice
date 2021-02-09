@@ -7,14 +7,14 @@ from gameframe.poker.utils import Deck, Evaluator, GreekEvaluator, OmahaEvaluato
 
 
 class NLHEGame(PokerGame, ABC):
-    """NLHEGame is the class for no-limit hold'em games."""
+    """NLHEGame is the class for no-limit Hold'em games."""
 
-    def __init__(self, deck: Deck, evaluator: Evaluator, ante: int, blinds: Sequence[int],
+    def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Sequence[int],
                  starting_stacks: Sequence[int]):
         max_delta = max(ante, max(blinds))
 
         super().__init__([
-            DealingStage(self, [False, False], 0), NLBettingStage(self, max_delta),  # Pre-flop
+            DealingStage(self, [False for _ in range(hole_card_count)], 0), NLBettingStage(self, max_delta),  # Pre-flop
             DealingStage(self, [], 3), NLBettingStage(self, max_delta),  # Flop
             DealingStage(self, [], 1), NLBettingStage(self, max_delta),  # Turn
             DealingStage(self, [], 1), NLBettingStage(self, max_delta),  # River
@@ -23,21 +23,21 @@ class NLHEGame(PokerGame, ABC):
 
 
 class NLTHEGame(NLHEGame):
-    """NLTHEGame is the class for no-limit texas hold'em games."""
+    """NLTHEGame is the class for no-limit texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
-        super().__init__(StandardDeck(), StandardEvaluator(), ante, blinds, starting_stacks)
+        super().__init__(2, StandardDeck(), StandardEvaluator(), ante, blinds, starting_stacks)
 
 
 class NLOHEGame(NLHEGame):
-    """NLOHEGame is the class for no-limit omaha hold'em games."""
+    """NLOHEGame is the class for no-limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
-        super().__init__(StandardDeck(), OmahaEvaluator(), ante, blinds, starting_stacks)
+        super().__init__(4, StandardDeck(), OmahaEvaluator(), ante, blinds, starting_stacks)
 
 
 class NLGHEGame(NLHEGame):
-    """NLGHEGame is the class for no-limit greek hold'em games."""
+    """NLGHEGame is the class for no-limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
-        super().__init__(StandardDeck(), GreekEvaluator(), ante, blinds, starting_stacks)
+        super().__init__(2, StandardDeck(), GreekEvaluator(), ante, blinds, starting_stacks)
