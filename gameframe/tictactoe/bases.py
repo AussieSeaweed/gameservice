@@ -69,6 +69,19 @@ class TTTPlayer(Actor[TTTGame]):
         """
         MarkAction(self.game, self, r, c).act()
 
+    def can_mark(self, r: int, c: int) -> bool:
+        """Determines if the cell of the board at the coordinates can be marked.
+
+        :param r: the row number of the cell
+        :param c: the column number of the cell
+        :return: True if the cell can be marked, else False
+        """
+        try:
+            MarkAction(self.game, self, r, c).verify()
+        except ActionException:
+            return False
+        return True
+
 
 class MarkAction(SeqAction[TTTGame, TTTPlayer]):
     def __init__(self, game: TTTGame, actor: TTTPlayer, r: int, c: int):

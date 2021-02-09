@@ -55,6 +55,18 @@ class RPSPlayer(Actor[RPSGame]):
         """
         ThrowAction(self.game, self, hand).act()
 
+    def can_throw(self, hand: Hand) -> bool:
+        """Determines if the the specified hand can be thrown.
+
+        :param hand: the hand to be thrown
+        :return: True if the hand can be thrown, else False
+        """
+        try:
+            ThrowAction(self.game, self, hand).verify()
+        except ActionException:
+            return False
+        return True
+
 
 class ThrowAction(Action[RPSGame, RPSPlayer]):
     def __init__(self, game: RPSGame, actor: RPSPlayer, hand: Hand):

@@ -7,7 +7,7 @@ from functools import cached_property
 from itertools import zip_longest
 from typing import Optional, Union
 
-from gameframe.game import ParamException
+from gameframe.game import ActionException, ParamException
 from gameframe.game.generics import A, Actor
 from gameframe.poker.utils import Card, CardLike, Deck, Evaluator, Hand
 from gameframe.sequential.generics import SeqAction, SeqGame
@@ -128,7 +128,7 @@ class PokerNature(Actor[PokerGame]):
         return 'PokerNature'
 
     def deal_player(self, player: PokerPlayer, *hole_cards: CardLike) -> None:
-        """Deals the hole cards to a player.
+        """Deals the hole cards to the specified player.
 
         :param player: the player to deal to
         :param hole_cards: the hole cards to be dealt
@@ -147,6 +147,35 @@ class PokerNature(Actor[PokerGame]):
         from gameframe.poker.actions import BoardCardDealingAction
 
         BoardCardDealingAction(self.game, self, *cards).act()
+
+    def can_deal_player(self, player: PokerPlayer, *hole_cards: CardLike) -> bool:
+        """Determines if the hole cards can be dealt to the specified player.
+
+        :param player: the player to deal to
+        :param hole_cards: the hole cards to be dealt
+        :return: True if the hand can be thrown, else False
+        """
+        from gameframe.poker.actions import HoleCardDealingAction
+
+        try:
+            HoleCardDealingAction(self.game, self, player, *hole_cards).verify()
+        except ActionException:
+            return False
+        return True
+
+    def can_deal_board(self, *cards: CardLike) -> bool:
+        """Determines if the cards can be dealt to the board.
+
+        :param cards: the cards to be dealt
+        :return: True if the hand can be thrown, else False
+        """
+        from gameframe.poker.actions import BoardCardDealingAction
+
+        try:
+            BoardCardDealingAction(self.game, self, *cards).verify()
+        except ActionException:
+            return False
+        return True
 
 
 class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
@@ -273,6 +302,60 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         from gameframe.poker.actions import ShowdownAction
 
         ShowdownAction(self.game, self, show).act()
+
+    def can_fold(self) -> bool:
+        """Determines if the player can fold.
+
+        :return: True if the player can fold, else False
+        """
+        from gameframe.poker.actions import FoldAction
+
+        try:
+            FoldAction(self.game, self).verify()
+        except ActionException:
+            return False
+        return True
+
+    def can_check_call(self) -> bool:
+        """Determines if the player can check or call.
+
+        :return: True if the player can check or call, else False
+        """
+        from gameframe.poker.actions import CheckCallAction
+
+        try:
+            CheckCallAction(self.game, self).verify()
+        except ActionException:
+            return False
+        return True
+
+    def can_bet_raise(self, amount: int) -> bool:
+        """Determines if the player can bet or raise the amount.
+
+        :param amount: the bet/raise amount
+        :return: True if the player can bet or raise the amount, else False
+        """
+        from gameframe.poker.actions import BetRaiseAction
+
+        try:
+            BetRaiseAction(self.game, self, amount).verify()
+        except ActionException:
+            return False
+        return True
+
+    def can_showdown(self, show: bool = False) -> bool:
+        """Determines if the player can showdown the his/her hand if necessary or specified.
+
+        :param show: a boolean value on whether or not to show regardless of necessity
+        :return: True if the player can showdown, else False
+        """
+        from gameframe.poker.actions import ShowdownAction
+
+        try:
+            ShowdownAction(self.game, self, show).verify()
+        except ActionException:
+            return False
+        return True
 
 
 class Stage(Iterator['Stage'], ABC):
