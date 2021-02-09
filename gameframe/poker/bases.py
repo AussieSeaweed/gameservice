@@ -112,6 +112,13 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         """
         return sum(min(player._commitment, self._requirement) for player in self.players)
 
+    @property
+    def _hole_card_statuses(self) -> Sequence[bool]:
+        from gameframe.poker.stages import DealingStage
+
+        return sum((list(stage.hole_card_statuses) for stage in self._stages if isinstance(stage, DealingStage)),
+                   start=[])
+
     def _trim(self) -> None:
         requirement = sorted(player._commitment for player in self.players)[-2]
 
@@ -192,10 +199,10 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         return self.game.players[(self.index + 1) % len(self.game.players)]
 
     def __repr__(self) -> str:
-        if self.mucked:
+        if self.hole_cards is None:
             return f'PokerPlayer({self.bet}, {self.stack})'
         else:
-            return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self._hole_cards)) + '])'
+            return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self.hole_cards)) + '])'
 
     @cached_property
     def index(self) -> int:
@@ -226,11 +233,18 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         return self.starting_stack - self._commitment
 
     @property
-    def hole_cards(self) -> Optional[Sequence[Card]]:
+    def hole_cards(self) -> Optional[Sequence[HoleCard]]:
         """
         :return: the hole cards of this poker player
         """
-        return None if self.mucked else tuple(self._hole_cards)
+        if self.mucked:
+            return None
+        else:
+            if self._status == HoleCardStatus.SHOWN:
+                return tuple(HoleCard(card, True) for card in self._hole_cards)
+            else:
+                return tuple(HoleCard(card, status) for card, status in zip(self._hole_cards,
+                                                                            self.game._hole_card_statuses))
 
     @property
     def hand(self) -> Hand:
@@ -467,6 +481,25 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
                 side_pot += entitlement - base
 
         return side_pot
+
+
+class HoleCard(Card):
+    """HoleCard is the class for hole cards."""
+
+    def __init__(self, card: Card, status: bool):
+        super().__init__(card.rank, card.suit)
+
+        self.__status = status
+
+    def __repr__(self) -> str:
+        return super().__repr__() if self.status else '??'
+
+    @property
+    def status(self) -> bool:
+        """
+        :return: True if the hole card is exposed, else False
+        """
+        return self.__status
 
 
 @unique
