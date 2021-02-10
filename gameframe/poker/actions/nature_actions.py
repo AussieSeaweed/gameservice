@@ -48,7 +48,7 @@ class HoleCardDealingAction(DealingAction):
     def verify(self) -> None:
         super().verify()
 
-        if len(self.player._hole_cards) >= self.game.hole_card_target:
+        if len(self.player._hole_cards) >= len(self.game.hole_card_target):
             raise ActionException('The player already has enough hole cards')
         elif len(self.cards) != len(cast(DealingStage, self.game._stage).hole_card_statuses):
             raise ActionException('Invalid number of hole cards are dealt')
