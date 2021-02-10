@@ -1,8 +1,8 @@
 from random import choice
 from unittest import TestCase, main
 
-from gameframe.rockpaperscissors import Hand, RPSGame
 from gameframe.game.tests.test_monte_carlo import MCTestCaseMixin
+from gameframe.rockpaperscissors import Hand, RPSGame
 
 
 class RPSMCTestCase(TestCase, MCTestCaseMixin[RPSGame]):
