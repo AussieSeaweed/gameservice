@@ -418,13 +418,13 @@ class Stage(Iterator['Stage'], ABC):
         except IndexError:
             raise StopIteration
 
+    @cached_property
+    def index(self) -> int:
+        return self.game._stages.index(self)
+
     @property
     def skippable(self) -> bool:
         return sum(not player.mucked for player in self.game.players) == 1
-
-    @property
-    def index(self) -> int:
-        return self.game._stages.index(self)
 
     @property
     @abstractmethod
