@@ -46,7 +46,7 @@ class TreysHand(Hand):
         if isinstance(other, TreysHand):
             return self.__hand_rank == other.__hand_rank  # type: ignore
         else:
-            return False
+            return NotImplemented
 
     def __hash__(self) -> int:
         return hash(self.__hand_rank)
