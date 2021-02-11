@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from collections import Sequence
 from enum import Enum, unique
 from typing import cast
 
@@ -8,21 +7,32 @@ from gameframe.utils import rotate
 
 
 class DealingStage(Stage):
-    def __init__(self, game: PokerGame, hole_card_statuses: Sequence[bool], board_card_count: int):
+    def __init__(self, game: PokerGame, card_count: int):
         super().__init__(game)
 
-        self.hole_card_statuses = hole_card_statuses
-        self.board_card_count = board_card_count
-
-    @property
-    def skippable(self) -> bool:
-        return super().skippable \
-               or (all(len(player._hole_cards) == len(self.game.hole_card_target) for player in self.game.players if
-                       not player.mucked) and len(self.game.board_cards) == self.game.board_card_target)
+        self.card_count = card_count
 
     @property
     def opener(self) -> PokerNature:
         return self.game.nature
+
+
+class HoleCardDealingStage(DealingStage):
+    def __init__(self, game: PokerGame, card_count: int, card_status: bool):
+        super().__init__(game, card_count)
+
+        self.card_status = card_status
+
+    @property
+    def skippable(self) -> bool:
+        return super().skippable or all(len(player._hole_cards) == self.game.hole_card_target
+                                        for player in self.game.players if not player.mucked)
+
+
+class BoardCardDealingStage(DealingStage):
+    @property
+    def skippable(self) -> bool:
+        return super().skippable or len(self.game.board_cards) == self.game.board_card_target
 
 
 class BettingStage(Stage, ABC):

@@ -116,17 +116,32 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return sum(min(player._commitment, self._requirement) for player in self.players)
 
     @property
-    def hole_card_target(self) -> list[bool]:
+    def hole_card_target(self) -> int:
+        """
+        :return: the target number of hole cards
+        """
+        from gameframe.poker.stages import HoleCardDealingStage
+
+        count = 0
+
+        for stage in self._stages[:self._stage.index + 1]:
+            if isinstance(stage, HoleCardDealingStage):
+                count += stage.card_count
+
+        return count
+
+    @property
+    def hole_card_statuses(self) -> Sequence[bool]:
         """
         :return: the target statuses of hole cards
         """
-        from gameframe.poker.stages import DealingStage
+        from gameframe.poker.stages import HoleCardDealingStage
 
         statuses: list[bool] = []
 
         for stage in self._stages[:self._stage.index + 1]:
-            if isinstance(stage, DealingStage):
-                statuses += list(stage.hole_card_statuses)
+            if isinstance(stage, HoleCardDealingStage):
+                statuses += [stage.card_status for _ in range(stage.card_count)]
 
         return statuses
 
@@ -135,13 +150,13 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         """
         :return: the target number of board cards
         """
-        from gameframe.poker.stages import DealingStage
+        from gameframe.poker.stages import BoardCardDealingStage
 
         count = 0
 
         for stage in self._stages[:self._stage.index + 1]:
-            if isinstance(stage, DealingStage):
-                count += stage.board_card_count
+            if isinstance(stage, BoardCardDealingStage):
+                count += stage.card_count
 
         return count
 
@@ -282,8 +297,8 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
             if self._status == HoleCardStatus.SHOWN:
                 return tuple(HoleCard(card, True) for card in self._hole_cards)
             else:
-                return tuple(HoleCard(card, status) for card, status in zip(self._hole_cards,
-                                                                            self.game.hole_card_target))
+                return tuple(HoleCard(card, status) for card, status in
+                             zip(self._hole_cards, self.game.hole_card_statuses))
 
     @property
     def hand(self) -> Hand:

@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import cast
 
 from gameframe.game import ActionException
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
-from gameframe.poker.stages import DealingStage
+from gameframe.poker.stages import BoardCardDealingStage, DealingStage, HoleCardDealingStage
 from gameframe.poker.utils import CardLike, parse_card
 
 
@@ -48,9 +47,13 @@ class HoleCardDealingAction(DealingAction):
     def verify(self) -> None:
         super().verify()
 
-        if len(self.player._hole_cards) >= len(self.game.hole_card_target):
+        if not isinstance(self.player, PokerPlayer):
+            raise TypeError('The player must be of type PokerPlayer')
+        elif not isinstance(self.game._stage, HoleCardDealingStage):
+            raise ActionException('Hole card dealing not allowed')
+        elif len(self.player._hole_cards) >= self.game.hole_card_target:
             raise ActionException('The player already has enough hole cards')
-        elif len(self.cards) != len(cast(DealingStage, self.game._stage).hole_card_statuses):
+        elif len(self.cards) != self.game._stage.card_count:
             raise ActionException('Invalid number of hole cards are dealt')
         elif self.player.mucked:
             raise ActionException('Cannot deal to mucked player')
@@ -63,7 +66,9 @@ class BoardCardDealingAction(DealingAction):
     def verify(self) -> None:
         super().verify()
 
-        if len(self.game.board_cards) >= self.game.board_card_target:
+        if not isinstance(self.game._stage, BoardCardDealingStage):
+            raise ActionException('Board card dealing not allowed')
+        elif len(self.game.board_cards) >= self.game.board_card_target:
             raise ActionException('The board already has enough cards')
-        elif len(self.cards) != cast(DealingStage, self.game._stage).board_card_count:
+        elif len(self.cards) != self.game._stage.card_count:
             raise ActionException('Invalid number of board cards are dealt')

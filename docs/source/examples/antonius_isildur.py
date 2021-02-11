@@ -38,6 +38,8 @@ game.nature.deal_board('9c')
 
 # Pot: 1356947.00 (0.50 was probably collected as rake in the actual game)
 
+print(f'Pot: {game.pot}')
+
 antonius.showdown()
 isildur.showdown()
 

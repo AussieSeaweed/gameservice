@@ -41,6 +41,8 @@ game.nature.deal_board('Jh')
 
 # Pot: 1109500 (1000 was probably collected as rake in the actual game)
 
+print(f'Pot: {game.pot}')
+
 ivey.showdown()
 dwan.showdown()
 

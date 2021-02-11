@@ -5,7 +5,7 @@ from unittest import TestCase, main
 
 from gameframe.game import ActionException
 from gameframe.poker import NLTHEGame, PokerPlayer
-from gameframe.poker.stages import BettingStage, DealingStage, ShowdownStage
+from gameframe.poker.stages import BettingStage, BoardCardDealingStage, HoleCardDealingStage, ShowdownStage
 from gameframe.sequential.tests.test_monte_carlo import SeqMCTestCaseMixin
 
 
@@ -29,16 +29,11 @@ class NLTexasHEMCTestCase(TestCase, SeqMCTestCaseMixin[NLTHEGame]):
                          sum(player.starting_stack for player in game.players))
 
     def act(self, game: NLTHEGame) -> None:
-        if isinstance(game._stage, DealingStage):
-            hole_card_count = len(game._stage.hole_card_statuses)
-            board_card_count = game._stage.board_card_count
-
-            if hole_card_count:
-                for player in game.players:
-                    game.nature.deal_player(player, *sample(list(game._deck), hole_card_count))
-
-            if board_card_count:
-                game.nature.deal_board(*sample(list(game._deck), board_card_count))
+        if isinstance(game._stage, HoleCardDealingStage):
+            for player in game.players:
+                game.nature.deal_player(player, *sample(game.deck, game._stage.card_count))
+        if isinstance(game._stage, BoardCardDealingStage):
+            game.nature.deal_board(*sample(game.deck, game._stage.card_count))
         elif isinstance(game._stage, BettingStage):
             actor = cast(PokerPlayer, game.actor)
             actions: list[Callable[[PokerPlayer], None]] = [

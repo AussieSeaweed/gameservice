@@ -52,5 +52,5 @@ class TreysHand(Hand):
         return hash(self.__hand_rank)
 
     def __repr__(self) -> str:
-        return self.treys_evaluator.class_to_string(  # type: ignore
-            self.treys_evaluator.get_rank_class(self.__hand_rank))
+        return self.treys_evaluator.class_to_string(self.treys_evaluator.get_rank_class(  # type: ignore
+            self.__hand_rank))
