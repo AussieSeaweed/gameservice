@@ -15,6 +15,7 @@ This code outputs the following
 
 .. code-block:: console
 
+   Pot: 1109500
    Players:
    PokerPlayer(0, 572100, [Ac, 2d])
    PokerPlayer(0, 1997500)
@@ -30,8 +31,9 @@ This code outputs the following
 
 .. code-block:: console
 
+   Pot: 135694700
    Players:
-   PokerPlayer(0, 1937923.75, [Ah, 3s, Ks, Kh])
+   PokerPlayer(0, 193792375, [Ah, 3s, Ks, Kh])
    PokerPlayer(0.00, 0.00)
    Board: 4s 5c 2h 5h 9c
 
