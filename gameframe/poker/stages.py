@@ -6,7 +6,7 @@ from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
 from gameframe.utils import rotate
 
 
-class DealingStage(Stage):
+class DealingStage(Stage, ABC):
     def __init__(self, game: PokerGame, card_count: int):
         super().__init__(game)
 
