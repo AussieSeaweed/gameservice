@@ -5,10 +5,10 @@ from typing import Generic, TypeVar
 from gameframe.game.bases import BaseActor, BaseGame
 from gameframe.game.exceptions import ActionException
 
-G = TypeVar('G', bound=BaseGame, covariant=True)
-N = TypeVar('N', bound=BaseActor, covariant=True)
-P = TypeVar('P', bound=BaseActor, covariant=True)
-A = TypeVar('A', bound=BaseActor, covariant=True)
+G = TypeVar('G', bound=BaseGame)
+N = TypeVar('N', bound=BaseActor)
+P = TypeVar('P', bound=BaseActor)
+A = TypeVar('A', bound=BaseActor)
 
 
 class Game(BaseGame, Generic[N, P], ABC):

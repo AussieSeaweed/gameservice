@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
+from typing import Generic
 
-from gameframe.game.bases import BaseGame
-
-G = TypeVar('G', bound=BaseGame)
+from gameframe.game.generics import G
 
 
 class MCTestCaseMixin(Generic[G], ABC):
