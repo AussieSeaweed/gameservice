@@ -102,7 +102,9 @@ class MarkAction(SeqAction[TTTGame, TTTPlayer]):
     def verify(self) -> None:
         super().verify()
 
-        if not (0 <= self.r < 3 and 0 <= self.c < 3):
+        if not isinstance(self.r, int) or not isinstance(self.c, int):
+            raise TypeError('The coordinates must be of type int')
+        elif not (0 <= self.r < 3 and 0 <= self.c < 3):
             raise ActionException('The coordinates are out of bounds')
         elif self.game._board[self.r][self.c] is not None:
             raise ActionException('The cell is not empty')

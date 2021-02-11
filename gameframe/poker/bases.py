@@ -45,7 +45,10 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         self._max_delta = 0
         self._requirement = ante
 
-        if len(players) < 2:
+        if not isinstance(ante, int) or not all(isinstance(blind, int) for blind in blinds) \
+                or not all(isinstance(stack, int) for stack in starting_stacks):
+            raise TypeError('The integral values must be of type int')
+        elif len(players) < 2:
             raise ParamException('Poker needs at least 2 players')
         elif any(a != b for a, b in zip_longest(blinds, sorted(blinds))):
             raise ParamException('Blinds have to be sorted')

@@ -62,7 +62,9 @@ class BetRaiseAction(BettingAction):
 
         stage = cast(BettingStage, self.game._stage)
 
-        if max(player._commitment for player in self.game.players) >= self.actor.starting_stack:
+        if not isinstance(self.amount, int):
+            raise TypeError('The amount must be of type int')
+        elif max(player._commitment for player in self.game.players) >= self.actor.starting_stack:
             raise ActionException('The stack of the acting player is covered')
         elif all(not player._relevant for player in self.game.players if player is not self.actor):
             raise ActionException('Betting/Raising is redundant')
@@ -95,5 +97,7 @@ class ShowdownAction(PokerAction[PokerPlayer]):
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.game._stage, ShowdownStage):
+        if not isinstance(self.show, bool):
+            raise TypeError('The show must be of type bool')
+        elif not isinstance(self.game._stage, ShowdownStage):
             raise ActionException('Game not in showdown')
