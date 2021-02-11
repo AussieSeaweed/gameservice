@@ -5,7 +5,7 @@ with open('README.rst', 'r') as long_description_file:
 
 setup(
     name='gameframe',
-    version='0.0.1b9',
+    version='0.0.2.dev1',
     author='Juho Kim',
     author_email='juho-kim@outlook.com',
     description='A package for various game implementations on python',
