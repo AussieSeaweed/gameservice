@@ -361,15 +361,14 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         BetRaiseAction(self.game, self, amount).act()
 
-    def showdown(self, show: bool = False) -> None:
-        """Showdowns the hand of this player if necessary or specified.
+    def showdown(self) -> None:
+        """Showdowns the hand of this player if necessary.
 
-        :param show: a boolean value on whether or not to show regardless of necessity
         :return: None
         """
         from gameframe.poker.actions import ShowdownAction
 
-        ShowdownAction(self.game, self, show).act()
+        ShowdownAction(self.game, self).act()
 
     def can_fold(self) -> bool:
         """Determines if the player can fold.
@@ -411,16 +410,15 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
             return False
         return True
 
-    def can_showdown(self, show: bool = False) -> bool:
-        """Determines if the player can showdown the his/her hand if necessary or specified.
+    def can_showdown(self) -> bool:
+        """Determines if the player can showdown the his/her hand if necessary.
 
-        :param show: a boolean value on whether or not to show regardless of necessity
         :return: True if the player can showdown, else False
         """
         from gameframe.poker.actions import ShowdownAction
 
         try:
-            ShowdownAction(self.game, self, show).verify()
+            ShowdownAction(self.game, self).verify()
         except ActionException:
             return False
         return True

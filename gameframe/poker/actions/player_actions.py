@@ -73,11 +73,6 @@ class BetRaiseAction(BettingAction):
 
 
 class ShowdownAction(PokerAction[PokerPlayer]):
-    def __init__(self, game: PokerGame, actor: PokerPlayer, show: bool):
-        super().__init__(game, actor)
-
-        self.show = show
-
     @property
     def next_actor(self) -> PokerPlayer:
         actor = next(self.actor)
@@ -88,8 +83,8 @@ class ShowdownAction(PokerAction[PokerPlayer]):
         return actor
 
     def apply(self) -> None:
-        if self.show or all(not (player.hand > self.actor.hand and player._commitment >= self.actor._commitment)
-                            for player in self.game.players if player.shown):
+        if all(not (player.hand > self.actor.hand and player._commitment >= self.actor._commitment)
+               for player in self.game.players if player.shown):
             self.actor._status = HoleCardStatus.SHOWN
         else:
             self.actor._status = HoleCardStatus.MUCKED
@@ -97,7 +92,5 @@ class ShowdownAction(PokerAction[PokerPlayer]):
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.show, bool):
-            raise TypeError('The show must be of type bool')
-        elif not isinstance(self.game._stage, ShowdownStage):
+        if not isinstance(self.game._stage, ShowdownStage):
             raise ActionException('Game not in showdown')
