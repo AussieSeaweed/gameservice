@@ -22,7 +22,7 @@ copyright = '2021, Juho Kim'
 author = 'Juho Kim'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.2.dev3'
+release = '0.0.2.dev4'
 
 # -- General configuration ---------------------------------------------------
 
