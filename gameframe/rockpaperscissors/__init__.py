@@ -1,3 +1,3 @@
-from gameframe.rockpaperscissors.bases import RPSHand, RPSGame, RPSPlayer
+from gameframe.rockpaperscissors.bases import RPSGame, RPSHand, RPSPlayer
 
-__all__ = ['RPSHand', 'RPSGame', 'RPSPlayer']
+__all__ = ['RPSGame', 'RPSHand', 'RPSPlayer']
