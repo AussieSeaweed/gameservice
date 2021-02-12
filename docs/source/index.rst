@@ -6,7 +6,7 @@
 GameFrame
 =========
 
-GameFrame is a Python game framework library implementing various poker and other board games.
+GameFrame is a Python package for various game implementations.
 
 The following games are supported in GameFrame...
 

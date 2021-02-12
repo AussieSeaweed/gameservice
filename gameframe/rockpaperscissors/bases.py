@@ -38,16 +38,16 @@ class RPSPlayer(Actor[RPSGame]):
     def __init__(self, game: RPSGame) -> None:
         super().__init__(game)
 
-        self._hand: Optional[Hand] = None
+        self._hand: Optional[RPSHand] = None
 
     @property
-    def hand(self) -> Optional[Hand]:
+    def hand(self) -> Optional[RPSHand]:
         """
         :return: the hand of this rock paper scissors player.
         """
         return self._hand
 
-    def throw(self, hand: Hand) -> None:
+    def throw(self, hand: RPSHand) -> None:
         """Throws the specified hand.
 
         :param hand: the hand to be thrown
@@ -55,7 +55,7 @@ class RPSPlayer(Actor[RPSGame]):
         """
         ThrowAction(self.game, self, hand).act()
 
-    def can_throw(self, hand: Hand) -> bool:
+    def can_throw(self, hand: RPSHand) -> bool:
         """Determines if the the specified hand can be thrown.
 
         :param hand: the hand to be thrown
@@ -69,7 +69,7 @@ class RPSPlayer(Actor[RPSGame]):
 
 
 class ThrowAction(Action[RPSGame, RPSPlayer]):
-    def __init__(self, game: RPSGame, actor: RPSPlayer, hand: Hand):
+    def __init__(self, game: RPSGame, actor: RPSPlayer, hand: RPSHand):
         super().__init__(game, actor)
 
         self.hand = hand
@@ -80,22 +80,22 @@ class ThrowAction(Action[RPSGame, RPSPlayer]):
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.hand, Hand):
+        if not isinstance(self.hand, RPSHand):
             raise TypeError('The hand must be of type Hand')
         elif self.actor.hand is not None:
             raise ActionException('The player has already played a hand')
 
 
 @unique
-class Hand(Enum):
-    """Hand is the enum for rock paper scissors hands."""
+class RPSHand(Enum):
+    """RPSHand is the enum for rock paper scissors hands."""
     ROCK = 'Rock'
     PAPER = 'Paper'
     SCISSORS = 'Scissors'
 
     def __lt__(self, other: Any) -> bool:
-        if isinstance(other, Hand):
-            hands = tuple(Hand)
+        if isinstance(other, RPSHand):
+            hands = tuple(RPSHand)
 
             return (hands.index(self) + 1) % 3 == hands.index(other)
         else:

@@ -1,9 +1,10 @@
 from abc import ABC
 from collections import Sequence
 
+from pokertools import Deck, Evaluator, GreekEvaluator, OmahaEvaluator, StandardDeck, StandardEvaluator
+
 from gameframe.poker.bases import PokerGame
-from gameframe.poker.stages import HoleCardDealingStage, BoardCardDealingStage, NLBettingStage, ShowdownStage
-from gameframe.poker.utils import Deck, Evaluator, GreekEvaluator, OmahaEvaluator, StandardDeck, StandardEvaluator
+from gameframe.poker.stages import BoardCardDealingStage, HoleCardDealingStage, NLBettingStage, ShowdownStage
 
 
 class NLHEGame(PokerGame, ABC):

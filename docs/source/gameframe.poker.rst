@@ -1,11 +1,6 @@
 gameframe.poker package
 =======================
 
-.. toctree::
-   :maxdepth: 1
-
-   gameframe.poker.utils
-
 .. automodule:: gameframe.poker.bases
    :members:
    :undoc-members:

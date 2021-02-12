@@ -2,7 +2,7 @@ from random import choice
 from unittest import TestCase, main
 
 from gameframe.game.tests.test_monte_carlo import MCTestCaseMixin
-from gameframe.rockpaperscissors import Hand, RPSGame
+from gameframe.rockpaperscissors import RPSHand, RPSGame
 
 
 class RPSMCTestCase(TestCase, MCTestCaseMixin[RPSGame]):
@@ -10,7 +10,7 @@ class RPSMCTestCase(TestCase, MCTestCaseMixin[RPSGame]):
 
     def act(self, game: RPSGame) -> None:
         for player in game.players:
-            player.throw(choice(list(Hand)))
+            player.throw(choice(list(RPSHand)))
 
     def create_game(self) -> RPSGame:
         return RPSGame()

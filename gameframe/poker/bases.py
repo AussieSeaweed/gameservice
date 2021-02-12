@@ -7,9 +7,10 @@ from functools import cached_property
 from itertools import zip_longest
 from typing import Optional, Union
 
+from pokertools import Card, CardLike, Deck, Evaluator, Hand, HoleCard
+
 from gameframe.game import ActionException, ParamException
 from gameframe.game.generics import A, Actor
-from gameframe.poker.utils import Card, CardLike, Deck, Evaluator, Hand
 from gameframe.sequential.generics import SeqAction, SeqGame
 
 
@@ -509,25 +510,6 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
                 side_pot += entitlement - base
 
         return side_pot
-
-
-class HoleCard(Card):
-    """HoleCard is the class for hole cards."""
-
-    def __init__(self, card: Card, status: bool):
-        super().__init__(card.rank, card.suit)
-
-        self.__status = status
-
-    def __repr__(self) -> str:
-        return super().__repr__() if self.status else '??'
-
-    @property
-    def status(self) -> bool:
-        """
-        :return: True if the hole card is exposed, else False
-        """
-        return self.__status
 
 
 @unique

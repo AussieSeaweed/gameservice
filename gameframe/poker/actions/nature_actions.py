@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 
+from pokertools import CardLike, parse_card
+
 from gameframe.game import ActionException
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
 from gameframe.poker.stages import BoardCardDealingStage, DealingStage, HoleCardDealingStage
-from gameframe.poker.utils import CardLike, parse_card
 
 
 class DealingAction(PokerAction[PokerNature], ABC):
