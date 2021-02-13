@@ -3,8 +3,9 @@ from abc import ABC, abstractmethod
 from pokertools import CardLike, parse_card
 
 from gameframe.game import ActionException
-from gameframe.poker import CardCountException, MuckedPlayerException
+from gameframe.poker import CardCountException
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
+from gameframe.poker.exceptions import InvalidPlayerException
 from gameframe.poker.stages import BoardCardDealingStage, DealingStage, HoleCardDealingStage
 
 
@@ -54,9 +55,9 @@ class HoleCardDealingAction(DealingAction):
         elif not isinstance(self.game._stage, HoleCardDealingStage):
             raise ActionException('Hole card dealing not allowed')
         elif self.player.mucked:
-            raise MuckedPlayerException('Cannot deal to mucked player')
+            raise InvalidPlayerException('Cannot deal to mucked player')
         elif len(self.player._hole_cards) >= self.game._stage.card_target:
-            raise ActionException('The player already has enough hole cards')
+            raise InvalidPlayerException('The player already has enough hole cards')
         elif len(self.cards) != self.game._stage.card_count:
             raise CardCountException('Invalid number of hole cards are dealt')
 

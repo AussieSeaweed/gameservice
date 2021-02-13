@@ -217,6 +217,91 @@ class NLTexasHESimTestCase(TestCase):
         self.assertEqual(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], '').pot, 0)
         self.assertEqual(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], '').pot, 0)
 
+    def test_nlthe_cans(self) -> None:
+        game = NLTHEGame(1, [1, 2], [100, 100, 100])
+        n = game.nature
+        a, b, c = game.players
+
+        self.assertTrue(n.can_deal_player())
+        self.assertTrue(n.can_deal_player(a))
+        self.assertTrue(n.can_deal_player(b))
+        self.assertTrue(n.can_deal_player(c))
+        self.assertFalse(n.can_deal_board())
+        self.assertEqual(n.player_deal_count, 2)
+
+        n.deal_player(a, 'Ah', 'Th')
+
+        self.assertTrue(n.can_deal_player())
+        self.assertFalse(n.can_deal_player(a))
+        self.assertTrue(n.can_deal_player(b))
+        self.assertTrue(n.can_deal_player(c))
+        self.assertFalse(n.can_deal_board())
+        self.assertEqual(n.player_deal_count, 2)
+
+        n.deal_player(b, 'As', 'Ts')
+        n.deal_player(c, 'Ac', 'Tc')
+
+        self.assertFalse(n.can_deal_player())
+        self.assertFalse(n.can_deal_board())
+
+        self.assertFalse(a.can_fold())
+        self.assertFalse(a.can_bet_raise())
+        self.assertFalse(a.can_check_call())
+        self.assertFalse(b.can_fold())
+        self.assertFalse(b.can_bet_raise())
+        self.assertFalse(b.can_check_call())
+        self.assertTrue(c.can_fold())
+        self.assertTrue(c.can_bet_raise())
+        self.assertTrue(c.can_check_call())
+        self.assertEqual(c.min_bet_raise_amount, 4)
+        self.assertEqual(c.max_bet_raise_amount, 99)
+
+        c.bet_raise(6)
+
+        self.assertTrue(a.can_fold())
+        self.assertTrue(a.can_bet_raise())
+        self.assertTrue(a.can_check_call())
+        self.assertFalse(b.can_fold())
+        self.assertFalse(b.can_bet_raise())
+        self.assertFalse(b.can_check_call())
+        self.assertFalse(c.can_fold())
+        self.assertFalse(c.can_bet_raise())
+        self.assertFalse(c.can_check_call())
+        self.assertEqual(a.min_bet_raise_amount, 10)
+        self.assertEqual(a.max_bet_raise_amount, 99)
+
+        a.fold()
+        b.check_call()
+
+        self.assertFalse(n.can_deal_player())
+        self.assertFalse(n.can_deal_player(a))
+        self.assertFalse(n.can_deal_player(b))
+        self.assertFalse(n.can_deal_player(c))
+        self.assertTrue(n.can_deal_board())
+        self.assertEqual(n.board_deal_count, 3)
+        n.deal_board('2h', '3h', '4h')
+
+        b.check_call()
+        c.check_call()
+
+        self.assertEqual(n.board_deal_count, 1)
+        n.deal_board('4s')
+
+        b.bet_raise(93)
+        c.check_call()
+
+        self.assertEqual(n.board_deal_count, 1)
+        n.deal_board('5s')
+
+        self.assertTrue(b.can_showdown())
+        self.assertFalse(c.can_showdown())
+
+        b.showdown()
+        c.showdown()
+
+        self.assertTrue(game.terminal)
+
+
     def assert_actor(self, game: PokerGame, index: Optional[int]) -> None:
         if isinstance(game.actor, PokerPlayer):
             self.assertEqual(game.actor.index, index)

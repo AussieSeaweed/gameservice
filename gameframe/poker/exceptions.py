@@ -1,7 +1,7 @@
 from gameframe.game import ActionException
 
 
-class MuckedPlayerException(ActionException):
+class InvalidPlayerException(ActionException):
     pass
 
 
