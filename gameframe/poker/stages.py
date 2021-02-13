@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum, unique
+from functools import cached_property
 from typing import cast
 
 from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
@@ -16,6 +17,11 @@ class DealingStage(Stage, ABC):
     def opener(self) -> PokerNature:
         return self.game.nature
 
+    @cached_property
+    @abstractmethod
+    def card_target(self) -> int:
+        pass
+
 
 class HoleCardDealingStage(DealingStage):
     def __init__(self, game: PokerGame, card_count: int, card_status: bool):
@@ -25,14 +31,34 @@ class HoleCardDealingStage(DealingStage):
 
     @property
     def skippable(self) -> bool:
-        return super().skippable or all(len(player._hole_cards) == self.game.hole_card_target
+        return super().skippable or all(len(player._hole_cards) == self.card_target
                                         for player in self.game.players if not player.mucked)
+
+    @cached_property
+    def card_target(self) -> int:
+        count = 0
+
+        for stage in self.game._stages[:self.index + 1]:
+            if isinstance(stage, HoleCardDealingStage):
+                count += stage.card_count
+
+        return count
 
 
 class BoardCardDealingStage(DealingStage):
     @property
     def skippable(self) -> bool:
-        return super().skippable or len(self.game.board_cards) == self.game.board_card_target
+        return super().skippable or len(self.game.board_cards) == self.card_target
+
+    @cached_property
+    def card_target(self) -> int:
+        count = 0
+
+        for stage in self.game._stages[:self.index + 1]:
+            if isinstance(stage, BoardCardDealingStage):
+                count += stage.card_count
+
+        return count
 
 
 class BettingStage(Stage, ABC):
@@ -44,8 +70,10 @@ class BettingStage(Stage, ABC):
 
     @property
     def min_amount(self) -> int:
+        player = cast(PokerPlayer, self.game.actor)
+
         return min(max(player.bet for player in self.game.players) + self.game._max_delta,
-                   cast(PokerPlayer, self.game.actor).bet + cast(PokerPlayer, self.game.actor).stack)
+                   player.bet + player.stack)
 
     @property
     @abstractmethod
@@ -87,7 +115,9 @@ class BettingStage(Stage, ABC):
 class NLBettingStage(BettingStage):
     @property
     def max_amount(self) -> int:
-        return cast(PokerPlayer, self.game.actor).bet + cast(PokerPlayer, self.game.actor).stack
+        player = cast(PokerPlayer, self.game.actor)
+
+        return player.bet + player.stack
 
 
 class ShowdownStage(Stage):

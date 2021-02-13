@@ -63,10 +63,11 @@ class RPSPlayer(Actor[RPSGame]):
         :return: True if a hand can be thrown, else False
         """
         try:
-            ThrowAction(self.game, self, RPSHand.ROCK).verify()
+            ThrowAction(self.game, self, next(iter(RPSHand))).verify()
         except ActionException:
             return False
-        return True
+        else:
+            return True
 
 
 class ThrowAction(Action[RPSGame, RPSPlayer]):
@@ -81,10 +82,10 @@ class ThrowAction(Action[RPSGame, RPSPlayer]):
     def verify(self) -> None:
         super().verify()
 
-        if self.actor.hand is not None:
-            raise ActionException('The player has already played a hand')
-        elif not isinstance(self.hand, RPSHand):
+        if not isinstance(self.hand, RPSHand):
             raise TypeError('The hand must be of type Hand')
+        elif self.actor.hand is not None:
+            raise ActionException('The player has already played a hand')
 
 
 @unique

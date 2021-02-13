@@ -82,7 +82,8 @@ class TTTPlayer(Actor[TTTGame]):
             MarkAction(self.game, self, r, c).verify()
         except ActionException:
             return False
-        return True
+        else:
+            return True
 
 
 class MarkAction(SeqAction[TTTGame, TTTPlayer]):

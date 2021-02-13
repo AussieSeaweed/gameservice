@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from pokertools import CardLike, parse_card
 
 from gameframe.game import ActionException
+from gameframe.poker import CardCountException, MuckedPlayerException
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
 from gameframe.poker.stages import BoardCardDealingStage, DealingStage, HoleCardDealingStage
 
@@ -52,12 +53,12 @@ class HoleCardDealingAction(DealingAction):
             raise TypeError('The player must be of type PokerPlayer')
         elif not isinstance(self.game._stage, HoleCardDealingStage):
             raise ActionException('Hole card dealing not allowed')
-        elif len(self.player._hole_cards) >= self.game.hole_card_target:
+        elif self.player.mucked:
+            raise MuckedPlayerException('Cannot deal to mucked player')
+        elif len(self.player._hole_cards) >= self.game._stage.card_target:
             raise ActionException('The player already has enough hole cards')
         elif len(self.cards) != self.game._stage.card_count:
-            raise ActionException('Invalid number of hole cards are dealt')
-        elif self.player.mucked:
-            raise ActionException('Cannot deal to mucked player')
+            raise CardCountException('Invalid number of hole cards are dealt')
 
 
 class BoardCardDealingAction(DealingAction):
@@ -69,7 +70,7 @@ class BoardCardDealingAction(DealingAction):
 
         if not isinstance(self.game._stage, BoardCardDealingStage):
             raise ActionException('Board card dealing not allowed')
-        elif len(self.game.board_cards) >= self.game.board_card_target:
+        elif len(self.game.board_cards) >= self.game._stage.card_target:
             raise ActionException('The board already has enough cards')
         elif len(self.cards) != self.game._stage.card_count:
-            raise ActionException('Invalid number of board cards are dealt')
+            raise CardCountException('Invalid number of board cards are dealt')

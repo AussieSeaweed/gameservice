@@ -2,6 +2,7 @@ from abc import ABC
 from typing import cast
 
 from gameframe.game import ActionException
+from gameframe.poker import BetRaiseAmountException
 from gameframe.poker.bases import HoleCardStatus, PokerAction, PokerGame, PokerPlayer
 from gameframe.poker.stages import BettingFlag, BettingStage, ShowdownStage
 
@@ -69,7 +70,7 @@ class BetRaiseAction(BettingAction):
         elif all(not player._relevant for player in self.game.players if player is not self.actor):
             raise ActionException('Betting/Raising is redundant')
         elif not stage.min_amount <= self.amount <= stage.max_amount:
-            raise ActionException('The bet/raise amount is not allowed')
+            raise BetRaiseAmountException('The bet/raise amount is not allowed')
 
 
 class ShowdownAction(PokerAction[PokerPlayer]):
@@ -97,5 +98,7 @@ class ShowdownAction(PokerAction[PokerPlayer]):
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.game._stage, ShowdownStage):
+        if not isinstance(self.force, bool):
+            raise TypeError('The force argument must be of type bool')
+        elif not isinstance(self.game._stage, ShowdownStage):
             raise ActionException('Game not in showdown')

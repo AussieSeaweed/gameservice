@@ -5,12 +5,13 @@ from collections import Iterator, MutableSequence, Sequence, defaultdict
 from enum import Enum, unique
 from functools import cached_property
 from itertools import zip_longest
-from typing import Optional, Union
+from typing import Optional, Union, cast
 
 from pokertools import Card, CardLike, Deck, Evaluator, Hand, HoleCard
 
 from gameframe.game import ActionException, ParamException
 from gameframe.game.generics import A, Actor
+from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, MuckedPlayerException
 from gameframe.sequential.generics import SeqAction, SeqGame
 
 
@@ -116,6 +117,21 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         """
         return sum(min(player._commitment, self._requirement) for player in self.players)
 
+    @cached_property
+    def hole_card_statuses(self) -> Sequence[bool]:
+        """
+        :return: the target statuses of hole cards
+        """
+        from gameframe.poker.stages import HoleCardDealingStage
+
+        statuses: list[bool] = []
+
+        for stage in self._stages:
+            if isinstance(stage, HoleCardDealingStage):
+                statuses.extend(stage.card_status for _ in range(stage.card_count))
+
+        return statuses
+
     def _trim(self) -> None:
         requirement = sorted(player._commitment for player in self.players)[-2]
 
@@ -131,16 +147,34 @@ class PokerNature(Actor[PokerGame]):
     def __repr__(self) -> str:
         return 'PokerNature'
 
-    def deal_player(self, player: PokerPlayer, *hole_cards: CardLike) -> None:
+    @property
+    def player_deal_count(self) -> int:
+        from gameframe.poker.stages import HoleCardDealingStage
+
+        if self.can_deal_player():
+            return cast(HoleCardDealingStage, self.game._stage).card_count
+        else:
+            raise ActionException('The poker nature cannot deal hole cards')
+
+    @property
+    def board_deal_count(self) -> int:
+        from gameframe.poker.stages import BoardCardDealingStage
+
+        if self.can_deal_board():
+            return cast(BoardCardDealingStage, self.game._stage).card_count
+        else:
+            raise ActionException('The poker nature cannot deal board cards')
+
+    def deal_player(self, player: PokerPlayer, *cards: CardLike) -> None:
         """Deals the hole cards to the specified player.
 
         :param player: the player to deal to
-        :param hole_cards: the hole cards to be dealt
+        :param cards: the hole cards to be dealt
         :return: None
         """
         from gameframe.poker.actions import HoleCardDealingAction
 
-        HoleCardDealingAction(self.game, self, player, *hole_cards).act()
+        HoleCardDealingAction(self.game, self, player, *cards).act()
 
     def deal_board(self, *cards: CardLike) -> None:
         """Deals the cards to the board.
@@ -152,20 +186,25 @@ class PokerNature(Actor[PokerGame]):
 
         BoardCardDealingAction(self.game, self, *cards).act()
 
-    def can_deal_player(self, player: PokerPlayer, *hole_cards: CardLike) -> bool:
+    def can_deal_player(self, player: Optional[PokerPlayer] = None, *cards: CardLike) -> bool:
         """Determines if the hole cards can be dealt to the specified player.
 
         :param player: the player to deal to
-        :param hole_cards: the hole cards to be dealt
+        :param cards: the hole cards to be dealt
         :return: True if the hand can be thrown, else False
         """
         from gameframe.poker.actions import HoleCardDealingAction
 
         try:
-            HoleCardDealingAction(self.game, self, player, *hole_cards).verify()
+            HoleCardDealingAction(self.game, self, self.game.players[0] if player is None else player, *cards).verify()
+        except MuckedPlayerException:
+            return player is None
+        except CardCountException:
+            return not cards
         except ActionException:
             return False
-        return True
+        else:
+            return True
 
     def can_deal_board(self, *cards: CardLike) -> bool:
         """Determines if the cards can be dealt to the board.
@@ -177,9 +216,12 @@ class PokerNature(Actor[PokerGame]):
 
         try:
             BoardCardDealingAction(self.game, self, *cards).verify()
+        except CardCountException:
+            return not cards
         except ActionException:
             return False
-        return True
+        else:
+            return True
 
 
 class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
@@ -265,6 +307,30 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         return self._status == HoleCardStatus.SHOWN
 
     @property
+    def min_bet_raise_amount(self) -> int:
+        """
+        :return: the minimum bet/raise amount
+        """
+        from gameframe.poker.stages import BettingStage
+
+        if self.can_bet_raise():
+            return cast(BettingStage, self.game._stage).min_amount
+        else:
+            raise ActionException('The poker player cannot bet/raise')
+
+    @property
+    def max_bet_raise_amount(self) -> int:
+        """
+        :return: the minimum bet/raise amount
+        """
+        from gameframe.poker.stages import BettingStage
+
+        if self.can_bet_raise():
+            return cast(BettingStage, self.game._stage).max_amount
+        else:
+            raise ActionException('The poker player cannot bet/raise')
+
+    @property
     def _effective_stack(self) -> int:
         try:
             return min(sorted(player.starting_stack for player in self.game.players if not player.mucked)[-2],
@@ -324,7 +390,8 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
             FoldAction(self.game, self).verify()
         except ActionException:
             return False
-        return True
+        else:
+            return True
 
     def can_check_call(self) -> bool:
         """Determines if the player can check or call.
@@ -337,9 +404,10 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
             CheckCallAction(self.game, self).verify()
         except ActionException:
             return False
-        return True
+        else:
+            return True
 
-    def can_bet_raise(self, amount: int) -> bool:
+    def can_bet_raise(self, amount: Optional[int] = None) -> bool:
         """Determines if the player can bet or raise the amount.
 
         :param amount: the bet/raise amount
@@ -348,12 +416,15 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         from gameframe.poker.actions import BetRaiseAction
 
         try:
-            BetRaiseAction(self.game, self, amount).verify()
+            BetRaiseAction(self.game, self, 0 if amount is None else amount).verify()
+        except BetRaiseAmountException:
+            return amount is None
         except ActionException:
             return False
-        return True
+        else:
+            return True
 
-    def can_showdown(self, force: bool = False) -> bool:
+    def can_showdown(self) -> bool:
         """Determines if the player can showdown the his/her hand if necessary or forced.
 
         :return: True if the player can showdown, else False
@@ -361,10 +432,11 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         from gameframe.poker.actions import ShowdownAction
 
         try:
-            ShowdownAction(self.game, self, force).verify()
+            ShowdownAction(self.game, self, False).verify()
         except ActionException:
             return False
-        return True
+        else:
+            return True
 
 
 class Stage(Iterator['Stage'], ABC):
@@ -439,8 +511,8 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
 
             base = max(base, base_player._commitment)
 
-        for player, revenue in revenues.items():
-            player._commitment -= revenue
+        for winner, revenue in revenues.items():
+            winner._commitment -= revenue
 
         self.game._actor = None
 
