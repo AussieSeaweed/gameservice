@@ -301,7 +301,6 @@ class NLTexasHESimTestCase(TestCase):
 
         self.assertTrue(game.terminal)
 
-
     def assert_actor(self, game: PokerGame, index: Optional[int]) -> None:
         if isinstance(game.actor, PokerPlayer):
             self.assertEqual(game.actor.index, index)
