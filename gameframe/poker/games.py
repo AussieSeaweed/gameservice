@@ -26,7 +26,7 @@ class NLHEGame(PokerGame, ABC):
 
 @final
 class NLTHEGame(NLHEGame):
-    """NLTHEGame is the class for no-limit texas Hold'em games."""
+    """NLTHEGame is the class for no-limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(2, StandardDeck(), StandardEvaluator(), ante, blinds, starting_stacks)

@@ -159,6 +159,9 @@ class PokerNature(Actor[PokerGame]):
 
     @property
     def player_deal_count(self) -> int:
+        """
+        :return: the number of hole cards to deal to a player
+        """
         from gameframe.poker.stages import HoleCardDealingStage
 
         if self.can_deal_player():
@@ -168,6 +171,9 @@ class PokerNature(Actor[PokerGame]):
 
     @property
     def board_deal_count(self) -> int:
+        """
+        :return: the number of cards to deal to the board
+        """
         from gameframe.poker.stages import BoardCardDealingStage
 
         if self.can_deal_board():
@@ -332,7 +338,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
     @property
     def max_bet_raise_amount(self) -> int:
         """
-        :return: the minimum bet/raise amount
+        :return: the maximum bet/raise amount
         """
         from gameframe.poker.stages import BettingStage
 
