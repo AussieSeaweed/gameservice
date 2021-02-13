@@ -20,7 +20,7 @@ class RPSGame(Game[Actor['RPSGame'], 'RPSPlayer']):
     @property
     def winner(self) -> Optional[RPSPlayer]:
         """
-        :return: the winning player of the rock paper scissors game if there is one, else None
+        :return: the winning player of this rock paper scissors game if there is one, else None
         """
         if self.players[0].hand is not None and self.players[1].hand is not None \
                 and self.players[0].hand != self.players[1].hand:
@@ -58,9 +58,9 @@ class RPSPlayer(Actor[RPSGame]):
         ThrowAction(self.game, self, hand).act()
 
     def can_throw(self) -> bool:
-        """Determines if a hand can be thrown.
+        """Determines if this rock paper scissors player can throw a hand.
 
-        :return: True if a hand can be thrown, else False
+        :return: True if this rock paper scissors player can throw a hand, else False
         """
         try:
             ThrowAction(self.game, self, next(iter(RPSHand))).verify()

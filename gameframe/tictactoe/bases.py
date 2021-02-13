@@ -33,7 +33,7 @@ class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer']):
     @property
     def empty_coords(self) -> Sequence[Sequence[int]]:
         """
-        :return: the list of empty coordinates of the board
+        :return: the list of the empty coordinates of the board
         """
         return [[r, c] for r in range(3) for c in range(3) if self._board[r][c] is None]
 
