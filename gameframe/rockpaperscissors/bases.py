@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from enum import Enum, unique
-from typing import Any, Optional
+from typing import Any, Optional, final
 
 from gameframe.game import ActionException
 from gameframe.game.generics import Action, Actor, Game
 
 
+@final
 class RPSGame(Game[Actor['RPSGame'], 'RPSPlayer']):
     """RPSGame is the class for rock paper scissors games."""
 
@@ -32,6 +33,7 @@ class RPSGame(Game[Actor['RPSGame'], 'RPSPlayer']):
         return all(player.hand is not None for player in self.players)
 
 
+@final
 class RPSPlayer(Actor[RPSGame]):
     """RPSPlayer is the class for rock paper scissors players."""
 
@@ -55,14 +57,13 @@ class RPSPlayer(Actor[RPSGame]):
         """
         ThrowAction(self.game, self, hand).act()
 
-    def can_throw(self, hand: RPSHand) -> bool:
-        """Determines if the the specified hand can be thrown.
+    def can_throw(self) -> bool:
+        """Determines if a hand can be thrown.
 
-        :param hand: the hand to be thrown
-        :return: True if the hand can be thrown, else False
+        :return: True if a hand can be thrown, else False
         """
         try:
-            ThrowAction(self.game, self, hand).verify()
+            ThrowAction(self.game, self, RPSHand.ROCK).verify()
         except ActionException:
             return False
         return True
@@ -80,10 +81,10 @@ class ThrowAction(Action[RPSGame, RPSPlayer]):
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.hand, RPSHand):
-            raise TypeError('The hand must be of type Hand')
-        elif self.actor.hand is not None:
+        if self.actor.hand is not None:
             raise ActionException('The player has already played a hand')
+        elif not isinstance(self.hand, RPSHand):
+            raise TypeError('The hand must be of type Hand')
 
 
 @unique
