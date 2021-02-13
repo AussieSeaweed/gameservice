@@ -5,7 +5,7 @@ from collections import Iterator, MutableSequence, Sequence, defaultdict
 from enum import Enum, unique
 from functools import cached_property
 from itertools import zip_longest
-from typing import Optional, Union, cast
+from typing import Optional, Union, cast, final
 
 from pokertools import Card, CardLike, Deck, Evaluator, Hand, HoleCard
 
@@ -69,6 +69,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
             self._stage.open()
 
     @property
+    @final
     def deck(self) -> Sequence[Card]:
         """
         :return: the deck of this poker game
@@ -76,6 +77,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return tuple(self._deck)
 
     @property
+    @final
     def evaluator(self) -> Evaluator:
         """
         :return: the evaluator of this poker game
@@ -83,6 +85,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return self.__evaluator
 
     @property
+    @final
     def ante(self) -> int:
         """
         :return: the ante of this poker game
@@ -90,6 +93,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return self.__ante
 
     @property
+    @final
     def blinds(self) -> Sequence[int]:
         """
         :return: the blinds of this poker game
@@ -97,6 +101,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return self.__blinds
 
     @property
+    @final
     def starting_stacks(self) -> Sequence[int]:
         """
         :return: the starting stacks of this poker game
@@ -104,6 +109,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return self.__starting_stacks
 
     @property
+    @final
     def board_cards(self) -> Sequence[Card]:
         """
         :return: the board cards of this poker game
@@ -111,6 +117,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return tuple(self._board_cards)
 
     @property
+    @final
     def pot(self) -> int:
         """
         :return: the pot of this poker game
@@ -118,6 +125,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return sum(min(player._commitment, self._requirement) for player in self.players)
 
     @cached_property
+    @final
     def hole_card_statuses(self) -> Sequence[bool]:
         """
         :return: the target statuses of hole cards
@@ -132,6 +140,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
 
         return statuses
 
+    @final
     def _trim(self) -> None:
         requirement = sorted(player._commitment for player in self.players)[-2]
 
@@ -141,6 +150,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         self._requirement = requirement
 
 
+@final
 class PokerNature(Actor[PokerGame]):
     """PokerNature is the class for poker natures."""
 
@@ -224,6 +234,7 @@ class PokerNature(Actor[PokerGame]):
             return True
 
 
+@final
 class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
     """PokerPlayer is the class for poker players."""
 
@@ -526,6 +537,7 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
         return side_pot
 
 
+@final
 @unique
 class HoleCardStatus(Enum):
     DEFAULT = 0

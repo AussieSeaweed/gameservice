@@ -1,5 +1,6 @@
 from abc import ABC
 from collections import Sequence
+from typing import final
 
 from pokertools import Deck, Evaluator, GreekEvaluator, OmahaEvaluator, StandardDeck, StandardEvaluator
 
@@ -23,6 +24,7 @@ class NLHEGame(PokerGame, ABC):
         ], deck, evaluator, ante, blinds, starting_stacks)
 
 
+@final
 class NLTHEGame(NLHEGame):
     """NLTHEGame is the class for no-limit texas Hold'em games."""
 
@@ -30,6 +32,7 @@ class NLTHEGame(NLHEGame):
         super().__init__(2, StandardDeck(), StandardEvaluator(), ante, blinds, starting_stacks)
 
 
+@final
 class NLOHEGame(NLHEGame):
     """NLOHEGame is the class for no-limit Omaha Hold'em games."""
 
@@ -37,6 +40,7 @@ class NLOHEGame(NLHEGame):
         super().__init__(4, StandardDeck(), OmahaEvaluator(), ante, blinds, starting_stacks)
 
 
+@final
 class NLGHEGame(NLHEGame):
     """NLGHEGame is the class for no-limit Greek Hold'em games."""
 
