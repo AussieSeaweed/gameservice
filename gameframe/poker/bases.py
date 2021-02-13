@@ -116,64 +116,6 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         """
         return sum(min(player._commitment, self._requirement) for player in self.players)
 
-    @property
-    def hole_card_target(self) -> int:
-        """
-        :return: the target number of hole cards
-        """
-        from gameframe.poker.stages import HoleCardDealingStage
-
-        count = 0
-
-        for stage in self._stages[:self._stage.index + 1]:
-            if isinstance(stage, HoleCardDealingStage):
-                count += stage.card_count
-
-        return count
-
-    @property
-    def hole_card_statuses(self) -> Sequence[bool]:
-        """
-        :return: the target statuses of hole cards
-        """
-        from gameframe.poker.stages import HoleCardDealingStage
-
-        statuses: list[bool] = []
-
-        for stage in self._stages[:self._stage.index + 1]:
-            if isinstance(stage, HoleCardDealingStage):
-                statuses += [stage.card_status for _ in range(stage.card_count)]
-
-        return statuses
-
-    @property
-    def board_card_target(self) -> int:
-        """
-        :return: the target number of board cards
-        """
-        from gameframe.poker.stages import BoardCardDealingStage
-
-        count = 0
-
-        for stage in self._stages[:self._stage.index + 1]:
-            if isinstance(stage, BoardCardDealingStage):
-                count += stage.card_count
-
-        return count
-
-    @property
-    def bet_raise_interval(self) -> Optional[Sequence[int]]:
-        """
-        :return: the interval of allowed bet/raise amounts if relevant, else None
-        """
-        from gameframe.poker.stages import BettingStage
-
-        if isinstance(self._stage, BettingStage) and isinstance(self.actor, PokerPlayer) \
-                and self.actor.can_bet_raise(self._stage.min_amount):
-            return [self._stage.min_amount, self._stage.max_amount]
-        else:
-            return None
-
     def _trim(self) -> None:
         requirement = sorted(player._commitment for player in self.players)[-2]
 

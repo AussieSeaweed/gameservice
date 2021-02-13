@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import Sequence
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, final
 
 from gameframe.game.bases import BaseActor, BaseGame
 from gameframe.game.exceptions import ActionException
@@ -17,10 +17,12 @@ class Game(BaseGame, Generic[N, P], ABC):
         self.__players = tuple(players)
 
     @property
+    @final
     def nature(self) -> N:
         return self.__nature
 
     @property
+    @final
     def players(self) -> Sequence[P]:
         return self.__players
 
@@ -30,6 +32,7 @@ class Actor(BaseActor, Generic[G], ABC):
         self.__game = game
 
     @property
+    @final
     def game(self) -> G:
         return self.__game
 

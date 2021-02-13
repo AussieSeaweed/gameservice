@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from collections import Sequence
-from typing import Optional
+from typing import Optional, final
 
 from gameframe.game import ActionException
 from gameframe.game.generics import Actor
 from gameframe.sequential.generics import SeqAction, SeqGame
 
 
+@final
 class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer']):
     """TTTGame is the class for tic tac toe games."""
 
@@ -54,6 +55,7 @@ class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer']):
         return None
 
 
+@final
 class TTTPlayer(Actor[TTTGame]):
     """TTTPlayer is the class for tic tac toe players."""
 

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, final
 
 from gameframe.game.bases import BaseActor, BaseGame
 
@@ -14,6 +14,7 @@ class BaseSeqGame(BaseGame, ABC):
     _actor: Optional[BaseActor]
 
     @property
+    @final
     def terminal(self) -> bool:
         return self._actor is None
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import Sequence
-from typing import Optional, TypeVar, Union
+from typing import Optional, TypeVar, Union, final
 
 from gameframe.game import ActionException, BaseActor
 from gameframe.game.generics import A, Action, Game, N, P
@@ -16,6 +16,7 @@ class SeqGame(Game[N, P], BaseSeqGame, ABC):
         self._actor: Optional[Union[N, P]] = actor
 
     @property
+    @final
     def actor(self) -> Optional[Union[N, P]]:
         return self._actor
 
