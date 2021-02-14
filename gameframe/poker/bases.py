@@ -255,7 +255,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         return self.game.players[(self.index + 1) % len(self.game.players)]
 
     def __repr__(self) -> str:
-        if self.hole_cards is None:
+        if self.mucked:
             return f'PokerPlayer({self.bet}, {self.stack})'
         else:
             return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self.hole_cards)) + '])'
@@ -289,18 +289,17 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         return self.starting_stack - self._commitment
 
     @property
-    def hole_cards(self) -> Optional[Sequence[HoleCard]]:
+    def hole_cards(self) -> Sequence[HoleCard]:
         """
         :return: the hole cards of this poker player
         """
         if self.mucked:
-            return None
+            return tuple(HoleCard(card, False) for card in self._hole_cards)
+        elif self.shown:
+            return tuple(HoleCard(card, True) for card in self._hole_cards)
         else:
-            if self._status == HoleCardStatus.SHOWN:
-                return tuple(HoleCard(card, True) for card in self._hole_cards)
-            else:
-                return tuple(HoleCard(card, status) for card, status in
-                             zip(self._hole_cards, self.game.hole_card_statuses))
+            return tuple(HoleCard(card, status) for card, status in
+                         zip(self._hole_cards, self.game.hole_card_statuses))
 
     @property
     def hand(self) -> Hand:
