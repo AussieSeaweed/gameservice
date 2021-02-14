@@ -125,11 +125,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
         return sum(min(player._commitment, self._requirement) for player in self.players)
 
     @cached_property
-    @final
-    def hole_card_statuses(self) -> Sequence[bool]:
-        """
-        :return: the target statuses of hole cards
-        """
+    def _hole_card_statuses(self) -> Sequence[bool]:
         from gameframe.poker.stages import HoleCardDealingStage
 
         statuses: list[bool] = []
@@ -140,7 +136,6 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
 
         return statuses
 
-    @final
     def _trim(self) -> None:
         requirement = sorted(player._commitment for player in self.players)[-2]
 
@@ -299,7 +294,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
             return tuple(HoleCard(card, True) for card in self._hole_cards)
         else:
             return tuple(HoleCard(card, status) for card, status in
-                         zip(self._hole_cards, self.game.hole_card_statuses))
+                         zip(self._hole_cards, self.game._hole_card_statuses))
 
     @property
     def hand(self) -> Hand:

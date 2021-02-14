@@ -18,9 +18,14 @@ class DealingStage(Stage, ABC):
         return self.game.nature
 
     @cached_property
-    @abstractmethod
     def card_target(self) -> int:
-        pass
+        count = 0
+
+        for stage in self.game._stages[:self.index + 1]:
+            if isinstance(stage, type(self)):
+                count += stage.card_count
+
+        return count
 
 
 class HoleCardDealingStage(DealingStage):
@@ -34,31 +39,11 @@ class HoleCardDealingStage(DealingStage):
         return super().skippable \
                or all(len(player._hole_cards) == self.card_target for player in self.game.players if not player.mucked)
 
-    @cached_property
-    def card_target(self) -> int:
-        count = 0
-
-        for stage in self.game._stages[:self.index + 1]:
-            if isinstance(stage, HoleCardDealingStage):
-                count += stage.card_count
-
-        return count
-
 
 class BoardCardDealingStage(DealingStage):
     @property
     def skippable(self) -> bool:
         return super().skippable or len(self.game.board_cards) == self.card_target
-
-    @cached_property
-    def card_target(self) -> int:
-        count = 0
-
-        for stage in self.game._stages[:self.index + 1]:
-            if isinstance(stage, BoardCardDealingStage):
-                count += stage.card_count
-
-        return count
 
 
 class BettingStage(Stage, ABC):
@@ -72,8 +57,7 @@ class BettingStage(Stage, ABC):
     def min_amount(self) -> int:
         player = cast(PokerPlayer, self.game.actor)
 
-        return min(max(player.bet for player in self.game.players) + self.game._max_delta,
-                   player.bet + player.stack)
+        return min(max(player.bet for player in self.game.players) + self.game._max_delta, player.bet + player.stack)
 
     @property
     @abstractmethod
