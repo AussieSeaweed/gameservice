@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum, unique
+from functools import total_ordering
 from typing import Any, Optional, final
 
 from gameframe.game import ActionException
@@ -88,6 +89,7 @@ class ThrowAction(Action[RPSGame, RPSPlayer]):
             raise ActionException('The player has already played a hand')
 
 
+@total_ordering
 @unique
 class RPSHand(Enum):
     """RPSHand is the enum for rock paper scissors hands."""
