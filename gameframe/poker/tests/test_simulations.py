@@ -253,6 +253,9 @@ class NLTexasHESimTestCase(TestCase):
         self.assertTrue(c.can_fold())
         self.assertTrue(c.can_bet_raise())
         self.assertTrue(c.can_check_call())
+        self.assertTrue(c.can_bet_raise(4))
+        self.assertTrue(c.can_bet_raise(99))
+        self.assertFalse(c.can_bet_raise(0))
         self.assertEqual(c.min_bet_raise_amount, 4)
         self.assertEqual(c.max_bet_raise_amount, 99)
 
