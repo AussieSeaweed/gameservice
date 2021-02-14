@@ -207,7 +207,7 @@ class PokerNature(Actor[PokerGame]):
 
         :param player: the player to deal to
         :param cards: the hole cards to be dealt
-        :return: True if the hand can be thrown, else False
+        :return: True if the player can be dealt, else False
         """
         from gameframe.poker.actions import HoleCardDealingAction
 
@@ -226,7 +226,7 @@ class PokerNature(Actor[PokerGame]):
         """Determines if the cards can be dealt to the board.
 
         :param cards: the cards to be dealt
-        :return: True if the hand can be thrown, else False
+        :return: True if the board can be dealt, else False
         """
         from gameframe.poker.actions import BoardCardDealingAction
 
