@@ -89,6 +89,7 @@ class ThrowAction(Action[RPSGame, RPSPlayer]):
             raise ActionException('The player has already played a hand')
 
 
+@final
 @total_ordering
 @unique
 class RPSHand(Enum):
