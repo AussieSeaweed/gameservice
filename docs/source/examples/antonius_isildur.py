@@ -5,10 +5,9 @@ The integral values are multiplied by 100 to represent cents in dollars.
 
 Video: https://www.youtube.com/watch?v=UMBm66Id2AA
 """
+from gameframe.poker import NLOGame
 
-from gameframe.poker import NLOHEGame
-
-game = NLOHEGame(0, [50000, 100000], [125945025, 67847350])
+game = NLOGame(0, [50000, 100000], [125945025, 67847350])
 antonius, isildur = game.players
 
 # Pre-flop

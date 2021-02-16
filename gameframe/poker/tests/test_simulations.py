@@ -3,7 +3,7 @@ from typing import Optional, cast
 from unittest import TestCase, main
 
 from gameframe.game import ActionException
-from gameframe.poker import NLTHEGame, PokerGame, PokerPlayer
+from gameframe.poker import NLTGame, PokerGame, PokerPlayer
 from gameframe.poker.stages import ShowdownStage
 
 
@@ -217,8 +217,8 @@ class NLTexasHESimTestCase(TestCase):
         self.assertEqual(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], '').pot, 0)
         self.assertEqual(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], '').pot, 0)
 
-    def test_nlthe_cans(self) -> None:
-        game = NLTHEGame(1, [1, 2], [100, 100, 100])
+    def test_nlt_cans(self) -> None:
+        game = NLTGame(1, [1, 2], [100, 100, 100])
         n = game.nature
         a, b, c = game.players
 
@@ -317,9 +317,9 @@ class NLTexasHESimTestCase(TestCase):
         self.assertSequenceEqual([player.stack for player in game.players], stacks)
 
     def parse(self, stacks: Sequence[int], hole_card_sets: Sequence[str], board_card_sets: Sequence[str], tokens: str,
-              terminate: bool = True) -> NLTHEGame:
+              terminate: bool = True) -> NLTGame:
         tokens = tokens.replace(' ', '')
-        game = NLTHEGame(self.ANTE, self.BLINDS, stacks)
+        game = NLTGame(self.ANTE, self.BLINDS, stacks)
 
         for player, hole_cards in zip(game.players, hole_card_sets):
             game.nature.deal_player(player, *self.split_cards(hole_cards))

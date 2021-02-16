@@ -2,10 +2,9 @@
 
 Video: https://www.youtube.com/watch?v=GnxFohpljqM
 """
+from gameframe.poker import NLTGame
 
-from gameframe.poker import NLTHEGame
-
-game = NLTHEGame(500, [1000, 2000], [1125600, 2000000, 553500])  # Antonius's stack is unknown
+game = NLTGame(500, [1000, 2000], [1125600, 2000000, 553500])  # Antonius's stack is unknown
 ivey, antonius, dwan = game.players
 
 # Pre-flop

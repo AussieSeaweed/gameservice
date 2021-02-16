@@ -25,24 +25,24 @@ class NLHEGame(PokerGame, ABC):
 
 
 @final
-class NLTHEGame(NLHEGame):
-    """NLTHEGame is the class for no-limit Texas Hold'em games."""
+class NLTGame(NLHEGame):
+    """NLTGame is the class for no-limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(2, StandardDeck(), StandardEvaluator(), ante, blinds, starting_stacks)
 
 
 @final
-class NLOHEGame(NLHEGame):
-    """NLOHEGame is the class for no-limit Omaha Hold'em games."""
+class NLOGame(NLHEGame):
+    """NLOGame is the class for no-limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(4, StandardDeck(), OmahaEvaluator(), ante, blinds, starting_stacks)
 
 
 @final
-class NLGHEGame(NLHEGame):
-    """NLGHEGame is the class for no-limit Greek Hold'em games."""
+class NLGGame(NLHEGame):
+    """NLGGame is the class for no-limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(2, StandardDeck(), GreekEvaluator(), ante, blinds, starting_stacks)

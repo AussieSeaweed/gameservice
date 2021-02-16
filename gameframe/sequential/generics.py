@@ -6,7 +6,7 @@ from gameframe.game import ActionException, BaseActor
 from gameframe.game.generics import A, Action, Game, N, P
 from gameframe.sequential.bases import BaseSeqGame
 
-G = TypeVar('G', bound=BaseSeqGame)
+SG = TypeVar('SG', bound=BaseSeqGame)
 
 
 class SeqGame(Game[N, P], BaseSeqGame, ABC):
@@ -21,7 +21,7 @@ class SeqGame(Game[N, P], BaseSeqGame, ABC):
         return self._actor
 
 
-class SeqAction(Action[G, A], ABC):
+class SeqAction(Action[SG, A], ABC):
     @property
     @abstractmethod
     def next_actor(self) -> Optional[BaseActor]:

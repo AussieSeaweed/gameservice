@@ -4,12 +4,12 @@ from typing import cast
 from unittest import TestCase, main
 
 from gameframe.game import ActionException
-from gameframe.poker import NLTHEGame, PokerPlayer
+from gameframe.poker import NLTGame, PokerPlayer
 from gameframe.poker.stages import BettingStage, BoardCardDealingStage, HoleCardDealingStage, ShowdownStage
 from gameframe.sequential.tests.test_monte_carlo import SeqMCTestCaseMixin
 
 
-class NLTexasHEMCTestCase(TestCase, SeqMCTestCaseMixin[NLTHEGame]):
+class NLTexasHEMCTestCase(TestCase, SeqMCTestCaseMixin[NLTGame]):
     ANTE = 1
     BLINDS = [1, 2]
     PLAYER_COUNT = 6
@@ -18,7 +18,7 @@ class NLTexasHEMCTestCase(TestCase, SeqMCTestCaseMixin[NLTHEGame]):
 
     MC_TEST_COUNT = 1000
 
-    def verify(self, game: NLTHEGame) -> None:
+    def verify(self, game: NLTGame) -> None:
         super().verify(game)
 
         if game.terminal:
@@ -28,7 +28,7 @@ class NLTexasHEMCTestCase(TestCase, SeqMCTestCaseMixin[NLTHEGame]):
         self.assertEqual(game.pot + sum(player.bet + player.stack for player in game.players),
                          sum(player.starting_stack for player in game.players))
 
-    def act(self, game: NLTHEGame) -> None:
+    def act(self, game: NLTGame) -> None:
         if isinstance(game._stage, HoleCardDealingStage):
             for player in game.players:
                 game.nature.deal_player(player, *sample(game.deck, game._stage.card_count))
@@ -59,9 +59,9 @@ class NLTexasHEMCTestCase(TestCase, SeqMCTestCaseMixin[NLTHEGame]):
         elif isinstance(game._stage, ShowdownStage):
             cast(PokerPlayer, game.actor).showdown()
 
-    def create_game(self) -> NLTHEGame:
-        return NLTHEGame(self.ANTE, self.BLINDS,
-                         [randint(self.MIN_STACK, self.MAX_STACK) for _ in range(self.PLAYER_COUNT)])
+    def create_game(self) -> NLTGame:
+        return NLTGame(self.ANTE, self.BLINDS,
+                       [randint(self.MIN_STACK, self.MAX_STACK) for _ in range(self.PLAYER_COUNT)])
 
 
 if __name__ == '__main__':

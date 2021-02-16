@@ -1,12 +1,11 @@
 from abc import ABC
-from typing import Generic
 
 from gameframe.game.tests.test_monte_carlo import MCTestCaseMixin
-from gameframe.sequential.generics import G
+from gameframe.sequential.generics import SG
 
 
-class SeqMCTestCaseMixin(MCTestCaseMixin[G], Generic[G], ABC):
-    def verify(self, game: G) -> None:
+class SeqMCTestCaseMixin(MCTestCaseMixin[SG], ABC):
+    def verify(self, game: SG) -> None:
         super().verify(game)
 
         if game.terminal:
