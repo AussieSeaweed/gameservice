@@ -1,7 +1,7 @@
-from typing import TypeVar
 import re
+from typing import TypeVar
 
-from pokertools import parse_card
+from pokertools import parse_cards
 
 from gameframe.poker import PokerGame, PokerPlayer
 
@@ -28,21 +28,9 @@ def parse_poker_game(game: PG, *tokens: str) -> None:
             else:
                 raise ValueError('Invalid command')
         else:
-            if match := re.match(r'dp (?P<index>\d+) (?P<cards_raw>\w+)', token):
-                cards_raw = match.group('cards_raw')
-                cards = []
-
-                for i in range(0, len(cards_raw), 2):
-                    cards.append(parse_card(cards_raw[i:i + 2]))
-
-                game.nature.deal_player(game.players[int(match.group('index'))], *cards)
-            elif match := re.match(r'db (?P<cards_raw>\w+)', token):
-                cards_raw = match.group('cards_raw')
-                cards = []
-
-                for i in range(0, len(cards_raw), 2):
-                    cards.append(parse_card(cards_raw[i:i + 2]))
-
-                game.nature.deal_board(*cards)
+            if match := re.match(r'dp (?P<index>\d+) (?P<cards>\w+)', token):
+                game.nature.deal_player(game.players[int(match.group('index'))], *parse_cards(match.group('cards')))
+            elif match := re.match(r'db (?P<cards>\w+)', token):
+                game.nature.deal_board(*parse_cards(match.group('cards')))
             else:
                 raise ValueError('Invalid command')
