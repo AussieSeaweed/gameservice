@@ -17,20 +17,20 @@ def parse_poker_game(game: PG, *tokens: str) -> None:
     """
     for token in tokens:
         if isinstance(game.actor, PokerPlayer):
-            if match := re.match(r'br (?P<amount>\d+)', token):
+            if match := re.fullmatch(r'br (?P<amount>\d+)', token):
                 game.actor.bet_raise(int(match.group('amount')))
             elif token == 'cc':
                 game.actor.check_call()
             elif token == 'f':
                 game.actor.fold()
-            elif match := re.match(r's( (?P<force>[0|1]))?', token):
+            elif match := re.fullmatch(r's( (?P<force>[0|1]))?', token):
                 game.actor.showdown(False if match.group('force') is None else bool(match.group('force')))
             else:
                 raise ValueError('Invalid command')
         else:
-            if match := re.match(r'dp (?P<index>\d+) (?P<cards>\w+)', token):
+            if match := re.fullmatch(r'dp (?P<index>\d+) (?P<cards>\w+)', token):
                 game.nature.deal_player(game.players[int(match.group('index'))], *parse_cards(match.group('cards')))
-            elif match := re.match(r'db (?P<cards>\w+)', token):
+            elif match := re.fullmatch(r'db (?P<cards>\w+)', token):
                 game.nature.deal_board(*parse_cards(match.group('cards')))
             else:
                 raise ValueError('Invalid command')
