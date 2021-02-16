@@ -5,6 +5,8 @@ The integral values are multiplied by 100 to represent cents in dollars.
 
 Video: https://www.youtube.com/watch?v=UMBm66Id2AA
 """
+from pokertools import parse_card, parse_cards
+
 from gameframe.poker import NLOGame
 
 game = NLOGame(0, [50000, 100000], [125945025, 67847350])
@@ -12,8 +14,8 @@ antonius, isildur = game.players
 
 # Pre-flop
 
-game.nature.deal_player(antonius, 'Ah', '3s', 'Ks', 'Kh')
-game.nature.deal_player(isildur, '6d', '9s', '7d', '8h')
+game.nature.deal_player(antonius, *parse_cards('Ah3sKsKh'))
+game.nature.deal_player(isildur, *parse_cards('6d9s7d8h'))
 
 isildur.bet_raise(300000)
 antonius.bet_raise(900000)
@@ -23,7 +25,7 @@ isildur.check_call()
 
 # Flop
 
-game.nature.deal_board('4s', '5c', '2h')
+game.nature.deal_board(*parse_cards('4s5c2h'))
 
 antonius.bet_raise(9100000)
 isildur.bet_raise(43500000)
@@ -32,8 +34,8 @@ isildur.check_call()
 
 # Turn and River
 
-game.nature.deal_board('5h')
-game.nature.deal_board('9c')
+game.nature.deal_board(parse_card('5h'))
+game.nature.deal_board(parse_card('9c'))
 
 # Pot: 1356947.00 (0.50 was probably collected as rake in the actual game)
 

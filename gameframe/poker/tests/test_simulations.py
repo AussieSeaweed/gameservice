@@ -2,6 +2,8 @@ from collections import Sequence
 from typing import Optional, cast
 from unittest import TestCase, main
 
+from pokertools import parse_card, parse_cards
+
 from gameframe.game import ActionException
 from gameframe.poker import NLTGame, PokerGame, PokerPlayer
 from gameframe.poker.stages import ShowdownStage
@@ -229,7 +231,7 @@ class NLTexasHESimTestCase(TestCase):
         self.assertFalse(n.can_deal_board())
         self.assertEqual(n.player_deal_count, 2)
 
-        n.deal_player(a, 'Ah', 'Th')
+        n.deal_player(a, parse_card('Ah'), parse_card('Th'))
 
         self.assertTrue(n.can_deal_player())
         self.assertFalse(n.can_deal_player(a))
@@ -238,8 +240,8 @@ class NLTexasHESimTestCase(TestCase):
         self.assertFalse(n.can_deal_board())
         self.assertEqual(n.player_deal_count, 2)
 
-        n.deal_player(b, 'As', 'Ts')
-        n.deal_player(c, 'Ac', 'Tc')
+        n.deal_player(b, parse_card('As'), parse_card('Ts'))
+        n.deal_player(c, parse_card('Ac'), parse_card('Tc'))
 
         self.assertFalse(n.can_deal_player())
         self.assertFalse(n.can_deal_board())
@@ -282,19 +284,19 @@ class NLTexasHESimTestCase(TestCase):
         self.assertFalse(n.can_deal_player(c))
         self.assertTrue(n.can_deal_board())
         self.assertEqual(n.board_deal_count, 3)
-        n.deal_board('2h', '3h', '4h')
+        n.deal_board(*parse_cards('2h3h4h'))
 
         b.check_call()
         c.check_call()
 
         self.assertEqual(n.board_deal_count, 1)
-        n.deal_board('4s')
+        n.deal_board(parse_card('4s'))
 
         b.bet_raise(93)
         c.check_call()
 
         self.assertEqual(n.board_deal_count, 1)
-        n.deal_board('5s')
+        n.deal_board(parse_card('5s'))
 
         self.assertTrue(b.can_showdown())
         self.assertFalse(c.can_showdown())
@@ -322,7 +324,7 @@ class NLTexasHESimTestCase(TestCase):
         game = NLTGame(self.ANTE, self.BLINDS, stacks)
 
         for player, hole_cards in zip(game.players, hole_card_sets):
-            game.nature.deal_player(player, *self.split_cards(hole_cards))
+            game.nature.deal_player(player, *parse_cards(hole_cards))
 
         try:
             while tokens or board_card_sets:
@@ -342,7 +344,7 @@ class NLTexasHESimTestCase(TestCase):
                     else:
                         self.fail()
                 else:
-                    game.nature.deal_board(*self.split_cards(board_card_sets[0]))
+                    game.nature.deal_board(*parse_cards(board_card_sets[0]))
                     board_card_sets = board_card_sets[1:]
         except ActionException as exception:
             assert not tokens and not board_card_sets, 'DEBUG: An exception was raised before all commands were parsed'
@@ -352,10 +354,6 @@ class NLTexasHESimTestCase(TestCase):
             cast(PokerPlayer, game.actor).showdown()
 
         return game
-
-    @staticmethod
-    def split_cards(cards: str) -> Sequence[str]:
-        return list(cards[i:i + 2] for i in range(0, len(cards), 2))
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from pokertools import CardLike, parse_card
+from pokertools import Card
 
 from gameframe.game import ActionException
 from gameframe.poker import CardCountException
@@ -10,10 +10,10 @@ from gameframe.poker.stages import BoardCardDealingStage, DealingStage, HoleCard
 
 
 class DealingAction(PokerAction[PokerNature], ABC):
-    def __init__(self, game: PokerGame, actor: PokerNature, *cards: CardLike):
+    def __init__(self, game: PokerGame, actor: PokerNature, *cards: Card):
         super().__init__(game, actor)
 
-        self.cards = list(map(parse_card, cards))
+        self.cards = list(cards)
 
     def apply(self) -> None:
         self.deal()
@@ -39,7 +39,7 @@ class DealingAction(PokerAction[PokerNature], ABC):
 
 
 class HoleCardDealingAction(DealingAction):
-    def __init__(self, game: PokerGame, actor: PokerNature, player: PokerPlayer, *cards: CardLike):
+    def __init__(self, game: PokerGame, actor: PokerNature, player: PokerPlayer, *cards: Card):
         super().__init__(game, actor, *cards)
 
         self.player = player

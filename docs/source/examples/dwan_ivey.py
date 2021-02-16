@@ -2,6 +2,8 @@
 
 Video: https://www.youtube.com/watch?v=GnxFohpljqM
 """
+from pokertools import parse_card, parse_cards
+
 from gameframe.poker import NLTGame
 
 game = NLTGame(500, [1000, 2000], [1125600, 2000000, 553500])  # Antonius's stack is unknown
@@ -9,9 +11,9 @@ ivey, antonius, dwan = game.players
 
 # Pre-flop
 
-game.nature.deal_player(ivey, 'Ac', '2d')
-game.nature.deal_player(antonius, '5h', '7s')  # Unknown
-game.nature.deal_player(dwan, '7h', '6h')
+game.nature.deal_player(ivey, *parse_cards('Ac2d'))
+game.nature.deal_player(antonius, *parse_cards('5h7s'))  # Unknown
+game.nature.deal_player(dwan, *parse_cards('7h6h'))
 
 dwan.bet_raise(7000)
 ivey.bet_raise(23000)
@@ -20,14 +22,14 @@ dwan.check_call()
 
 # Flop
 
-game.nature.deal_board('Jc', '3d', '5c')
+game.nature.deal_board(*parse_cards('Jc3d5c'))
 
 ivey.bet_raise(35000)
 dwan.check_call()
 
 # Turn
 
-game.nature.deal_board('4h')
+game.nature.deal_board(parse_card('4h'))
 
 ivey.bet_raise(90000)
 dwan.bet_raise(232600)
@@ -36,7 +38,7 @@ dwan.check_call()
 
 # River
 
-game.nature.deal_board('Jh')
+game.nature.deal_board(parse_card('Jh'))
 
 # Pot: 1109500 (1000 was probably collected as rake in the actual game)
 

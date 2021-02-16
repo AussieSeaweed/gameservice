@@ -7,7 +7,7 @@ from functools import cached_property
 from itertools import zip_longest
 from typing import Optional, Union, cast, final
 
-from pokertools import Card, CardLike, Deck, Evaluator, Hand, HoleCard
+from pokertools import Card, Deck, Evaluator, Hand, HoleCard
 
 from gameframe.game import ActionException, ParamException
 from gameframe.game.generics import A, Actor
@@ -176,7 +176,7 @@ class PokerNature(Actor[PokerGame]):
         else:
             raise ActionException('The poker nature cannot deal board cards')
 
-    def deal_player(self, player: PokerPlayer, *cards: CardLike) -> None:
+    def deal_player(self, player: PokerPlayer, *cards: Card) -> None:
         """Deals the hole cards to the specified player.
 
         :param player: the player to deal to
@@ -187,7 +187,7 @@ class PokerNature(Actor[PokerGame]):
 
         HoleCardDealingAction(self.game, self, player, *cards).act()
 
-    def deal_board(self, *cards: CardLike) -> None:
+    def deal_board(self, *cards: Card) -> None:
         """Deals the cards to the board.
 
         :param cards: the cards to be dealt
@@ -197,7 +197,7 @@ class PokerNature(Actor[PokerGame]):
 
         BoardCardDealingAction(self.game, self, *cards).act()
 
-    def can_deal_player(self, player: Optional[PokerPlayer] = None, *cards: CardLike) -> bool:
+    def can_deal_player(self, player: Optional[PokerPlayer] = None, *cards: Card) -> bool:
         """Determines if the hole cards can be dealt to the specified player.
 
         :param player: the player to deal to
@@ -217,7 +217,7 @@ class PokerNature(Actor[PokerGame]):
         else:
             return True
 
-    def can_deal_board(self, *cards: CardLike) -> bool:
+    def can_deal_board(self, *cards: Card) -> bool:
         """Determines if the cards can be dealt to the board.
 
         :param cards: the cards to be dealt
