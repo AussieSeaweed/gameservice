@@ -17,7 +17,7 @@ class DealingAction(PokerAction[PokerNature], ABC):
 
     def apply(self) -> None:
         self.deal()
-        self.game._deck.remove(self.cards)
+        self.game._deck.remove(*self.cards)
 
     def verify(self) -> None:
         super().verify()
