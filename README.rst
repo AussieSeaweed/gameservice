@@ -11,8 +11,6 @@ The following games are supported in GameFrame...
 - Tic Tac Toe
 - Rock Paper Scissors
 
-The full documentation is available at `read the docs <https://gameframe.readthedocs.io/>`_.
-
 
 License
 -------

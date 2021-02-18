@@ -1,14 +1,11 @@
 import re
-from typing import TypeVar
 
 from pokertools import parse_cards
 
-from gameframe.poker import PokerGame, PokerPlayer
-
-PG = TypeVar('PG', bound=PokerGame)
+from gameframe.poker.bases import PokerGame, PokerPlayer
 
 
-def parse_poker_game(game: PG, *tokens: str) -> None:
+def parse_poker_game(game: PokerGame, *tokens: str) -> None:
     """Parses the tokens as actions and applies them the supplied game.
 
     :param game: the game to be applied on
