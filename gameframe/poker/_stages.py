@@ -3,7 +3,7 @@ from enum import Enum, unique
 from functools import cached_property
 from typing import cast
 
-from auxiliary.utils import rotate
+from auxiliary.utils import limit, rotate
 
 from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, _Stage
 
@@ -103,6 +103,16 @@ class NLBettingStage(BettingStage):
         player = cast(PokerPlayer, self.game.actor)
 
         return player.bet + player.stack
+
+
+class PLBettingStage(BettingStage):
+    @property
+    def max_amount(self) -> int:
+        player = cast(PokerPlayer, self.game.actor)
+        bets = [player.bet for player in self.game.players]
+        max_amount = max(bets) + player.game.pot + sum(bets) + max(bets) - player.bet
+
+        return limit(max_amount, self.min_amount, player.bet + player.stack)
 
 
 class ShowdownStage(_Stage):

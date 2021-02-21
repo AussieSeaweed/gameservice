@@ -43,7 +43,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer', Union['PokerNature', 'Poke
         self.__starting_stacks = tuple(starting_stacks)
 
         self._board_cards: MutableSequence[Card] = []
-        self._aggressor = players[0] if len(players) == 2 else players[blinds.index(max(blinds))]
+        self._aggressor = players[0] if len(players) == 2 else players[len(blinds) - 1]
         self._max_delta = 0
         self._requirement = ante
 
@@ -52,12 +52,10 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer', Union['PokerNature', 'Poke
             raise TypeError('The integral values must be of type int')
         elif len(players) < 2:
             raise ParamException('Poker needs at least 2 players')
-        elif any(a != b for a, b in zip_longest(blinds, sorted(blinds))):
+        elif list(blinds) != sorted(blinds):
             raise ParamException('Blinds have to be sorted')
         elif len(blinds) > len(players):
             raise ParamException('There are more blinds than players')
-        elif len(blinds) != len(set(blinds)):
-            raise ParamException('Each blind value must be unique')
 
         if len(players) == 2:
             blinds = list(reversed(blinds))
