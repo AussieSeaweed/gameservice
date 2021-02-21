@@ -3,11 +3,12 @@ from enum import Enum, unique
 from functools import cached_property
 from typing import cast
 
-from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
-from gameframe.utils import rotate
+from auxiliary.utils import rotate
+
+from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, _Stage
 
 
-class DealingStage(Stage, ABC):
+class DealingStage(_Stage, ABC):
     def __init__(self, game: PokerGame, card_count: int):
         super().__init__(game)
 
@@ -46,7 +47,7 @@ class BoardCardDealingStage(DealingStage):
         return super().skippable or len(self.game.board_cards) == self.card_target
 
 
-class BettingStage(Stage, ABC):
+class BettingStage(_Stage, ABC):
     def __init__(self, game: PokerGame, initial_max_delta: int):
         super().__init__(game)
 
@@ -72,9 +73,9 @@ class BettingStage(Stage, ABC):
 
     @property
     def opener(self) -> PokerPlayer:
-        index: int = next(max(self.game.players, key=lambda player: (player.bet, player.index))).index  # type: ignore
+        sub_opener = max(self.game.players, key=lambda player: (player.bet, player.index))
 
-        return next(player for player in rotate(self.game.players, index) if player._relevant)
+        return next(player for player in rotate(self.game.players, next(sub_opener).index) if player._relevant)
 
     def open(self) -> None:
         super().open()
@@ -104,7 +105,7 @@ class NLBettingStage(BettingStage):
         return player.bet + player.stack
 
 
-class ShowdownStage(Stage):
+class ShowdownStage(_Stage):
     @property
     def skippable(self) -> bool:
         return super().skippable or all(player.mucked or player.shown for player in self.game.players)

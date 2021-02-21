@@ -4,12 +4,12 @@ from collections import Sequence
 from typing import Optional, final
 
 from gameframe.game import ActionException
-from gameframe.game.generics import Actor
-from gameframe.sequential.generics import SeqAction, SeqGame
+from gameframe.game._generics import Actor
+from gameframe.sequential._generics import SeqAction, SeqGame
 
 
 @final
-class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer']):
+class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer', 'TTTPlayer']):
     """TTTGame is the class for tic tac toe games."""
 
     def __init__(self) -> None:
@@ -69,7 +69,7 @@ class TTTPlayer(Actor[TTTGame]):
         :param c: the column number of the cell
         :return: None
         """
-        MarkAction(self.game, self, r, c).act()
+        _MarkAction(self.game, self, r, c).act()
 
     def can_mark(self, r: int, c: int) -> bool:
         """Determines if the cell of the board at the coordinates can be marked.
@@ -79,14 +79,14 @@ class TTTPlayer(Actor[TTTGame]):
         :return: True if the cell can be marked, else False
         """
         try:
-            MarkAction(self.game, self, r, c).verify()
+            _MarkAction(self.game, self, r, c).verify()
         except ActionException:
             return False
         else:
             return True
 
 
-class MarkAction(SeqAction[TTTGame, TTTPlayer]):
+class _MarkAction(SeqAction[TTTGame, TTTPlayer]):
     def __init__(self, game: TTTGame, actor: TTTPlayer, r: int, c: int):
         super().__init__(game, actor)
 

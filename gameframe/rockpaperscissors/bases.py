@@ -5,7 +5,7 @@ from functools import total_ordering
 from typing import Any, Optional, final
 
 from gameframe.game import ActionException
-from gameframe.game.generics import Action, Actor, Game
+from gameframe.game._generics import Action, Actor, Game
 
 
 @final
@@ -56,7 +56,7 @@ class RPSPlayer(Actor[RPSGame]):
         :param hand: the hand to be thrown
         :return: None
         """
-        ThrowAction(self.game, self, hand).act()
+        _ThrowAction(self.game, self, hand).act()
 
     def can_throw(self) -> bool:
         """Determines if this rock paper scissors player can throw a hand.
@@ -64,29 +64,11 @@ class RPSPlayer(Actor[RPSGame]):
         :return: True if this rock paper scissors player can throw a hand, else False
         """
         try:
-            ThrowAction(self.game, self, next(iter(RPSHand))).verify()
+            _ThrowAction(self.game, self, next(iter(RPSHand))).verify()
         except ActionException:
             return False
         else:
             return True
-
-
-class ThrowAction(Action[RPSGame, RPSPlayer]):
-    def __init__(self, game: RPSGame, actor: RPSPlayer, hand: RPSHand):
-        super().__init__(game, actor)
-
-        self.hand = hand
-
-    def apply(self) -> None:
-        self.actor._hand = self.hand
-
-    def verify(self) -> None:
-        super().verify()
-
-        if not isinstance(self.hand, RPSHand):
-            raise TypeError('The hand must be of type Hand')
-        elif self.actor.hand is not None:
-            raise ActionException('The player has already played a hand')
 
 
 @final
@@ -105,3 +87,21 @@ class RPSHand(Enum):
             return (hands.index(self) + 1) % 3 == hands.index(other)
         else:
             return NotImplemented
+
+
+class _ThrowAction(Action[RPSGame, RPSPlayer]):
+    def __init__(self, game: RPSGame, actor: RPSPlayer, hand: RPSHand):
+        super().__init__(game, actor)
+
+        self.hand = hand
+
+    def apply(self) -> None:
+        self.actor._hand = self.hand
+
+    def verify(self) -> None:
+        super().verify()
+
+        if not isinstance(self.hand, RPSHand):
+            raise TypeError('The hand must be of type Hand')
+        elif self.actor.hand is not None:
+            raise ActionException('The player has already played a hand')

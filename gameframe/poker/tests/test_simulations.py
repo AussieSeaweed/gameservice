@@ -6,7 +6,7 @@ from pokertools import parse_card, parse_cards
 
 from gameframe.game import ActionException
 from gameframe.poker import NLTGame, PokerGame, PokerPlayer
-from gameframe.poker.stages import ShowdownStage
+from gameframe.poker._stages import ShowdownStage
 
 
 class NLTexasHESimTestCase(TestCase):

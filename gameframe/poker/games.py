@@ -5,7 +5,7 @@ from typing import final
 from pokertools import Deck, Evaluator, GreekEvaluator, OmahaEvaluator, StandardDeck, StandardEvaluator
 
 from gameframe.poker.bases import PokerGame
-from gameframe.poker.stages import BoardCardDealingStage, HoleCardDealingStage, NLBettingStage, ShowdownStage
+from gameframe.poker._stages import BoardCardDealingStage, HoleCardDealingStage, NLBettingStage, ShowdownStage
 
 
 class NLHEGame(PokerGame, ABC):

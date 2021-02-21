@@ -10,12 +10,12 @@ from typing import Optional, Union, cast, final
 from pokertools import Card, Deck, Evaluator, Hand, HoleCard
 
 from gameframe.game import ActionException, ParamException
-from gameframe.game.generics import A, Actor
+from gameframe.game._generics import A, Actor
 from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, InvalidPlayerException
-from gameframe.sequential.generics import SeqAction, SeqGame
+from gameframe.sequential._generics import SeqAction, SeqGame
 
 
-class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
+class PokerGame(SeqGame['PokerNature', 'PokerPlayer', Union['PokerNature', 'PokerPlayer']], ABC):
     """PokerGame is the abstract base class for all poker games.
 
     When a PokerGame instance is created, its deck, evaluator, limit, and streets are also created through the
@@ -25,7 +25,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self, stages: Sequence[Stage], deck: Deck, evaluator: Evaluator, ante: int, blinds: Sequence[int],
+    def __init__(self, stages: Sequence[_Stage], deck: Deck, evaluator: Evaluator, ante: int, blinds: Sequence[int],
                  starting_stacks: Sequence[int]):
         nature = PokerNature(self)
         players = [PokerPlayer(self) for _ in starting_stacks]
@@ -126,7 +126,7 @@ class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
 
     @cached_property
     def _hole_card_statuses(self) -> Sequence[bool]:
-        from gameframe.poker.stages import HoleCardDealingStage
+        from gameframe.poker._stages import HoleCardDealingStage
 
         statuses: list[bool] = []
 
@@ -157,7 +157,7 @@ class PokerNature(Actor[PokerGame]):
         """
         :return: the number of hole cards to deal to a player
         """
-        from gameframe.poker.stages import HoleCardDealingStage
+        from gameframe.poker._stages import HoleCardDealingStage
 
         if self.can_deal_player():
             return cast(HoleCardDealingStage, self.game._stage).card_count
@@ -169,7 +169,7 @@ class PokerNature(Actor[PokerGame]):
         """
         :return: the number of cards to deal to the board
         """
-        from gameframe.poker.stages import BoardCardDealingStage
+        from gameframe.poker._stages import BoardCardDealingStage
 
         if self.can_deal_board():
             return cast(BoardCardDealingStage, self.game._stage).card_count
@@ -183,7 +183,7 @@ class PokerNature(Actor[PokerGame]):
         :param cards: the hole cards to be dealt
         :return: None
         """
-        from gameframe.poker.actions import HoleCardDealingAction
+        from gameframe.poker._actions import HoleCardDealingAction
 
         HoleCardDealingAction(self.game, self, player, *cards).act()
 
@@ -193,7 +193,7 @@ class PokerNature(Actor[PokerGame]):
         :param cards: the cards to be dealt
         :return: None
         """
-        from gameframe.poker.actions import BoardCardDealingAction
+        from gameframe.poker._actions import BoardCardDealingAction
 
         BoardCardDealingAction(self.game, self, *cards).act()
 
@@ -204,7 +204,7 @@ class PokerNature(Actor[PokerGame]):
         :param cards: the hole cards to be dealt
         :return: True if the player can be dealt, else False
         """
-        from gameframe.poker.actions import HoleCardDealingAction
+        from gameframe.poker._actions import HoleCardDealingAction
 
         try:
             HoleCardDealingAction(self.game, self, self.game.players[0] if player is None else player, *cards).verify()
@@ -223,7 +223,7 @@ class PokerNature(Actor[PokerGame]):
         :param cards: the cards to be dealt
         :return: True if the board can be dealt, else False
         """
-        from gameframe.poker.actions import BoardCardDealingAction
+        from gameframe.poker._actions import BoardCardDealingAction
 
         try:
             BoardCardDealingAction(self.game, self, *cards).verify()
@@ -244,7 +244,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         self._commitment = 0
         self._hole_cards: MutableSequence[Card] = []
-        self._status = HoleCardStatus.DEFAULT
+        self._status = _HoleCardStatus.DEFAULT
 
     def __next__(self) -> PokerPlayer:
         return self.game.players[(self.index + 1) % len(self.game.players)]
@@ -308,21 +308,21 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         """
         :return: True if this poker player has mucked his/her hand, else False
         """
-        return self._status == HoleCardStatus.MUCKED
+        return self._status == _HoleCardStatus.MUCKED
 
     @property
     def shown(self) -> bool:
         """
         :return: True if this poker player has shown his/her hand, else False
         """
-        return self._status == HoleCardStatus.SHOWN
+        return self._status == _HoleCardStatus.SHOWN
 
     @property
     def min_bet_raise_amount(self) -> int:
         """
         :return: the minimum bet/raise amount
         """
-        from gameframe.poker.stages import BettingStage
+        from gameframe.poker._stages import BettingStage
 
         if self.can_bet_raise():
             return cast(BettingStage, self.game._stage).min_amount
@@ -334,7 +334,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         """
         :return: the maximum bet/raise amount
         """
-        from gameframe.poker.stages import BettingStage
+        from gameframe.poker._stages import BettingStage
 
         if self.can_bet_raise():
             return cast(BettingStage, self.game._stage).max_amount
@@ -358,7 +358,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         :return: None
         """
-        from gameframe.poker.actions import FoldAction
+        from gameframe.poker._actions import FoldAction
 
         FoldAction(self.game, self).act()
 
@@ -367,7 +367,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         :return: None
         """
-        from gameframe.poker.actions import CheckCallAction
+        from gameframe.poker._actions import CheckCallAction
 
         CheckCallAction(self.game, self).act()
 
@@ -377,7 +377,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         :param amount: the bet/raise amount
         :return: None
         """
-        from gameframe.poker.actions import BetRaiseAction
+        from gameframe.poker._actions import BetRaiseAction
 
         BetRaiseAction(self.game, self, amount).act()
 
@@ -386,7 +386,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         :return: None
         """
-        from gameframe.poker.actions import ShowdownAction
+        from gameframe.poker._actions import ShowdownAction
 
         ShowdownAction(self.game, self, force).act()
 
@@ -395,7 +395,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         :return: True if the player can fold, else False
         """
-        from gameframe.poker.actions import FoldAction
+        from gameframe.poker._actions import FoldAction
 
         try:
             FoldAction(self.game, self).verify()
@@ -409,7 +409,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         :return: True if the player can check or call, else False
         """
-        from gameframe.poker.actions import CheckCallAction
+        from gameframe.poker._actions import CheckCallAction
 
         try:
             CheckCallAction(self.game, self).verify()
@@ -424,7 +424,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         :param amount: the bet/raise amount
         :return: True if the player can bet or raise the amount, else False
         """
-        from gameframe.poker.actions import BetRaiseAction
+        from gameframe.poker._actions import BetRaiseAction
 
         try:
             BetRaiseAction(self.game, self, 0 if amount is None else amount).verify()
@@ -440,7 +440,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
 
         :return: True if the player can showdown, else False
         """
-        from gameframe.poker.actions import ShowdownAction
+        from gameframe.poker._actions import ShowdownAction
 
         try:
             ShowdownAction(self.game, self, False).verify()
@@ -450,11 +450,11 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
             return True
 
 
-class Stage(Iterator['Stage'], ABC):
+class _Stage(Iterator['_Stage'], ABC):
     def __init__(self, game: PokerGame):
         self.game = game
 
-    def __next__(self) -> Stage:
+    def __next__(self) -> _Stage:
         try:
             return self.game._stages[self.index + 1]
         except IndexError:
@@ -483,7 +483,7 @@ class Stage(Iterator['Stage'], ABC):
         pass
 
 
-class PokerAction(SeqAction[PokerGame, A], ABC):
+class _PokerAction(SeqAction[PokerGame, A], ABC):
     def act(self) -> None:
         super().act()
 
@@ -537,9 +537,8 @@ class PokerAction(SeqAction[PokerGame, A], ABC):
         return side_pot
 
 
-@final
 @unique
-class HoleCardStatus(Enum):
+class _HoleCardStatus(Enum):
     DEFAULT = 0
     SHOWN = 1
     MUCKED = 2

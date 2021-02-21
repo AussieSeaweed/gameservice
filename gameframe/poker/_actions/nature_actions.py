@@ -4,12 +4,12 @@ from pokertools import Card
 
 from gameframe.game import ActionException
 from gameframe.poker import CardCountException
-from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer
+from gameframe.poker.bases import _PokerAction, PokerGame, PokerNature, PokerPlayer
 from gameframe.poker.exceptions import InvalidPlayerException
-from gameframe.poker.stages import BoardCardDealingStage, DealingStage, HoleCardDealingStage
+from gameframe.poker._stages import BoardCardDealingStage, DealingStage, HoleCardDealingStage
 
 
-class DealingAction(PokerAction[PokerNature], ABC):
+class DealingAction(_PokerAction[PokerNature], ABC):
     def __init__(self, game: PokerGame, actor: PokerNature, *cards: Card):
         super().__init__(game, actor)
 

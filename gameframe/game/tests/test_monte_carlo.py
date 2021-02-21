@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Generic
 
 from gameframe.game import BaseActor, BaseGame
-from gameframe.game.generics import G
+from gameframe.game._generics import G
 
 
 class MCTestCaseMixin(Generic[G], ABC):

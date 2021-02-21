@@ -1,7 +1,7 @@
 from abc import ABC
 
 from gameframe.game.tests.test_monte_carlo import MCTestCaseMixin
-from gameframe.sequential.generics import SG
+from gameframe.sequential._generics import SG
 
 
 class SeqMCTestCaseMixin(MCTestCaseMixin[SG], ABC):

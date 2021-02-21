@@ -5,7 +5,7 @@ from unittest import TestCase, main
 
 from gameframe.game import ActionException
 from gameframe.poker import NLTGame, PokerPlayer
-from gameframe.poker.stages import BettingStage, BoardCardDealingStage, HoleCardDealingStage, ShowdownStage
+from gameframe.poker._stages import BettingStage, BoardCardDealingStage, HoleCardDealingStage, ShowdownStage
 from gameframe.sequential.tests.test_monte_carlo import SeqMCTestCaseMixin
 
 

@@ -3,11 +3,11 @@ from typing import cast
 
 from gameframe.game import ActionException
 from gameframe.poker import BetRaiseAmountException
-from gameframe.poker.bases import HoleCardStatus, PokerAction, PokerGame, PokerPlayer
-from gameframe.poker.stages import BettingFlag, BettingStage, ShowdownStage
+from gameframe.poker.bases import _HoleCardStatus, _PokerAction, PokerGame, PokerPlayer
+from gameframe.poker._stages import BettingFlag, BettingStage, ShowdownStage
 
 
-class BettingAction(PokerAction[PokerPlayer], ABC):
+class BettingAction(_PokerAction[PokerPlayer], ABC):
     @property
     def next_actor(self) -> PokerPlayer:
         actor = next(self.actor)
@@ -26,7 +26,7 @@ class BettingAction(PokerAction[PokerPlayer], ABC):
 
 class FoldAction(BettingAction):
     def apply(self) -> None:
-        self.actor._status = HoleCardStatus.MUCKED
+        self.actor._status = _HoleCardStatus.MUCKED
 
     def verify(self) -> None:
         super().verify()
@@ -73,7 +73,7 @@ class BetRaiseAction(BettingAction):
             raise BetRaiseAmountException('The bet/raise amount is not allowed')
 
 
-class ShowdownAction(PokerAction[PokerPlayer]):
+class ShowdownAction(_PokerAction[PokerPlayer]):
     def __init__(self, game: PokerGame, actor: PokerPlayer, force: bool) -> None:
         super().__init__(game, actor)
 
@@ -91,9 +91,9 @@ class ShowdownAction(PokerAction[PokerPlayer]):
     def apply(self) -> None:
         if self.force or all(not (player.hand > self.actor.hand and player._commitment >= self.actor._commitment)
                              for player in self.game.players if player.shown):
-            self.actor._status = HoleCardStatus.SHOWN
+            self.actor._status = _HoleCardStatus.SHOWN
         else:
-            self.actor._status = HoleCardStatus.MUCKED
+            self.actor._status = _HoleCardStatus.MUCKED
 
     def verify(self) -> None:
         super().verify()
