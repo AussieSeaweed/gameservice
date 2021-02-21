@@ -9,7 +9,7 @@ from gameframe.poker._stages import BettingStage, BoardCardDealingStage, HoleCar
 from gameframe.sequential.tests.test_monte_carlo import SeqMCTestCaseMixin
 
 
-class NLTexasHEMCTestCase(TestCase, SeqMCTestCaseMixin[NLTGame]):
+class NLTMCTestCase(TestCase, SeqMCTestCaseMixin[NLTGame]):
     ANTE = 1
     BLINDS = [1, 2]
     PLAYER_COUNT = 6

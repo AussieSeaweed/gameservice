@@ -77,7 +77,7 @@ class NLGGame(NLHEGame):
 
 @final
 class NLSGame(NLHEGame):
-    """NLSGame is the class for no-limit Short-deck Hold'em games."""
+    """NLSGame is the class for no-limit Short-Deck Hold'em games."""
 
     def __init__(self, ante: int, blind: int, starting_stacks: Sequence[int]):
         super().__init__(2, ShortDeck(), ShortEvaluator(), ante, [0] * len(starting_stacks) + [blind], starting_stacks)
@@ -105,3 +105,11 @@ class PLGGame(PLHEGame):
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(2, StandardDeck(), GreekEvaluator(), ante, blinds, starting_stacks)
+
+
+@final
+class PLSGame(PLHEGame):
+    """PLSGame is the class for pot-limit Short-Deck Hold'em games."""
+
+    def __init__(self, ante: int, blind: int, starting_stacks: Sequence[int]):
+        super().__init__(2, ShortDeck(), ShortEvaluator(), ante, [0] * len(starting_stacks) + [blind], starting_stacks)

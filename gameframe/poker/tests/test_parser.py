@@ -1,6 +1,6 @@
 from unittest import TestCase, main
 
-from gameframe.poker import NLOGame, NLTGame, parse_poker_game
+from gameframe.poker import NLTGame, PLOGame, parse_poker_game
 
 
 class ParserTestCase(TestCase):
@@ -40,8 +40,8 @@ class ParserTestCase(TestCase):
         self.assertSequenceEqual([player.shown for player in game.players], [True, False, True])
         self.assertSequenceEqual([player.mucked for player in game.players], [False, True, False])
 
-    def test_nlo(self) -> None:
-        game = NLOGame(0, [50000, 100000], [125945025, 67847350])
+    def test_plo(self) -> None:
+        game = PLOGame(0, [50000, 100000], [125945025, 67847350])
 
         parse_poker_game(
             game,

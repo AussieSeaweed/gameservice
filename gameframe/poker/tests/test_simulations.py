@@ -5,11 +5,11 @@ from unittest import TestCase, main
 from pokertools import parse_card, parse_cards
 
 from gameframe.game import ActionException
-from gameframe.poker import NLTGame, PokerGame, PokerPlayer
+from gameframe.poker import NLTGame, PLOGame, PokerGame, PokerPlayer
 from gameframe.poker._stages import ShowdownStage
 
 
-class NLTexasHESimTestCase(TestCase):
+class NLTSimTestCase(TestCase):
     ANTE = 1
     BLINDS = 1, 2
 
@@ -354,6 +354,35 @@ class NLTexasHESimTestCase(TestCase):
             cast(PokerPlayer, game.actor).showdown()
 
         return game
+
+
+class PLOSimTestCase(TestCase):
+    def test_amount(self) -> None:
+        game = PLOGame(0, [1, 2], [100, 100])
+
+        game.nature.deal_player(game.players[0], *parse_cards('AhAsKhKs'))
+        game.nature.deal_player(game.players[1], *parse_cards('AcAdKcKd'))
+
+        self.assertEqual(game.players[1].max_bet_raise_amount, 6)
+
+        game = PLOGame(0, [1, 2], [100, 100, 100])
+
+        game.nature.deal_player(game.players[0], *parse_cards('AhAsKhKs'))
+        game.nature.deal_player(game.players[1], *parse_cards('AcAdKcKd'))
+        game.nature.deal_player(game.players[2], *parse_cards('QcQdJcJd'))
+
+        self.assertEqual(game.players[2].max_bet_raise_amount, 7)
+
+        game.players[2].bet_raise(7)
+
+        self.assertEqual(game.players[0].max_bet_raise_amount, 23)
+
+        game = PLOGame(1, [1, 2], [100, 100])
+
+        game.nature.deal_player(game.players[0], *parse_cards('AhAsKhKs'))
+        game.nature.deal_player(game.players[1], *parse_cards('AcAdKcKd'))
+
+        self.assertEqual(game.players[1].max_bet_raise_amount, 8)
 
 
 if __name__ == '__main__':
