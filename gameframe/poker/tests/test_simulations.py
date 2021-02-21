@@ -5,7 +5,7 @@ from unittest import TestCase, main
 from pokertools import parse_card, parse_cards
 
 from gameframe.game import ActionException
-from gameframe.poker import NLTGame, PLOGame, PokerGame, PokerPlayer
+from gameframe.poker import NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker_game
 from gameframe.poker._stages import ShowdownStage
 
 
@@ -383,6 +383,29 @@ class PLOSimTestCase(TestCase):
         game.nature.deal_player(game.players[1], *parse_cards('AcAdKcKd'))
 
         self.assertEqual(game.players[1].max_bet_raise_amount, 8)
+
+
+class NLSSimTestCase(TestCase):
+    def test_pre_flop(self) -> None:
+        game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
+
+        parse_poker_game(
+            game,
+            'dp 0 Th8h', 'dp 1 QsJd', 'dp 2 QhQd', 'dp 3 8d7c', 'dp 4 KhKs', 'dp 5 8c7h',
+            'cc', 'cc', 'cc', 'cc', 'cc', 'cc',
+        )
+
+        self.assertIs(game.actor, game.nature)
+
+        game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
+
+        parse_poker_game(
+            game,
+            'dp 0 Th8h', 'dp 1 QsJd', 'dp 2 QhQd', 'dp 3 8d7c', 'dp 4 KhKs', 'dp 5 8c7h',
+            'cc', 'cc', 'cc', 'cc', 'cc', 'br 35000', 'cc', 'cc', 'cc', 'cc', 'cc',
+        )
+
+        self.assertIs(game.actor, game.nature)
 
 
 if __name__ == '__main__':

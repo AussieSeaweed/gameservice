@@ -1,5 +1,4 @@
-"""This shows the 1.3 million dollar pot played between Antonius and Isildur. Technically, they were playing pot-limit
-Omaha Hold'em, but this can nonetheless be simulated as a no-limit Omaha Hold'em hand.
+"""This shows the 1.3 million dollar pot played between Antonius and Isildur.
 
 The integral values are multiplied by 100 to represent cents in dollars.
 
@@ -7,9 +6,9 @@ Video: https://www.youtube.com/watch?v=UMBm66Id2AA
 """
 from pokertools import parse_card, parse_cards
 
-from gameframe.poker import NLOGame
+from gameframe.poker import PLOGame
 
-game = NLOGame(0, [50000, 100000], [125945025, 67847350])
+game = PLOGame(0, [50000, 100000], [125945025, 67847350])
 antonius, isildur = game.players
 
 # Pre-flop

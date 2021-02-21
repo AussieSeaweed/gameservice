@@ -11,22 +11,22 @@ from gameframe.poker.bases import PokerGame
 
 
 class HEGame(PokerGame, ABC):
-    """HEGame is the class for hold'em games."""
+    """HEGame is the class for Hold'em games."""
 
     def __init__(self, pre_flop: BettingStage, flop: BettingStage, turn: BettingStage, river: BettingStage,
                  hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Sequence[int],
                  starting_stacks: Sequence[int]):
         super().__init__([
             HoleCardDealingStage(self, hole_card_count, False), pre_flop,
-            BoardCardDealingStage(self, 3), flop,  # Flop
-            BoardCardDealingStage(self, 1), turn,  # Turn
-            BoardCardDealingStage(self, 1), river,  # River
-            ShowdownStage(self),  # Showdown
+            BoardCardDealingStage(self, 3), flop,
+            BoardCardDealingStage(self, 1), turn,
+            BoardCardDealingStage(self, 1), river,
+            ShowdownStage(self),
         ], deck, evaluator, ante, blinds, starting_stacks)
 
 
 class NLHEGame(HEGame, ABC):
-    """NLHEGame is the class for no-limit Hold'em games."""
+    """NLHEGame is the class for No-Limit Hold'em games."""
 
     def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Sequence[int],
                  starting_stacks: Sequence[int]):
@@ -39,7 +39,7 @@ class NLHEGame(HEGame, ABC):
 
 
 class PLHEGame(HEGame, ABC):
-    """PLHEGame is the class for pot-limit Hold'em games."""
+    """PLHEGame is the class for Pot-Limit Hold'em games."""
 
     def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Sequence[int],
                  starting_stacks: Sequence[int]):
@@ -53,7 +53,7 @@ class PLHEGame(HEGame, ABC):
 
 @final
 class NLTGame(NLHEGame):
-    """NLTGame is the class for no-limit Texas Hold'em games."""
+    """NLTGame is the class for No-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(2, StandardDeck(), StandardEvaluator(), ante, blinds, starting_stacks)
@@ -61,7 +61,7 @@ class NLTGame(NLHEGame):
 
 @final
 class NLOGame(NLHEGame):
-    """NLOGame is the class for no-limit Omaha Hold'em games."""
+    """NLOGame is the class for No-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(4, StandardDeck(), OmahaEvaluator(), ante, blinds, starting_stacks)
@@ -69,7 +69,7 @@ class NLOGame(NLHEGame):
 
 @final
 class NLGGame(NLHEGame):
-    """NLGGame is the class for no-limit Greek Hold'em games."""
+    """NLGGame is the class for No-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(2, StandardDeck(), GreekEvaluator(), ante, blinds, starting_stacks)
@@ -77,15 +77,16 @@ class NLGGame(NLHEGame):
 
 @final
 class NLSGame(NLHEGame):
-    """NLSGame is the class for no-limit Short-Deck Hold'em games."""
+    """NLSGame is the class for No-Limit Short-Deck Hold'em games."""
 
-    def __init__(self, ante: int, blind: int, starting_stacks: Sequence[int]):
-        super().__init__(2, ShortDeck(), ShortEvaluator(), ante, [0] * len(starting_stacks) + [blind], starting_stacks)
+    def __init__(self, ante: int, button_blind: int, starting_stacks: Sequence[int]):
+        super().__init__(2, ShortDeck(), ShortEvaluator(), ante, [0] * (len(starting_stacks) - 1) + [button_blind],
+                         starting_stacks)
 
 
 @final
 class PLTGame(PLHEGame):
-    """PLTGame is the class for pot-limit Texas Hold'em games."""
+    """PLTGame is the class for Pot-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(2, StandardDeck(), StandardEvaluator(), ante, blinds, starting_stacks)
@@ -93,7 +94,7 @@ class PLTGame(PLHEGame):
 
 @final
 class PLOGame(PLHEGame):
-    """PLOGame is the class for pot-limit Omaha Hold'em games."""
+    """PLOGame is the class for Pot-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(4, StandardDeck(), OmahaEvaluator(), ante, blinds, starting_stacks)
@@ -101,7 +102,7 @@ class PLOGame(PLHEGame):
 
 @final
 class PLGGame(PLHEGame):
-    """PLGGame is the class for pot-limit Greek Hold'em games."""
+    """PLGGame is the class for Pot-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
         super().__init__(2, StandardDeck(), GreekEvaluator(), ante, blinds, starting_stacks)
@@ -109,7 +110,8 @@ class PLGGame(PLHEGame):
 
 @final
 class PLSGame(PLHEGame):
-    """PLSGame is the class for pot-limit Short-Deck Hold'em games."""
+    """PLSGame is the class for Pot-Limit Short-Deck Hold'em games."""
 
-    def __init__(self, ante: int, blind: int, starting_stacks: Sequence[int]):
-        super().__init__(2, ShortDeck(), ShortEvaluator(), ante, [0] * len(starting_stacks) + [blind], starting_stacks)
+    def __init__(self, ante: int, button_blind: int, starting_stacks: Sequence[int]):
+        super().__init__(2, ShortDeck(), ShortEvaluator(), ante, [0] * (len(starting_stacks) - 1) + [button_blind],
+                         starting_stacks)
