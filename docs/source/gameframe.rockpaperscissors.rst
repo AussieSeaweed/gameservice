@@ -5,4 +5,3 @@ gameframe.rockpaperscissors package
    :members:
    :undoc-members:
    :show-inheritance:
-   :exclude-members: ThrowAction

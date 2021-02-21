@@ -5,7 +5,6 @@ gameframe.poker package
    :members:
    :undoc-members:
    :show-inheritance:
-   :exclude-members: PokerAction, Stage, HoleCardStatus
 
 .. automodule:: gameframe.poker.games
    :members:

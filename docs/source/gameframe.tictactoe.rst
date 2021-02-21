@@ -5,4 +5,3 @@ gameframe.tictactoe package
    :members:
    :undoc-members:
    :show-inheritance:
-   :exclude-members: MarkAction

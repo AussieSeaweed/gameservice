@@ -253,7 +253,7 @@ class PokerPlayer(Actor[PokerGame], Iterator['PokerPlayer']):
         if self.mucked:
             return f'PokerPlayer({self.bet}, {self.stack})'
         else:
-            return f'PokerPlayer({self.bet}, {self.stack}, [' + ', '.join(map(str, self.hole_cards)) + '])'
+            return f'PokerPlayer({self.bet}, {self.stack}, ' + ''.join(map(str, self.hole_cards)) + ')'
 
     @cached_property
     def index(self) -> int:
@@ -497,11 +497,11 @@ class _PokerAction(SeqAction[PokerGame, A], ABC):
                 self.game._stage.open()
             except StopIteration:
                 self.game._trim()
-                self.__distribute()
+                self.distribute()
         else:
             self.game._stage.update()
 
-    def __distribute(self) -> None:
+    def distribute(self) -> None:
         players = list(filter(lambda player: not player.mucked, self.game.players))
         revenues: defaultdict[PokerPlayer, int] = defaultdict(int)
 
@@ -511,7 +511,7 @@ class _PokerAction(SeqAction[PokerGame, A], ABC):
         base = 0
 
         for base_player in players:
-            side_pot = self.__get_side_pot(base, base_player)
+            side_pot = self.get_side_pot(base, base_player)
 
             recipients = list(filter(lambda player: player is base_player or player.hand == base_player.hand, players))
 
@@ -527,7 +527,7 @@ class _PokerAction(SeqAction[PokerGame, A], ABC):
 
         self.game._actor = None
 
-    def __get_side_pot(self, base: int, base_player: PokerPlayer) -> int:
+    def get_side_pot(self, base: int, base_player: PokerPlayer) -> int:
         side_pot = 0
 
         for player in self.game.players:
