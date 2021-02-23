@@ -226,8 +226,11 @@ class NLTSimTestCase(TestCase):
 
         self.assertTrue(n.can_deal_player())
         self.assertTrue(n.can_deal_player(a))
+        self.assertTrue(n.can_deal_player(a, parse_cards('AhTh')))
         self.assertTrue(n.can_deal_player(b))
+        self.assertTrue(n.can_deal_player(b, parse_cards('AhTh')))
         self.assertTrue(n.can_deal_player(c))
+        self.assertTrue(n.can_deal_player(c, parse_cards('AhTh')))
         self.assertFalse(n.can_deal_board())
         self.assertEqual(n.player_deal_count, 2)
 
@@ -237,7 +240,9 @@ class NLTSimTestCase(TestCase):
         self.assertFalse(n.can_deal_player(a))
         self.assertTrue(n.can_deal_player(b))
         self.assertTrue(n.can_deal_player(c))
+        self.assertFalse(n.can_deal_player(c, parse_cards('AhTh')))
         self.assertFalse(n.can_deal_board())
+        self.assertFalse(n.can_deal_board(parse_cards('AhTh')))
         self.assertEqual(n.player_deal_count, 2)
 
         n.deal_player(b, parse_cards('AsTs'))
@@ -283,6 +288,8 @@ class NLTSimTestCase(TestCase):
         self.assertFalse(n.can_deal_player(b))
         self.assertFalse(n.can_deal_player(c))
         self.assertTrue(n.can_deal_board())
+        self.assertFalse(n.can_deal_board(parse_cards('AhTh')))
+        self.assertTrue(n.can_deal_board(parse_cards('2h3h4h')))
         self.assertEqual(n.board_deal_count, 3)
         n.deal_board(parse_cards('2h3h4h'))
 

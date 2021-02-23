@@ -195,7 +195,7 @@ class PokerNature(Actor[PokerGame]):
 
         BoardCardDealingAction(self.game, self, cards).act()
 
-    def can_deal_player(self, player: Optional[PokerPlayer] = None, cards: Optional[Iterable[Card]] = None) -> bool:
+    def can_deal_player(self, /, player: Optional[PokerPlayer] = None, cards: Optional[Iterable[Card]] = None) -> bool:
         """Determines if the hole cards can be dealt to the specified player.
 
         :param player: the player to deal to
@@ -205,8 +205,9 @@ class PokerNature(Actor[PokerGame]):
         from gameframe.poker._actions import HoleCardDealingAction
 
         try:
-            HoleCardDealingAction(self.game, self, self.game.players[0] if player is None else player,
-                                  () if cards is None else cards).verify()
+            HoleCardDealingAction(
+                self.game, self, self.game.players[0] if player is None else player, () if cards is None else cards,
+            ).verify()
         except InvalidPlayerException:
             return player is None
         except CardCountException:
