@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections import Sequence
+from collections import Iterable, Sequence
 from typing import Generic, TypeVar, final
 
 from gameframe.game.bases import BaseActor, BaseGame
@@ -12,7 +12,7 @@ A = TypeVar('A', bound=BaseActor)
 
 
 class Game(BaseGame, Generic[N, P], ABC):
-    def __init__(self, nature: N, players: Sequence[P]):
+    def __init__(self, nature: N, players: Iterable[P]):
         self.__nature = nature
         self.__players = tuple(players)
 
