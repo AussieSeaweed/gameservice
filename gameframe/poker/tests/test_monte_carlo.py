@@ -1,10 +1,8 @@
-from collections import Callable
-from random import randint, sample, shuffle
+from random import choice, randint, sample
 from typing import cast
 from unittest import TestCase, main
 
-from gameframe.game import ActionException
-from gameframe.poker import NLTGame, PokerPlayer
+from gameframe.poker import NLTGame, PokerPlayer, parse_poker_game
 from gameframe.poker._stages import BettingStage, BoardCardDealingStage, HoleCardDealingStage, ShowdownStage
 from gameframe.sequential.tests.test_monte_carlo import SeqMCTestCaseMixin
 
@@ -31,33 +29,25 @@ class NLTMCTestCase(TestCase, SeqMCTestCaseMixin[NLTGame]):
     def act(self, game: NLTGame) -> None:
         if isinstance(game._stage, HoleCardDealingStage):
             for player in game.players:
-                game.nature.deal_player(player, *sample(game.deck, game._stage.card_count))
+                game.nature.deal_player(player, sample(game.deck, game._stage.card_count))
         if isinstance(game._stage, BoardCardDealingStage):
-            game.nature.deal_board(*sample(game.deck, game._stage.card_count))
+            game.nature.deal_board(sample(game.deck, game._stage.card_count))
         elif isinstance(game._stage, BettingStage):
             actor = cast(PokerPlayer, game.actor)
-            actions: list[Callable[[PokerPlayer], None]] = [
-                lambda actor: actor.bet_raise(2 * max(player.bet for player in game.players)),
-                lambda actor: actor.fold(),
-            ]
+            actions = []
 
-            shuffle(actions)
+            if actor.can_fold():
+                actions.append('f')
 
-            try:
-                actions[0](actor)
-                return
-            except ActionException:
-                pass
+            if actor.can_check_call():
+                actions.append('cc')
 
-            try:
-                actions[1](actor)
-                return
-            except ActionException:
-                pass
+            if actor.can_bet_raise():
+                actions.extend({f'br {actor.min_bet_raise_amount}', f'br {actor.max_bet_raise_amount}'})
 
-            actor.check_call()
+            parse_poker_game(game, [choice(actions)])
         elif isinstance(game._stage, ShowdownStage):
-            cast(PokerPlayer, game.actor).showdown()
+            parse_poker_game(game, ['s'])
 
     def create_game(self) -> NLTGame:
         return NLTGame(self.ANTE, self.BLINDS,

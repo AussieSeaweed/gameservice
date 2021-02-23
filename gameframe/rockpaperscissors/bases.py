@@ -19,6 +19,10 @@ class RPSGame(Game[Actor['RPSGame'], 'RPSPlayer']):
         super().__init__(nature, players)
 
     @property
+    def terminal(self) -> bool:
+        return all(player.hand is not None for player in self.players)
+
+    @property
     def winner(self) -> Optional[RPSPlayer]:
         """
         :return: the winning player of this rock paper scissors game if there is one, else None
@@ -28,10 +32,6 @@ class RPSGame(Game[Actor['RPSGame'], 'RPSPlayer']):
             return self.players[0] if self.players[0].hand > self.players[1].hand else self.players[1]
         else:
             return None
-
-    @property
-    def terminal(self) -> bool:
-        return all(player.hand is not None for player in self.players)
 
 
 @final

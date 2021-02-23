@@ -2,7 +2,7 @@ from collections import Sequence
 from typing import Optional, cast
 from unittest import TestCase, main
 
-from pokertools import parse_card, parse_cards
+from pokertools import parse_cards
 
 from gameframe.game import ActionException
 from gameframe.poker import NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker_game
@@ -231,7 +231,7 @@ class NLTSimTestCase(TestCase):
         self.assertFalse(n.can_deal_board())
         self.assertEqual(n.player_deal_count, 2)
 
-        n.deal_player(a, parse_card('Ah'), parse_card('Th'))
+        n.deal_player(a, parse_cards('AhTh'))
 
         self.assertTrue(n.can_deal_player())
         self.assertFalse(n.can_deal_player(a))
@@ -240,8 +240,8 @@ class NLTSimTestCase(TestCase):
         self.assertFalse(n.can_deal_board())
         self.assertEqual(n.player_deal_count, 2)
 
-        n.deal_player(b, parse_card('As'), parse_card('Ts'))
-        n.deal_player(c, parse_card('Ac'), parse_card('Tc'))
+        n.deal_player(b, parse_cards('AsTs'))
+        n.deal_player(c, parse_cards('AcTc'))
 
         self.assertFalse(n.can_deal_player())
         self.assertFalse(n.can_deal_board())
@@ -284,19 +284,19 @@ class NLTSimTestCase(TestCase):
         self.assertFalse(n.can_deal_player(c))
         self.assertTrue(n.can_deal_board())
         self.assertEqual(n.board_deal_count, 3)
-        n.deal_board(*parse_cards('2h3h4h'))
+        n.deal_board(parse_cards('2h3h4h'))
 
         b.check_call()
         c.check_call()
 
         self.assertEqual(n.board_deal_count, 1)
-        n.deal_board(parse_card('4s'))
+        n.deal_board(parse_cards('4s'))
 
         b.bet_raise(93)
         c.check_call()
 
         self.assertEqual(n.board_deal_count, 1)
-        n.deal_board(parse_card('5s'))
+        n.deal_board(parse_cards('5s'))
 
         self.assertTrue(b.can_showdown())
         self.assertFalse(c.can_showdown())
@@ -324,7 +324,7 @@ class NLTSimTestCase(TestCase):
         game = NLTGame(self.ANTE, self.BLINDS, stacks)
 
         for player, hole_cards in zip(game.players, hole_card_sets):
-            game.nature.deal_player(player, *parse_cards(hole_cards))
+            game.nature.deal_player(player, parse_cards(hole_cards))
 
         try:
             while tokens or board_card_sets:
@@ -344,7 +344,7 @@ class NLTSimTestCase(TestCase):
                     else:
                         self.fail()
                 else:
-                    game.nature.deal_board(*parse_cards(board_card_sets[0]))
+                    game.nature.deal_board(parse_cards(board_card_sets[0]))
                     board_card_sets = board_card_sets[1:]
         except ActionException as exception:
             assert not tokens and not board_card_sets, 'DEBUG: An exception was raised before all commands were parsed'
@@ -360,16 +360,16 @@ class PLOSimTestCase(TestCase):
     def test_amount(self) -> None:
         game = PLOGame(0, [1, 2], [100, 100])
 
-        game.nature.deal_player(game.players[0], *parse_cards('AhAsKhKs'))
-        game.nature.deal_player(game.players[1], *parse_cards('AcAdKcKd'))
+        game.nature.deal_player(game.players[0], parse_cards('AhAsKhKs'))
+        game.nature.deal_player(game.players[1], parse_cards('AcAdKcKd'))
 
         self.assertEqual(game.players[1].max_bet_raise_amount, 6)
 
         game = PLOGame(0, [1, 2], [100, 100, 100])
 
-        game.nature.deal_player(game.players[0], *parse_cards('AhAsKhKs'))
-        game.nature.deal_player(game.players[1], *parse_cards('AcAdKcKd'))
-        game.nature.deal_player(game.players[2], *parse_cards('QcQdJcJd'))
+        game.nature.deal_player(game.players[0], parse_cards('AhAsKhKs'))
+        game.nature.deal_player(game.players[1], parse_cards('AcAdKcKd'))
+        game.nature.deal_player(game.players[2], parse_cards('QcQdJcJd'))
 
         self.assertEqual(game.players[2].max_bet_raise_amount, 7)
 
@@ -379,8 +379,8 @@ class PLOSimTestCase(TestCase):
 
         game = PLOGame(1, [1, 2], [100, 100])
 
-        game.nature.deal_player(game.players[0], *parse_cards('AhAsKhKs'))
-        game.nature.deal_player(game.players[1], *parse_cards('AcAdKcKd'))
+        game.nature.deal_player(game.players[0], parse_cards('AhAsKhKs'))
+        game.nature.deal_player(game.players[1], parse_cards('AcAdKcKd'))
 
         self.assertEqual(game.players[1].max_bet_raise_amount, 8)
 
@@ -389,21 +389,19 @@ class NLSSimTestCase(TestCase):
     def test_pre_flop(self) -> None:
         game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
 
-        parse_poker_game(
-            game,
+        parse_poker_game(game, (
             'dp 0 Th8h', 'dp 1 QsJd', 'dp 2 QhQd', 'dp 3 8d7c', 'dp 4 KhKs', 'dp 5 8c7h',
             'cc', 'cc', 'cc', 'cc', 'cc', 'cc',
-        )
+        ))
 
         self.assertIs(game.actor, game.nature)
 
         game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
 
-        parse_poker_game(
-            game,
+        parse_poker_game(game, (
             'dp 0 Th8h', 'dp 1 QsJd', 'dp 2 QhQd', 'dp 3 8d7c', 'dp 4 KhKs', 'dp 5 8c7h',
             'cc', 'cc', 'cc', 'cc', 'cc', 'br 35000', 'cc', 'cc', 'cc', 'cc', 'cc',
-        )
+        ))
 
         self.assertIs(game.actor, game.nature)
 

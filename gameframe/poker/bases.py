@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections import Iterator, MutableSequence, Sequence, defaultdict
+from collections import Iterable, Iterator, MutableSequence, Sequence, defaultdict
 from enum import Enum, unique
 from functools import cached_property
 from itertools import zip_longest
@@ -15,7 +15,7 @@ from gameframe.poker.exceptions import BetRaiseAmountException, CardCountExcepti
 from gameframe.sequential._generics import SeqAction, SeqGame
 
 
-class PokerGame(SeqGame['PokerNature', 'PokerPlayer', Union['PokerNature', 'PokerPlayer']], ABC):
+class PokerGame(SeqGame['PokerNature', 'PokerPlayer'], ABC):
     """PokerGame is the abstract base class for all poker games.
 
     When a PokerGame instance is created, its deck, evaluator, limit, and streets are also created through the
@@ -174,7 +174,7 @@ class PokerNature(Actor[PokerGame]):
         else:
             raise ActionException('The poker nature cannot deal board cards')
 
-    def deal_player(self, player: PokerPlayer, *cards: Card) -> None:
+    def deal_player(self, player: PokerPlayer, cards: Iterable[Card]) -> None:
         """Deals the hole cards to the specified player.
 
         :param player: the player to deal to
@@ -183,9 +183,9 @@ class PokerNature(Actor[PokerGame]):
         """
         from gameframe.poker._actions import HoleCardDealingAction
 
-        HoleCardDealingAction(self.game, self, player, *cards).act()
+        HoleCardDealingAction(self.game, self, player, cards).act()
 
-    def deal_board(self, *cards: Card) -> None:
+    def deal_board(self, cards: Iterable[Card]) -> None:
         """Deals the cards to the board.
 
         :param cards: the cards to be dealt
@@ -193,9 +193,9 @@ class PokerNature(Actor[PokerGame]):
         """
         from gameframe.poker._actions import BoardCardDealingAction
 
-        BoardCardDealingAction(self.game, self, *cards).act()
+        BoardCardDealingAction(self.game, self, cards).act()
 
-    def can_deal_player(self, player: Optional[PokerPlayer] = None, *cards: Card) -> bool:
+    def can_deal_player(self, player: Optional[PokerPlayer] = None, cards: Optional[Iterable[Card]] = None) -> bool:
         """Determines if the hole cards can be dealt to the specified player.
 
         :param player: the player to deal to
@@ -205,17 +205,18 @@ class PokerNature(Actor[PokerGame]):
         from gameframe.poker._actions import HoleCardDealingAction
 
         try:
-            HoleCardDealingAction(self.game, self, self.game.players[0] if player is None else player, *cards).verify()
+            HoleCardDealingAction(self.game, self, self.game.players[0] if player is None else player,
+                                  () if cards is None else cards).verify()
         except InvalidPlayerException:
             return player is None
         except CardCountException:
-            return not cards
+            return cards is None
         except ActionException:
             return False
         else:
             return True
 
-    def can_deal_board(self, *cards: Card) -> bool:
+    def can_deal_board(self, cards: Optional[Iterable[Card]] = None) -> bool:
         """Determines if the cards can be dealt to the board.
 
         :param cards: the cards to be dealt
@@ -224,9 +225,9 @@ class PokerNature(Actor[PokerGame]):
         from gameframe.poker._actions import BoardCardDealingAction
 
         try:
-            BoardCardDealingAction(self.game, self, *cards).verify()
+            BoardCardDealingAction(self.game, self, () if cards is None else cards).verify()
         except CardCountException:
-            return not cards
+            return cards is None
         except ActionException:
             return False
         else:

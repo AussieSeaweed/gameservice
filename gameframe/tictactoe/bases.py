@@ -9,7 +9,7 @@ from gameframe.sequential._generics import SeqAction, SeqGame
 
 
 @final
-class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer', 'TTTPlayer']):
+class TTTGame(SeqGame[Actor['TTTGame'], 'TTTPlayer']):
     """TTTGame is the class for tic tac toe games."""
 
     def __init__(self) -> None:

@@ -1,11 +1,12 @@
 import re
+from collections import Iterable
 
 from pokertools import parse_cards
 
 from gameframe.poker.bases import PokerGame, PokerPlayer
 
 
-def parse_poker_game(game: PokerGame, *tokens: str) -> None:
+def parse_poker_game(game: PokerGame, tokens: Iterable[str]) -> None:
     """Parses the tokens as actions and applies them the supplied game.
 
     :param game: the game to be applied on
@@ -26,8 +27,8 @@ def parse_poker_game(game: PokerGame, *tokens: str) -> None:
                 raise ValueError('Invalid command')
         else:
             if match := re.fullmatch(r'dp (?P<index>\d+) (?P<cards>\w+)', token):
-                game.nature.deal_player(game.players[int(match.group('index'))], *parse_cards(match.group('cards')))
+                game.nature.deal_player(game.players[int(match.group('index'))], parse_cards(match.group('cards')))
             elif match := re.fullmatch(r'db (?P<cards>\w+)', token):
-                game.nature.deal_board(*parse_cards(match.group('cards')))
+                game.nature.deal_board(parse_cards(match.group('cards')))
             else:
                 raise ValueError('Invalid command')

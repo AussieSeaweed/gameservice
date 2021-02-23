@@ -1,4 +1,4 @@
-from gameframe.poker import NLGGame, NLOGame, NLTGame, NLSGame, PLGGame, PLOGame, PLTGame, PLSGame
+from gameframe.poker import NLGGame, NLOGame, NLSGame, NLTGame, PLGGame, PLOGame, PLSGame, PLTGame
 from gameframe.rockpaperscissors import RPSGame
 from gameframe.tictactoe import TTTGame
 

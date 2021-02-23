@@ -2,7 +2,7 @@
 
 Video: https://www.youtube.com/watch?v=QlgCcphLjaQ
 """
-from pokertools import parse_card, parse_cards
+from pokertools import parse_cards
 
 from gameframe.poker import NLSGame
 
@@ -11,12 +11,12 @@ badziakouski, zhong, xuan, jun, phua, koon = game.players
 
 # Pre-flop
 
-game.nature.deal_player(badziakouski, *parse_cards('Th8h'))
-game.nature.deal_player(zhong, *parse_cards('QsJd'))
-game.nature.deal_player(xuan, *parse_cards('QhQd'))
-game.nature.deal_player(jun, *parse_cards('8d7c'))
-game.nature.deal_player(phua, *parse_cards('KhKs'))
-game.nature.deal_player(koon, *parse_cards('8c7h'))
+game.nature.deal_player(badziakouski, parse_cards('Th8h'))
+game.nature.deal_player(zhong, parse_cards('QsJd'))
+game.nature.deal_player(xuan, parse_cards('QhQd'))
+game.nature.deal_player(jun, parse_cards('8d7c'))
+game.nature.deal_player(phua, parse_cards('KhKs'))
+game.nature.deal_player(koon, parse_cards('8c7h'))
 
 badziakouski.check_call()
 zhong.check_call()
@@ -30,15 +30,15 @@ xuan.check_call()
 
 # Flop
 
-game.nature.deal_board(*parse_cards('9h6cKc'))
+game.nature.deal_board(parse_cards('9h6cKc'))
 
 # Turn
 
-game.nature.deal_board(parse_card('Jh'))
+game.nature.deal_board(parse_cards('Jh'))
 
 # River
 
-game.nature.deal_board(parse_card('Ts'))
+game.nature.deal_board(parse_cards('Ts'))
 
 # Pot: 623000
 

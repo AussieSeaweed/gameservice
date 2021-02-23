@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from collections import Iterable
 
 from pokertools import Card
 
@@ -10,14 +11,14 @@ from gameframe.poker.exceptions import InvalidPlayerException
 
 
 class DealingAction(_PokerAction[PokerNature], ABC):
-    def __init__(self, game: PokerGame, actor: PokerNature, *cards: Card):
+    def __init__(self, game: PokerGame, actor: PokerNature, cards: Iterable[Card]):
         super().__init__(game, actor)
 
         self.cards = list(cards)
 
     def apply(self) -> None:
         self.deal()
-        self.game._deck.remove(*self.cards)
+        self.game._deck.remove(self.cards)
 
     def verify(self) -> None:
         super().verify()
@@ -39,8 +40,8 @@ class DealingAction(_PokerAction[PokerNature], ABC):
 
 
 class HoleCardDealingAction(DealingAction):
-    def __init__(self, game: PokerGame, actor: PokerNature, player: PokerPlayer, *cards: Card):
-        super().__init__(game, actor, *cards)
+    def __init__(self, game: PokerGame, actor: PokerNature, player: PokerPlayer, cards: Iterable[Card]):
+        super().__init__(game, actor, cards)
 
         self.player = player
 

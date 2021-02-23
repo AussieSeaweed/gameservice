@@ -2,7 +2,7 @@ from random import choice
 from unittest import TestCase, main
 
 from gameframe.sequential.tests.test_monte_carlo import SeqMCTestCaseMixin
-from gameframe.tictactoe import TTTGame
+from gameframe.tictactoe import TTTGame, TTTPlayer
 
 
 class TTTMCTestCase(TestCase, SeqMCTestCaseMixin[TTTGame]):
@@ -17,7 +17,7 @@ class TTTMCTestCase(TestCase, SeqMCTestCaseMixin[TTTGame]):
             assert game.empty_coords and game.winner is None
 
     def act(self, game: TTTGame) -> None:
-        assert game.actor is not None
+        assert isinstance(game.actor, TTTPlayer)
         game.actor.mark(*choice([(r, c) for r, c in game.empty_coords]))
 
     def create_game(self) -> TTTGame:
