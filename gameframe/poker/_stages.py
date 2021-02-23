@@ -55,17 +55,6 @@ class BettingStage(_Stage, ABC):
         self.flag = BettingFlag.DEFAULT
 
     @property
-    def min_amount(self) -> int:
-        player = cast(PokerPlayer, self.game.actor)
-
-        return min(max(player.bet for player in self.game.players) + self.game._max_delta, player.bet + player.stack)
-
-    @property
-    @abstractmethod
-    def max_amount(self) -> int:
-        pass
-
-    @property
     def skippable(self) -> bool:
         return super().skippable or all(not player._relevant for player in self.game.players) \
                or (self.game.actor is self.game._aggressor and self.flag != BettingFlag.IGNORE) \
@@ -76,6 +65,17 @@ class BettingStage(_Stage, ABC):
         sub_opener = max(self.game.players, key=lambda player: (player.bet, player.index))
 
         return next(player for player in rotate(self.game.players, next(sub_opener).index) if player._relevant)
+
+    @property
+    def min_amount(self) -> int:
+        player = cast(PokerPlayer, self.game.actor)
+
+        return min(max(player.bet for player in self.game.players) + self.game._max_delta, player.bet + player.stack)
+
+    @property
+    @abstractmethod
+    def max_amount(self) -> int:
+        pass
 
     def open(self) -> None:
         super().open()
