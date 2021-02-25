@@ -1,46 +1,20 @@
 from __future__ import annotations
 
-from enum import Enum, unique
-from functools import total_ordering
-from typing import Any, Optional, final
+from enum import unique
+from typing import Any, Optional, cast, final
 
-from gameframe.game import ActionException
-from gameframe.game._generics import Action, Actor, Game
+from auxiliary.enums import OrderedEnum
 
-
-@final
-class RPSGame(Game[Actor['RPSGame'], 'RPSPlayer']):
-    """RPSGame is the class for rock paper scissors games."""
-
-    def __init__(self) -> None:
-        nature = Actor(self)
-        players = RPSPlayer(self), RPSPlayer(self)
-
-        super().__init__(nature, players)
-
-    @property
-    def terminal(self) -> bool:
-        return all(player.hand is not None for player in self.players)
-
-    @property
-    def winner(self) -> Optional[RPSPlayer]:
-        """
-        :return: the winning player of this rock paper scissors game if there is one, else None
-        """
-        if self.players[0].hand is not None and self.players[1].hand is not None \
-                and self.players[0].hand != self.players[1].hand:
-            return self.players[0] if self.players[0].hand > self.players[1].hand else self.players[1]
-        else:
-            return None
+from gameframe.exceptions import ActionException
+from gameframe.game import Game, _Action
 
 
 @final
-class RPSPlayer(Actor[RPSGame]):
+class RPSPlayer:
     """RPSPlayer is the class for rock paper scissors players."""
 
     def __init__(self, game: RPSGame) -> None:
-        super().__init__(game)
-
+        self.__game = game
         self._hand: Optional[RPSHand] = None
 
     @property
@@ -56,7 +30,7 @@ class RPSPlayer(Actor[RPSGame]):
         :param hand: the hand to be thrown
         :return: None
         """
-        _ThrowAction(self.game, self, hand).act()
+        _ThrowAction(self.__game, self, hand).act()
 
     def can_throw(self) -> bool:
         """Determines if this rock paper scissors player can throw a hand.
@@ -64,7 +38,7 @@ class RPSPlayer(Actor[RPSGame]):
         :return: True if this rock paper scissors player can throw a hand, else False
         """
         try:
-            _ThrowAction(self.game, self, next(iter(RPSHand))).verify()
+            _ThrowAction(self.__game, self, next(iter(RPSHand))).verify()
         except ActionException:
             return False
         else:
@@ -72,9 +46,30 @@ class RPSPlayer(Actor[RPSGame]):
 
 
 @final
-@total_ordering
+class RPSGame(Game[None, RPSPlayer]):
+    """RPSGame is the class for rock paper scissors games."""
+
+    def __init__(self) -> None:
+        super().__init__(None, (RPSPlayer(self), RPSPlayer(self)))
+
+    @property
+    def terminal(self) -> bool:
+        return all(player.hand is not None for player in self.players)
+
+    @property
+    def winner(self) -> Optional[RPSPlayer]:
+        """
+        :return: the winning player of this rock paper scissors game if there is one, else None
+        """
+        if self.terminal and self.players[0].hand != self.players[1].hand:
+            return max(self.players, key=lambda player: cast(RPSHand, player.hand))
+        else:
+            return None
+
+
+@final
 @unique
-class RPSHand(Enum):
+class RPSHand(OrderedEnum):
     """RPSHand is the enum for rock paper scissors hands."""
     ROCK = 'Rock'
     PAPER = 'Paper'
@@ -82,14 +77,12 @@ class RPSHand(Enum):
 
     def __lt__(self, other: Any) -> bool:
         if isinstance(other, RPSHand):
-            hands = tuple(RPSHand)
-
-            return (hands.index(self) + 1) % 3 == hands.index(other)
+            return (self.index + 1) % 3 == other.index
         else:
             return NotImplemented
 
 
-class _ThrowAction(Action[RPSGame, RPSPlayer]):
+class _ThrowAction(_Action[RPSGame, RPSPlayer]):
     def __init__(self, game: RPSGame, actor: RPSPlayer, hand: RPSHand):
         super().__init__(game, actor)
 

@@ -1,15 +1,22 @@
-from collections import Sequence
-from typing import Optional, cast
+from abc import ABC
+from collections import Iterable, Sequence
+from typing import Generic, Optional, cast
 from unittest import TestCase, main
 
 from pokertools import parse_cards
 
-from gameframe.game import ActionException
-from gameframe.poker import NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker_game
+from gameframe.exceptions import ActionException
+from gameframe.game import _G
+from gameframe.poker import NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker
 from gameframe.poker._stages import ShowdownStage
+from gameframe.tictactoe import TTTGame, parse_ttt
 
 
-class NLTSimTestCase(TestCase):
+class SimulationTestCaseMixin(Generic[_G], ABC):
+    ...
+
+
+class NLTSimulationTestCase(TestCase):
     ANTE = 1
     BLINDS = 1, 2
 
@@ -313,6 +320,28 @@ class NLTSimTestCase(TestCase):
 
         self.assertTrue(game.terminal)
 
+    def test_parser(self) -> None:
+        game = NLTGame(500, [1000, 2000], [1125600, 2000000, 553500])
+
+        parse_poker(game, (
+            'dp 0 Ac2d', 'dp 1 5h7s', 'dp 2 7h6h',
+            'br 7000', 'br 23000', 'f', 'cc',
+            'db Jc3d5c',
+            'br 35000', 'cc',
+            'db 4h',
+            'br 90000', 'br 232600', 'br 1067100', 'cc',
+            'db Jh',
+        ))
+
+        self.assertEqual(game.pot, 1109500)
+
+        parse_poker(game, ('s', 's'))
+
+        self.assertSequenceEqual([player.bet for player in game.players], [0, 0, 0])
+        self.assertSequenceEqual([player.stack for player in game.players], [572100, 1997500, 1109500])
+        self.assertSequenceEqual([player.shown for player in game.players], [True, False, True])
+        self.assertSequenceEqual([player.mucked for player in game.players], [False, True, False])
+
     def assert_actor(self, game: PokerGame, index: Optional[int]) -> None:
         if isinstance(game.actor, PokerPlayer):
             self.assertEqual(game.actor.index, index)
@@ -363,7 +392,7 @@ class NLTSimTestCase(TestCase):
         return game
 
 
-class PLOSimTestCase(TestCase):
+class PLOSimulationTestCase(TestCase):
     def test_amount(self) -> None:
         game = PLOGame(0, [1, 2], [100, 100])
 
@@ -391,12 +420,33 @@ class PLOSimTestCase(TestCase):
 
         self.assertEqual(game.players[1].max_bet_raise_amount, 8)
 
+    def test_hand(self) -> None:
+        game = PLOGame(0, [50000, 100000], [125945025, 67847350])
 
-class NLSSimTestCase(TestCase):
+        parse_poker(game, (
+            'dp 0 Ah3sKsKh', 'dp 1 6d9s7d8h',
+            'br 300000', 'br 900000', 'br 2700000', 'br 8100000', 'cc',
+            'db 4s5c2h',
+            'br 9100000', 'br 43500000', 'br 77900000', 'cc',
+            'db 5h',
+            'db 9c',
+        ))
+
+        self.assertEqual(game.pot, 135694700)
+
+        parse_poker(game, ('s', 's'))
+
+        self.assertSequenceEqual([player.bet for player in game.players], [0, 0])
+        self.assertSequenceEqual([player.stack for player in game.players], [193792375, 0])
+        self.assertSequenceEqual([player.shown for player in game.players], [True, False])
+        self.assertSequenceEqual([player.mucked for player in game.players], [False, True])
+
+
+class NLSSimulationTestCase(TestCase):
     def test_pre_flop(self) -> None:
         game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
 
-        parse_poker_game(game, (
+        parse_poker(game, (
             'dp 0 Th8h', 'dp 1 QsJd', 'dp 2 QhQd', 'dp 3 8d7c', 'dp 4 KhKs', 'dp 5 8c7h',
             'cc', 'cc', 'cc', 'cc', 'cc', 'cc',
         ))
@@ -405,12 +455,84 @@ class NLSSimTestCase(TestCase):
 
         game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
 
-        parse_poker_game(game, (
+        parse_poker(game, (
             'dp 0 Th8h', 'dp 1 QsJd', 'dp 2 QhQd', 'dp 3 8d7c', 'dp 4 KhKs', 'dp 5 8c7h',
             'cc', 'cc', 'cc', 'cc', 'cc', 'br 35000', 'cc', 'cc', 'cc', 'cc', 'cc',
         ))
 
         self.assertIs(game.actor, game.nature)
+
+    def test_hand(self) -> None:
+        game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
+
+        parse_poker(game, (
+            'dp 0 Th8h', 'dp 1 QsJd', 'dp 2 QhQd', 'dp 3 8d7c', 'dp 4 KhKs', 'dp 5 8c7h',
+            'cc', 'cc', 'br 35000', 'f', 'br 298000', 'f', 'f', 'f', 'cc',
+            'db 9h6cKc',
+            'db Jh',
+            'db Ts',
+        ))
+
+        self.assertEqual(game.pot, 623000)
+
+        parse_poker(game, ('s', 's'))
+
+        self.assertSequenceEqual([player.bet for player in game.players], [0, 0, 0, 0, 0, 0])
+        self.assertSequenceEqual([player.stack for player in game.players], [489000, 226000, 684000, 400000, 0, 198000])
+        self.assertSequenceEqual([player.shown for player in game.players], [False, False, True, False, True, False])
+        self.assertSequenceEqual([player.mucked for player in game.players], [True, True, False, True, False, True])
+
+
+class TTTSimulationTestCase(TestCase, SimulationTestCaseMixin[TTTGame]):
+    def test_draws(self) -> None:
+        games = [
+            self.parse([[1, 1], [0, 0], [0, 1], [0, 2], [1, 0], [1, 2], [2, 0], [2, 1], [2, 2]]),
+            self.parse([[0, 0], [0, 2], [2, 0], [2, 2], [1, 2], [1, 0], [0, 1], [1, 1], [2, 1]]),
+            self.parse([[0, 0], [0, 1], [0, 2], [1, 0], [1, 2], [1, 1], [2, 0], [2, 2], [2, 1]]),
+            self.parse([[0, 1], [0, 0], [1, 1], [0, 2], [1, 2], [1, 0], [2, 0], [2, 1], [2, 2]]),
+            self.parse([[1, 1], [0, 2], [2, 2], [0, 0], [0, 1], [2, 1], [1, 0], [1, 2], [2, 0]]),
+        ]
+
+        for game in games:
+            self.assertIsNone(game.winner)
+
+    def test_losses(self) -> None:
+        games = [
+            self.parse([[2, 2], [0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0]]),
+            self.parse([[1, 1], [0, 2], [1, 2], [1, 0], [2, 2], [0, 0], [0, 1], [2, 0]]),
+            self.parse([[1, 1], [0, 1], [2, 0], [2, 2], [2, 1], [0, 2], [0, 0], [1, 2]]),
+            self.parse([[0, 0], [1, 0], [0, 1], [1, 1], [2, 2], [1, 2]]),
+            self.parse([[0, 1], [2, 0], [1, 1], [2, 1], [0, 2], [2, 2]]),
+        ]
+
+        for game in games:
+            self.assertIs(game.players[1], game.winner)
+
+    def test_wins(self) -> None:
+        games = [
+            self.parse([[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0]]),
+            self.parse([[1, 1], [0, 2], [0, 1], [1, 2], [2, 1]]),
+            self.parse([[1, 1], [0, 1], [2, 0], [0, 2], [0, 0], [1, 0], [2, 2]]),
+            self.parse([[1, 1], [0, 1], [2, 0], [2, 2], [0, 2]]),
+            self.parse([[0, 0], [1, 0], [0, 1], [1, 1], [0, 2]]),
+        ]
+
+        for game in games:
+            self.assertIs(game.players[0], game.winner)
+
+    def test_illegal_actions(self) -> None:
+        self.assertRaises(AttributeError, self.parse, [[2, 2], [2, 1], [2, 0], [1, 2], [1, 1], [1, 0], [0, 2], [0, 1]])
+        self.assertRaises(ActionException, self.parse, [[0, 0], [0, 0]])
+        self.assertRaises(ActionException, self.parse, [[0, 0], [0, 1], [0, 0]])
+        self.assertRaises(ActionException, self.parse, [[3, 3]])
+        self.assertRaises(ActionException, self.parse, [[-1, -1]])
+        self.assertRaises(ActionException, lambda game: game.players[0].mark(0, 1), self.parse([[0, 0]]))
+
+    @staticmethod
+    def parse(coords: Iterable[Sequence[int]]) -> TTTGame:
+        parse_ttt(game := TTTGame(), coords)
+
+        return game
 
 
 if __name__ == '__main__':

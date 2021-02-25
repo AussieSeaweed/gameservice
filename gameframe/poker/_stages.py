@@ -5,10 +5,10 @@ from typing import cast
 
 from auxiliary.utils import limit, rotate
 
-from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, _Stage
+from gameframe.poker._bases import PokerGame, PokerNature, PokerPlayer, Stage
 
 
-class DealingStage(_Stage, ABC):
+class DealingStage(Stage, ABC):
     def __init__(self, game: PokerGame, card_count: int):
         super().__init__(game)
 
@@ -47,7 +47,7 @@ class BoardCardDealingStage(DealingStage):
         return super().skippable or len(self.game.board_cards) == self.card_target
 
 
-class BettingStage(_Stage, ABC):
+class BettingStage(Stage, ABC):
     def __init__(self, game: PokerGame, initial_max_delta: int):
         super().__init__(game)
 
@@ -75,7 +75,7 @@ class BettingStage(_Stage, ABC):
     @property
     @abstractmethod
     def max_amount(self) -> int:
-        pass
+        ...
 
     def open(self) -> None:
         super().open()
@@ -110,12 +110,12 @@ class PLBettingStage(BettingStage):
     def max_amount(self) -> int:
         player = cast(PokerPlayer, self.game.actor)
         bets = [player.bet for player in self.game.players]
-        max_amount = max(bets) + player.game.pot + sum(bets) + max(bets) - player.bet
+        max_amount = max(bets) + self.game.pot + sum(bets) + max(bets) - player.bet
 
         return limit(max_amount, self.min_amount, player.bet + player.stack)
 
 
-class ShowdownStage(_Stage):
+class ShowdownStage(Stage):
     @property
     def skippable(self) -> bool:
         return super().skippable or all(player.mucked or player.shown for player in self.game.players)
