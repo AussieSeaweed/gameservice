@@ -64,8 +64,8 @@ class TTTGame(SequentialGame[None, TTTPlayer]):
         super().__init__(None, players, players[0])
 
         self._board: list[list[Optional[TTTPlayer]]] = [[None, None, None],
-                                                              [None, None, None],
-                                                              [None, None, None]]
+                                                        [None, None, None],
+                                                        [None, None, None]]
 
     @property
     def board(self) -> Sequence[Sequence[Optional[TTTPlayer]]]:
