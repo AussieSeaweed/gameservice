@@ -438,8 +438,6 @@ class PokerGame(SequentialGame[PokerNature, PokerPlayer], ABC):
 
 
 class Stage(Iterator['Stage'], ABC):
-    """Stage is the abstract base class for all poker stages."""
-
     def __init__(self, game: PokerGame):
         self.game: Final = game
 
@@ -453,24 +451,15 @@ class Stage(Iterator['Stage'], ABC):
     @cached_property
     @final
     def index(self) -> int:
-        """
-        :return: the index of this stage
-        """
         return self.game._stages.index(self)
 
     @property
     def skippable(self) -> bool:
-        """
-        :return: whether or not this stage is skippable
-        """
         return sum(not player.mucked for player in self.game.players) == 1
 
     @property
     @abstractmethod
     def opener(self) -> Union[PokerNature, PokerPlayer]:
-        """
-        :return: the opener of this stage
-        """
         ...
 
     def open(self) -> None:
