@@ -16,7 +16,7 @@ class SimulationTestCaseMixin(Generic[_G], ABC):
     ...
 
 
-class NLTSimulationTestCase(TestCase):
+class NLTSimulationTestCase(TestCase, SimulationTestCaseMixin[NLTGame]):
     ANTE = 1
     BLINDS = 1, 2
 
@@ -392,7 +392,7 @@ class NLTSimulationTestCase(TestCase):
         return game
 
 
-class PLOSimulationTestCase(TestCase):
+class PLOSimulationTestCase(TestCase, SimulationTestCaseMixin[PLOGame]):
     def test_amount(self) -> None:
         game = PLOGame(0, [1, 2], [100, 100])
 
@@ -442,7 +442,7 @@ class PLOSimulationTestCase(TestCase):
         self.assertSequenceEqual([player.mucked for player in game.players], [False, True])
 
 
-class NLSSimulationTestCase(TestCase):
+class NLSSimulationTestCase(TestCase, SimulationTestCaseMixin[NLSGame]):
     def test_pre_flop(self) -> None:
         game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
 
