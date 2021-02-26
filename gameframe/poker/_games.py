@@ -2,8 +2,10 @@ from abc import ABC
 from collections import Iterable, Sequence
 from typing import final
 
-from pokertools import (Deck, Evaluator, GreekEvaluator, OmahaEvaluator, ShortDeck, ShortEvaluator, StandardDeck,
-                        StandardEvaluator)
+from pokertools import (Card, Deck, Evaluator, GreekEvaluator, OmahaEvaluator, Rank, ShortDeck, ShortEvaluator,
+                        StandardDeck,
+                        StandardEvaluator, Suit)
+from pokertools.evaluators import RankEvaluator
 
 from gameframe.poker._bases import PokerGame
 from gameframe.poker._stages import (BettingStage, BoardCardDealingStage, HoleCardDealingStage, NLBettingStage,
@@ -121,3 +123,13 @@ class PLSGame(PLHEGame):
                              starting_stacks)
         else:
             PLSGame.__init__(self, ante, button_blind, tuple(starting_stacks))
+
+
+@final
+class KuhnGame(PokerGame):
+    def __init__(self) -> None:
+        super().__init__(
+            [HoleCardDealingStage(self, 1, False), NLBettingStage(self, 1), ShowdownStage(self)],
+            Deck((Card(Rank.JACK, Suit.SPADE), Card(Rank.QUEEN, Suit.SPADE), Card(Rank.KING, Suit.SPADE))),
+            RankEvaluator(), 1, (), (2, 2),
+        )

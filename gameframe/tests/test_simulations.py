@@ -7,7 +7,7 @@ from pokertools import parse_cards
 
 from gameframe.exceptions import ActionException
 from gameframe.game import _G
-from gameframe.poker import NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker
+from gameframe.poker import KuhnGame, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker
 from gameframe.poker._stages import ShowdownStage
 from gameframe.tictactoe import TTTGame, parse_ttt
 
@@ -481,6 +481,26 @@ class NLSSimulationTestCase(TestCase):
         self.assertSequenceEqual([player.stack for player in game.players], [489000, 226000, 684000, 400000, 0, 198000])
         self.assertSequenceEqual([player.shown for player in game.players], [False, False, True, False, True, False])
         self.assertSequenceEqual([player.mucked for player in game.players], [True, True, False, True, False, True])
+
+
+class KuhnSimulationTestCase(TestCase, SimulationTestCaseMixin[KuhnGame]):
+    def test_hands(self) -> None:
+        games = [
+            self.parse(('dp 0 Qs', 'dp 1 Ks', 'cc', 'cc', 's', 's')),
+            self.parse(('dp 0 Qs', 'dp 1 Ks', 'cc', 'br 1', 'f')),
+            self.parse(('dp 0 Qs', 'dp 1 Ks', 'cc', 'br 1', 'cc', 's', 's')),
+            self.parse(('dp 0 Qs', 'dp 1 Ks', 'br 1', 'f')),
+            self.parse(('dp 0 Qs', 'dp 1 Ks', 'br 1', 'cc', 's', 's')),
+        ]
+
+        for game in games:
+            self.assertTrue(game.terminal)
+
+    @staticmethod
+    def parse(tokens: Iterable[str]) -> KuhnGame:
+        parse_poker(game := KuhnGame(), tokens)
+
+        return game
 
 
 class TTTSimulationTestCase(TestCase, SimulationTestCaseMixin[TTTGame]):
