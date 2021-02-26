@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from collections import Iterable
-from typing import Final, Generic, TypeVar
+from collections import Iterable, Sequence
+from typing import Any, Generic, TypeVar
 
 from gameframe.exceptions import ActionException
 
@@ -10,6 +10,22 @@ class GameInterface(ABC):
 
     Every game has to define its nature and players.
     """
+
+    @property
+    @abstractmethod
+    def nature(self) -> Any:
+        """
+        :return: the nature of this game
+        """
+        ...
+
+    @property
+    @abstractmethod
+    def players(self) -> Any:
+        """
+        :return: the players of this game
+        """
+        ...
 
     @property
     @abstractmethod
@@ -28,8 +44,16 @@ class Game(Generic[_N, _P], GameInterface, ABC):
     """Game is the abstract generic base class for all games."""
 
     def __init__(self, nature: _N, players: Iterable[_P]):
-        self.nature: Final = nature
-        self.players: Final = tuple(players)
+        self.__nature = nature
+        self.__players = tuple(players)
+
+    @property
+    def nature(self) -> _N:
+        return self.__nature
+
+    @property
+    def players(self) -> Sequence[_P]:
+        return self.__players
 
 
 _G = TypeVar('_G', bound=GameInterface)

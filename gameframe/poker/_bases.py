@@ -5,7 +5,7 @@ from collections import Collection, Iterable, Iterator, Sequence, defaultdict
 from enum import Enum, unique
 from functools import cached_property
 from itertools import zip_longest
-from typing import Final, Generic, Optional, TypeVar, Union, cast, final, overload
+from typing import Generic, Optional, TypeVar, Union, cast, final, overload
 
 from auxiliary.utils import default
 from pokertools import Card, Deck, Evaluator, Hand, HoleCard
@@ -128,8 +128,7 @@ class PokerPlayer(Iterator['PokerPlayer']):
 
     def __init__(self, game: PokerGame, stack: int):
         self.__game = game
-
-        self.starting_stack: Final = stack
+        self.__starting_stack = stack
 
         self._commitment = 0
         self._cards = list[Card]()
@@ -143,6 +142,10 @@ class PokerPlayer(Iterator['PokerPlayer']):
             return f'PokerPlayer({self.bet}, {self.stack})'
         else:
             return f'PokerPlayer({self.bet}, {self.stack}, ' + ''.join(map(str, self.hole_cards)) + ')'
+
+    @property
+    def starting_stack(self) -> int:
+        return self.__starting_stack
 
     @cached_property
     def index(self) -> int:
@@ -439,7 +442,7 @@ class PokerGame(SequentialGame[PokerNature, PokerPlayer], ABC):
 
 class Stage(Iterator['Stage'], ABC):
     def __init__(self, game: PokerGame):
-        self.game: Final = game
+        self.game = game
 
     @final
     def __next__(self) -> Stage:
