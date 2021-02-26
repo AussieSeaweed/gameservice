@@ -21,7 +21,7 @@ class GameInterface(ABC):
 
     @property
     @abstractmethod
-    def players(self) -> Any:
+    def players(self) -> Sequence[Any]:
         """
         :return: the players of this game
         """
