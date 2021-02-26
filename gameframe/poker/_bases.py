@@ -7,6 +7,7 @@ from functools import cached_property
 from itertools import zip_longest
 from typing import Final, Generic, Optional, TypeVar, Union, cast, final, overload
 
+from auxiliary.utils import default
 from pokertools import Card, Deck, Evaluator, Hand, HoleCard
 
 from gameframe.exceptions import ActionException, ParamException
@@ -92,9 +93,8 @@ class PokerNature:
         from gameframe.poker._actions import HoleCardDealingAction
 
         try:
-            HoleCardDealingAction(
-                self.__game, self, self.__game.players[0] if player is None else player, () if cards is None else cards,
-            ).verify()
+            HoleCardDealingAction(self.__game, self, default(player, self.__game.players[0]),
+                                  default(cards, ())).verify()
         except InvalidPlayerException:
             return player is None
         except CardCountException:
@@ -113,7 +113,7 @@ class PokerNature:
         from gameframe.poker._actions import BoardCardDealingAction
 
         try:
-            BoardCardDealingAction(self.__game, self, () if cards is None else cards).verify()
+            BoardCardDealingAction(self.__game, self, default(cards, ())).verify()
         except CardCountException:
             return cards is None
         except ActionException:
@@ -308,7 +308,7 @@ class PokerPlayer(Iterator['PokerPlayer']):
         from gameframe.poker._actions import BetRaiseAction
 
         try:
-            BetRaiseAction(self.__game, self, 0 if amount is None else amount).verify()
+            BetRaiseAction(self.__game, self, default(amount, 0)).verify()
         except BetRaiseAmountException:
             return amount is None
         except ActionException:
