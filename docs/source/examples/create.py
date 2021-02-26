@@ -1,4 +1,4 @@
-from gameframe.poker import NLGGame, NLOGame, NLSGame, NLTGame, PLGGame, PLOGame, PLSGame, PLTGame
+from gameframe.poker import KuhnGame, NLGGame, NLOGame, NLSGame, NLTGame, PLGGame, PLOGame, PLSGame, PLTGame
 from gameframe.rockpaperscissors import RPSGame
 from gameframe.tictactoe import TTTGame
 
@@ -30,6 +30,9 @@ nls_game = NLSGame(ante, button_blind, starting_stacks)
 
 # Create a Pot-Limit Short-Deck Hold'em game
 pls_game = PLSGame(ante, button_blind, starting_stacks)
+
+# Create a Kuhn Poker game
+kuhn_game = KuhnGame()
 
 # Create a tic tac toe game
 ttt_game = TTTGame()
