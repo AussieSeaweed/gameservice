@@ -3,8 +3,7 @@ from collections import Iterable, Sequence
 from typing import final
 
 from pokertools import (Card, Deck, Evaluator, GreekEvaluator, OmahaEvaluator, Rank, ShortDeck, ShortEvaluator,
-                        StandardDeck,
-                        StandardEvaluator, Suit)
+                        StandardDeck, StandardEvaluator, Suit)
 from pokertools.evaluators import RankEvaluator
 
 from gameframe.poker._bases import PokerGame
