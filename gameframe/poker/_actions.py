@@ -33,8 +33,6 @@ class DealingAction(PokerAction[PokerNature, S], ABC):
             raise ActionException('Card not in deck')
         elif len(self.cards) != len(set(self.cards)):
             raise ActionException('Duplicates in cards')
-        # elif len(self.cards) != self.stage.card_count:  # TODO: FIGURE HOW TO PUT THIS HERE AND REMOVE TWO BELOW
-        #     raise CardCountException('Invalid number of hole cards are dealt')
 
     @abstractmethod
     def deal(self) -> None:
