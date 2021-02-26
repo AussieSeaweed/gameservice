@@ -132,7 +132,7 @@ class PokerPlayer(Iterator['PokerPlayer']):
         self.starting_stack: Final = stack
 
         self._commitment = 0
-        self._hole_cards = list[Card]()
+        self._cards = list[Card]()
         self._status = self._HoleCardStatus.DEFAULT
 
     def __next__(self) -> PokerPlayer:
@@ -171,18 +171,18 @@ class PokerPlayer(Iterator['PokerPlayer']):
         :return: the hole cards of this poker player
         """
         if self.mucked:
-            return (HoleCard(card, False) for card in self._hole_cards)
+            return (HoleCard(card, False) for card in self._cards)
         elif self.shown:
-            return (HoleCard(card, True) for card in self._hole_cards)
+            return (HoleCard(card, True) for card in self._cards)
         else:
-            return (HoleCard(card, status) for card, status in zip(self._hole_cards, self.__game.hole_card_statuses))
+            return (HoleCard(card, status) for card, status in zip(self._cards, self.__game.hole_card_statuses))
 
     @property
     def hand(self) -> Hand:
         """
         :return: the hand of this poker player
         """
-        return self.__game.evaluator.hand(self._hole_cards, self.__game.board_cards)
+        return self.__game.evaluator.hand(self._cards, self.__game.board_cards)
 
     @property
     def mucked(self) -> bool:

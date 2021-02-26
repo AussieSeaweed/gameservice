@@ -38,7 +38,7 @@ class HoleCardDealingStage(DealingStage):
     @property
     def skippable(self) -> bool:
         return super().skippable \
-               or all(len(player._hole_cards) == self.card_target for player in self.game.players if not player.mucked)
+               or all(len(player._cards) == self.card_target for player in self.game.players if not player.mucked)
 
 
 class BoardCardDealingStage(DealingStage):

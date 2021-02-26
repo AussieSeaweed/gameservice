@@ -46,7 +46,7 @@ class HoleCardDealingAction(DealingAction[HoleCardDealingStage]):
         self.player = player
 
     def deal(self) -> None:
-        self.player._hole_cards.extend(self.cards)
+        self.player._cards.extend(self.cards)
 
     def verify(self) -> None:
         super().verify()
@@ -57,7 +57,7 @@ class HoleCardDealingAction(DealingAction[HoleCardDealingStage]):
             raise ActionException('Hole card dealing not allowed')
         elif self.player.mucked:
             raise InvalidPlayerException('Cannot deal to mucked player')
-        elif len(self.player._hole_cards) >= self.stage.card_target:
+        elif len(self.player._cards) >= self.stage.card_target:
             raise InvalidPlayerException('The player already has enough hole cards')
         elif len(self.cards) != self.stage.card_count:
             raise CardCountException('Invalid number of hole cards are dealt')
