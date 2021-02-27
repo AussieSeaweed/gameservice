@@ -74,7 +74,8 @@ class BettingStage(Stage, ABC):
 
     @property
     @abstractmethod
-    def max_amount(self) -> int: ...
+    def max_amount(self) -> int:
+        ...
 
     def open(self) -> None:
         super().open()

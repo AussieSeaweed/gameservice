@@ -72,13 +72,16 @@ class PokerNature:
         BoardCardDealingAction(self.__game, self, cards).act()
 
     @overload
-    def can_deal_player(self) -> bool: ...
+    def can_deal_player(self) -> bool:
+        ...
 
     @overload
-    def can_deal_player(self, player: PokerPlayer) -> bool: ...
+    def can_deal_player(self, player: PokerPlayer) -> bool:
+        ...
 
     @overload
-    def can_deal_player(self, player: PokerPlayer, cards: Iterable[Card]) -> bool: ...
+    def can_deal_player(self, player: PokerPlayer, cards: Iterable[Card]) -> bool:
+        ...
 
     def can_deal_player(self, player: Optional[PokerPlayer] = None, cards: Optional[Iterable[Card]] = None) -> bool:
         """Determines if the hole cards can be dealt to the specified player.
@@ -463,14 +466,17 @@ class Stage(Iterator['Stage'], ABC):
 
     @property
     @abstractmethod
-    def opener(self) -> Union[PokerNature, PokerPlayer]: ...
+    def opener(self) -> Union[PokerNature, PokerPlayer]:
+        ...
 
     def open(self) -> None:
         self.game._actor = self.opener
 
-    def close(self) -> None: ...
+    def close(self) -> None:
+        ...
 
-    def update(self) -> None: ...
+    def update(self) -> None:
+        ...
 
 
 S = TypeVar('S', bound=Stage)

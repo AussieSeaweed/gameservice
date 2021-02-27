@@ -25,13 +25,16 @@ class MonteCarloTestCaseMixin(Generic[_G], ABC):
                 self.verify(game)
 
     @abstractmethod
-    def create_game(self) -> _G: ...
+    def create_game(self) -> _G:
+        ...
 
     @abstractmethod
-    def act(self, game: _G) -> None: ...
+    def act(self, game: _G) -> None:
+        ...
 
     @abstractmethod
-    def verify(self, game: _G) -> None: ...
+    def verify(self, game: _G) -> None:
+        ...
 
 
 class NLTMonteCarloTestCase(TestCase, MonteCarloTestCaseMixin[NLTGame]):

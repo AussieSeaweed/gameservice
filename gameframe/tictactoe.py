@@ -29,10 +29,12 @@ class TTTPlayer:
         _MarkAction(self.__game, self, r, c).act()
 
     @overload
-    def can_mark(self) -> bool: ...
+    def can_mark(self) -> bool:
+        ...
 
     @overload
-    def can_mark(self, r: int, c: int) -> bool: ...
+    def can_mark(self, r: int, c: int) -> bool:
+        ...
 
     def can_mark(self, r: Optional[int] = None, c: Optional[int] = None) -> bool:
         """Determines if the cell of the board at the coordinates can be marked.

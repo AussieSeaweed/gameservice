@@ -35,7 +35,8 @@ class DealingAction(PokerAction[PokerNature, S], ABC):
             raise ActionException('Duplicates in cards')
 
     @abstractmethod
-    def deal(self) -> None: ...
+    def deal(self) -> None:
+        ...
 
 
 class HoleCardDealingAction(DealingAction[HoleCardDealingStage]):
