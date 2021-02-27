@@ -14,9 +14,11 @@ from gameframe.poker._stages import (BettingStage, BoardCardDealingStage, HoleCa
 class HEGame(PokerGame, ABC):
     """HEGame is the class for Hold'em games."""
 
-    def __init__(self, pre_flop: BettingStage, flop: BettingStage, turn: BettingStage, river: BettingStage,
-                 hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Iterable[int],
-                 starting_stacks: Iterable[int]):
+    def __init__(
+            self, pre_flop: BettingStage, flop: BettingStage, turn: BettingStage, river: BettingStage,
+            hole_card_count: int, deck: Deck, evaluator: Evaluator,
+            ante: int, blinds: Iterable[int], starting_stacks: Iterable[int],
+    ):
         super().__init__([
             HoleCardDealingStage(self, hole_card_count, False), pre_flop,
             BoardCardDealingStage(self, 3), flop,
@@ -31,11 +33,11 @@ class NLHEGame(HEGame, ABC):
 
     def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Iterable[int],
                  starting_stacks: Iterable[int]):
-        max_delta = max(ante, max(blinds := tuple(blinds)))
+        d = max(ante, max(blinds := tuple(blinds)))
 
         super().__init__(
-            NLBettingStage(self, max_delta), NLBettingStage(self, max_delta), NLBettingStage(self, max_delta),
-            NLBettingStage(self, max_delta), hole_card_count, deck, evaluator, ante, blinds, starting_stacks,
+            NLBettingStage(self, d), NLBettingStage(self, d), NLBettingStage(self, d), NLBettingStage(self, d),
+            hole_card_count, deck, evaluator, ante, blinds, starting_stacks,
         )
 
 
@@ -44,11 +46,11 @@ class PLHEGame(HEGame, ABC):
 
     def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Iterable[int],
                  starting_stacks: Iterable[int]):
-        max_delta = max(ante, max(blinds := tuple(blinds)))
+        d = max(ante, max(blinds := tuple(blinds)))
 
         super().__init__(
-            PLBettingStage(self, max_delta), PLBettingStage(self, max_delta), PLBettingStage(self, max_delta),
-            PLBettingStage(self, max_delta), hole_card_count, deck, evaluator, ante, blinds, starting_stacks,
+            PLBettingStage(self, d), PLBettingStage(self, d), PLBettingStage(self, d), PLBettingStage(self, d),
+            hole_card_count, deck, evaluator, ante, blinds, starting_stacks,
         )
 
 
@@ -128,7 +130,7 @@ class PLSGame(PLHEGame):
 class KuhnGame(PokerGame):
     def __init__(self) -> None:
         super().__init__(
-            [HoleCardDealingStage(self, 1, False), NLBettingStage(self, 1), ShowdownStage(self)],
+            (HoleCardDealingStage(self, 1, False), NLBettingStage(self, 1), ShowdownStage(self)),
             Deck((Card(Rank.JACK, Suit.SPADE), Card(Rank.QUEEN, Suit.SPADE), Card(Rank.KING, Suit.SPADE))),
             RankEvaluator(), 1, (), (2, 2),
         )

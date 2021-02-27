@@ -350,10 +350,14 @@ class PokerGame(SequentialGame[PokerNature, PokerPlayer], ABC):
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self, stages: Iterable[Stage], deck: Deck, evaluator: Evaluator, ante: int, blinds: Iterable[int],
-                 starting_stacks: Iterable[int]):
-        blinds = tuple(blinds)
-        starting_stacks = tuple(starting_stacks)
+    def __init__(
+            self, stages: Iterable[Stage], deck: Deck, evaluator: Evaluator,
+            ante: int, blinds: Iterable[int], starting_stacks: Iterable[int],
+    ):
+        if not isinstance(blinds, Sequence):
+            blinds = tuple(blinds)
+        if not isinstance(starting_stacks, Sequence):
+            starting_stacks = tuple(starting_stacks)
 
         super().__init__(actor := PokerNature(self), (PokerPlayer(self, stack) for stack in starting_stacks), actor)
 
