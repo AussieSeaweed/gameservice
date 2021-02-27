@@ -26,7 +26,6 @@ class SequentialGameInterface(GameInterface, ABC):
         """
         :return: the actor of this sequential game
         """
-        ...
 
 
 class SequentialGame(Game[_N, _P], SequentialGameInterface, ABC):
@@ -49,8 +48,7 @@ _SG = TypeVar('_SG', bound=SequentialGameInterface)
 class _SequentialAction(_Action[_SG, _A], ABC):
     @property
     @abstractmethod
-    def next_actor(self) -> Any:
-        ...
+    def next_actor(self) -> Any: ...
 
     def act(self) -> None:
         super().act()

@@ -17,7 +17,6 @@ class GameInterface(ABC):
         """
         :return: the nature of this game
         """
-        ...
 
     @property
     @abstractmethod
@@ -25,7 +24,6 @@ class GameInterface(ABC):
         """
         :return: the players of this game
         """
-        ...
 
     @property
     @abstractmethod
@@ -33,7 +31,6 @@ class GameInterface(ABC):
         """
         :return: True if this game is terminal, else False
         """
-        ...
 
 
 _N = TypeVar('_N')
@@ -74,5 +71,4 @@ class _Action(Generic[_G, _A], ABC):
             raise ActionException('Actions cannot be applied to terminal games')
 
     @abstractmethod
-    def apply(self) -> None:
-        ...
+    def apply(self) -> None: ...
