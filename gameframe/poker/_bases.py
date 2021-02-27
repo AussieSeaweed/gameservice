@@ -178,7 +178,7 @@ class PokerPlayer(Iterator['PokerPlayer']):
         elif self.shown:
             return (HoleCard(card, True) for card in self._cards)
         else:
-            return (HoleCard(card, status) for card, status in zip(self._cards, self.__game.hole_card_statuses))
+            return (HoleCard(card, status) for card, status in zip(self._cards, self.__game._hole_card_statuses))
 
     @property
     def hand(self) -> Hand:
@@ -423,8 +423,7 @@ class PokerGame(SequentialGame[PokerNature, PokerPlayer], ABC):
         return sum(min(player._commitment, self._requirement) for player in self.players)
 
     @cached_property
-    @final
-    def hole_card_statuses(self) -> Sequence[bool]:
+    def _hole_card_statuses(self) -> Sequence[bool]:
         from gameframe.poker._stages import HoleCardDealingStage
 
         statuses = list[bool]()
