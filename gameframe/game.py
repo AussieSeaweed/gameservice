@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import Iterable, Sequence
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, TypeVar, final
 
 from gameframe.exceptions import ActionException
 
@@ -8,14 +8,14 @@ from gameframe.exceptions import ActionException
 class GameInterface(ABC):
     """GameInterface is the interface for all games.
 
-    Every game has to define its nature and players.
+       Every game has to define its nature and players.
     """
 
     @property
     @abstractmethod
     def nature(self) -> Any:
         """
-        :return: the nature of this game
+        :return: The nature of this game.
         """
         ...
 
@@ -23,7 +23,7 @@ class GameInterface(ABC):
     @abstractmethod
     def players(self) -> Sequence[Any]:
         """
-        :return: the players of this game
+        :return: The players of this game.
         """
         ...
 
@@ -31,7 +31,7 @@ class GameInterface(ABC):
     @abstractmethod
     def terminal(self) -> bool:
         """
-        :return: True if this game is terminal, else False
+        :return: True if this game is terminal, else False.
         """
         ...
 
@@ -48,10 +48,12 @@ class Game(Generic[_N, _P], GameInterface, ABC):
         self.__players = tuple(players)
 
     @property
+    @final
     def nature(self) -> _N:
         return self.__nature
 
     @property
+    @final
     def players(self) -> Sequence[_P]:
         return self.__players
 

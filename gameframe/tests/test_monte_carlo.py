@@ -3,7 +3,7 @@ from random import choice, randint, sample
 from typing import Generic, cast
 from unittest import TestCase, main
 
-from auxiliary.utils import next_or_none
+from auxiliary import next_or_none
 
 from gameframe.game import _G
 from gameframe.poker import NLTGame, PokerNature, PokerPlayer, parse_poker
@@ -41,7 +41,7 @@ class NLTMonteCarloTestCase(TestCase, MonteCarloTestCaseMixin[NLTGame]):
     MONTE_CARLO_TEST_COUNT = 1000
 
     ANTE = 1
-    BLINDS = [1, 2]
+    BLINDS = 1, 2
     PLAYER_COUNT = 6
     MIN_STACK = 0
     MAX_STACK = 20
@@ -80,7 +80,7 @@ class NLTMonteCarloTestCase(TestCase, MonteCarloTestCaseMixin[NLTGame]):
             if game.actor.can_showdown():
                 actions.extend(('s 0', 's 1'))
 
-            parse_poker(game, [choice(actions)])
+            parse_poker(game, (choice(actions),))
 
     def create_game(self) -> NLTGame:
         return NLTGame(

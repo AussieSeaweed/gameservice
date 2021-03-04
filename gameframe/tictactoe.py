@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import Iterable, Iterator, Sequence
 from typing import Optional, cast, final, overload
 
-from auxiliary.utils import next_or_none
+from auxiliary import next_or_none
 
 from gameframe.exceptions import ActionException
 from gameframe.sequential import SequentialGame, _SequentialAction
@@ -22,9 +22,9 @@ class TTTPlayer:
     def mark(self, r: int, c: int) -> None:
         """Marks the cell of the board at the coordinates.
 
-        :param r: the row number of the cell
-        :param c: the column number of the cell
-        :return: None
+        :param r: The row number of the cell.
+        :param c: The column number of the cell.
+        :return: None.
         """
         _MarkAction(self.__game, self, r, c).act()
 
@@ -39,9 +39,9 @@ class TTTPlayer:
     def can_mark(self, r: Optional[int] = None, c: Optional[int] = None) -> bool:
         """Determines if the cell of the board at the coordinates can be marked.
 
-        :param r: the row number of the cell
-        :param c: the column number of the cell
-        :return: True if the cell can be marked, else False
+        :param r: The row number of the cell.
+        :param c: The column number of the cell.
+        :return: True if the cell can be marked, else False.
         """
         try:
             if r is None or c is None:
@@ -70,21 +70,21 @@ class TTTGame(SequentialGame[None, TTTPlayer]):
     @property
     def board(self) -> Sequence[Sequence[Optional[TTTPlayer]]]:
         """
-        :return: the board of this tic tac toe game
+        :return: The board of this tic tac toe game.
         """
         return tuple(map(tuple, self._board))
 
     @property
     def empty_coords(self) -> Iterator[tuple[int, int]]:
         """
-        :return: the list of the empty coordinates of the board
+        :return: The list of the empty coordinates of the board.
         """
         return ((r, c) for r in range(3) for c in range(3) if self._board[r][c] is None)
 
     @property
     def winner(self) -> Optional[TTTPlayer]:
         """
-        :return: the winning player of the tic tac toe game if there is one, else None
+        :return: The winning player of the tic tac toe game if there is one, else None.
         """
         for i in range(3):
             if self._board[i][0] is self._board[i][1] is self._board[i][2] is not None:
@@ -129,9 +129,9 @@ class _MarkAction(_SequentialAction[TTTGame, TTTPlayer]):
 def parse_ttt(game: TTTGame, coords: Iterable[Sequence[int]]) -> None:
     """Parses the coords as mark actions and applies them the supplied tic tac toe game.
 
-    :param game: the tic tac toe game to be applied on
-    :param coords: the coordinates to mark
-    :return: None
+    :param game: The tic tac toe game to be applied on.
+    :param coords: The coordinates to mark.
+    :return: None.
     """
     for r, c in coords:
         cast(TTTPlayer, game.actor).mark(r, c)

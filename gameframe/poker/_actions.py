@@ -4,10 +4,10 @@ from collections import Iterable
 from pokertools import Card
 
 from gameframe.exceptions import ActionException
-from gameframe.poker._bases import PokerAction, PokerGame, PokerNature, PokerPlayer, S
-from gameframe.poker._exceptions import BetRaiseAmountException, CardCountException, InvalidPlayerException
 from gameframe.poker._stages import (BettingFlag, BettingStage, BoardCardDealingStage, DealingStage,
                                      HoleCardDealingStage, ShowdownStage)
+from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer, S
+from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, InvalidPlayerException
 
 
 class DealingAction(PokerAction[PokerNature, S], ABC):

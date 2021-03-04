@@ -3,15 +3,15 @@ from collections import Iterable
 
 from pokertools import parse_cards
 
-from gameframe.poker._bases import PokerGame, PokerPlayer
+from gameframe.poker.bases import PokerGame, PokerPlayer
 
 
 def parse_poker(game: PokerGame, tokens: Iterable[str]) -> None:
     """Parses the tokens as actions and applies them the supplied poker game.
 
-    :param game: the poker game to be applied on
-    :param tokens: the tokens to parse as actions
-    :return: None
+    :param game: The poker game to be applied on.
+    :param tokens: The tokens to parse as actions.
+    :return: None.
     """
     for token in tokens:
         if isinstance(game.actor, PokerPlayer):

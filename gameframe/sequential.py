@@ -9,8 +9,8 @@ from gameframe.game import Game, GameInterface, _A, _Action, _N, _P
 class SequentialGameInterface(GameInterface, ABC):
     """SequentialGameInterface is the interface for all sequential games.
 
-    In sequential games, only one actor can act at a time and is stored in the actor property. If a sequential game is
-    terminal, its actor attribute must be set to None to denote such.
+       In sequential games, only one actor can act at a time and is stored in the actor property. If a sequential game
+       is terminal, its actor attribute must be set to None to denote such.
     """
 
     _actor: Any
@@ -24,8 +24,9 @@ class SequentialGameInterface(GameInterface, ABC):
     @abstractmethod
     def actor(self) -> Any:
         """
-        :return: the actor of this sequential game
+        :return: The actor of this sequential game.
         """
+        ...
 
 
 class SequentialGame(Game[_N, _P], SequentialGameInterface, ABC):
@@ -48,7 +49,8 @@ _SG = TypeVar('_SG', bound=SequentialGameInterface)
 class _SequentialAction(_Action[_SG, _A], ABC):
     @property
     @abstractmethod
-    def next_actor(self) -> Any: ...
+    def next_actor(self) -> Any:
+        ...
 
     def act(self) -> None:
         super().act()

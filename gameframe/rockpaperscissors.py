@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import unique
 from typing import Any, Optional, cast, final
 
-from auxiliary.enums import OrderedEnum
+from auxiliary import OrderedEnum
 
 from gameframe.exceptions import ActionException
 from gameframe.game import Game, _Action
@@ -20,22 +20,22 @@ class RPSPlayer:
     @property
     def hand(self) -> Optional[RPSHand]:
         """
-        :return: the hand of this rock paper scissors player.
+        :return: The hand of this rock paper scissors player.
         """
         return self._hand
 
     def throw(self, hand: RPSHand) -> None:
         """Throws the specified hand.
 
-        :param hand: the hand to be thrown
-        :return: None
+        :param hand: The hand to be thrown.
+        :return: None.
         """
         _ThrowAction(self.__game, self, hand).act()
 
     def can_throw(self) -> bool:
         """Determines if this rock paper scissors player can throw a hand.
 
-        :return: True if this rock paper scissors player can throw a hand, else False
+        :return: True if this rock paper scissors player can throw a hand, else False.
         """
         try:
             _ThrowAction(self.__game, self, next(iter(RPSHand))).verify()
@@ -59,7 +59,7 @@ class RPSGame(Game[None, RPSPlayer]):
     @property
     def winner(self) -> Optional[RPSPlayer]:
         """
-        :return: the winning player of this rock paper scissors game if there is one, else None
+        :return: The winning player of this rock paper scissors game if there is one, else None.
         """
         if self.terminal and self.players[0].hand != self.players[1].hand:
             return max(self.players, key=lambda player: cast(RPSHand, player.hand))

@@ -1,14 +1,15 @@
 from abc import ABC
-from collections import Iterable, Sequence
+from collections import Iterable
 from typing import final
 
+from auxiliary import ilen, retain_iter
 from pokertools import (Card, Deck, Evaluator, GreekEvaluator, OmahaEvaluator, Rank, ShortDeck, ShortEvaluator,
                         StandardDeck, StandardEvaluator, Suit)
 from pokertools.evaluators import RankEvaluator
 
-from gameframe.poker._bases import PokerGame
 from gameframe.poker._stages import (BettingStage, BoardCardDealingStage, HoleCardDealingStage, NLBettingStage,
                                      PLBettingStage, ShowdownStage)
+from gameframe.poker.bases import PokerGame
 
 
 class HEGame(PokerGame, ABC):
@@ -19,21 +20,22 @@ class HEGame(PokerGame, ABC):
             hole_card_count: int, deck: Deck, evaluator: Evaluator,
             ante: int, blinds: Iterable[int], starting_stacks: Iterable[int],
     ):
-        super().__init__([
+        super().__init__((
             HoleCardDealingStage(self, hole_card_count, False), pre_flop,
             BoardCardDealingStage(self, 3), flop,
             BoardCardDealingStage(self, 1), turn,
             BoardCardDealingStage(self, 1), river,
             ShowdownStage(self),
-        ], deck, evaluator, ante, blinds, starting_stacks)
+        ), deck, evaluator, ante, blinds, starting_stacks)
 
 
 class NLHEGame(HEGame, ABC):
     """NLHEGame is the class for No-Limit Hold'em games."""
 
+    @retain_iter
     def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Iterable[int],
                  starting_stacks: Iterable[int]):
-        d = max(ante, max(blinds := tuple(blinds)))
+        d = max(ante, max(blinds))
 
         super().__init__(
             NLBettingStage(self, d), NLBettingStage(self, d), NLBettingStage(self, d), NLBettingStage(self, d),
@@ -44,9 +46,10 @@ class NLHEGame(HEGame, ABC):
 class PLHEGame(HEGame, ABC):
     """PLHEGame is the class for Pot-Limit Hold'em games."""
 
+    @retain_iter
     def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Iterable[int],
                  starting_stacks: Iterable[int]):
-        d = max(ante, max(blinds := tuple(blinds)))
+        d = max(ante, max(blinds))
 
         super().__init__(
             PLBettingStage(self, d), PLBettingStage(self, d), PLBettingStage(self, d), PLBettingStage(self, d),
@@ -106,24 +109,20 @@ class PLGGame(PLHEGame):
 class NLSGame(NLHEGame):
     """NLSGame is the class for No-Limit Short-Deck Hold'em games."""
 
+    @retain_iter
     def __init__(self, ante: int, button_blind: int, starting_stacks: Iterable[int]):
-        if isinstance(starting_stacks, Sequence):
-            super().__init__(2, ShortDeck(), ShortEvaluator(), ante, [0] * (len(starting_stacks) - 1) + [button_blind],
-                             starting_stacks)
-        else:
-            NLSGame.__init__(self, ante, button_blind, tuple(starting_stacks))
+        super().__init__(2, ShortDeck(), ShortEvaluator(), ante, (0,) * (ilen(starting_stacks) - 1) + (button_blind,),
+                         starting_stacks)
 
 
 @final
 class PLSGame(PLHEGame):
     """PLSGame is the class for Pot-Limit Short-Deck Hold'em games."""
 
+    @retain_iter
     def __init__(self, ante: int, button_blind: int, starting_stacks: Iterable[int]):
-        if isinstance(starting_stacks, Sequence):
-            super().__init__(2, ShortDeck(), ShortEvaluator(), ante, [0] * (len(starting_stacks) - 1) + [button_blind],
-                             starting_stacks)
-        else:
-            PLSGame.__init__(self, ante, button_blind, tuple(starting_stacks))
+        super().__init__(2, ShortDeck(), ShortEvaluator(), ante, (0,) * (ilen(starting_stacks) - 1) + (button_blind,),
+                         starting_stacks)
 
 
 @final
