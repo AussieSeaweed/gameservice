@@ -4,28 +4,35 @@ from typing import Any, Generic, TypeVar, final
 
 from gameframe.exceptions import ActionException
 
+_N = TypeVar('_N')
+_P = TypeVar('_P')
 
-class GameInterface(ABC):
-    """GameInterface is the interface for all games.
+
+class Game(Generic[_N, _P], ABC):
+    """Game is the abstract generic base class for all games.
 
        Every game has to define its nature and players.
     """
 
+    def __init__(self, nature: _N, players: Iterable[_P]):
+        self.__nature = nature
+        self.__players = tuple(players)
+
     @property
-    @abstractmethod
-    def nature(self) -> Any:
+    @final
+    def nature(self) -> _N:
         """
         :return: The nature of this game.
         """
-        pass
+        return self.__nature
 
     @property
-    @abstractmethod
-    def players(self) -> Sequence[Any]:
+    @final
+    def players(self) -> Sequence[_P]:
         """
         :return: The players of this game.
         """
-        pass
+        return self.__players
 
     @property
     @abstractmethod
@@ -36,29 +43,7 @@ class GameInterface(ABC):
         pass
 
 
-_N = TypeVar('_N')
-_P = TypeVar('_P')
-
-
-class Game(Generic[_N, _P], GameInterface, ABC):
-    """Game is the abstract generic base class for all games."""
-
-    def __init__(self, nature: _N, players: Iterable[_P]):
-        self.__nature = nature
-        self.__players = tuple(players)
-
-    @property
-    @final
-    def nature(self) -> _N:
-        return self.__nature
-
-    @property
-    @final
-    def players(self) -> Sequence[_P]:
-        return self.__players
-
-
-_G = TypeVar('_G', bound=GameInterface)
+_G = TypeVar('_G', bound=Game[Any, Any])
 _A = TypeVar('_A')
 
 
