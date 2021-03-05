@@ -54,15 +54,15 @@ class RPSGame(Game[None, RPSPlayer]):
 
     @property
     def terminal(self) -> bool:
-        return all(player.hand is not None for player in self.players)
+        return all(player._hand is not None for player in self.players)
 
     @property
     def winner(self) -> Optional[RPSPlayer]:
         """
         :return: The winning player of this rock paper scissors game if there is one, else None.
         """
-        if self.terminal and self.players[0].hand != self.players[1].hand:
-            return max(self.players, key=lambda player: cast(RPSHand, player.hand))
+        if self.terminal and self.players[0]._hand != self.players[1]._hand:
+            return max(self.players, key=lambda player: cast(RPSHand, player._hand))
         else:
             return None
 
@@ -96,5 +96,5 @@ class _ThrowAction(_Action[RPSGame, RPSPlayer]):
 
         if not isinstance(self.hand, RPSHand):
             raise TypeError('The hand must be of type Hand')
-        elif self.actor.hand is not None:
+        elif self.actor._hand is not None:
             raise ActionException('The player has already played a hand')

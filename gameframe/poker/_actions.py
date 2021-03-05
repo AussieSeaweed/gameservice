@@ -36,7 +36,7 @@ class DealingAction(PokerAction[PokerNature, S], ABC):
 
     @abstractmethod
     def deal(self) -> None:
-        ...
+        pass
 
 
 class HoleCardDealingAction(DealingAction[HoleCardDealingStage]):

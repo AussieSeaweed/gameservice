@@ -461,16 +461,16 @@ class Stage(Iterator['Stage'], ABC):
     @property
     @abstractmethod
     def opener(self) -> Union[PokerNature, PokerPlayer]:
-        ...
+        pass
 
     def open(self) -> None:
         self.game._actor = self.opener
 
     def close(self) -> None:
-        ...
+        pass
 
     def update(self) -> None:
-        ...
+        pass
 
 
 S = TypeVar('S', bound=Stage)

@@ -13,7 +13,7 @@ from gameframe.tictactoe import TTTGame, parse_ttt
 
 
 class SimulationTestCaseMixin(Generic[_G], ABC):
-    ...
+    pass
 
 
 class NLTSimulationTestCase(TestCase, SimulationTestCaseMixin[NLTGame]):

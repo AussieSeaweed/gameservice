@@ -4,7 +4,7 @@ from functools import cached_property
 from typing import cast
 
 from auxiliary import rotate
-from math2.misc import limit
+from math2.misc import bind
 
 from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer, Stage
 
@@ -76,7 +76,7 @@ class BettingStage(Stage, ABC):
     @property
     @abstractmethod
     def max_amount(self) -> int:
-        ...
+        pass
 
     def open(self) -> None:
         super().open()
@@ -113,7 +113,7 @@ class PLBettingStage(BettingStage):
         bets = tuple(player.bet for player in self.game.players)
         max_amount = max(bets) + self.game.pot + sum(bets) + max(bets) - player.bet
 
-        return limit(max_amount, self.min_amount, player.bet + player.stack)
+        return bind(max_amount, self.min_amount, player.bet + player.stack)
 
 
 class ShowdownStage(Stage):

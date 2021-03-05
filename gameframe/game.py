@@ -17,7 +17,7 @@ class GameInterface(ABC):
         """
         :return: The nature of this game.
         """
-        ...
+        pass
 
     @property
     @abstractmethod
@@ -25,7 +25,7 @@ class GameInterface(ABC):
         """
         :return: The players of this game.
         """
-        ...
+        pass
 
     @property
     @abstractmethod
@@ -33,7 +33,7 @@ class GameInterface(ABC):
         """
         :return: True if this game is terminal, else False.
         """
-        ...
+        pass
 
 
 _N = TypeVar('_N')
@@ -77,4 +77,4 @@ class _Action(Generic[_G, _A], ABC):
 
     @abstractmethod
     def apply(self) -> None:
-        ...
+        pass
