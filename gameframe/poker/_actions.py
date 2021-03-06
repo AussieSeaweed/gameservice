@@ -7,7 +7,7 @@ from gameframe.exceptions import ActionException
 from gameframe.poker._stages import (BettingFlag, BettingStage, BoardCardDealingStage, DealingStage,
                                      HoleCardDealingStage, ShowdownStage)
 from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer, S
-from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, InvalidPlayerException
+from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, PlayerException
 
 
 class DealingAction(PokerAction[PokerNature, S], ABC):
@@ -20,10 +20,6 @@ class DealingAction(PokerAction[PokerNature, S], ABC):
     def next_actor(self) -> PokerNature:
         return self.game.nature
 
-    def apply(self) -> None:
-        self.deal()
-        self.game._deck.remove(self.cards)
-
     def verify(self) -> None:
         super().verify()
 
@@ -33,6 +29,10 @@ class DealingAction(PokerAction[PokerNature, S], ABC):
             raise ActionException('Card not in deck')
         elif len(self.cards) != len(set(self.cards)):
             raise ActionException('Duplicates in cards')
+
+    def apply(self) -> None:
+        self.deal()
+        self.game._deck.remove(self.cards)
 
     @abstractmethod
     def deal(self) -> None:
@@ -45,9 +45,6 @@ class HoleCardDealingAction(DealingAction[HoleCardDealingStage]):
 
         self.player = player
 
-    def deal(self) -> None:
-        self.player._cards.extend(self.cards)
-
     def verify(self) -> None:
         super().verify()
 
@@ -56,17 +53,17 @@ class HoleCardDealingAction(DealingAction[HoleCardDealingStage]):
         elif not isinstance(self.game._stage, HoleCardDealingStage):
             raise ActionException('Hole card dealing not allowed')
         elif self.player.mucked:
-            raise InvalidPlayerException('Cannot deal to mucked player')
+            raise PlayerException('Cannot deal to mucked player')
         elif len(self.player._cards) >= self.stage.card_target:
-            raise InvalidPlayerException('The player already has enough hole cards')
+            raise PlayerException('The player already has enough hole cards')
         elif len(self.cards) != self.stage.card_count:
             raise CardCountException('Invalid number of hole cards are dealt')
 
+    def deal(self) -> None:
+        self.player._cards.extend(self.cards)
+
 
 class BoardCardDealingAction(DealingAction[BoardCardDealingStage]):
-    def deal(self) -> None:
-        self.game._board_cards.extend(self.cards)
-
     def verify(self) -> None:
         super().verify()
 
@@ -76,6 +73,9 @@ class BoardCardDealingAction(DealingAction[BoardCardDealingStage]):
             raise ActionException('The board already has enough cards')
         elif len(self.cards) != self.stage.card_count:
             raise CardCountException('Invalid number of board cards are dealt')
+
+    def deal(self) -> None:
+        self.game._board_cards.extend(self.cards)
 
 
 class BettingAction(PokerAction[PokerPlayer, BettingStage], ABC):
@@ -96,14 +96,14 @@ class BettingAction(PokerAction[PokerPlayer, BettingStage], ABC):
 
 
 class FoldAction(BettingAction):
-    def apply(self) -> None:
-        self.actor._status = self.actor._HoleCardStatus.MUCKED
-
     def verify(self) -> None:
         super().verify()
 
         if self.actor.bet >= max(player.bet for player in self.game.players):
             raise ActionException('Folding is redundant')
+
+    def apply(self) -> None:
+        self.actor._status = self.actor._HoleCardStatus.MUCKED
 
 
 class CheckCallAction(BettingAction):
@@ -121,14 +121,6 @@ class BetRaiseAction(BettingAction):
 
         self.amount = amount
 
-    def apply(self) -> None:
-        self.stage.flag = BettingFlag.DEFAULT
-
-        self.game._aggressor = self.actor
-        self.game._max_delta = max(self.game._max_delta, self.amount - max(player.bet for player in self.game.players))
-
-        self.actor._commitment += self.amount - self.actor.bet
-
     def verify(self) -> None:
         super().verify()
 
@@ -140,6 +132,14 @@ class BetRaiseAction(BettingAction):
             raise ActionException('Betting/Raising is redundant')
         elif not self.stage.min_amount <= self.amount <= self.stage.max_amount:
             raise BetRaiseAmountException('The bet/raise amount is not allowed')
+
+    def apply(self) -> None:
+        self.stage.flag = BettingFlag.DEFAULT
+
+        self.game._aggressor = self.actor
+        self.game._max_delta = max(self.game._max_delta, self.amount - max(player.bet for player in self.game.players))
+
+        self.actor._commitment += self.amount - self.actor.bet
 
 
 class ShowdownAction(PokerAction[PokerPlayer, ShowdownStage]):
@@ -157,13 +157,6 @@ class ShowdownAction(PokerAction[PokerPlayer, ShowdownStage]):
 
         return actor
 
-    def apply(self) -> None:
-        if self.force or all(not (player.hand > self.actor.hand and player._commitment >= self.actor._commitment)
-                             for player in self.game.players if player.shown):
-            self.actor._status = self.actor._HoleCardStatus.SHOWN
-        else:
-            self.actor._status = self.actor._HoleCardStatus.MUCKED
-
     def verify(self) -> None:
         super().verify()
 
@@ -171,3 +164,10 @@ class ShowdownAction(PokerAction[PokerPlayer, ShowdownStage]):
             raise TypeError('The force argument must be of type bool')
         elif not isinstance(self.game._stage, ShowdownStage):
             raise ActionException('Game not in showdown')
+
+    def apply(self) -> None:
+        if self.force or all(not (player.hand > self.actor.hand and player._commitment >= self.actor._commitment)
+                             for player in self.game.players if player.shown):
+            self.actor._status = self.actor._HoleCardStatus.SHOWN
+        else:
+            self.actor._status = self.actor._HoleCardStatus.MUCKED

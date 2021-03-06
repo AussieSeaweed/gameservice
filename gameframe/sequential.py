@@ -16,7 +16,7 @@ class SequentialGame(Game[_N, _P], ABC):
     def __init__(self, nature: _N, players: Iterable[_P], actor: Optional[Union[_N, _P]]):
         super().__init__(nature, players)
 
-        self._actor: Optional[Union[_N, _P]] = actor
+        self._actor = actor
 
     @property
     @final

@@ -59,9 +59,7 @@ class TTTGame(SequentialGame[None, TTTPlayer]):
     """TTTGame is the class for tic tac toe games."""
 
     def __init__(self) -> None:
-        players = TTTPlayer(self), TTTPlayer(self)
-
-        super().__init__(None, players, players[0])
+        super().__init__(None, players := (TTTPlayer(self), TTTPlayer(self)), players[0])
 
         self._board: list[list[Optional[TTTPlayer]]] = [[None, None, None],
                                                         [None, None, None],
@@ -108,12 +106,9 @@ class _MarkAction(_SequentialAction[TTTGame, TTTPlayer]):
     @property
     def next_actor(self) -> Optional[TTTPlayer]:
         if next_or_none(self.game.empty_coords) is not None and self.game.winner is None:
-            return self.game.players[not self.game.players.index(self.actor)]
+            return self.game.players[self.game.players[0] is self.actor]
         else:
             return None
-
-    def apply(self) -> None:
-        self.game._board[self.r][self.c] = self.actor
 
     def verify(self) -> None:
         super().verify()
@@ -124,6 +119,9 @@ class _MarkAction(_SequentialAction[TTTGame, TTTPlayer]):
             raise ActionException('The coordinates are out of bounds')
         elif self.game._board[self.r][self.c] is not None:
             raise ActionException('The cell is not empty')
+
+    def apply(self) -> None:
+        self.game._board[self.r][self.c] = self.actor
 
 
 def parse_ttt(game: TTTGame, coords: Iterable[Sequence[int]]) -> None:

@@ -88,9 +88,6 @@ class _ThrowAction(_Action[RPSGame, RPSPlayer]):
 
         self.hand = hand
 
-    def apply(self) -> None:
-        self.actor._hand = self.hand
-
     def verify(self) -> None:
         super().verify()
 
@@ -98,3 +95,6 @@ class _ThrowAction(_Action[RPSGame, RPSPlayer]):
             raise TypeError('The hand must be of type Hand')
         elif self.actor._hand is not None:
             raise ActionException('The player has already played a hand')
+
+    def apply(self) -> None:
+        self.actor._hand = self.hand

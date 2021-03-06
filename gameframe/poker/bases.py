@@ -12,7 +12,7 @@ from pokertools import Card, Deck, Evaluator, Hand, HoleCard
 
 from gameframe.exceptions import ActionException, ParamException
 from gameframe.game import _A
-from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, InvalidPlayerException
+from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, PlayerException
 from gameframe.sequential import SequentialGame, _SequentialAction
 
 
@@ -95,7 +95,7 @@ class PokerNature:
         try:
             HoleCardDealingAction(self.__game, self, default(player, self.__game.players[0]),
                                   default(cards, ())).verify()
-        except InvalidPlayerException:
+        except PlayerException:
             return player is None
         except CardCountException:
             return cards is None
