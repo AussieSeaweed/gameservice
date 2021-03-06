@@ -1,6 +1,6 @@
 from abc import ABC
 from collections import Iterable, Sequence
-from typing import Generic, Optional
+from typing import Generic, Optional, cast
 from unittest import TestCase, main
 
 from pokertools import parse_cards
@@ -491,7 +491,7 @@ class FLGSimulationTestCase(TestCase, SimulationTestCaseMixin[FLGGame]):
             'br 20', 'br 30', 'br 40'
         ))
 
-        self.assertRaises(ActionException, game.players[1].bet_raise, 50)
+        self.assertRaises(ActionException, cast(PokerPlayer, game.actor).bet_raise, 50)
 
 
 class KuhnSimulationTestCase(TestCase, SimulationTestCaseMixin[KuhnGame]):
