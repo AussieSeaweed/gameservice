@@ -11,7 +11,17 @@ gameframe.poker package
    :undoc-members:
    :show-inheritance:
 
+.. automodule:: gameframe.poker.params
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 .. automodule:: gameframe.poker.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: gameframe.poker.exceptions
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,7 +1,7 @@
 gameframe.tictactoe package
 ===========================
 
-.. automodule:: gameframe.tictactoe.bases
+.. automodule:: gameframe.tictactoe
    :members:
    :undoc-members:
    :show-inheritance:

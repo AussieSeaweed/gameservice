@@ -1,7 +1,7 @@
-gameframe.sequential package
+gameframe.exceptions package
 ============================
 
-.. automodule:: gameframe.sequential
+.. automodule:: gameframe.exceptions
    :members:
    :undoc-members:
    :show-inheritance:

@@ -9,3 +9,4 @@ GameFrame API
    gameframe.poker
    gameframe.tictactoe
    gameframe.rockpaperscissors
+   gameframe.exceptions
