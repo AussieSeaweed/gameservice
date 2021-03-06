@@ -7,7 +7,7 @@ from pokertools import parse_cards
 
 from gameframe.exceptions import ActionException
 from gameframe.game import _G
-from gameframe.poker import KuhnGame, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker
+from gameframe.poker import FLGGame, KuhnGame, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker
 from gameframe.tictactoe import TTTGame, parse_ttt
 
 
@@ -480,6 +480,18 @@ class NLSSimulationTestCase(TestCase, SimulationTestCaseMixin[NLSGame]):
         self.assertSequenceEqual([player.stack for player in game.players], [489000, 226000, 684000, 400000, 0, 198000])
         self.assertSequenceEqual([player.shown for player in game.players], [False, False, True, False, True, False])
         self.assertSequenceEqual([player.mucked for player in game.players], [True, True, False, True, False, True])
+
+
+class FLGSimulationTestCase(TestCase, SimulationTestCaseMixin[FLGGame]):
+    def test_max_bet_raise_count(self) -> None:
+        game = FLGGame(0, [5, 10], [1000, 1000])
+
+        parse_poker(game, (
+            'dh 0 Th8h', 'dh 1 QsJd',
+            'br 20', 'br 30', 'br 40'
+        ))
+
+        self.assertRaises(ActionException, game.players[1].bet_raise, 50)
 
 
 class KuhnSimulationTestCase(TestCase, SimulationTestCaseMixin[KuhnGame]):
