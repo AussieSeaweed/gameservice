@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from collections import Iterable, Sequence
-from typing import Any, Generic, TypeVar, final
+from collections import Iterable
+from typing import Any, Final, Generic, TypeVar
 
 from gameframe.exceptions import ActionException
 
@@ -15,24 +15,8 @@ class Game(Generic[_N, _P], ABC):
     """
 
     def __init__(self, nature: _N, players: Iterable[_P]):
-        self.__nature = nature
-        self.__players = tuple(players)
-
-    @property
-    @final
-    def nature(self) -> _N:
-        """
-        :return: The nature of this game.
-        """
-        return self.__nature
-
-    @property
-    @final
-    def players(self) -> Sequence[_P]:
-        """
-        :return: The players of this game.
-        """
-        return self.__players
+        self.nature: Final = nature
+        self.players: Final = tuple(players)
 
     @property
     @abstractmethod

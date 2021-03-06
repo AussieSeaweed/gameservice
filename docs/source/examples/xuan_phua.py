@@ -11,12 +11,12 @@ badziakouski, zhong, xuan, jun, phua, koon = game.players
 
 # Pre-flop
 
-game.nature.deal_player(badziakouski, parse_cards('Th8h'))
-game.nature.deal_player(zhong, parse_cards('QsJd'))
-game.nature.deal_player(xuan, parse_cards('QhQd'))
-game.nature.deal_player(jun, parse_cards('8d7c'))
-game.nature.deal_player(phua, parse_cards('KhKs'))
-game.nature.deal_player(koon, parse_cards('8c7h'))
+game.nature.deal_hole(badziakouski, parse_cards('Th8h'))
+game.nature.deal_hole(zhong, parse_cards('QsJd'))
+game.nature.deal_hole(xuan, parse_cards('QhQd'))
+game.nature.deal_hole(jun, parse_cards('8d7c'))
+game.nature.deal_hole(phua, parse_cards('KhKs'))
+game.nature.deal_hole(koon, parse_cards('8c7h'))
 
 badziakouski.check_call()
 zhong.check_call()

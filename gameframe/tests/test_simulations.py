@@ -1,6 +1,6 @@
 from abc import ABC
 from collections import Iterable, Sequence
-from typing import Generic, Optional, cast
+from typing import Generic, Optional
 from unittest import TestCase, main
 
 from pokertools import parse_cards
@@ -8,7 +8,6 @@ from pokertools import parse_cards
 from gameframe.exceptions import ActionException
 from gameframe.game import _G
 from gameframe.poker import KuhnGame, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker
-from gameframe.poker._stages import ShowdownStage
 from gameframe.tictactoe import TTTGame, parse_ttt
 
 
@@ -231,31 +230,31 @@ class NLTSimulationTestCase(TestCase, SimulationTestCaseMixin[NLTGame]):
         n = game.nature
         a, b, c = game.players
 
-        self.assertTrue(n.can_deal_player())
-        self.assertTrue(n.can_deal_player(a))
-        self.assertTrue(n.can_deal_player(a, parse_cards('AhTh')))
-        self.assertTrue(n.can_deal_player(b))
-        self.assertTrue(n.can_deal_player(b, parse_cards('AhTh')))
-        self.assertTrue(n.can_deal_player(c))
-        self.assertTrue(n.can_deal_player(c, parse_cards('AhTh')))
+        self.assertTrue(n.can_deal_hole())
+        self.assertTrue(n.can_deal_hole(a))
+        self.assertTrue(n.can_deal_hole(a, parse_cards('AhTh')))
+        self.assertTrue(n.can_deal_hole(b))
+        self.assertTrue(n.can_deal_hole(b, parse_cards('AhTh')))
+        self.assertTrue(n.can_deal_hole(c))
+        self.assertTrue(n.can_deal_hole(c, parse_cards('AhTh')))
         self.assertFalse(n.can_deal_board())
-        self.assertEqual(n.player_deal_count, 2)
+        self.assertEqual(n.hole_deal_count, 2)
 
-        n.deal_player(a, parse_cards('AhTh'))
+        n.deal_hole(a, parse_cards('AhTh'))
 
-        self.assertTrue(n.can_deal_player())
-        self.assertFalse(n.can_deal_player(a))
-        self.assertTrue(n.can_deal_player(b))
-        self.assertTrue(n.can_deal_player(c))
-        self.assertFalse(n.can_deal_player(c, parse_cards('AhTh')))
+        self.assertTrue(n.can_deal_hole())
+        self.assertFalse(n.can_deal_hole(a))
+        self.assertTrue(n.can_deal_hole(b))
+        self.assertTrue(n.can_deal_hole(c))
+        self.assertFalse(n.can_deal_hole(c, parse_cards('AhTh')))
         self.assertFalse(n.can_deal_board())
         self.assertFalse(n.can_deal_board(parse_cards('AhTh')))
-        self.assertEqual(n.player_deal_count, 2)
+        self.assertEqual(n.hole_deal_count, 2)
 
-        n.deal_player(b, parse_cards('AsTs'))
-        n.deal_player(c, parse_cards('AcTc'))
+        n.deal_hole(b, parse_cards('AsTs'))
+        n.deal_hole(c, parse_cards('AcTc'))
 
-        self.assertFalse(n.can_deal_player())
+        self.assertFalse(n.can_deal_hole())
         self.assertFalse(n.can_deal_board())
 
         self.assertFalse(a.can_fold())
@@ -290,10 +289,10 @@ class NLTSimulationTestCase(TestCase, SimulationTestCaseMixin[NLTGame]):
         a.fold()
         b.check_call()
 
-        self.assertFalse(n.can_deal_player())
-        self.assertFalse(n.can_deal_player(a))
-        self.assertFalse(n.can_deal_player(b))
-        self.assertFalse(n.can_deal_player(c))
+        self.assertFalse(n.can_deal_hole())
+        self.assertFalse(n.can_deal_hole(a))
+        self.assertFalse(n.can_deal_hole(b))
+        self.assertFalse(n.can_deal_hole(c))
         self.assertTrue(n.can_deal_board())
         self.assertFalse(n.can_deal_board(parse_cards('AhTh')))
         self.assertTrue(n.can_deal_board(parse_cards('2h3h4h')))
@@ -324,7 +323,7 @@ class NLTSimulationTestCase(TestCase, SimulationTestCaseMixin[NLTGame]):
         game = NLTGame(500, [1000, 2000], [1125600, 2000000, 553500])
 
         parse_poker(game, (
-            'dp 0 Ac2d', 'dp 1 5h7s', 'dp 2 7h6h',
+            'dh 0 Ac2d', 'dh 1 5h7s', 'dh 2 7h6h',
             'br 7000', 'br 23000', 'f', 'cc',
             'db Jc3d5c',
             'br 35000', 'cc',
@@ -343,10 +342,10 @@ class NLTSimulationTestCase(TestCase, SimulationTestCaseMixin[NLTGame]):
         self.assertSequenceEqual([player.mucked for player in game.players], [False, True, False])
 
     def assert_actor(self, game: PokerGame, index: Optional[int]) -> None:
-        if isinstance(game.actor, PokerPlayer):
-            self.assertEqual(game.actor.index, index)
+        if index is None:
+            self.assertIs(game.actor, game.nature)
         else:
-            self.assertIsNone(index)
+            self.assertIs(game.actor, game.players[index])
 
     def assert_shows(self, game: PokerGame, shows: Sequence[bool]) -> None:
         self.assertSequenceEqual([player.shown for player in game.players], shows)
@@ -360,7 +359,7 @@ class NLTSimulationTestCase(TestCase, SimulationTestCaseMixin[NLTGame]):
         game = NLTGame(self.ANTE, self.BLINDS, stacks)
 
         for player, hole_cards in zip(game.players, hole_card_sets):
-            game.nature.deal_player(player, parse_cards(hole_cards))
+            game.nature.deal_hole(player, parse_cards(hole_cards))
 
         try:
             while tokens or board_card_sets:
@@ -386,8 +385,8 @@ class NLTSimulationTestCase(TestCase, SimulationTestCaseMixin[NLTGame]):
             assert not tokens and not board_card_sets, 'DEBUG: An exception was raised before all commands were parsed'
             raise exception
 
-        while terminate and not game.terminal and isinstance(game._stage, ShowdownStage):
-            cast(PokerPlayer, game.actor).showdown()
+        while terminate and not game.terminal and isinstance(game.actor, PokerPlayer) and game.actor.can_showdown():
+            game.actor.showdown()
 
         return game
 
@@ -396,16 +395,16 @@ class PLOSimulationTestCase(TestCase, SimulationTestCaseMixin[PLOGame]):
     def test_amount(self) -> None:
         game = PLOGame(0, [1, 2], [100, 100])
 
-        game.nature.deal_player(game.players[0], parse_cards('AhAsKhKs'))
-        game.nature.deal_player(game.players[1], parse_cards('AcAdKcKd'))
+        game.nature.deal_hole(game.players[0], parse_cards('AhAsKhKs'))
+        game.nature.deal_hole(game.players[1], parse_cards('AcAdKcKd'))
 
         self.assertEqual(game.players[1].max_bet_raise_amount, 6)
 
         game = PLOGame(0, [1, 2], [100, 100, 100])
 
-        game.nature.deal_player(game.players[0], parse_cards('AhAsKhKs'))
-        game.nature.deal_player(game.players[1], parse_cards('AcAdKcKd'))
-        game.nature.deal_player(game.players[2], parse_cards('QcQdJcJd'))
+        game.nature.deal_hole(game.players[0], parse_cards('AhAsKhKs'))
+        game.nature.deal_hole(game.players[1], parse_cards('AcAdKcKd'))
+        game.nature.deal_hole(game.players[2], parse_cards('QcQdJcJd'))
 
         self.assertEqual(game.players[2].max_bet_raise_amount, 7)
 
@@ -415,8 +414,8 @@ class PLOSimulationTestCase(TestCase, SimulationTestCaseMixin[PLOGame]):
 
         game = PLOGame(1, [1, 2], [100, 100])
 
-        game.nature.deal_player(game.players[0], parse_cards('AhAsKhKs'))
-        game.nature.deal_player(game.players[1], parse_cards('AcAdKcKd'))
+        game.nature.deal_hole(game.players[0], parse_cards('AhAsKhKs'))
+        game.nature.deal_hole(game.players[1], parse_cards('AcAdKcKd'))
 
         self.assertEqual(game.players[1].max_bet_raise_amount, 8)
 
@@ -424,7 +423,7 @@ class PLOSimulationTestCase(TestCase, SimulationTestCaseMixin[PLOGame]):
         game = PLOGame(0, [50000, 100000], [125945025, 67847350])
 
         parse_poker(game, (
-            'dp 0 Ah3sKsKh', 'dp 1 6d9s7d8h',
+            'dh 0 Ah3sKsKh', 'dh 1 6d9s7d8h',
             'br 300000', 'br 900000', 'br 2700000', 'br 8100000', 'cc',
             'db 4s5c2h',
             'br 9100000', 'br 43500000', 'br 77900000', 'cc',
@@ -447,7 +446,7 @@ class NLSSimulationTestCase(TestCase, SimulationTestCaseMixin[NLSGame]):
         game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
 
         parse_poker(game, (
-            'dp 0 Th8h', 'dp 1 QsJd', 'dp 2 QhQd', 'dp 3 8d7c', 'dp 4 KhKs', 'dp 5 8c7h',
+            'dh 0 Th8h', 'dh 1 QsJd', 'dh 2 QhQd', 'dh 3 8d7c', 'dh 4 KhKs', 'dh 5 8c7h',
             'cc', 'cc', 'cc', 'cc', 'cc', 'cc',
         ))
 
@@ -456,7 +455,7 @@ class NLSSimulationTestCase(TestCase, SimulationTestCaseMixin[NLSGame]):
         game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
 
         parse_poker(game, (
-            'dp 0 Th8h', 'dp 1 QsJd', 'dp 2 QhQd', 'dp 3 8d7c', 'dp 4 KhKs', 'dp 5 8c7h',
+            'dh 0 Th8h', 'dh 1 QsJd', 'dh 2 QhQd', 'dh 3 8d7c', 'dh 4 KhKs', 'dh 5 8c7h',
             'cc', 'cc', 'cc', 'cc', 'cc', 'br 35000', 'cc', 'cc', 'cc', 'cc', 'cc',
         ))
 
@@ -466,7 +465,7 @@ class NLSSimulationTestCase(TestCase, SimulationTestCaseMixin[NLSGame]):
         game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
 
         parse_poker(game, (
-            'dp 0 Th8h', 'dp 1 QsJd', 'dp 2 QhQd', 'dp 3 8d7c', 'dp 4 KhKs', 'dp 5 8c7h',
+            'dh 0 Th8h', 'dh 1 QsJd', 'dh 2 QhQd', 'dh 3 8d7c', 'dh 4 KhKs', 'dh 5 8c7h',
             'cc', 'cc', 'br 35000', 'f', 'br 298000', 'f', 'f', 'f', 'cc',
             'db 9h6cKc',
             'db Jh',
@@ -486,11 +485,11 @@ class NLSSimulationTestCase(TestCase, SimulationTestCaseMixin[NLSGame]):
 class KuhnSimulationTestCase(TestCase, SimulationTestCaseMixin[KuhnGame]):
     def test_hands(self) -> None:
         games = [
-            self.parse(('dp 0 Qs', 'dp 1 Ks', 'cc', 'cc', 's', 's')),
-            self.parse(('dp 0 Qs', 'dp 1 Ks', 'cc', 'br 1', 'f')),
-            self.parse(('dp 0 Qs', 'dp 1 Ks', 'cc', 'br 1', 'cc', 's', 's')),
-            self.parse(('dp 0 Qs', 'dp 1 Ks', 'br 1', 'f')),
-            self.parse(('dp 0 Qs', 'dp 1 Ks', 'br 1', 'cc', 's', 's')),
+            self.parse(('dh 0 Qs', 'dh 1 Ks', 'cc', 'cc', 's', 's')),
+            self.parse(('dh 0 Qs', 'dh 1 Ks', 'cc', 'br 1', 'f')),
+            self.parse(('dh 0 Qs', 'dh 1 Ks', 'cc', 'br 1', 'cc', 's', 's')),
+            self.parse(('dh 0 Qs', 'dh 1 Ks', 'br 1', 'f')),
+            self.parse(('dh 0 Qs', 'dh 1 Ks', 'br 1', 'cc', 's', 's')),
         ]
 
         for game in games:

@@ -13,8 +13,8 @@ antonius, isildur = game.players
 
 # Pre-flop
 
-game.nature.deal_player(antonius, parse_cards('Ah3sKsKh'))
-game.nature.deal_player(isildur, parse_cards('6d9s7d8h'))
+game.nature.deal_hole(antonius, parse_cards('Ah3sKsKh'))
+game.nature.deal_hole(isildur, parse_cards('6d9s7d8h'))
 
 isildur.bet_raise(300000)
 antonius.bet_raise(900000)

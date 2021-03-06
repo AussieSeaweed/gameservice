@@ -14,20 +14,20 @@ def parse_poker(game: PokerGame, tokens: Iterable[str]) -> None:
     :return: None.
     """
     for token in tokens:
-        if isinstance(game.actor, PokerPlayer):
+        if isinstance(game._actor, PokerPlayer):
             if match := re.fullmatch(r'br (?P<amount>\d+)', token):
-                game.actor.bet_raise(int(match.group('amount')))
+                game._actor.bet_raise(int(match.group('amount')))
             elif token == 'cc':
-                game.actor.check_call()
+                game._actor.check_call()
             elif token == 'f':
-                game.actor.fold()
+                game._actor.fold()
             elif match := re.fullmatch(r's( (?P<force>[0|1]))?', token):
-                game.actor.showdown(False if match.group('force') is None else bool(match.group('force')))
+                game._actor.showdown(False if match.group('force') is None else bool(match.group('force')))
             else:
                 raise ValueError('Invalid command')
         else:
-            if match := re.fullmatch(r'dp (?P<index>\d+) (?P<cards>\w+)', token):
-                game.nature.deal_player(game.players[int(match.group('index'))], parse_cards(match.group('cards')))
+            if match := re.fullmatch(r'dh (?P<index>\d+) (?P<cards>\w+)', token):
+                game.nature.deal_hole(game.players[int(match.group('index'))], parse_cards(match.group('cards')))
             elif match := re.fullmatch(r'db (?P<cards>\w+)', token):
                 game.nature.deal_board(parse_cards(match.group('cards')))
             else:

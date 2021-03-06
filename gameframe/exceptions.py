@@ -9,3 +9,8 @@ class GameFrameException(Exception, ABC):
 class ActionException(GameFrameException):
     """ActionException is the exception class for action exceptions."""
     pass
+
+
+class ParamException(GameFrameException):
+    """ParamException is the exception class raised when the game parameter is invalid."""
+    pass

@@ -132,4 +132,4 @@ def parse_ttt(game: TTTGame, coords: Iterable[Sequence[int]]) -> None:
     :return: None.
     """
     for r, c in coords:
-        cast(TTTPlayer, game.actor).mark(r, c)
+        cast(TTTPlayer, game._actor).mark(r, c)

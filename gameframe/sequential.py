@@ -49,5 +49,5 @@ class _SequentialAction(_Action[_SG, _A], ABC):
     def verify(self) -> None:
         super().verify()
 
-        if self.game.actor is not self.actor:
+        if self.game._actor is not self.actor:
             raise ActionException('The actor is not in turn')

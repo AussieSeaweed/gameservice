@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from enum import unique
+from enum import auto
 from typing import Any, Optional, cast, final
 
-from auxiliary import OrderedEnum
+from auxiliary import OrderedEnum, default
 
 from gameframe.exceptions import ActionException
 from gameframe.game import Game, _Action
@@ -39,7 +39,7 @@ class RPSPlayer:
         :return: True if this rock paper scissors player can throw a hand, else False.
         """
         try:
-            _ThrowAction(self.__game, self, next(iter(RPSHand)) if hand is None else hand).verify()
+            _ThrowAction(self.__game, self, default(hand, next(iter(RPSHand)))).verify()
         except ActionException:
             return False
         else:
@@ -69,12 +69,11 @@ class RPSGame(Game[None, RPSPlayer]):
 
 
 @final
-@unique
 class RPSHand(OrderedEnum):
     """RPSHand is the enum for rock paper scissors hands."""
-    ROCK = 'Rock'
-    PAPER = 'Paper'
-    SCISSORS = 'Scissors'
+    ROCK = auto()
+    PAPER = auto()
+    SCISSORS = auto()
 
     def __lt__(self, other: Any) -> bool:
         if isinstance(other, RPSHand):

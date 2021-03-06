@@ -58,9 +58,9 @@ class NLTMonteCarloTestCase(TestCase, MonteCarloTestCaseMixin[NLTGame]):
 
     def act(self, game: NLTGame) -> None:
         if isinstance(game.actor, PokerNature):
-            if game.actor.can_deal_player():
+            if game.actor.can_deal_hole():
                 for player in game.players:
-                    game.nature.deal_player(player, sample(tuple(game.deck), game.actor.player_deal_count))
+                    game.nature.deal_hole(player, sample(tuple(game.deck), game.actor.hole_deal_count))
             elif game.actor.can_deal_board():
                 game.nature.deal_board(sample(tuple(game.deck), game.actor.board_deal_count))
             else:

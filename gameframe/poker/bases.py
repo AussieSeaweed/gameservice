@@ -1,19 +1,16 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections import Collection, Iterable, Iterator, Sequence, defaultdict
-from enum import Enum, unique
-from functools import cached_property
-from itertools import zip_longest
-from typing import Generic, Optional, TypeVar, Union, cast, final, overload
+from collections import Iterable, Iterator, Sequence
+from enum import Enum, auto
+from typing import Final, Optional, Union, cast, final, overload
 
 from auxiliary import default, ilen, iter_equal, retain_iter
 from pokertools import Card, Deck, Evaluator, Hand, HoleCard
 
-from gameframe.exceptions import ActionException
-from gameframe.game import _A
-from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, ParamException, PlayerException
-from gameframe.sequential import SequentialGame, _SequentialAction
+from gameframe.exceptions import ActionException, ParamException
+from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, PlayerException
+from gameframe.sequential import SequentialGame
 
 
 @final
@@ -27,14 +24,14 @@ class PokerNature:
         return 'PokerNature'
 
     @property
-    def player_deal_count(self) -> int:
+    def hole_deal_count(self) -> int:
         """
         :return: The number of hole cards to deal to a player.
         """
-        from gameframe.poker._stages import HoleCardDealingStage
+        from gameframe.poker.params import HoleDealingStage
 
-        if self.can_deal_player():
-            return cast(HoleCardDealingStage, self.__game._stage).card_count
+        if self.can_deal_hole():
+            return cast(HoleDealingStage, self.__game._stage)._card_count
         else:
             raise ActionException('The poker nature cannot deal hole cards')
 
@@ -43,58 +40,47 @@ class PokerNature:
         """
         :return: The number of cards to deal to the board.
         """
-        from gameframe.poker._stages import BoardCardDealingStage
+        from gameframe.poker.params import BoardDealingStage
 
         if self.can_deal_board():
-            return cast(BoardCardDealingStage, self.__game._stage).card_count
+            return cast(BoardDealingStage, self.__game._stage)._card_count
         else:
             raise ActionException('The poker nature cannot deal board cards')
 
-    def deal_player(self, player: PokerPlayer, cards: Iterable[Card]) -> None:
+    def deal_hole(self, player: PokerPlayer, cards: Iterable[Card]) -> None:
         """Deals the hole cards to the specified player.
 
         :param player: The player to deal to.
         :param cards: The hole cards to be dealt.
         :return: None.
         """
-        from gameframe.poker._actions import HoleCardDealingAction
+        from gameframe.poker._actions import HoleDealingAction
 
-        HoleCardDealingAction(self.__game, self, player, cards).act()
-
-    def deal_board(self, cards: Iterable[Card]) -> None:
-        """Deals the cards to the board.
-
-        :param cards: The cards to be dealt.
-        :return: None.
-        """
-        from gameframe.poker._actions import BoardCardDealingAction
-
-        BoardCardDealingAction(self.__game, self, cards).act()
+        HoleDealingAction(self.__game, self, player, cards).act()
 
     @overload
-    def can_deal_player(self) -> bool:
+    def can_deal_hole(self) -> bool:
         ...
 
     @overload
-    def can_deal_player(self, player: PokerPlayer) -> bool:
+    def can_deal_hole(self, player: PokerPlayer) -> bool:
         ...
 
     @overload
-    def can_deal_player(self, player: PokerPlayer, cards: Iterable[Card]) -> bool:
+    def can_deal_hole(self, player: PokerPlayer, cards: Iterable[Card]) -> bool:
         ...
 
-    def can_deal_player(self, player: Optional[PokerPlayer] = None, cards: Optional[Iterable[Card]] = None) -> bool:
+    def can_deal_hole(self, player: Optional[PokerPlayer] = None, cards: Optional[Iterable[Card]] = None) -> bool:
         """Determines if the hole cards can be dealt to the specified player.
 
         :param player: The player to deal to.
         :param cards: The hole cards to be dealt.
         :return: True if the player can be dealt, else False.
         """
-        from gameframe.poker._actions import HoleCardDealingAction
+        from gameframe.poker._actions import HoleDealingAction
 
         try:
-            HoleCardDealingAction(self.__game, self, default(player, self.__game.players[0]),
-                                  default(cards, ())).verify()
+            HoleDealingAction(self.__game, self, default(player, self.__game.players[0]), default(cards, ())).verify()
         except PlayerException:
             return player is None
         except CardCountException:
@@ -104,16 +90,26 @@ class PokerNature:
         else:
             return True
 
+    def deal_board(self, cards: Iterable[Card]) -> None:
+        """Deals the cards to the board.
+
+        :param cards: The cards to be dealt.
+        :return: None.
+        """
+        from gameframe.poker._actions import BoardDealingAction
+
+        BoardDealingAction(self.__game, self, cards).act()
+
     def can_deal_board(self, cards: Optional[Iterable[Card]] = None) -> bool:
         """Determines if the cards can be dealt to the board.
 
         :param cards: The cards to be dealt.
         :return: True if the board can be dealt, else False.
         """
-        from gameframe.poker._actions import BoardCardDealingAction
+        from gameframe.poker._actions import BoardDealingAction
 
         try:
-            BoardCardDealingAction(self.__game, self, default(cards, ())).verify()
+            BoardDealingAction(self.__game, self, default(cards, ())).verify()
         except CardCountException:
             return cards is None
         except ActionException:
@@ -123,93 +119,78 @@ class PokerNature:
 
 
 @final
-class PokerPlayer(Iterator['PokerPlayer']):
+class PokerPlayer:
     """PokerPlayer is the class for poker players."""
 
     def __init__(self, game: PokerGame, stack: int):
         self.__game = game
-        self.__starting_stack = stack
+        self.starting_stack: Final = stack
 
-        self._commitment = 0
-        self._cards = list[Card]()
-        self._status = self._HoleCardStatus.DEFAULT
-
-    def __next__(self) -> PokerPlayer:
-        return self.__game.players[(self.index + 1) % len(self.__game.players)]
+        self._stack = stack
+        self._bet = 0
+        self._hole_cards = list[HoleCard]()
+        self._status = self._Status.DEFAULT
 
     def __repr__(self) -> str:
         if self.mucked:
-            return f'PokerPlayer({self.bet}, {self.stack})'
+            return f'PokerPlayer({self._bet}, {self._stack})'
         else:
-            return f'PokerPlayer({self.bet}, {self.stack}, ' + ''.join(map(str, self.hole_cards)) + ')'
-
-    @property
-    def starting_stack(self) -> int:
-        return self.__starting_stack
-
-    @cached_property
-    def index(self) -> int:
-        """
-        :return: The index of this poker player.
-        """
-        return self.__game.players.index(self)
-
-    @property
-    def bet(self) -> int:
-        """
-        :return: The bet of this poker player.
-        """
-        return max(self._commitment - self.__game._requirement, 0)
+            return f'PokerPlayer({self._bet}, {self._stack}, ' + ''.join(map(str, self.hole_cards)) + ')'
 
     @property
     def stack(self) -> int:
         """
         :return: The stack of this poker player.
         """
-        return self.starting_stack - self._commitment
+        return self._stack
 
     @property
-    def hole_cards(self) -> Iterator[HoleCard]:
+    def bet(self) -> int:
+        """
+        :return: The bet of this poker player.
+        """
+        return self._bet
+
+    @property
+    def hole_cards(self) -> Sequence[HoleCard]:
         """
         :return: The hole cards of this poker player.
         """
         if self.mucked:
-            return (HoleCard(card, False) for card in self._cards)
+            return tuple(HoleCard(card, False) for card in self._hole_cards)
         elif self.shown:
-            return (HoleCard(card, True) for card in self._cards)
+            return tuple(HoleCard(card, True) for card in self._hole_cards)
         else:
-            return (HoleCard(card, status) for card, status in zip(self._cards, self.__game._hole_card_statuses))
-
-    @property
-    def hand(self) -> Hand:
-        """
-        :return: The hand of this poker player.
-        """
-        return self.__game.evaluator.hand(self._cards, self.__game.board_cards)
+            return tuple(self._hole_cards)
 
     @property
     def mucked(self) -> bool:
         """
         :return: True if this poker player has mucked his/her hand, else False.
         """
-        return self._status == self._HoleCardStatus.MUCKED
+        return self._status == self._Status.MUCKED
 
     @property
     def shown(self) -> bool:
         """
         :return: True if this poker player has shown his/her hand, else False.
         """
-        return self._status == self._HoleCardStatus.SHOWN
+        return self._status == self._Status.SHOWN
+
+    @property
+    def hand(self) -> Hand:
+        """
+        :return: The hand of this poker player.
+        """
+        return self.__game._evaluator.hand(self._hole_cards, self.__game._board_cards)
 
     @property
     def min_bet_raise_amount(self) -> int:
         """
         :return: The minimum bet/raise amount.
         """
-        from gameframe.poker._stages import BettingStage
-
         if self.can_bet_raise():
-            return cast(BettingStage, self.__game._stage).min_amount
+            return self.__game._limit._min_amount(self.__game)
         else:
             raise ActionException('The poker player cannot bet/raise')
 
@@ -218,12 +199,18 @@ class PokerPlayer(Iterator['PokerPlayer']):
         """
         :return: The maximum bet/raise amount.
         """
-        from gameframe.poker._stages import BettingStage
-
         if self.can_bet_raise():
-            return cast(BettingStage, self.__game._stage).max_amount
+            return self.__game._limit._max_amount(self.__game)
         else:
             raise ActionException('The poker player cannot bet/raise')
+
+    @property
+    def _put(self) -> int:
+        return self.starting_stack - self._stack
+
+    @property
+    def _total(self) -> int:
+        return self._stack + self._bet
 
     @property
     def _effective_stack(self) -> int:
@@ -235,7 +222,7 @@ class PokerPlayer(Iterator['PokerPlayer']):
 
     @property
     def _relevant(self) -> bool:
-        return not self.mucked and self._commitment < self._effective_stack
+        return not self.mucked and self._put < self._effective_stack
 
     def fold(self) -> None:
         """Folds.
@@ -245,34 +232,6 @@ class PokerPlayer(Iterator['PokerPlayer']):
         from gameframe.poker._actions import FoldAction
 
         FoldAction(self.__game, self).act()
-
-    def check_call(self) -> None:
-        """Checks or calls.
-
-        :return: None.
-        """
-        from gameframe.poker._actions import CheckCallAction
-
-        CheckCallAction(self.__game, self).act()
-
-    def bet_raise(self, amount: int) -> None:
-        """Bets or Raises the amount.
-
-        :param amount: The bet/raise amount.
-        :return: None.
-        """
-        from gameframe.poker._actions import BetRaiseAction
-
-        BetRaiseAction(self.__game, self, amount).act()
-
-    def showdown(self, force: bool = False) -> None:
-        """Showdowns the hand of this player if necessary or forced.
-
-        :return: None.
-        """
-        from gameframe.poker._actions import ShowdownAction
-
-        ShowdownAction(self.__game, self, force).act()
 
     def can_fold(self) -> bool:
         """Determines if the player can fold.
@@ -288,6 +247,15 @@ class PokerPlayer(Iterator['PokerPlayer']):
         else:
             return True
 
+    def check_call(self) -> None:
+        """Checks or calls.
+
+        :return: None.
+        """
+        from gameframe.poker._actions import CheckCallAction
+
+        CheckCallAction(self.__game, self).act()
+
     def can_check_call(self) -> bool:
         """Determines if the player can check or call.
 
@@ -301,6 +269,16 @@ class PokerPlayer(Iterator['PokerPlayer']):
             return False
         else:
             return True
+
+    def bet_raise(self, amount: int) -> None:
+        """Bets or Raises the amount.
+
+        :param amount: The bet/raise amount.
+        :return: None.
+        """
+        from gameframe.poker._actions import BetRaiseAction
+
+        BetRaiseAction(self.__game, self, amount).act()
 
     def can_bet_raise(self, amount: Optional[int] = None) -> bool:
         """Determines if the player can bet or raise the amount.
@@ -319,25 +297,35 @@ class PokerPlayer(Iterator['PokerPlayer']):
         else:
             return True
 
-    def can_showdown(self) -> bool:
+    def showdown(self, force: bool = False) -> None:
+        """Showdowns the hand of this player if necessary or forced.
+
+        :param force: True to force showdown.
+        :return: None.
+        """
+        from gameframe.poker._actions import ShowdownAction
+
+        ShowdownAction(self.__game, self, force).act()
+
+    def can_showdown(self, force: Optional[bool] = None) -> bool:
         """Determines if the player can showdown the his/her hand if necessary or forced.
 
+        :param force: True to force showdown.
         :return: True if the player can showdown, else False.
         """
         from gameframe.poker._actions import ShowdownAction
 
         try:
-            ShowdownAction(self.__game, self, False).verify()
+            ShowdownAction(self.__game, self, default(force, False)).verify()
         except ActionException:
             return False
         else:
             return True
 
-    @unique
-    class _HoleCardStatus(Enum):
-        DEFAULT = 0
-        SHOWN = 1
-        MUCKED = 2
+    class _Status(Enum):
+        DEFAULT = auto()
+        MUCKED = auto()
+        SHOWN = auto()
 
 
 class PokerGame(SequentialGame[PokerNature, PokerPlayer], ABC):
@@ -351,61 +339,51 @@ class PokerGame(SequentialGame[PokerNature, PokerPlayer], ABC):
     """
 
     @retain_iter
-    def __init__(self, stages: Iterable[Stage], deck: Deck, evaluator: Evaluator,
+    def __init__(self, stages: Iterable[Stage], limit: Limit, evaluator: Evaluator, deck: Deck,
                  ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        from gameframe.poker.params import _ShowdownStage
+
         super().__init__(actor := PokerNature(self), (PokerPlayer(self, stack) for stack in starting_stacks), actor)
 
-        self._stages = tuple(stages)
-        self._stage: Optional[Stage] = self._stages[0]
+        self._stages = tuple(stages) + (_ShowdownStage(),)
+        self._stage = self._stages[0]
 
+        self._limit = limit
+        self._evaluator = evaluator
         self._deck = deck
-        self.__evaluator = evaluator
 
+        self._pot = 0
         self._board_cards = list[Card]()
+
         self._aggressor = self.players[0] if len(self.players) == 2 else self.players[ilen(blinds) - 1]
         self._max_delta = 0
-        self._requirement = ante
+        self._bet_raise_count = 0
 
-        if not isinstance(ante, int) or not all(isinstance(blind, int) for blind in blinds) \
-                or not all(isinstance(stack, int) for stack in starting_stacks):
-            raise TypeError('The integral values must be of type int')
-        elif len(self.players) < 2:
+        if len(self.players) < 2:
             raise ParamException('Poker needs at least 2 players')
         elif not iter_equal(blinds, sorted(blinds)):
             raise ParamException('Blinds have to be sorted')
         elif ilen(blinds) > len(self.players):
             raise ParamException('There are more blinds than players')
 
-        for player, blind, starting_stack in zip_longest(
-                self.players, reversed(tuple(blinds)) if len(self.players) == 2 else blinds, starting_stacks,
-                fillvalue=0,
-        ):
-            player._commitment = min(ante + blind, starting_stack)
+        self._tax(ante, blinds)
 
-        if not self._stage.skippable:
-            self._stage.open()
+        if not self._stage._skippable(self):
+            self._stage._open(self)
 
     @property
     @final
-    def deck(self) -> Collection[Card]:
+    def deck(self) -> Iterator[Card]:
         """
-        :return: the deck of this poker game
+        :return: The deck of this poker game.
         """
-        return tuple(self._deck)
-
-    @property
-    @final
-    def evaluator(self) -> Evaluator:
-        """
-        :return: the evaluator of this poker game
-        """
-        return self.__evaluator
+        return iter(self._deck)
 
     @property
     @final
     def board_cards(self) -> Sequence[Card]:
         """
-        :return: the board cards of this poker game
+        :return: The board cards of this poker game.
         """
         return tuple(self._board_cards)
 
@@ -413,127 +391,63 @@ class PokerGame(SequentialGame[PokerNature, PokerPlayer], ABC):
     @final
     def pot(self) -> int:
         """
-        :return: the pot of this poker game
+        :return: The pot of this poker game.
         """
-        return sum(min(player._commitment, self._requirement) for player in self.players)
+        return self._pot
 
-    @cached_property
-    def _hole_card_statuses(self) -> Sequence[bool]:
-        from gameframe.poker._stages import HoleCardDealingStage
+    def _tax(self, ante: int, blinds: Iterable[int]) -> None:
+        for player in self.players:
+            cur_ante = min(ante, player._stack)
 
-        statuses = list[bool]()
+            player._stack -= cur_ante
+            self._pot += cur_ante
 
-        for stage in self._stages:
-            if isinstance(stage, HoleCardDealingStage):
-                statuses.extend(stage.card_status for _ in range(stage.card_count))
+        for player, blind in zip(self.players, reversed(tuple(blinds)) if len(self.players) == 2 else blinds):
+            blind = min(blind, player._stack)
 
-        return statuses
+            player._stack -= blind
+            player._bet = blind
 
-    def _trim(self) -> None:
-        requirement = sorted(player._commitment for player in self.players)[-2]
+    def _reset(self) -> None:
+        entitlement = sorted(player._bet for player in self.players)[-2]
 
         for player in self.players:
-            player._commitment = min(player._commitment, requirement)
+            cur_entitlement = min(entitlement, player._bet)
 
-        self._requirement = requirement
+            self._pot += cur_entitlement
+            player._stack += player._bet - cur_entitlement
+            player._bet = 0
 
 
-class Stage(Iterator['Stage'], ABC):
-    def __init__(self, game: PokerGame):
-        self.game = game
+class Stage(ABC):
+    """Stage is the abstract base class for all stages."""
 
-    @final
-    def __next__(self) -> Stage:
-        try:
-            return self.game._stages[self.index + 1]
-        except IndexError:
-            raise StopIteration
+    def _skippable(self, game: PokerGame) -> bool:
+        return sum(not player.mucked for player in game.players) == 1
 
-    @cached_property
-    @final
-    def index(self) -> int:
-        return self.game._stages.index(self)
+    def _open(self, game: PokerGame) -> None:
+        game._actor = self._opener(game)
 
-    @property
-    def skippable(self) -> bool:
-        return sum(not player.mucked for player in self.game.players) == 1
+    def _close(self, game: PokerGame) -> None:
+        pass
 
-    @property
+    def _update(self, game: PokerGame) -> None:
+        pass
+
     @abstractmethod
-    def opener(self) -> Union[PokerNature, PokerPlayer]:
-        pass
-
-    def open(self) -> None:
-        self.game._actor = self.opener
-
-    def close(self) -> None:
-        pass
-
-    def update(self) -> None:
+    def _opener(self, game: PokerGame) -> Union[PokerNature, PokerPlayer]:
         pass
 
 
-S = TypeVar('S', bound=Stage)
+class Limit(ABC):
+    """Limit is the abstract base class for all limits."""
 
+    _max_bet_raise_count: Optional[int]
 
-class PokerAction(_SequentialAction[PokerGame, _A], Generic[_A, S], ABC):
-    def __init__(self, game: PokerGame, actor: _A):
-        super().__init__(game, actor)
+    @classmethod
+    def _min_amount(cls, game: PokerGame) -> int:
+        return min(max(player._bet for player in game.players) + game._max_delta, cast(PokerPlayer, game._actor)._total)
 
-        self.stage = cast(S, self.game._stage)
-
-    def act(self) -> None:
-        super().act()
-
-        if self.stage.skippable:
-            self.stage.close()
-
-            try:
-                stage: Stage = self.stage
-
-                while stage.skippable:
-                    stage = next(stage)
-
-                stage.open()
-
-                self.game._stage = stage
-            except StopIteration:
-                self.game._trim()
-
-                self.distribute()
-
-                self.game._actor = None
-                self.game._stage = None
-        else:
-            self.stage.update()
-
-    def distribute(self) -> None:
-        players = [player for player in self.game.players if not player.mucked]
-        revenues: defaultdict[PokerPlayer, int] = defaultdict(int)
-        base = 0
-
-        if len(players) != 1:
-            players.sort(key=lambda player: (player.hand, -player._commitment), reverse=True)
-
-        for base_player in players:
-            side_pot = self.side_pot(base, base_player)
-            recipients = [player for player in players if player is base_player or player.hand == base_player.hand]
-
-            for recipient in recipients:
-                revenues[recipient] += side_pot // len(recipients)
-            else:
-                revenues[recipients[0]] += side_pot % len(recipients)
-
-            base = max(base, base_player._commitment)
-
-        for winner, revenue in revenues.items():
-            winner._commitment -= revenue
-
-    def side_pot(self, base: int, base_player: PokerPlayer) -> int:
-        side_pot = 0
-
-        for player in self.game.players:
-            if base < (entitlement := min(player._commitment, base_player._commitment)):
-                side_pot += entitlement - base
-
-        return side_pot
+    @abstractmethod
+    def _max_amount(self, game: PokerGame) -> int:
+        pass

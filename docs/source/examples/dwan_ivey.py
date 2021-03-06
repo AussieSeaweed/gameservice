@@ -11,9 +11,9 @@ ivey, antonius, dwan = game.players
 
 # Pre-flop
 
-game.nature.deal_player(ivey, parse_cards('Ac2d'))
-game.nature.deal_player(antonius, parse_cards('5h7s'))  # Unknown
-game.nature.deal_player(dwan, parse_cards('7h6h'))
+game.nature.deal_hole(ivey, parse_cards('Ac2d'))
+game.nature.deal_hole(antonius, parse_cards('5h7s'))  # Unknown
+game.nature.deal_hole(dwan, parse_cards('7h6h'))
 
 dwan.bet_raise(7000)
 ivey.bet_raise(23000)

@@ -1,16 +1,78 @@
 from abc import ABC, abstractmethod
 from collections import Iterable
+from typing import cast
 
-from pokertools import Card
+from auxiliary import after
+from math2.misc import bind
+from pokertools import Card, HoleCard
 
 from gameframe.exceptions import ActionException
-from gameframe.poker._stages import (BettingFlag, BettingStage, BoardCardDealingStage, DealingStage,
-                                     HoleCardDealingStage, ShowdownStage)
-from gameframe.poker.bases import PokerAction, PokerGame, PokerNature, PokerPlayer, S
+from gameframe.game import _A
+from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer
 from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, PlayerException
+from gameframe.poker.params import BettingStage, BoardDealingStage, DealingStage, HoleDealingStage, _ShowdownStage
+from gameframe.sequential import _SequentialAction
 
 
-class DealingAction(PokerAction[PokerNature, S], ABC):
+class PokerAction(_SequentialAction[PokerGame, _A], ABC):
+    def act(self) -> None:
+        super().act()
+
+        if self.game._stage._skippable(self.game):
+            self.game._stage._close(self.game)
+
+            try:
+                while self.game._stage._skippable(self.game):
+                    self.game._stage = after(self.game._stages, self.game._stage)
+                else:
+                    self.game._stage._open(self.game)
+            except ValueError:
+                self.game._reset()
+                self.distribute()
+                self.game._actor = None
+        else:
+            self.game._stage._update(self.game)
+
+    def distribute(self) -> None:
+        players = [player for player in self.game.players if not player.mucked]
+
+        if len(players) > 1:
+            players.sort(key=lambda player: (player.hand, -player._put), reverse=True)
+
+        base = 0
+
+        for base_player in players:
+            if base < base_player._put:
+                side_pot = self.side_pot(base, base_player._put)
+                winners = tuple(
+                    player for player in players if player is base_player or player.hand == base_player.hand)
+
+                for winner in winners:
+                    winner._bet += side_pot // len(winners)
+                else:
+                    winners[0]._bet += side_pot % len(winners)
+
+                base = max(base, base_player._put)
+
+        for player in self.game.players:
+            if player._put > base:
+                player._bet += player._put - base
+
+            player._stack += player._bet
+            player._bet = 0
+
+        self.game._pot = 0
+
+    def side_pot(self, lo: int, hi: int) -> int:
+        side_pot = 0
+
+        for player in self.game.players:
+            side_pot += bind(player._put, lo, hi) - lo
+
+        return side_pot
+
+
+class DealingAction(PokerAction[PokerNature], ABC):
     def __init__(self, game: PokerGame, actor: PokerNature, cards: Iterable[Card]):
         super().__init__(game, actor)
 
@@ -29,6 +91,8 @@ class DealingAction(PokerAction[PokerNature, S], ABC):
             raise ActionException('Card not in deck')
         elif len(self.cards) != len(set(self.cards)):
             raise ActionException('Duplicates in cards')
+        elif len(self.cards) != self.game._stage._card_count:
+            raise CardCountException('Invalid number of hole cards are dealt')
 
     def apply(self) -> None:
         self.deal()
@@ -39,52 +103,50 @@ class DealingAction(PokerAction[PokerNature, S], ABC):
         pass
 
 
-class HoleCardDealingAction(DealingAction[HoleCardDealingStage]):
+class HoleDealingAction(DealingAction):
     def __init__(self, game: PokerGame, actor: PokerNature, player: PokerPlayer, cards: Iterable[Card]):
         super().__init__(game, actor, cards)
 
         self.player = player
 
     def verify(self) -> None:
-        super().verify()
-
         if not isinstance(self.player, PokerPlayer):
             raise TypeError('The player must be of type PokerPlayer')
-        elif not isinstance(self.game._stage, HoleCardDealingStage):
+        elif not isinstance(self.game._stage, HoleDealingStage):
             raise ActionException('Hole card dealing not allowed')
         elif self.player.mucked:
             raise PlayerException('Cannot deal to mucked player')
-        elif len(self.player._cards) >= self.stage.card_target:
+        elif len(self.player._hole_cards) >= self.game._stage._card_target(self.game):
             raise PlayerException('The player already has enough hole cards')
-        elif len(self.cards) != self.stage.card_count:
-            raise CardCountException('Invalid number of hole cards are dealt')
 
-    def deal(self) -> None:
-        self.player._cards.extend(self.cards)
-
-
-class BoardCardDealingAction(DealingAction[BoardCardDealingStage]):
-    def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.game._stage, BoardCardDealingStage):
+    def deal(self) -> None:
+        status = cast(HoleDealingStage, self.game._stage)._status
+
+        self.player._hole_cards.extend(HoleCard(card, status) for card in self.cards)
+
+
+class BoardDealingAction(DealingAction):
+    def verify(self) -> None:
+        if not isinstance(self.game._stage, BoardDealingStage):
             raise ActionException('Board card dealing not allowed')
-        elif len(self.game.board_cards) >= self.stage.card_target:
+        elif len(self.game._board_cards) >= self.game._stage._card_target(self.game):
             raise ActionException('The board already has enough cards')
-        elif len(self.cards) != self.stage.card_count:
-            raise CardCountException('Invalid number of board cards are dealt')
+
+        super().verify()
 
     def deal(self) -> None:
         self.game._board_cards.extend(self.cards)
 
 
-class BettingAction(PokerAction[PokerPlayer, BettingStage], ABC):
+class BettingAction(PokerAction[PokerPlayer], ABC):
     @property
     def next_actor(self) -> PokerPlayer:
-        actor = next(self.actor)
+        actor = after(self.game.players, self.actor, True)
 
         while not actor._relevant and actor is not self.game._aggressor:
-            actor = next(actor)
+            actor = after(self.game.players, actor, True)
 
         return actor
 
@@ -99,20 +161,23 @@ class FoldAction(BettingAction):
     def verify(self) -> None:
         super().verify()
 
-        if self.actor.bet >= max(player.bet for player in self.game.players):
+        if self.actor._bet >= max(player._bet for player in self.game.players):
             raise ActionException('Folding is redundant')
 
     def apply(self) -> None:
-        self.actor._status = self.actor._HoleCardStatus.MUCKED
+        self.actor._status = self.actor._Status.MUCKED
 
 
 class CheckCallAction(BettingAction):
     @property
     def amount(self) -> int:
-        return min(self.actor.stack, max(player.bet for player in self.game.players) - self.actor.bet)
+        return min(self.actor._stack, max(player._bet for player in self.game.players) - self.actor._bet)
 
     def apply(self) -> None:
-        self.actor._commitment += self.amount
+        amount = self.amount
+
+        self.actor._stack -= amount
+        self.actor._bet += amount
 
 
 class BetRaiseAction(BettingAction):
@@ -124,25 +189,28 @@ class BetRaiseAction(BettingAction):
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.amount, int):
-            raise TypeError('The amount must be of type int')
-        elif max(player._commitment for player in self.game.players) >= self.actor.starting_stack:
+        if max(player._bet for player in self.game.players) >= self.actor._total:
             raise ActionException('The stack of the acting player is covered')
         elif all(not player._relevant for player in self.game.players if player is not self.actor):
             raise ActionException('Betting/Raising is redundant')
-        elif not self.stage.min_amount <= self.amount <= self.stage.max_amount:
+        elif self.game._bet_raise_count == self.game._limit._max_bet_raise_count:
+            raise ActionException('Too many number of bets/raises')
+        elif not self.game._limit._min_amount(self.game) <= self.amount <= self.game._limit._max_amount(self.game):
             raise BetRaiseAmountException('The bet/raise amount is not allowed')
 
     def apply(self) -> None:
-        self.stage.flag = BettingFlag.DEFAULT
+        stage = cast(BettingStage, self.game._stage)
+        stage._behavior = stage._Behavior.DEFAULT
 
         self.game._aggressor = self.actor
-        self.game._max_delta = max(self.game._max_delta, self.amount - max(player.bet for player in self.game.players))
+        self.game._max_delta = max(self.game._max_delta, self.amount - max(player._bet for player in self.game.players))
+        self.game._bet_raise_count += 1
 
-        self.actor._commitment += self.amount - self.actor.bet
+        self.actor._stack -= self.amount - self.actor._bet
+        self.actor._bet = self.amount
 
 
-class ShowdownAction(PokerAction[PokerPlayer, ShowdownStage]):
+class ShowdownAction(PokerAction[PokerPlayer]):
     def __init__(self, game: PokerGame, actor: PokerPlayer, force: bool) -> None:
         super().__init__(game, actor)
 
@@ -150,24 +218,22 @@ class ShowdownAction(PokerAction[PokerPlayer, ShowdownStage]):
 
     @property
     def next_actor(self) -> PokerPlayer:
-        actor = next(self.actor)
+        actor = after(self.game.players, self.actor, True)
 
         while actor.mucked:
-            actor = next(actor)
+            actor = after(self.game.players, actor, True)
 
         return actor
 
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.force, bool):
-            raise TypeError('The force argument must be of type bool')
-        elif not isinstance(self.game._stage, ShowdownStage):
+        if not isinstance(self.game._stage, _ShowdownStage):
             raise ActionException('Game not in showdown')
 
     def apply(self) -> None:
-        if self.force or all(not (player.hand > self.actor.hand and player._commitment >= self.actor._commitment)
+        if self.force or all(not (player.hand > self.actor.hand and player._put >= self.actor._put)
                              for player in self.game.players if player.shown):
-            self.actor._status = self.actor._HoleCardStatus.SHOWN
+            self.actor._status = self.actor._Status.SHOWN
         else:
-            self.actor._status = self.actor._HoleCardStatus.MUCKED
+            self.actor._status = self.actor._Status.MUCKED
