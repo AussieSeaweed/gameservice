@@ -1,4 +1,9 @@
-from gameframe.exceptions import ActionException
+from gameframe.exceptions import GameFrameException, ActionException
+
+
+class ParamException(GameFrameException):
+    """ParamException is the exception class for parameter exceptions."""
+    pass
 
 
 class PlayerException(ActionException):

@@ -32,13 +32,14 @@ class RPSPlayer:
         """
         _ThrowAction(self.__game, self, hand).act()
 
-    def can_throw(self) -> bool:
+    def can_throw(self, hand: Optional[RPSHand] = None) -> bool:
         """Determines if this rock paper scissors player can throw a hand.
 
+        :param hand: The hand to be thrown.
         :return: True if this rock paper scissors player can throw a hand, else False.
         """
         try:
-            _ThrowAction(self.__game, self, next(iter(RPSHand))).verify()
+            _ThrowAction(self.__game, self, next(iter(RPSHand)) if hand is None else hand).verify()
         except ActionException:
             return False
         else:

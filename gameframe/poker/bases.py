@@ -10,9 +10,9 @@ from typing import Generic, Optional, TypeVar, Union, cast, final, overload
 from auxiliary import default, ilen, iter_equal, retain_iter
 from pokertools import Card, Deck, Evaluator, Hand, HoleCard
 
-from gameframe.exceptions import ActionException, ParamException
+from gameframe.exceptions import ActionException
 from gameframe.game import _A
-from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, PlayerException
+from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, ParamException, PlayerException
 from gameframe.sequential import SequentialGame, _SequentialAction
 
 
