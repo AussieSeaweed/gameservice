@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections import Iterable
+from collections.abc import Iterable
 from typing import Any, Final, Generic, TypeVar
 
 from gameframe.exceptions import ActionException

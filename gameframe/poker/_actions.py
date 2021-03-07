@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections import Iterable
+from collections.abc import Iterable
 from typing import cast
 
 from auxiliary import after
@@ -95,8 +95,8 @@ class DealingAction(PokerAction[PokerNature], ABC):
             raise CardCountException('Invalid number of hole cards are dealt')
 
     def apply(self) -> None:
+        self.game._deck.draw(self.cards)
         self.deal()
-        self.game._deck.remove(self.cards)
 
     @abstractmethod
     def deal(self) -> None:

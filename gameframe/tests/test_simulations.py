@@ -1,5 +1,5 @@
 from abc import ABC
-from collections import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 from typing import Generic, Optional, cast
 from unittest import TestCase, main
 

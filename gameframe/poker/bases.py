@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections import Iterable, Iterator, Sequence
+from collections.abc import Iterable, Iterator, Sequence
 from enum import Enum, auto
 from typing import Final, Optional, Union, cast, final, overload
 

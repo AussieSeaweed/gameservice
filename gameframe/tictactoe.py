@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections import Iterable, Iterator, Sequence
+from collections.abc import Iterable, Iterator, Sequence
 from typing import Optional, cast, final, overload
 
 from auxiliary import next_or_none
