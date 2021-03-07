@@ -56,4 +56,4 @@ This code outputs the following
    PokerPlayer(0, 198000)
    Board: 9h6cKcJhTs
 
-For more information, you can look at the gameframe api documentations.
+For more information, you can look at the gameframe API documentations.
