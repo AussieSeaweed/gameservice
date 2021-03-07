@@ -1,7 +1,12 @@
 Interacting with Games
 ======================
 
-After creating a game, you can interact with it.
+In order to use the gameframe package in your project, you must first import it.
+
+.. code-block:: python
+
+   from gameframe import ...
+
 
 Interacting with Poker games
 ----------------------------
