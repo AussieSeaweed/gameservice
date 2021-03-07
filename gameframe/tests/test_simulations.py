@@ -319,6 +319,36 @@ class NLTSimulationTestCase(TestCase, SimulationTestCaseMixin[NLTGame]):
 
         self.assertTrue(game.terminal)
 
+    def test_min_bet_raise_amount(self) -> None:
+        game = NLTGame(0, [5, 10], [1000, 1000])
+
+        parse_poker(game, (
+            'dh 0 Th8h', 'dh 1 QsJd',
+        ))
+
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 20)
+
+        parse_poker(game, (
+            'cc', 'cc',
+            'db AsAcAh',
+        ))
+
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
+
+        parse_poker(game, (
+            'cc', 'cc',
+            'db Ad',
+        ))
+
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
+
+        parse_poker(game, (
+            'cc', 'cc',
+            'db 2h',
+        ))
+
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
+
     def test_parser(self) -> None:
         game = NLTGame(500, [1000, 2000], [1125600, 2000000, 553500])
 
@@ -492,6 +522,37 @@ class FLGSimulationTestCase(TestCase, SimulationTestCaseMixin[FLGGame]):
         ))
 
         self.assertRaises(ActionException, cast(PokerPlayer, game.actor).bet_raise, 50)
+
+    def test_min_bet_raise_amount(self) -> None:
+        game = FLGGame(0, [5, 10], [1000, 1000])
+
+        parse_poker(game, (
+            'dh 0 Th8h', 'dh 1 QsJd',
+        ))
+
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 20)
+        self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise_amount, 20)
+
+        parse_poker(game, (
+            'cc', 'cc',
+            'db AsAcAh',
+        ))
+
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
+
+        parse_poker(game, (
+            'cc', 'cc',
+            'db Ad',
+        ))
+
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 20)
+
+        parse_poker(game, (
+            'cc', 'cc',
+            'db 2h',
+        ))
+
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 20)
 
 
 class KuhnSimulationTestCase(TestCase, SimulationTestCaseMixin[KuhnGame]):
