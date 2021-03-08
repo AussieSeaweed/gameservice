@@ -11,8 +11,8 @@ from gameframe.poker.bases import Limit, PokerGame
 from gameframe.poker.params import BettingStage, BoardDealingStage, FixedLimit, HoleDealingStage, NoLimit, PotLimit
 
 
-class HEGame(PokerGame, ABC):
-    """HEGame is the class for Hold'em games."""
+class HGame(PokerGame, ABC):
+    """HGame is the class for Hold'em games."""
 
     @retain_iter
     def __init__(self, hole_card_count: int, limit: Limit, deck: Deck, evaluator: Evaluator,
@@ -27,24 +27,24 @@ class HEGame(PokerGame, ABC):
         ), limit, evaluator, deck, ante, blinds, starting_stacks)
 
 
-class FLHEGame(HEGame, ABC):
-    """FLHEGame is the class for Fixed-Limit Hold'em games."""
+class FLHGame(HGame, ABC):
+    """FLHGame is the class for Fixed-Limit Hold'em games."""
 
-    def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Iterable[int],
-                 starting_stacks: Iterable[int]):
+    def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator,
+                 ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(hole_card_count, FixedLimit(), deck, evaluator, ante, blinds, starting_stacks)
 
 
-class PLHEGame(HEGame, ABC):
-    """PLHEGame is the class for Pot-Limit Hold'em games."""
+class PLHGame(HGame, ABC):
+    """PLHGame is the class for Pot-Limit Hold'em games."""
 
-    def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator, ante: int, blinds: Iterable[int],
-                 starting_stacks: Iterable[int]):
+    def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator,
+                 ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(hole_card_count, PotLimit(), deck, evaluator, ante, blinds, starting_stacks)
 
 
-class NLHEGame(HEGame, ABC):
-    """NLHEGame is the class for No-Limit Hold'em games."""
+class NLHGame(HGame, ABC):
+    """NLHGame is the class for No-Limit Hold'em games."""
 
     def __init__(self, hole_card_count: int, deck: Deck, evaluator: Evaluator,
                  ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -52,7 +52,7 @@ class NLHEGame(HEGame, ABC):
 
 
 @final
-class FLTGame(FLHEGame):
+class FLTGame(FLHGame):
     """FLTGame is the class for Fixed-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -60,7 +60,7 @@ class FLTGame(FLHEGame):
 
 
 @final
-class PLTGame(PLHEGame):
+class PLTGame(PLHGame):
     """PLTGame is the class for Pot-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -68,7 +68,7 @@ class PLTGame(PLHEGame):
 
 
 @final
-class NLTGame(NLHEGame):
+class NLTGame(NLHGame):
     """NLTGame is the class for No-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -76,7 +76,7 @@ class NLTGame(NLHEGame):
 
 
 @final
-class FLOGame(FLHEGame):
+class FLOGame(FLHGame):
     """FLOGame is the class for Fixed-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -84,7 +84,7 @@ class FLOGame(FLHEGame):
 
 
 @final
-class PLOGame(PLHEGame):
+class PLOGame(PLHGame):
     """PLOGame is the class for Pot-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -92,7 +92,7 @@ class PLOGame(PLHEGame):
 
 
 @final
-class NLOGame(NLHEGame):
+class NLOGame(NLHGame):
     """NLOGame is the class for No-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -100,7 +100,31 @@ class NLOGame(NLHEGame):
 
 
 @final
-class FLGGame(FLHEGame):
+class FL5OGame(FLHGame):
+    """FL5OGame is the class for Fixed-Limit 5-Card Omaha Hold'em games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(5, StandardDeck(), OmahaEvaluator(), ante, blinds, starting_stacks)
+
+
+@final
+class PL5OGame(PLHGame):
+    """PL5OGame is the class for Pot-Limit 5-Card Omaha Hold'em games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(5, StandardDeck(), OmahaEvaluator(), ante, blinds, starting_stacks)
+
+
+@final
+class NL5OGame(NLHGame):
+    """NL5OGame is the class for No-Limit 5-Card Omaha Hold'em games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(5, StandardDeck(), OmahaEvaluator(), ante, blinds, starting_stacks)
+
+
+@final
+class FLGGame(FLHGame):
     """FLGGame is the class for Fixed-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -108,7 +132,7 @@ class FLGGame(FLHEGame):
 
 
 @final
-class PLGGame(PLHEGame):
+class PLGGame(PLHGame):
     """PLGGame is the class for Pot-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -116,7 +140,7 @@ class PLGGame(PLHEGame):
 
 
 @final
-class NLGGame(NLHEGame):
+class NLGGame(NLHGame):
     """NLGGame is the class for No-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -124,7 +148,7 @@ class NLGGame(NLHEGame):
 
 
 @final
-class FLSGame(FLHEGame):
+class FLSGame(FLHGame):
     """FLSGame is the class for Fixed-Limit Short-Deck Hold'em games."""
 
     @retain_iter
@@ -134,7 +158,7 @@ class FLSGame(FLHEGame):
 
 
 @final
-class PLSGame(PLHEGame):
+class PLSGame(PLHGame):
     """PLSGame is the class for Pot-Limit Short-Deck Hold'em games."""
 
     @retain_iter
@@ -144,7 +168,7 @@ class PLSGame(PLHEGame):
 
 
 @final
-class NLSGame(NLHEGame):
+class NLSGame(NLHGame):
     """NLSGame is the class for No-Limit Short-Deck Hold'em games."""
 
     @retain_iter

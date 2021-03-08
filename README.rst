@@ -11,6 +11,9 @@ The following games are supported in GameFrame...
 - Fixed-Limit Omaha Hold'em
 - Pot-Limit Omaha Hold'em
 - No-Limit Omaha Hold'em
+- Fixed-Limit 5-Card Omaha Hold'em
+- Pot-Limit 5-Card Omaha Hold'em
+- No-Limit 5-Card Omaha Hold'em
 - Fixed-Limit Greek Hold'em
 - Pot-Limit Greek Hold'em
 - No-Limit Greek Hold'em
