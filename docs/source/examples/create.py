@@ -1,5 +1,5 @@
 from gameframe.poker import (FLGGame, FLOGame, FLSGame, FLTGame, KuhnGame, NLGGame, NLOGame, NLSGame, NLTGame, PLGGame,
-                             PLOGame, PLSGame, PLTGame)
+                             PLOGame, PLSGame, PLTGame, FL5OGame, PL5OGame, NL5OGame)
 from gameframe.rockpaperscissors import RPSGame
 from gameframe.tictactoe import TTTGame
 
@@ -25,6 +25,15 @@ plo_game = PLOGame(ante, blinds, starting_stacks)
 
 # Create a No-Limit Omaha Hold'em game
 nlo_game = NLOGame(ante, blinds, starting_stacks)
+
+# Create a Fixed-Limit 5-Card Omaha Hold'em game
+fl5o_game = FL5OGame(ante, blinds, starting_stacks)
+
+# Create a Pot-Limit 5-Card Omaha Hold'em game
+pl5o_game = PL5OGame(ante, blinds, starting_stacks)
+
+# Create a No-Limit 5-Card Omaha Hold'em game
+nl5o_game = NL5OGame(ante, blinds, starting_stacks)
 
 # Create a Fixed-Limit Greek Hold'em game
 flg_game = FLGGame(ante, blinds, starting_stacks)
