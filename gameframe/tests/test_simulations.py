@@ -7,7 +7,7 @@ from pokertools import parse_cards
 
 from gameframe.exceptions import ActionException
 from gameframe.game import _G
-from gameframe.poker import FLGGame, KuhnGame, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker
+from gameframe.poker import FLGGame, KuhnGame, NLD5Game, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker
 from gameframe.tictactoe import TTTGame, parse_ttt
 
 
@@ -518,7 +518,7 @@ class FLGSimulationTestCase(TestCase, SimulationTestCaseMixin[FLGGame]):
 
         parse_poker(game, (
             'dh 0 Th8h', 'dh 1 QsJd',
-            'br 20', 'br 30', 'br 40'
+            'br 20', 'br 30', 'br 40',
         ))
 
         self.assertRaises(ActionException, cast(PokerPlayer, game.actor).bet_raise, 50)
@@ -553,6 +553,31 @@ class FLGSimulationTestCase(TestCase, SimulationTestCaseMixin[FLGGame]):
         ))
 
         self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 20)
+
+
+class NLD5SimulationTestCase(TestCase, SimulationTestCaseMixin[NLD5Game]):
+    def test_terminality(self) -> None:
+        game = NLD5Game(0, [5, 10], [1000, 1000])
+
+        parse_poker(game, (
+            'dh 0 Th8h9cJsQd', 'dh 1 AsAdAcAhKd',
+            'f',
+        ))
+
+        self.assertTrue(game.terminal)
+
+    def test_hand(self) -> None:
+        game = NLD5Game(0, [5, 10], [1000, 1000, 1000, 1000])
+
+        parse_poker(game, (
+            'dh 0 Th8h9cJsQd', 'dh 1 AsAdAcAhKd', 'dh 2 2s2d2c3h3d', 'dh 3 4s4d4c5h5d',
+            'cc', 'cc', 'f', 'cc',
+            'd  ', 'd 3h3d 2hKs', 'd 4c4d4s 5c5sKc',
+            'br 100', 'cc', 'cc',
+            's', 's', 's',
+        ))
+
+        self.assertTrue(game.terminal)
 
 
 class KuhnSimulationTestCase(TestCase, SimulationTestCaseMixin[KuhnGame]):

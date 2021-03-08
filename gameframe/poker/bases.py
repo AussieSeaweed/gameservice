@@ -297,6 +297,35 @@ class PokerPlayer:
         else:
             return True
 
+    def draw(self, froms: Iterable[Card], tos: Iterable[Card]) -> None:
+        """Draws the cards.
+
+        :param froms: The cards to be drawn from the player.
+        :param tos: The optional cards to be drawn to the player.
+        :return: None.
+        """
+        from gameframe.poker._actions import DrawAction
+
+        DrawAction(self.__game, self, froms, tos).act()
+
+    def can_draw(self, froms: Iterable[Card] = (), tos: Optional[Iterable[Card]] = None) -> bool:
+        """Determines if the player can draw the cards.
+
+        :param froms: The cards to be drawn from the player.
+        :param tos: The optional cards to be drawn to the player.
+        :return: True if the player can draw, else False.
+        """
+        from gameframe.poker._actions import DrawAction
+
+        try:
+            DrawAction(self.__game, self, froms, default(tos, ())).verify()
+        except CardCountException:
+            return tos is None
+        except ActionException:
+            return False
+        else:
+            return True
+
     def showdown(self, force: bool = False) -> None:
         """Showdowns the hand of this player if necessary or forced.
 
@@ -328,7 +357,7 @@ class PokerPlayer:
         SHOWN = auto()
 
 
-class PokerGame(SequentialGame[PokerNature, PokerPlayer], ABC):
+class PokerGame(SequentialGame[PokerNature, PokerPlayer]):
     """PokerGame is the abstract base class for all poker games.
 
        When a PokerGame instance is created, its deck, evaluator, limit, and streets are also created through the

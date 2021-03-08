@@ -10,7 +10,8 @@ from gameframe.exceptions import ActionException
 from gameframe.game import _A
 from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer
 from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, PlayerException
-from gameframe.poker.params import BettingStage, BoardDealingStage, DealingStage, HoleDealingStage, _ShowdownStage
+from gameframe.poker.params import (BettingStage, BoardDealingStage, DealingStage, DrawStage, HoleDealingStage,
+                                    _ShowdownStage)
 from gameframe.sequential import _SequentialAction
 
 
@@ -22,6 +23,8 @@ class PokerAction(_SequentialAction[PokerGame, _A], ABC):
             self.game._stage._close(self.game)
 
             try:
+                self.game._stage = after(self.game._stages, self.game._stage)
+
                 while self.game._stage._skippable(self.game):
                     self.game._stage = after(self.game._stages, self.game._stage)
                 else:
@@ -208,6 +211,44 @@ class BetRaiseAction(BettingAction):
 
         self.actor._stack -= self.amount - self.actor._bet
         self.actor._bet = self.amount
+
+
+class DrawAction(PokerAction[PokerPlayer]):
+    def __init__(self, game: PokerGame, actor: PokerPlayer, froms: Iterable[Card], tos: Iterable[Card]):
+        super().__init__(game, actor)
+
+        self.froms = tuple(froms)
+        self.tos = tuple(tos)
+
+    @property
+    def next_actor(self) -> PokerPlayer:
+        actor = after(self.game.players, self.actor, True)
+
+        while actor.mucked:
+            actor = after(self.game.players, actor, True)
+
+        return actor
+
+    def verify(self) -> None:
+        super().verify()
+
+        if not isinstance(self.game._stage, DrawStage):
+            raise ActionException('Not a draw round')
+        elif any(from_ not in self.actor._hole_cards for from_ in self.froms):
+            raise ActionException('The hole card does not belong to the actor.')
+        elif any(card not in self.game._deck for card in self.tos):
+            raise ActionException('Card not in deck')
+        elif len(self.froms) + len(self.tos) != len(set(self.froms) | set(self.tos)):
+            raise ActionException('Duplicates in cards')
+        elif len(self.froms) != len(self.tos):
+            raise CardCountException('The from cards must be of same length as to cards.')
+
+    def apply(self) -> None:
+        self.game._deck.draw(self.tos)
+
+        for i, card in enumerate(self.actor._hole_cards):
+            if card in self.froms:
+                self.actor._hole_cards[i] = HoleCard(self.tos[self.froms.index(card)], card.status)
 
 
 class ShowdownAction(PokerAction[PokerPlayer]):

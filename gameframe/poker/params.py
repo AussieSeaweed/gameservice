@@ -1,6 +1,6 @@
 from abc import ABC
 from enum import Enum, auto
-from typing import cast
+from typing import Optional, cast
 
 from auxiliary.funcs import after
 from math2.misc import bind
@@ -54,11 +54,11 @@ class BettingStage(Stage, ABC):
     def __init__(self, initial_max_delta: int):
         self._initial_max_delta = initial_max_delta
 
-        self._behavior = self._Behavior.DEFAULT
+        self._behavior: Optional[BettingStage._Behavior] = None
 
     def _skippable(self, game: PokerGame) -> bool:
         return super()._skippable(game) or all(not player._relevant for player in game.players) \
-               or (game._actor is game._aggressor and self._behavior != self._Behavior.IGNORE) \
+               or (game._actor is game._aggressor and self._Behavior.IGNORE != self._behavior is not None) \
                or self._behavior == self._Behavior.FINAL
 
     def _open(self, game: PokerGame) -> None:
@@ -68,6 +68,7 @@ class BettingStage(Stage, ABC):
             self._behavior = self._Behavior.IGNORE
             game._bet_raise_count = 1
         else:
+            self._behavior = self._Behavior.DEFAULT
             game._aggressor = self._opener(game)
             game._bet_raise_count = 0
 
@@ -90,6 +91,16 @@ class BettingStage(Stage, ABC):
         DEFAULT = auto()
         IGNORE = auto()
         FINAL = auto()
+
+
+class DrawStage(Stage):
+    """DrawStage is the class for draw stages."""
+
+    def _skippable(self, game: PokerGame) -> bool:
+        return super()._skippable(game) or game._actor is self._opener(game)
+
+    def _opener(self, game: PokerGame) -> PokerPlayer:
+        return next(player for player in game.players if not player.mucked)
 
 
 class _ShowdownStage(Stage):
