@@ -20,6 +20,9 @@ The following games are supported in GameFrame...
 - Fixed-Limit Short-Deck Hold'em
 - Pot-Limit Short-Deck Hold'em
 - No-Limit Short-Deck Hold'em
+- Fixed-Limit 5-Card Draw
+- Pot-Limit 5-Card Draw
+- No-Limit 5-Card Draw
 - Kuhn Poker
 - Tic Tac Toe
 - Rock Paper Scissors
