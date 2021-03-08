@@ -2,7 +2,7 @@ from abc import ABC
 from enum import Enum, auto
 from typing import cast
 
-from auxiliary.funcs import after, iindex
+from auxiliary.funcs import after
 from math2.misc import bind
 
 from gameframe.poker.bases import Limit, PokerGame, PokerNature, PokerPlayer, Stage
@@ -20,7 +20,7 @@ class DealingStage(Stage, ABC):
     def _card_target(self, game: PokerGame) -> int:
         count = 0
 
-        for stage in game._stages[:iindex(game._stages, self) + 1]:
+        for stage in game._stages[:game._stages.index(self) + 1]:
             if isinstance(stage, type(self)):
                 count += stage._card_count
 
