@@ -37,7 +37,7 @@ class HoleDealingStage(DealingStage):
 
     def _skippable(self, game: PokerGame) -> bool:
         return super()._skippable(game) or all(
-            len(player._hole_cards) == self._card_target(game) for player in game.players if not player.mucked
+            len(player._hole) == self._card_target(game) for player in game.players if not player.mucked
         )
 
 
@@ -45,7 +45,7 @@ class BoardDealingStage(DealingStage):
     """BoardDealingStage is the class for board card dealing stages."""
 
     def _skippable(self, game: PokerGame) -> bool:
-        return super()._skippable(game) or len(game._board_cards) == self._card_target(game)
+        return super()._skippable(game) or len(game._board) == self._card_target(game)
 
 
 class BettingStage(Stage, ABC):
@@ -117,7 +117,7 @@ class _ShowdownStage(Stage):
 class FixedLimit(Limit):
     """FixedLimit is the class for fixed-limits."""
 
-    _max_bet_raise_count = 4
+    _max_count = 4
 
     def _max_amount(self, game: PokerGame) -> int:
         return self._min_amount(game)
@@ -126,7 +126,7 @@ class FixedLimit(Limit):
 class PotLimit(Limit):
     """PotLimit is the class for pot-limits."""
 
-    _max_bet_raise_count = None
+    _max_count = None
 
     def _max_amount(self, game: PokerGame) -> int:
         bets = tuple(player._bet for player in game.players)
@@ -138,7 +138,7 @@ class PotLimit(Limit):
 class NoLimit(Limit):
     """NoLimit is the class for no-limits."""
 
-    _max_bet_raise_count = None
+    _max_count = None
 
     def _max_amount(self, game: PokerGame) -> int:
         return cast(PokerPlayer, game._actor)._total

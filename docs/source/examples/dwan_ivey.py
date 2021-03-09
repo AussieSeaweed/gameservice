@@ -49,4 +49,4 @@ dwan.showdown()
 
 print('Players:')
 print('\n'.join(map(str, game.players)))
-print('Board:', ''.join(map(str, game.board_cards)))
+print('Board:', ''.join(map(str, game.board)))

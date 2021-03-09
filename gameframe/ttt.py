@@ -6,7 +6,7 @@ from typing import Optional, cast, final, overload
 from auxiliary import next_or_none
 
 from gameframe.exceptions import ActionException
-from gameframe.sequential import SequentialGame, _SequentialAction
+from gameframe.seq import SeqGame, _SeqAction
 
 
 @final
@@ -55,7 +55,7 @@ class TTTPlayer:
 
 
 @final
-class TTTGame(SequentialGame[None, TTTPlayer]):
+class TTTGame(SeqGame[None, TTTPlayer]):
     """TTTGame is the class for tic tac toe games."""
 
     def __init__(self) -> None:
@@ -97,7 +97,7 @@ class TTTGame(SequentialGame[None, TTTPlayer]):
         return None
 
 
-class _MarkAction(_SequentialAction[TTTGame, TTTPlayer]):
+class _MarkAction(_SeqAction[TTTGame, TTTPlayer]):
     def __init__(self, game: TTTGame, actor: TTTPlayer, r: int, c: int):
         super().__init__(game, actor)
 
@@ -124,7 +124,7 @@ class _MarkAction(_SequentialAction[TTTGame, TTTPlayer]):
         self.game._board[self.r][self.c] = self.actor
 
 
-def parse_ttt(game: TTTGame, coords: Iterable[Sequence[int]]) -> None:
+def parse_ttt(game: TTTGame, coords: Iterable[Sequence[int]]) -> TTTGame:
     """Parses the coords as mark actions and applies them the supplied tic tac toe game.
 
     :param game: The tic tac toe game to be applied on.
@@ -133,3 +133,5 @@ def parse_ttt(game: TTTGame, coords: Iterable[Sequence[int]]) -> None:
     """
     for r, c in coords:
         cast(TTTPlayer, game._actor).mark(r, c)
+
+    return game

@@ -1,5 +1,5 @@
 """This is a sample rock paper scissors game."""
-from gameframe.rockpaperscissors import RPSGame, RPSHand
+from gameframe.rps import RPSGame, RPSHand
 
 game = RPSGame()
 x, y = game.players

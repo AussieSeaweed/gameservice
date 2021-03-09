@@ -2,13 +2,13 @@ from collections.abc import Iterable
 from typing import final
 
 from auxiliary import ilen, retain_iter
-from pokertools import (Card, Deck, Evaluator, GreekEvaluator, OmahaEvaluator, Rank, ShortDeck, ShortEvaluator,
-                        StandardDeck, StandardEvaluator, Suit)
+from pokertools import (Card, Deck, Evaluator, GreekEvaluator, OmahaEvaluator, Rank, ShortDeck, ShortEvaluator, StdDeck,
+                        StdEvaluator, Suit)
 from pokertools.evaluators import RankEvaluator
 
 from gameframe.poker.bases import Limit, PokerGame
-from gameframe.poker.params import BettingStage, BoardDealingStage, DrawStage, FixedLimit, HoleDealingStage, NoLimit, \
-    PotLimit
+from gameframe.poker.params import (BettingStage, BoardDealingStage, DrawStage, FixedLimit, HoleDealingStage, NoLimit,
+                                    PotLimit)
 
 
 class HGame(PokerGame):
@@ -56,7 +56,7 @@ class FLTGame(FLHGame):
     """FLTGame is the class for Fixed-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(2, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(2, StdEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -64,7 +64,7 @@ class PLTGame(PLHGame):
     """PLTGame is the class for Pot-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(2, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(2, StdEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -72,7 +72,7 @@ class NLTGame(NLHGame):
     """NLTGame is the class for No-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(2, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(2, StdEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -80,7 +80,7 @@ class FLOGame(FLHGame):
     """FLOGame is the class for Fixed-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(4, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(4, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -88,7 +88,7 @@ class PLOGame(PLHGame):
     """PLOGame is the class for Pot-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(4, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(4, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -96,7 +96,7 @@ class NLOGame(NLHGame):
     """NLOGame is the class for No-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(4, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(4, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -104,7 +104,7 @@ class FLO5Game(FLHGame):
     """FLO5Game is the class for Fixed-Limit 5-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(5, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(5, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -112,7 +112,7 @@ class PLO5Game(PLHGame):
     """PLO5Game is the class for Pot-Limit 5-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(5, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(5, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -120,7 +120,7 @@ class NLO5Game(NLHGame):
     """NLO5Game is the class for No-Limit 5-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(5, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(5, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -128,7 +128,7 @@ class FLGGame(FLHGame):
     """FLGGame is the class for Fixed-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(2, GreekEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(2, GreekEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -136,7 +136,7 @@ class PLGGame(PLHGame):
     """PLGGame is the class for Pot-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(2, GreekEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(2, GreekEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -144,7 +144,7 @@ class NLGGame(NLHGame):
     """NLGGame is the class for No-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(2, GreekEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(2, GreekEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
@@ -185,7 +185,7 @@ class D5Game(PokerGame):
         max_delta = max(ante, max(blinds))
 
         super().__init__((HoleDealingStage(5, False), BettingStage(max_delta), DrawStage(), BettingStage(max_delta)),
-                         limit, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+                         limit, StdEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final

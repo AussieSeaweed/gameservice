@@ -1,7 +1,7 @@
 from gameframe.poker import (FLGGame, FLO5Game, FLOGame, FLSGame, FLTGame, KuhnGame, NLGGame, NLO5Game, NLOGame,
                              NLSGame, NLTGame, PLGGame, PLO5Game, PLOGame, PLSGame, PLTGame)
-from gameframe.rockpaperscissors import RPSGame
-from gameframe.tictactoe import TTTGame
+from gameframe.rps import RPSGame
+from gameframe.ttt import TTTGame
 
 ante = 1
 blinds = [1, 2]
