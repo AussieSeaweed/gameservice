@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from enum import auto
-from typing import Any, Optional, cast, final
+from typing import Any, Optional, final
 
-from auxiliary import OrderedEnum, default
+from auxiliary import OrderedEnum, default, get
 
 from gameframe.exceptions import ActionException
 from gameframe.game import Game, _Action
@@ -63,7 +63,7 @@ class RPSGame(Game[None, RPSPlayer]):
         :return: The winning player of this rock paper scissors game if there is one, else None.
         """
         if self.terminal and self.players[0]._hand != self.players[1]._hand:
-            return max(self.players, key=lambda player: cast(RPSHand, player._hand))
+            return max(self.players, key=lambda player: get(player._hand))
         else:
             return None
 
