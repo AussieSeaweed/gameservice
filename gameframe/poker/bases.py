@@ -25,6 +25,13 @@ class PokerNature:
         return 'PokerNature'
 
     @property
+    def dealable_players(self) -> Iterator[PokerPlayer]:
+        """
+        :return: The players that can be dealt.
+        """
+        return filter(self.can_deal_hole, self.__game.players)
+
+    @property
     def hole_deal_count(self) -> int:
         """
         :return: The number of hole cards to deal to a player.

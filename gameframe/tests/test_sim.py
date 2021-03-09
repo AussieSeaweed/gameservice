@@ -628,12 +628,14 @@ class NLTSimTestCase(ExtTestCase, SimTestCaseMixin[NLTGame]):
 
             if isinstance(game._stage, HoleDealingStage) and not player.mucked \
                     and len(player.hole) != game._stage._card_target(game):
+                self.assertIn(player, game.nature.dealable_players)
                 self.assertTrue(game.nature.can_deal_hole(player))
                 self.assertTrue(game.nature.can_deal_hole(player, sample(tuple(game._deck), game._stage._card_count)))
                 self.assertFalse(
                     game.nature.can_deal_hole(player, sample(tuple(game._deck), game._stage._card_count + 1)))
                 self.assertEqual(game.nature.hole_deal_count, game._stage._card_count)
             else:
+                self.assertNotIn(player, game.nature.dealable_players)
                 self.assertFalse(game.nature.can_deal_hole(player))
                 self.assertFalse(game.nature.can_deal_hole(player, ()))
 
