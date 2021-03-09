@@ -88,7 +88,7 @@ Interacting with Tic Tac Toe games
 I don't expect people to use GameFrame for Tic Tac Toe games, but this section will explain how to play tic tac toe
 games.
 
-.. literalinclude:: examples/tictactoe.py
+.. literalinclude:: examples/ttt.py
    :language: python
 
 This code outputs:
@@ -103,7 +103,7 @@ This code outputs:
 
 You can also use the parser, as demonstrated below:
 
-.. literalinclude:: examples/tictactoe_parser.py
+.. literalinclude:: examples/ttt_parser.py
    :language: python
 
 This code outputs:
@@ -124,7 +124,7 @@ Interacting with Rock Paper Scissors games
 
 Rock Paper Scissors game is the simplest game implemented on GameFrame. The following code demonstrates how to use it.
 
-.. literalinclude:: examples/rockpaperscissors.py
+.. literalinclude:: examples/rps.py
    :language: python
 
 This code outputs:
