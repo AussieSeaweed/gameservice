@@ -1,7 +1,7 @@
 from abc import ABC
-from collections.abc import Sequence
 from itertools import repeat
-from typing import Generic, Optional, cast
+from random import sample
+from typing import Generic, cast
 from unittest import TestCase, main
 
 from auxiliary import ExtTestCase
@@ -9,7 +9,9 @@ from pokertools import parse_cards
 
 from gameframe.exceptions import ActionException
 from gameframe.game import _G
-from gameframe.poker import FLGGame, KuhnGame, NLD5Game, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker
+from gameframe.poker import (BetRaiseAmountException, BettingStage, BoardDealingStage, FLGGame, HoleDealingStage,
+                             KuhnGame, NLD5Game, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker)
+from gameframe.poker.params import _ShowdownStage
 from gameframe.ttt import TTTGame, parse_ttt
 
 
@@ -17,350 +19,555 @@ class SimTestCaseMixin(Generic[_G], ABC):
     pass
 
 
-class NLTSimTestCase(TestCase, SimTestCaseMixin[NLTGame]):
-    ANTE = 1
-    BLINDS = 1, 2
-
+class NLTSimTestCase(ExtTestCase, SimTestCaseMixin[NLTGame]):
     def test_not_betting_stage(self) -> None:
-        self.assertRaises(ActionException, self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'],
-                                                      'cc cc cc cb2c', False).players[1].fold)
-        self.assertRaises(ActionException, self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'],
-                                                      'cc cc cc cc', False).players[0].check_call)
-        self.assertRaises(ActionException, self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'],
-                                                      'cc cc cc cb2b4c', False).players[0].bet_raise, 100)
-        self.assertRaises(ActionException, self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                                                      ['AcAsKc', 'Qs', 'Qc'],
-                                                      'cccc cccc cccc cccb2ccc').players[0].fold)
-        self.assertRaises(ActionException, self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                                                      ['AcAsKc', 'Qs', 'Qc'],
-                                                      'cccc cccc cccc cccc').players[0].check_call)
-        self.assertRaises(ActionException, self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                                                      ['AcAsKc', 'Qs', 'Qc'],
-                                                      'cccc cccc cccc cccb2b4b6ccc').players[1].bet_raise, 8)
+        self.assertRaises(ActionException, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'br 2', 'cc',
+        )).players[0].fold)
+        self.assertRaises(ActionException, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'cc',
+        )).players[0].check_call)
+        self.assertRaises(ActionException, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'br 2', 'br 4', 'cc'
+        )).players[0].bet_raise, 100)
+        self.assertRaises(ActionException, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc', 'br 2', 'cc', 'cc', 'cc',
+        )).players[0].fold)
+        self.assertRaises(ActionException, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc', 'cc',
+        )).players[0].check_call)
+        self.assertRaises(ActionException, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc', 'br 2', 'br 4', 'br 6', 'cc', 'cc', 'cc',
+        )).players[0].bet_raise, 8)
 
     def test_redundant_fold(self) -> None:
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], [], 'cf')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc'], 'cc f')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs'], 'cb4c cc f')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'],
-                          'cb4c cc cc f')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], [],
-                          'cccf')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc'], 'b6ffc f')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc', 'Qs'], 'cccc cccc cccf')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc', 'Qs', 'Qc'], 'ffcc cc cc cf')
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc',
+        )), ('f',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'cc',
+            'db AcAsKc',
+        )), ('f',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'br 4', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs',
+        )), ('f',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'br 4', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc',
+        )), ('f',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc',
+        )), ('f',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 6', 'f', 'f', 'cc',
+            'db AcAsKc',
+        )), ('f',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc',
+        )), ('f',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'f', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc',
+        )), ('f',))
 
     def test_covered_stack(self) -> None:
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], [], 'b6b199b100')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc'], 'b6c cb50b193b93')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs'],
-                          'cb4c cc b195b95')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'],
-                          'b6c cc cc b93b93')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], [],
-                          'b299ccb99')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc'], 'ffcc b197b50')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc', 'Qs'], 'cccc cccc b197ccb197')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc', 'Qs', 'Qc'], 'b6ccc cccc cccc ccb293b193')
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'br 199',
+        )), ('br 100',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'cc',
+            'db AcAsKc', 'cc', 'br 50', 'br 193',
+        )), ('br 93',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'br 4', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'br 195',
+        )), ('br 95',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'br 93',
+        )), ('br 93',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 299', 'cc', 'cc',
+        )), ('br 99',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'f', 'cc', 'cc',
+            'db AcAsKc', 'br 197',
+        )), ('br 50',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+            'db Qs', 'br 197', 'cc', 'cc',
+        )), ('br 197',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 6', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'br 293',
+        )), ('br 193',))
 
     def test_redundant_bet_raise(self) -> None:
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], [], 'b99b197')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc'], 'b6c cb93b193')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs'],
-                          'cb4c cc cb95b195')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'],
-                          'b6c cc cc cb93b193')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], [],
-                          'cccb99cb199cb199')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc'], 'fb6fc b93b193')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc', 'Qs'], 'cfcc ccc b197cb297')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc', 'Qs', 'Qc'], 'cffc b10c b10b20c b67b267')
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 99',
+        )), ('br 197',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'cc',
+            'db AcAsKc', 'cc', 'br 93',
+        )), ('br 193',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'br 4', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'br 95',
+        )), ('br 195',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'br 93',
+        )), ('br 193',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'br 99', 'cc', 'br 199', 'cc',
+        )), ('br 299',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'br 6', 'f', 'cc',
+            'db AcAsKc', 'br 93',
+        )), ('br 193',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'f', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc',
+            'db Qs', 'br 197', 'cc',
+        )), ('br 297',))
+        self.assertRaises(ActionException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'f', 'f', 'cc',
+            'db AcAsKc', 'br 10', 'cc',
+            'db Qs', 'br 10', 'br 20', 'cc',
+            'db Qc', 'br 67',
+        )), ('br 267',))
 
     def test_bet_amount(self) -> None:
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], [], 'b6b9')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc'], 'b6c b12b24b30')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs'],
-                          'cb4c b4c b4b8b10')
-        self.assertRaises(ActionException, self.parse, [200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'],
-                          'b6c cc cc b1')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], [],
-                          'ccb98b99b100')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc'], 'cccc b2b4b6b8ccb9')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc', 'Qs'], 'cccc cccc b96b97b98')
-        self.assertRaises(ActionException, self.parse, [200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'],
-                          ['AcAsKc', 'Qs', 'Qc'], 'ffcc cc cc b50b55')
+        self.assertRaises(BetRaiseAmountException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6',
+        )), ('br 9',))
+        self.assertRaises(BetRaiseAmountException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'cc',
+            'db AcAsKc', 'br 12', 'br 24',
+        )), ('br 30',))
+        self.assertRaises(BetRaiseAmountException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'br 4', 'cc',
+            'db AcAsKc', 'br 4', 'cc',
+            'db Qs', 'br 4', 'br 8',
+        )), ('br 10',))
+        self.assertRaises(BetRaiseAmountException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc',
+        )), ('br 1',))
+        self.assertRaises(BetRaiseAmountException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'cc', 'br 98', 'br 99',
+        )), ('br 100',))
+        self.assertRaises(BetRaiseAmountException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'br 2', 'br 4', 'br 6', 'br 8', 'cc',
+        )), ('br 9',))
+        self.assertRaises(BetRaiseAmountException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+            'db Qs', 'br 96', 'br 97',
+        )), ('br 98',))
+        self.assertRaises(BetRaiseAmountException, parse_poker, parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'f', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'br 50',
+        )), ('br 55',))
 
-    def test_aggressor(self) -> None:
-        self.assert_actor(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b6b99c', False), 0)
-        self.assert_actor(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b99c', False), 1)
-        self.assert_actor(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'cc cc cc cc', False), 0)
-        self.assert_actor(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'cc cc cb6c cc', False), 0)
-        self.assert_actor(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'cc cc cc cb6b12c', False),
-                          0)
-        self.assert_actor(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'b299ccc', False), 2)
-        self.assert_actor(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'ffb99c', False), 0)
-        self.assert_actor(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'cccc cccc cccc cccc', False), 0)
-        self.assert_actor(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'cccc cccc cb2ccc cccc', False), 0)
-        self.assert_actor(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'cccc cccc cccc b6b12b297ccc', False), 2)
-        self.assert_actor(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'fb199cc', False), 0)
-        self.assert_actor(self.parse([100] * 4, ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'b99ccc', False), 0)
+    def test_showdown_order(self) -> None:
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'br 99', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc',
+        ))).actor, game.players[0])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 99', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc',
+        ))).actor, game.players[1])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'cc',
+        ))).actor, game.players[0])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'cc',
+        ))).actor, game.players[0])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'br 4', 'cc',
+            'db Qc', 'cc', 'cc',
+        ))).actor, game.players[0])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'br 6', 'br 12', 'cc',
+        ))).actor, game.players[0])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 299', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc',
+        ))).actor, game.players[2])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'f', 'br 99', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc',
+        ))).actor, game.players[0])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc', 'cc',
+        ))).actor, game.players[0])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'br 2', 'cc', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc', 'cc',
+        ))).actor, game.players[0])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'cc', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc', 'cc',
+            'db Qc', 'br 6', 'br 12', 'br 297', 'cc', 'cc', 'cc',
+        ))).actor, game.players[2])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'br 199', 'cc', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc',
+        ))).actor, game.players[0])
+        self.assertIs((game := parse_poker(NLTGame(1, (1, 2), (100,) * 4), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 99', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc',
+        ))).actor, game.players[0])
 
     def test_showdown(self) -> None:
-        self.assert_shows(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b6b199c'), [True, True])
-        self.assert_shows(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b99c'), [False, True])
-        self.assert_shows(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b6c cc cc cc'),
-                          [True, True])
-        self.assert_shows(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'cc cc cc cc'), [True, True])
-        self.assert_shows(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc'], 'b4c b6f'), [False, False])
-        self.assert_shows(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'b299ccc'), [True, True, True, False])
-        self.assert_shows(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'fb6cc ccc ccc ccc'), [True, True, False, False])
-        self.assert_shows(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'fb6cc ccb10b20cf cc cb50c'), [False, True, False, False])
-        self.assert_shows(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'b6ccc ccb10b20cb93ccc ccc ccc'), [True, True, False, False])
-        self.assert_shows(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'b6ccc ccb10b20cb93ccc b50cc ccc'), [True, True, False, False])
-        self.assert_shows(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                     'fb199cc'), [True, True, False, False])
-        self.assert_shows(self.parse([100] * 4, ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b99ccc'),
-                          [True, True, False, False])
-        self.assert_shows(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'JcJh', 'TsTh'],
-                                     ['AcAsKc', 'Qs', 'Qc'], 'cccb149ccccc cccc cccc cccc'),
-                          [True, True, False, False, False, False])
-        self.assert_shows(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'JcJh', 'TsTh'],
-                                     [], 'b50fffff'), [False, False, False, False, False, False])
-        self.assert_shows(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'TsTh', 'JcTc'],
-                                     ['AcAsKc', 'Qs', 'Qc'], 'b50b199ccccf'), [True, True, False, False, False, True])
-
-        self.assert_shows(self.parse([0, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
-        self.assert_shows(self.parse([1, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
-        self.assert_shows(self.parse([0, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
-        self.assert_shows(self.parse([2, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
-        self.assert_shows(self.parse([50, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [True, True])
-        self.assert_shows(self.parse([0, 0, 0, 0], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], ''),
-                          [True, True, False, False])
-        self.assert_shows(self.parse([1, 1, 5, 5], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b4c'),
-                          [True, True, True, False])
-        self.assert_shows(self.parse([7, 0, 9, 7], ['4h8s', 'AsQs', 'Ac8d', 'AhQh'], ['Ad3s2h', '8h', 'Ts'], 'ff'),
-                          [True, True, False, False])
-        self.assert_shows(self.parse([1, 17, 0, 1], ['3d6c', '8sAh', 'Ad8c', 'KcQs'], ['4c7h5s', 'Ts', '3c'], ''),
-                          [True, True, True, False])
-        self.assert_shows(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], ''),
-                          [False, True, False, True])
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'br 199', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (True, True))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 99', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (False, True))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'cc',
+            's', 's',
+        )).players), (True, True))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'cc',
+            's', 's',
+        )).players), (True, True))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 4', 'cc',
+            'db AcAsKc', 'br 6', 'f',
+        )).players), (False, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 299', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc', 's', 's', 's', 's',
+        )).players), (True, True, True, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'br 6', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc',
+            's', 's', 's',
+        )).players), (True, True, False, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'br 6', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'br 10', 'br 20', 'cc', 'f',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'br 50', 'cc',
+            's', 's',
+        )).players), (False, True, False, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 6', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'br 10', 'br 20', 'cc', 'br 93', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc',
+            's', 's', 's', 's',
+        )).players), (True, True, False, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 6', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'br 10', 'br 20', 'cc', 'br 93', 'cc', 'cc', 'cc',
+            'db Qs', 'br 50', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc',
+            's', 's', 's', 's',
+        )).players), (True, True, False, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'br 199', 'cc', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc',
+            's', 's', 's',
+        )).players), (True, True, False, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (100,) * 4), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 99', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc',
+            's', 's', 's', 's',
+        )).players), (True, True, False, False))
+        self.assertIterableEqual(
+            (player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200, 200, 150)), (
+                'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'dh 4 JcJh', 'dh 5 TsTh',
+                'cc', 'cc', 'cc', 'br 149', 'cc', 'cc', 'cc', 'cc', 'cc',
+                'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+                'db Qs', 'cc', 'cc', 'cc', 'cc',
+                'db Qc', 'cc', 'cc', 'cc', 'cc',
+                's', 's', 's', 's', 's', 's',
+            )).players), (True, True, False, False, False, False)
+        )
+        self.assertIterableEqual(
+            (player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200, 200, 150)), (
+                'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'dh 4 JcJh', 'dh 5 TsTh',
+                'br 50', 'f', 'f', 'f', 'f', 'f',
+            )).players), (False, False, False, False, False, False)
+        )
+        self.assertIterableEqual(
+            (player.shown for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200, 200, 150)), (
+                'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'dh 4 TsTh', 'dh 5 JcTc',
+                'br 50', 'br 199', 'cc', 'cc', 'cc', 'cc', 'f',
+                'db AcAsKc', 'db Qs', 'db Qc', 's', 's', 's', 's', 's',
+            )).players), (True, True, False, False, False, True)
+        )
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (0, 0)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (True, True))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (1, 0)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (True, True))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (0, 1)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (True, True))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (2, 1)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (True, True))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (50, 1)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (True, True))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (0, 0, 0, 0)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's', 's', 's',
+        )).players), (True, True, False, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (1, 1, 5, 5)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 4', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc', 's', 's', 's', 's',
+        )).players), (True, True, True, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (7, 0, 9, 7)), (
+            'dh 0 4h8s', 'dh 1 AsQs', 'dh 2 Ac8d', 'dh 3 AhQh', 'f', 'f',
+            'db Ad3s2h', 'db 8h', 'db Ts', 's', 's',
+        )).players), (True, True, False, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (1, 17, 0, 1)), (
+            'dh 0 3d6c', 'dh 1 8sAh', 'dh 2 Ad8c', 'dh 3 KcQs', 'db 4c7h5s', 'db Ts', 'db 3c', 's', 's', 's', 's',
+        )).players), (True, True, True, False))
+        self.assertIterableEqual((player.shown for player in parse_poker(NLTGame(1, (1, 2), (2, 16, 0, 1)), (
+            'dh 0 AcKs', 'dh 1 8h2c', 'dh 2 6h6c', 'dh 3 2dTd', 'db 8d5c4d', 'db Qh', 'db 5d', 's', 's', 's', 's',
+        )).players), (False, True, False, True))
 
     def test_distribution(self) -> None:
-        self.assert_stacks(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b6b199c'), [100, 200])
-        self.assert_stacks(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b99c'), [100, 200])
-        self.assert_stacks(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'b6c cc cc cc'), [193, 107])
-        self.assert_stacks(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], 'cc cc cc cc'), [197, 103])
-        self.assert_stacks(self.parse([200, 100], ['QdQh', 'AhAd'], ['AcAsKc'], 'b4cb6f'), [205, 95])
-        self.assert_stacks(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                      'b299ccc'), [300, 400, 100, 0])
-        self.assert_stacks(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                      'fb6cc ccc ccc ccc'), [193, 115, 299, 193])
-        self.assert_stacks(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                      'fb6cc ccb10b20cf cc cb50c'), [123, 195, 299, 183])
-        self.assert_stacks(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                      'b6ccc ccb10b20cb93ccc ccc ccc'), [100, 400, 200, 100])
-        self.assert_stacks(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                      'b6ccc ccb10b20cb93ccc b50cc ccc'), [200, 400, 150, 50])
-        self.assert_stacks(self.parse([200, 100, 300, 200], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'],
-                                      'fb199cc'), [200, 301, 299, 0])
-        self.assert_stacks(self.parse([100] * 4, ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b99ccc'),
-                           [0, 400, 0, 0])
-        self.assert_stacks(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'JcJh', 'TsTh'],
-                                      ['AcAsKc', 'Qs', 'Qc'], 'cccb149ccccc cccc cccc cccc'),
-                           [300, 600, 150, 50, 50, 0])
-        self.assert_stacks(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'JcJh', 'TsTh'],
-                                      [], 'b50fffff'), [198, 97, 308, 199, 199, 149])
-        self.assert_stacks(self.parse([200, 100, 300, 200, 200, 150], ['QdQh', 'AhAd', 'KsKh', 'JsJd', 'TsTh', 'JcTc'],
-                                      ['AcAsKc', 'Qs', 'Qc'], 'b50b199ccccf'), [150, 0, 249, 0, 0, 751])
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'br 199', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (100, 200))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 99', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (100, 200))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 6', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'cc',
+            's', 's',
+        )).players), (193, 107))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'cc',
+            's', 's',
+        )).players), (197, 103))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'br 4', 'cc',
+            'db AcAsKc', 'br 6', 'f',
+        )).players), (205, 95))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 299', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc', 's', 's', 's', 's',
+        )).players), (300, 400, 100, 0))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'br 6', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc',
+            's', 's', 's',
+        )).players), (193, 115, 299, 193))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'br 6', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'br 10', 'br 20', 'cc', 'f',
+            'db Qs', 'cc', 'cc',
+            'db Qc', 'cc', 'br 50', 'cc',
+            's', 's',
+        )).players), (123, 195, 299, 183))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 6', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'br 10', 'br 20', 'cc', 'br 93', 'cc', 'cc', 'cc',
+            'db Qs', 'cc', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc',
+            's', 's', 's', 's',
+        )).players), (100, 400, 200, 100))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 6', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'cc', 'cc', 'br 10', 'br 20', 'cc', 'br 93', 'cc', 'cc', 'cc',
+            'db Qs', 'br 50', 'cc', 'cc',
+            'db Qc', 'cc', 'cc', 'cc',
+            's', 's', 's', 's',
+        )).players), (200, 400, 150, 50))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'f', 'br 199', 'cc', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc',
+            's', 's', 's',
+        )).players), (200, 301, 299, 0))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (100,) * 4), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 99', 'cc', 'cc', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc',
+            's', 's', 's', 's',
+        )).players), (0, 400, 0, 0))
+        self.assertIterableEqual(
+            (player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200, 200, 150)), (
+                'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'dh 4 JcJh', 'dh 5 TsTh',
+                'cc', 'cc', 'cc', 'br 149', 'cc', 'cc', 'cc', 'cc', 'cc',
+                'db AcAsKc', 'cc', 'cc', 'cc', 'cc',
+                'db Qs', 'cc', 'cc', 'cc', 'cc',
+                'db Qc', 'cc', 'cc', 'cc', 'cc',
+                's', 's', 's', 's', 's', 's',
+            )).players), (300, 600, 150, 50, 50, 0)
+        )
+        self.assertIterableEqual(
+            (player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200, 200, 150)), (
+                'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'dh 4 JcJh', 'dh 5 TsTh',
+                'br 50', 'f', 'f', 'f', 'f', 'f',
+            )).players), (198, 97, 308, 199, 199, 149)
+        )
+        self.assertIterableEqual(
+            (player.stack for player in parse_poker(NLTGame(1, (1, 2), (200, 100, 300, 200, 200, 150)), (
+                'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'dh 4 TsTh', 'dh 5 JcTc',
+                'br 50', 'br 199', 'cc', 'cc', 'cc', 'cc', 'f',
+                'db AcAsKc', 'db Qs', 'db Qc', 's', 's', 's', 's', 's',
+            )).players), (150, 0, 249, 0, 0, 751)
+        )
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (0, 0)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (0, 0))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (1, 0)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (1, 0))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (0, 1)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (0, 1))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (2, 1)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (1, 2))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (50, 1)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's',
+        )).players), (49, 2))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (0, 0, 0, 0)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'db AcAsKc', 'db Qs', 'db Qc', 's', 's', 's', 's',
+        )).players), (0, 0, 0, 0))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (1, 1, 5, 5)), (
+            'dh 0 QdQh', 'dh 1 AhAd', 'dh 2 KsKh', 'dh 3 JsJd', 'br 4', 'cc',
+            'db AcAsKc', 'db Qs', 'db Qc', 's', 's', 's', 's',
+        )).players), (0, 4, 8, 0))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (7, 0, 9, 7)), (
+            'dh 0 4h8s', 'dh 1 AsQs', 'dh 2 Ac8d', 'dh 3 AhQh', 'f', 'f',
+            'db Ad3s2h', 'db 8h', 'db Ts', 's', 's',
+        )).players), (9, 0, 8, 6))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (1, 17, 0, 1)), (
+            'dh 0 3d6c', 'dh 1 8sAh', 'dh 2 Ad8c', 'dh 3 KcQs', 'db 4c7h5s', 'db Ts', 'db 3c', 's', 's', 's', 's',
+        )).players), (3, 16, 0, 0))
+        self.assertIterableEqual((player.stack for player in parse_poker(NLTGame(1, (1, 2), (2, 16, 0, 1)), (
+            'dh 0 AcKs', 'dh 1 8h2c', 'dh 2 6h6c', 'dh 3 2dTd', 'db 8d5c4d', 'db Qh', 'db 5d', 's', 's', 's', 's',
+        )).players), (0, 16, 0, 3))
 
-        self.assert_stacks(self.parse([0, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [0, 0])
-        self.assert_stacks(self.parse([1, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [1, 0])
-        self.assert_stacks(self.parse([0, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [0, 1])
-        self.assert_stacks(self.parse([2, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [1, 2])
-        self.assert_stacks(self.parse([50, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], ''), [49, 2])
-        self.assert_stacks(self.parse([0, 0, 0, 0], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], ''),
-                           [0, 0, 0, 0])
-        self.assert_stacks(self.parse([1, 1, 5, 5], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b4c'),
-                           [0, 4, 8, 0])
-        self.assert_stacks(self.parse([7, 0, 9, 7], ['4h8s', 'AsQs', 'Ac8d', 'AhQh'], ['Ad3s2h', '8h', 'Ts'], 'ff'),
-                           [9, 0, 8, 6])
-        self.assert_stacks(self.parse([1, 17, 0, 1], ['3d6c', '8sAh', 'Ad8c', 'KcQs'], ['4c7h5s', 'Ts', '3c'], ''),
-                           [3, 16, 0, 0])
-        self.assert_stacks(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], ''),
-                           [0, 16, 0, 3])
-
-    def test_pot(self) -> None:
-        self.assertEqual(self.parse([0, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
-        self.assertEqual(self.parse([1, 0], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
-        self.assertEqual(self.parse([0, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
-        self.assertEqual(self.parse([2, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
-        self.assertEqual(self.parse([50, 1], ['QdQh', 'AhAd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
-        self.assertEqual(self.parse([0, 0, 0, 0], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], '').pot, 0)
-        self.assertEqual(self.parse([1, 1, 5, 5], ['QdQh', 'AhAd', 'KsKh', 'JsJd'], ['AcAsKc', 'Qs', 'Qc'], 'b4c').pot,
-                         0)
-        self.assertEqual(self.parse([7, 0, 9, 7], ['4h8s', 'AsQs', 'Ac8d', 'AhQh'], ['Ad3s2h', '8h', 'Ts'], 'ff').pot,
-                         0)
-        self.assertEqual(self.parse([1, 17, 0, 1], ['3d6c', '8sAh', 'Ad8c', 'KcQs'], ['4c7h5s', 'Ts', '3c'], '').pot, 0)
-        self.assertEqual(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], '').pot, 0)
-        self.assertEqual(self.parse([2, 16, 0, 1], ['AcKs', '8h2c', '6h6c', '2dTd'], ['8d5c4d', 'Qh', '5d'], '').pot, 0)
-
-    def test_nlt_cans(self) -> None:
-        game = NLTGame(1, [1, 2], [100, 100, 100])
-        n = game.nature
-        a, b, c = game.players
-
-        self.assertTrue(n.can_deal_hole())
-        self.assertTrue(n.can_deal_hole(a))
-        self.assertTrue(n.can_deal_hole(a, parse_cards('AhTh')))
-        self.assertTrue(n.can_deal_hole(b))
-        self.assertTrue(n.can_deal_hole(b, parse_cards('AhTh')))
-        self.assertTrue(n.can_deal_hole(c))
-        self.assertTrue(n.can_deal_hole(c, parse_cards('AhTh')))
-        self.assertFalse(n.can_deal_board())
-        self.assertEqual(n.hole_deal_count, 2)
-
-        n.deal_hole(a, parse_cards('AhTh'))
-
-        self.assertTrue(n.can_deal_hole())
-        self.assertFalse(n.can_deal_hole(a))
-        self.assertTrue(n.can_deal_hole(b))
-        self.assertTrue(n.can_deal_hole(c))
-        self.assertFalse(n.can_deal_hole(c, parse_cards('AhTh')))
-        self.assertFalse(n.can_deal_board())
-        self.assertFalse(n.can_deal_board(parse_cards('AhTh')))
-        self.assertEqual(n.hole_deal_count, 2)
-
-        n.deal_hole(b, parse_cards('AsTs'))
-        n.deal_hole(c, parse_cards('AcTc'))
-
-        self.assertFalse(n.can_deal_hole())
-        self.assertFalse(n.can_deal_board())
-
-        self.assertFalse(a.can_fold())
-        self.assertFalse(a.can_bet_raise())
-        self.assertFalse(a.can_check_call())
-        self.assertFalse(b.can_fold())
-        self.assertFalse(b.can_bet_raise())
-        self.assertFalse(b.can_check_call())
-        self.assertTrue(c.can_fold())
-        self.assertTrue(c.can_bet_raise())
-        self.assertTrue(c.can_check_call())
-        self.assertTrue(c.can_bet_raise(4))
-        self.assertTrue(c.can_bet_raise(99))
-        self.assertFalse(c.can_bet_raise(0))
-        self.assertEqual(c.min_bet_raise_amount, 4)
-        self.assertEqual(c.max_bet_raise_amount, 99)
-
-        c.bet_raise(6)
-
-        self.assertTrue(a.can_fold())
-        self.assertTrue(a.can_bet_raise())
-        self.assertTrue(a.can_check_call())
-        self.assertFalse(b.can_fold())
-        self.assertFalse(b.can_bet_raise())
-        self.assertFalse(b.can_check_call())
-        self.assertFalse(c.can_fold())
-        self.assertFalse(c.can_bet_raise())
-        self.assertFalse(c.can_check_call())
-        self.assertEqual(a.min_bet_raise_amount, 10)
-        self.assertEqual(a.max_bet_raise_amount, 99)
-
-        a.fold()
-        b.check_call()
-
-        self.assertFalse(n.can_deal_hole())
-        self.assertFalse(n.can_deal_hole(a))
-        self.assertFalse(n.can_deal_hole(b))
-        self.assertFalse(n.can_deal_hole(c))
-        self.assertTrue(n.can_deal_board())
-        self.assertFalse(n.can_deal_board(parse_cards('AhTh')))
-        self.assertTrue(n.can_deal_board(parse_cards('2h3h4h')))
-        self.assertEqual(n.board_deal_count, 3)
-        n.deal_board(parse_cards('2h3h4h'))
-
-        b.check_call()
-        c.check_call()
-
-        self.assertEqual(n.board_deal_count, 1)
-        n.deal_board(parse_cards('4s'))
-
-        b.bet_raise(93)
-        c.check_call()
-
-        self.assertEqual(n.board_deal_count, 1)
-        n.deal_board(parse_cards('5s'))
-
-        self.assertTrue(b.can_showdown())
-        self.assertFalse(c.can_showdown())
-
-        b.showdown()
-        c.showdown()
-
-        self.assertTrue(game.terminal)
+    def test_low_stacks(self) -> None:
+        self.verify(parse_poker(NLTGame(1, (1, 2), (0, 0)), ('dh 0', 'dh 1', 'db', 'db', 'db', 's', 's')))
+        self.verify(parse_poker(NLTGame(1, (1, 2), (1, 0)), ('dh 0', 'dh 1', 'db', 'db', 'db', 's', 's')))
+        self.verify(parse_poker(NLTGame(1, (1, 2), (0, 1)), ('dh 0', 'dh 1', 'db', 'db', 'db', 's', 's')))
+        self.verify(parse_poker(NLTGame(1, (1, 2), (2, 1)), ('dh 0', 'dh 1', 'db', 'db', 'db', 's', 's')))
+        self.verify(parse_poker(NLTGame(1, (1, 2), (50, 1)), ('dh 0', 'dh 1', 'db', 'db', 'db', 's', 's')))
+        self.verify(parse_poker(NLTGame(1, (1, 2), (0, 0, 0, 0)), (
+            'dh 0', 'dh 1', 'dh 2', 'dh 3', 'db', 'db', 'db', 's', 's', 's', 's',
+        )))
+        self.verify(parse_poker(NLTGame(1, (1, 2), (1, 17, 0, 1)), (
+            'dh 0', 'dh 1', 'dh 2', 'dh 3', 'db', 'db', 'db', 's', 's', 's', 's',
+        )))
+        self.verify(parse_poker(NLTGame(1, (1, 2), (2, 16, 0, 1)), (
+            'dh 0', 'dh 1', 'dh 2', 'dh 3', 'db', 'db', 'db', 's', 's', 's', 's',
+        )))
+        self.verify(parse_poker(NLTGame(1, (1, 2), (2, 16, 0, 1)), (
+            'dh 0', 'dh 1', 'dh 2', 'dh 3', 'db', 'db', 'db', 's', 's', 's', 's',
+        )))
+        self.verify(parse_poker(NLTGame(1, (1, 2), (1, 1, 5, 5)), (
+            'dh 0', 'dh 1', 'dh 2', 'dh 3', 'br 4', 'cc', 'db', 'db', 'db', 's', 's', 's', 's',
+        )))
+        self.verify(parse_poker(NLTGame(1, (1, 2), (7, 0, 9, 7)), (
+            'dh 0', 'dh 1', 'dh 2', 'dh 3', 'f', 'f', 'db', 'db', 'db', 's', 's',
+        )))
 
     def test_min_bet_raise_amount(self) -> None:
-        game = NLTGame(0, [5, 10], [1000, 1000])
-
-        parse_poker(game, (
-            'dh 0 Th8h', 'dh 1 QsJd',
-        ))
-
+        game = parse_poker(NLTGame(0, (5, 10), (1000, 1000)), ('dh 0', 'dh 1'))
         self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 20)
-
-        parse_poker(game, (
-            'cc', 'cc',
-            'db AsAcAh',
-        ))
-
+        parse_poker(game, ('cc', 'cc', 'db'))
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
+        parse_poker(game, ('cc', 'cc', 'db'))
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
+        parse_poker(game, ('cc', 'cc', 'db'))
         self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
 
-        parse_poker(game, (
-            'cc', 'cc',
-            'db Ad',
-        ))
-
-        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
-
-        parse_poker(game, (
-            'cc', 'cc',
-            'db 2h',
-        ))
-
-        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
-
-    def test_parser(self) -> None:
-        game = NLTGame(500, [1000, 2000], [1125600, 2000000, 553500])
-
-        parse_poker(game, (
-            'dh 0 Ac2d', 'dh 1 5h7s', 'dh 2 7h6h',
-            'br 7000', 'br 23000', 'f', 'cc',
-            'db Jc3d5c',
-            'br 35000', 'cc',
-            'db 4h',
-            'br 90000', 'br 232600', 'br 1067100', 'cc',
+    def test_hand(self) -> None:
+        game = parse_poker(NLTGame(500, (1000, 2000), (1125600, 2000000, 553500)), (
+            'dh 0 Ac2d', 'dh 1 5h7s', 'dh 2 7h6h', 'br 7000', 'br 23000', 'f', 'cc',
+            'db Jc3d5c', 'br 35000', 'cc',
+            'db 4h', 'br 90000', 'br 232600', 'br 1067100', 'cc',
             'db Jh',
         ))
 
@@ -368,59 +575,87 @@ class NLTSimTestCase(TestCase, SimTestCaseMixin[NLTGame]):
 
         parse_poker(game, ('s', 's'))
 
-        self.assertSequenceEqual([player.bet for player in game.players], [0, 0, 0])
-        self.assertSequenceEqual([player.stack for player in game.players], [572100, 1997500, 1109500])
-        self.assertSequenceEqual([player.shown for player in game.players], [True, False, True])
-        self.assertSequenceEqual([player.mucked for player in game.players], [False, True, False])
+        self.assertIterableEqual((player.bet for player in game.players), (0, 0, 0))
+        self.assertIterableEqual((player.stack for player in game.players), (572100, 1997500, 1109500))
+        self.assertIterableEqual((player.shown for player in game.players), (True, False, True))
+        self.assertIterableEqual((player.mucked for player in game.players), (False, True, False))
 
-    def assert_actor(self, game: PokerGame, index: Optional[int]) -> None:
-        if index is None:
-            self.assertIs(game.actor, game.nature)
+    def test_nlt_cans(self) -> None:
+        game = NLTGame(1, (1, 2), (100, 100, 100))
+        commands = (
+            'dh 0 AhTh', 'dh 1 AsTs', 'dh 2 AcTc', 'br 6', 'f', 'cc',
+            'db 2h3h4h', 'cc', 'cc',
+            'db 4s', 'br 93', 'cc',
+            'db 5s', 's 1', 's 1',
+        )
+
+        for command in commands:
+            parse_poker(game, (command,))
+            self.verify(game)
+
+    def verify(self, game: PokerGame) -> None:
+        for player in game.players:
+            if isinstance(game._stage, BettingStage) and player.bet < max(player.bet for player in game.players) \
+                    and game.actor is player:
+                self.assertTrue(player.can_fold())
+            else:
+                self.assertFalse(player.can_fold())
+
+            if isinstance(game._stage, BettingStage) and game.actor is player:
+                self.assertTrue(player.can_check_call())
+            else:
+                self.assertFalse(player.can_check_call())
+
+            if isinstance(game._stage, BettingStage) and game.actor is player \
+                    and any(player._relevant for player in game.players if player is not game.actor) \
+                    and game._bet_raise_count != game._limit._max_count:
+                self.assertTrue(player.can_bet_raise())
+                self.assertTrue(player.can_bet_raise(game._limit._min_amount(game)))
+                self.assertTrue(player.can_bet_raise(game._limit._max_amount(game)))
+                self.assertFalse(player.can_bet_raise(game._limit._min_amount(game) - 1))
+                self.assertFalse(player.can_bet_raise(game._limit._max_amount(game) + 1))
+            else:
+                self.assertFalse(player.can_bet_raise())
+
+            if isinstance(game._stage, _ShowdownStage) and game.actor is player and not (player.mucked or player.shown):
+                self.assertTrue(player.can_showdown())
+                self.assertTrue(player.can_showdown(False))
+                self.assertTrue(player.can_showdown(True))
+            else:
+                self.assertFalse(player.can_showdown())
+                self.assertFalse(player.can_showdown(False))
+                self.assertFalse(player.can_showdown(True))
+
+            if isinstance(game._stage, HoleDealingStage) and not player.mucked \
+                    and len(player.hole) != game._stage._card_target(game):
+                self.assertTrue(game.nature.can_deal_hole(player))
+                self.assertTrue(game.nature.can_deal_hole(player, sample(tuple(game._deck), game._stage._card_count)))
+                self.assertFalse(
+                    game.nature.can_deal_hole(player, sample(tuple(game._deck), game._stage._card_count + 1)))
+                self.assertEqual(game.nature.hole_deal_count, game._stage._card_count)
+            else:
+                self.assertFalse(game.nature.can_deal_hole(player))
+                self.assertFalse(game.nature.can_deal_hole(player, ()))
+
+        if isinstance(game._stage, HoleDealingStage):
+            self.assertTrue(game.nature.can_deal_hole())
         else:
-            self.assertIs(game.actor, game.players[index])
+            self.assertFalse(game.nature.can_deal_hole())
 
-    def assert_shows(self, game: PokerGame, shows: Sequence[bool]) -> None:
-        self.assertSequenceEqual([player.shown for player in game.players], shows)
+        if isinstance(game._stage, BoardDealingStage):
+            self.assertTrue(game.nature.can_deal_board())
+            self.assertTrue(game.nature.can_deal_board(sample(tuple(game._deck), game._stage._card_count)))
+            self.assertFalse(game.nature.can_deal_board(sample(tuple(game._deck), game._stage._card_count + 1)))
+            self.assertEqual(game.nature.board_deal_count, game._stage._card_count)
+        else:
+            self.assertFalse(game.nature.can_deal_board())
+            self.assertFalse(game.nature.can_deal_board(()))
 
-    def assert_stacks(self, game: PokerGame, stacks: Sequence[int]) -> None:
-        self.assertSequenceEqual([player.stack for player in game.players], stacks)
+        self.assertEqual(sum(player.bet + player.stack for player in game.players) + game.pot,
+                         sum(player.starting_stack for player in game.players))
 
-    def parse(self, stacks: Sequence[int], hole_card_sets: Sequence[str], board_card_sets: Sequence[str], tokens: str,
-              terminate: bool = True) -> NLTGame:
-        tokens = tokens.replace(' ', '')
-        game = NLTGame(self.ANTE, self.BLINDS, stacks)
-
-        for player, hole_cards in zip(game.players, hole_card_sets):
-            game.nature.deal_hole(player, parse_cards(hole_cards))
-
-        try:
-            while tokens or board_card_sets:
-                if isinstance(game.actor, PokerPlayer):
-                    token, tokens = tokens[0], tokens[1:]
-
-                    if token == 'b':
-                        index = len(tokens) if tokens.isdigit() else next(
-                            i for i, c in enumerate(tokens) if not c.isdigit())
-
-                        amount, tokens = int(tokens[:index]), tokens[index:]
-                        game.actor.bet_raise(amount)
-                    elif token == 'c':
-                        game.actor.check_call()
-                    elif token == 'f':
-                        game.actor.fold()
-                    else:
-                        self.fail()
-                else:
-                    game.nature.deal_board(parse_cards(board_card_sets[0]))
-                    board_card_sets = board_card_sets[1:]
-        except ActionException as exception:
-            assert not tokens and not board_card_sets, 'DEBUG: An exception was raised before all commands were parsed'
-            raise exception
-
-        while terminate and not game.terminal and isinstance(game.actor, PokerPlayer) and game.actor.can_showdown():
-            game.actor.showdown()
-
-        return game
+        if game.terminal:
+            self.assertEqual(game.pot, 0)
 
 
 class PLOSimTestCase(ExtTestCase, SimTestCaseMixin[PLOGame]):
@@ -453,12 +688,9 @@ class PLOSimTestCase(ExtTestCase, SimTestCaseMixin[PLOGame]):
 
     def test_hand(self) -> None:
         game = parse_poker(PLOGame(0, (50000, 100000), (125945025, 67847350)), (
-            'dh 0 Ah3sKsKh', 'dh 1 6d9s7d8h',
-            'br 300000', 'br 900000', 'br 2700000', 'br 8100000', 'cc',
-            'db 4s5c2h',
-            'br 9100000', 'br 43500000', 'br 77900000', 'cc',
-            'db 5h',
-            'db 9c',
+            'dh 0 Ah3sKsKh', 'dh 1 6d9s7d8h', 'br 300000', 'br 900000', 'br 2700000', 'br 8100000', 'cc',
+            'db 4s5c2h', 'br 9100000', 'br 43500000', 'br 77900000', 'cc',
+            'db 5h', 'db 9c',
         ))
 
         self.assertEqual(game.pot, 135694700)
@@ -489,9 +721,7 @@ class NLSSimTestCase(ExtTestCase, SimTestCaseMixin[NLSGame]):
         game = parse_poker(NLSGame(3000, 3000, (495000, 232000, 362000, 403000, 301000, 204000)), (
             'dh 0 Th8h', 'dh 1 QsJd', 'dh 2 QhQd', 'dh 3 8d7c', 'dh 4 KhKs', 'dh 5 8c7h',
             'cc', 'cc', 'br 35000', 'f', 'br 298000', 'f', 'f', 'f', 'cc',
-            'db 9h6cKc',
-            'db Jh',
-            'db Ts',
+            'db 9h6cKc', 'db Jh', 'db Ts',
         ))
 
         self.assertEqual(game.pot, 623000)
@@ -540,7 +770,7 @@ class NLD5SimTestCase(TestCase, SimTestCaseMixin[NLD5Game]):
         self.assertTrue(parse_poker(NLD5Game(0, (5, 10), (1000, 1000, 1000, 1000)), (
             'dh 0 AsAdAcAhKd', 'dh 1 4s4d4c5h5d', 'dh 2 2s2d2c3h3d', 'dh 3 Th8h9cJsQd',
             'cc', 'cc', 'f', 'cc',
-            'd 4c4d4s 5c5sKc', 'd 3h3d', 'd  ',
+            'd 4c4d4s 5c5sKc', 'd 3h3d', 'd',
             'br 100', 'cc', 'cc',
             's', 's', 's',
         )).terminal)
