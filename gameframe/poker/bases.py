@@ -199,7 +199,7 @@ class PokerPlayer:
         return self.__game._evaluator.hand(self._hole, self.__game._board)
 
     @property
-    def min_bet_raise_amount(self) -> int:
+    def min_bet_raise(self) -> int:
         """
         :return: The minimum bet/raise amount.
         """
@@ -209,7 +209,7 @@ class PokerPlayer:
             raise ActionException('The poker player cannot bet/raise')
 
     @property
-    def max_bet_raise_amount(self) -> int:
+    def max_bet_raise(self) -> int:
         """
         :return: The maximum bet/raise amount.
         """
@@ -292,7 +292,7 @@ class PokerPlayer:
         """
         from gameframe.poker._actions import BetRaiseAction
 
-        BetRaiseAction(self.__game, self, default(amount, self.min_bet_raise_amount)).act()
+        BetRaiseAction(self.__game, self, default(amount, self.min_bet_raise)).act()
 
     def can_bet_raise(self, amount: Optional[int] = None) -> bool:
         """Determines if the player can bet or raise the amount.

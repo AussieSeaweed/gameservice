@@ -553,15 +553,15 @@ class NLTSimTestCase(ExtTestCase, SimTestCaseMixin[NLTGame]):
             'dh 0', 'dh 1', 'dh 2', 'dh 3', 'f', 'f', 'db', 'db', 'db', 's', 's',
         )))
 
-    def test_min_bet_raise_amount(self) -> None:
+    def test_min_bet_raise(self) -> None:
         game = parse_poker(NLTGame(0, (5, 10), (1000, 1000)), ('dh 0', 'dh 1'))
-        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 20)
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise, 20)
         parse_poker(game, ('cc', 'cc', 'db'))
-        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise, 10)
         parse_poker(game, ('cc', 'cc', 'db'))
-        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise, 10)
         parse_poker(game, ('cc', 'cc', 'db'))
-        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise, 10)
 
     def test_hand(self) -> None:
         game = parse_poker(NLTGame(500, (1000, 2000), (1125600, 2000000, 553500)), (
@@ -661,13 +661,13 @@ class NLTSimTestCase(ExtTestCase, SimTestCaseMixin[NLTGame]):
 
 
 class PLOSimTestCase(ExtTestCase, SimTestCaseMixin[PLOGame]):
-    def test_max_bet_raise_amount(self) -> None:
+    def test_max_bet_raise(self) -> None:
         game = PLOGame(0, (1, 2), (100, 100))
 
         game.nature.deal_hole(game.players[0], parse_cards('AhAsKhKs'))
         game.nature.deal_hole(game.players[1], parse_cards('AcAdKcKd'))
 
-        self.assertEqual(game.players[1].max_bet_raise_amount, 6)
+        self.assertEqual(game.players[1].max_bet_raise, 6)
 
         game = PLOGame(0, (1, 2), (100, 100, 100))
 
@@ -675,18 +675,18 @@ class PLOSimTestCase(ExtTestCase, SimTestCaseMixin[PLOGame]):
         game.nature.deal_hole(game.players[1], parse_cards('AcAdKcKd'))
         game.nature.deal_hole(game.players[2], parse_cards('QcQdJcJd'))
 
-        self.assertEqual(game.players[2].max_bet_raise_amount, 7)
+        self.assertEqual(game.players[2].max_bet_raise, 7)
 
         game.players[2].bet_raise(7)
 
-        self.assertEqual(game.players[0].max_bet_raise_amount, 23)
+        self.assertEqual(game.players[0].max_bet_raise, 23)
 
         game = PLOGame(1, (1, 2), (100, 100))
 
         game.nature.deal_hole(game.players[0], parse_cards('AhAsKhKs'))
         game.nature.deal_hole(game.players[1], parse_cards('AcAdKcKd'))
 
-        self.assertEqual(game.players[1].max_bet_raise_amount, 8)
+        self.assertEqual(game.players[1].max_bet_raise, 8)
 
     def test_hand(self) -> None:
         game = parse_poker(PLOGame(0, (50000, 100000), (125945025, 67847350)), (
@@ -742,26 +742,26 @@ class FLGSimTestCase(TestCase, SimTestCaseMixin[FLGGame]):
 
         self.assertRaises(ActionException, cast(PokerPlayer, game.actor).bet_raise, 50)
 
-    def test_bet_raise_amount(self) -> None:
+    def test_bet_raise(self) -> None:
         game = parse_poker(FLGGame(0, (5, 10), (1000, 1000)), ('dh 0', 'dh 1'))
 
-        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 20)
-        self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise_amount, 20)
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise, 20)
+        self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise, 20)
 
         parse_poker(game, ('cc', 'cc', 'db'))
 
-        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 10)
-        self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise_amount, 10)
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise, 10)
+        self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise, 10)
 
         parse_poker(game, ('cc', 'cc', 'db'))
 
-        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 20)
-        self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise_amount, 20)
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise, 20)
+        self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise, 20)
 
         parse_poker(game, ('cc', 'cc', 'db'))
 
-        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise_amount, 20)
-        self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise_amount, 20)
+        self.assertEqual(cast(PokerPlayer, game.actor).min_bet_raise, 20)
+        self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise, 20)
 
 
 class NLD5SimTestCase(TestCase, SimTestCaseMixin[NLD5Game]):

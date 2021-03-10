@@ -75,7 +75,7 @@ class NLTMCTestCase(TestCase, MCTestCaseMixin[NLTGame]):
                 actions.append('cc')
 
             if game.actor.can_bet_raise():
-                actions.extend({f'br {game.actor.min_bet_raise_amount}', f'br {game.actor.max_bet_raise_amount}'})
+                actions.extend({f'br {game.actor.min_bet_raise}', f'br {game.actor.max_bet_raise}'})
 
             if game.actor.can_showdown():
                 actions.extend(('s 0', 's 1'))
