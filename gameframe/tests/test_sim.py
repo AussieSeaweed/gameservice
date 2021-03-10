@@ -731,9 +731,9 @@ class NLSSimTestCase(ExtTestCase, SimTestCaseMixin[NLSGame]):
         parse_poker(game, ('s', 's'))
 
         self.assertIterableEqual((player.bet for player in game.players), repeat(0, 6))
-        self.assertIterableEqual((player.stack for player in game.players), [489000, 226000, 684000, 400000, 0, 198000])
-        self.assertIterableEqual((player.shown for player in game.players), [False, False, True, False, True, False])
-        self.assertIterableEqual((player.mucked for player in game.players), [True, True, False, True, False, True])
+        self.assertIterableEqual((player.stack for player in game.players), (489000, 226000, 684000, 400000, 0, 198000))
+        self.assertIterableEqual((player.shown for player in game.players), (False, False, True, False, True, False))
+        self.assertIterableEqual((player.mucked for player in game.players), (True, True, False, True, False, True))
 
 
 class FLGSimTestCase(TestCase, SimTestCaseMixin[FLGGame]):
