@@ -251,6 +251,7 @@ class BadugiGame(PokerGame):
         ), limit, BadugiEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
+@final
 class FLBadugiGame(BadugiGame):
     """FLBadugiGame is the class for Fixed-Limit Badugi games."""
 
@@ -258,6 +259,7 @@ class FLBadugiGame(BadugiGame):
         super().__init__(FixedLimit(), ante, blinds, starting_stacks)
 
 
+@final
 class PLBadugiGame(BadugiGame):
     """PLBadugiGame is the class for Pot-Limit Badugi games."""
 
@@ -265,6 +267,7 @@ class PLBadugiGame(BadugiGame):
         super().__init__(PotLimit(), ante, blinds, starting_stacks)
 
 
+@final
 class NLBadugiGame(BadugiGame):
     """NLBadugiGame is the class for No-Limit Badugi games."""
 
