@@ -4,7 +4,7 @@ Video: https://www.youtube.com/watch?v=QlgCcphLjaQ
 """
 from gameframe.poker import NLSGame, parse_poker
 
-game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
+game = NLSGame(3000, 3000, (495000, 232000, 362000, 403000, 301000, 204000))
 badziakouski, zhong, xuan, jun, phua, koon = game.players
 
 parse_poker(game, (
@@ -20,14 +20,9 @@ parse_poker(game, (
 ))
 
 # Pot: 623000
-
 print(f'Pot: {game.pot}')
 
 parse_poker(game, (
     # Showdown
     's', 's'
 ))
-
-print('Players:')
-print('\n'.join(map(str, game.players)))
-print('Board:', ''.join(map(str, game.board)))

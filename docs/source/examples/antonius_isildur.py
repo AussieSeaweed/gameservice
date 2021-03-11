@@ -8,7 +8,7 @@ from pokertools import parse_cards
 
 from gameframe.poker import PLOGame
 
-game = PLOGame(0, [50000, 100000], [125945025, 67847350])
+game = PLOGame(0, (50000, 100000), (125945025, 67847350))
 antonius, isildur = game.players
 
 # Pre-flop
@@ -37,12 +37,7 @@ game.nature.deal_board(parse_cards('5h'))
 game.nature.deal_board(parse_cards('9c'))
 
 # Pot: 1356947.00 (0.50 was probably collected as rake in the actual game)
-
 print(f'Pot: {game.pot}')
 
 antonius.showdown()
 isildur.showdown()
-
-print('Players:')
-print('\n'.join(map(str, game.players)))
-print('Board:', ''.join(map(str, game.board)))

@@ -6,7 +6,7 @@ from pokertools import parse_cards
 
 from gameframe.poker import NLSGame
 
-game = NLSGame(3000, 3000, [495000, 232000, 362000, 403000, 301000, 204000])
+game = NLSGame(3000, 3000, (495000, 232000, 362000, 403000, 301000, 204000))
 badziakouski, zhong, xuan, jun, phua, koon = game.players
 
 # Pre-flop
@@ -41,12 +41,7 @@ game.nature.deal_board(parse_cards('Jh'))
 game.nature.deal_board(parse_cards('Ts'))
 
 # Pot: 623000
-
 print(f'Pot: {game.pot}')
 
 phua.showdown()
 xuan.showdown()
-
-print('Players:')
-print('\n'.join(map(str, game.players)))
-print('Board:', ''.join(map(str, game.board)))

@@ -6,7 +6,7 @@ from pokertools import parse_cards
 
 from gameframe.poker import NLTGame
 
-game = NLTGame(500, [1000, 2000], [1125600, 2000000, 553500])  # Antonius's stack is unknown
+game = NLTGame(500, (1000, 2000), (1125600, 2000000, 553500))  # Antonius's stack is unknown
 ivey, antonius, dwan = game.players
 
 # Pre-flop
@@ -41,12 +41,7 @@ dwan.check_call()
 game.nature.deal_board(parse_cards('Jh'))
 
 # Pot: 1109500 (1000 was probably collected as rake in the actual game)
-
 print(f'Pot: {game.pot}')
 
 ivey.showdown()
 dwan.showdown()
-
-print('Players:')
-print('\n'.join(map(str, game.players)))
-print('Board:', ''.join(map(str, game.board)))

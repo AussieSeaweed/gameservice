@@ -13,7 +13,3 @@ y.mark(2, 1)
 x.mark(1, 2)
 y.mark(1, 0)
 x.mark(2, 2)
-
-print('Board:')
-print('\n'.join(map(lambda row: ' '.join(map(str, row)), game.board)))
-print(f'Winner: {game.winner}')

@@ -10,7 +10,3 @@ parse_ttt(game, (
     (1, 1),
     (0, 2),
 ))
-
-print('Board:')
-print('\n'.join(map(lambda row: ' '.join(map(str, row)), game.board)))
-print(f'Winner: {game.winner}')
