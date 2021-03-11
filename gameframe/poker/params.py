@@ -52,7 +52,7 @@ class BettingStage(Stage, ABC):
     """BettingStage is the class for betting stages."""
 
     def __init__(self, initial_max_delta: int):
-        self._initial_max_delta = initial_max_delta
+        self.__initial_max_delta = initial_max_delta
 
         self._behavior: Optional[BettingStage._Behavior] = None
 
@@ -72,7 +72,7 @@ class BettingStage(Stage, ABC):
             game._aggressor = self._opener(game)
             game._bet_raise_count = 0
 
-        game._max_delta = self._initial_max_delta
+        game._max_delta = self.__initial_max_delta
 
     def _close(self, game: PokerGame) -> None:
         game._reset()
@@ -96,11 +96,19 @@ class BettingStage(Stage, ABC):
 class DrawStage(Stage):
     """DrawStage is the class for draw stages."""
 
+    def __init__(self):
+        self.__opened = False
+
     def _skippable(self, game: PokerGame) -> bool:
-        return super()._skippable(game) or game._actor is self._opener(game)
+        return super()._skippable(game) or (self.__opened and game._actor is self._opener(game))
 
     def _opener(self, game: PokerGame) -> PokerPlayer:
         return next(player for player in game.players if not player.mucked)
+
+    def _open(self, game: PokerGame) -> None:
+        super()._open(game)
+
+        self.__opened = True
 
 
 class _ShowdownStage(Stage):
