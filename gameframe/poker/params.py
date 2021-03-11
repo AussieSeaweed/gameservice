@@ -96,7 +96,7 @@ class BettingStage(Stage, ABC):
 class DrawStage(Stage):
     """DrawStage is the class for draw stages."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__opened = False
 
     def _skippable(self, game: PokerGame) -> bool:
