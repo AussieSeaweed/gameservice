@@ -23,6 +23,9 @@ The following games are supported in GameFrame...
          - Fixed-Limit 5-Card Omaha Hold'em
          - Pot-Limit 5-Card Omaha Hold'em
          - No-Limit 5-Card Omaha Hold'em
+         - Fixed-Limit 6-Card Omaha Hold'em
+         - Pot-Limit 6-Card Omaha Hold'em
+         - No-Limit 6-Card Omaha Hold'em
       - Greek Hold'em
          - Fixed-Limit Greek Hold'em
          - Pot-Limit Greek Hold'em
@@ -36,6 +39,10 @@ The following games are supported in GameFrame...
          - Fixed-Limit 5-Card Draw
          - Pot-Limit 5-Card Draw
          - No-Limit 5-Card Draw
+      - Badugi
+         - Fixed-Limit Badugi
+         - Pot-Limit Badugi
+         - No-Limit Badugi
    - Kuhn Poker
 - Tic Tac Toe
 - Rock Paper Scissors

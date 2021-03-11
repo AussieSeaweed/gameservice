@@ -34,6 +34,10 @@ The following games are supported in GameFrame...
          - Fixed-Limit 5-Card Draw
          - Pot-Limit 5-Card Draw
          - No-Limit 5-Card Draw
+      - Badugi
+         - Fixed-Limit Badugi
+         - Pot-Limit Badugi
+         - No-Limit Badugi
    - Kuhn Poker
 - Tic Tac Toe
 - Rock Paper Scissors
