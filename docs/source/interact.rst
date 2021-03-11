@@ -109,9 +109,9 @@ Whether each action can be applied can also be queried through the corresponding
    # True if the nature can deal the specified hole cards to the specified player, else False.
    nature.can_deal_hole(player, parse_cards('Ac2d'))
 
-   # The number of hole cards to be dealt to each player.
+   # Get the number of hole cards to be dealt to each player.
    nature.hole_deal_count
-   # An iterator of players that can be dealt hole cards.
+   # Get an iterator of players that can be dealt hole cards.
    nature.dealable_players
 
    # True if the nature can deal cards to the board, else False.
@@ -119,8 +119,8 @@ Whether each action can be applied can also be queried through the corresponding
    # True if the nature can deal the specified cards to the board, else False.
    nature.can_deal_board(parse_cards('KsKcKh'))
 
-   # Print the number of cards to be dealt to the board.
-   print(nature.board_deal_count)
+   # Get the number of cards to be dealt to the board.
+   nature.board_deal_count
 
    # True if the player can fold, else False.
    player.can_fold()
