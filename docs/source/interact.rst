@@ -11,6 +11,9 @@ In order to use the gameframe package in your project, you must first import it.
 Interacting with Poker games
 ----------------------------
 
+Poker games in GameFrame uses `pokertools <https://pokertools.readthedocs.io/>`_ as the back-end framework for hand
+evaluations and various types.
+
 The following code demonstrates interacting with No-Limit Texas Hold'em games.
 
 .. literalinclude:: examples/dwan_ivey.py

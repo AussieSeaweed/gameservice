@@ -4,7 +4,7 @@ from typing import final
 from auxiliary import ilen, retain_iter
 from pokertools import (Card, Deck, Evaluator, GreekEvaluator, OmahaEvaluator, Rank, ShortDeck, ShortEvaluator, StdDeck,
                         StdEvaluator, Suit)
-from pokertools.evaluators import RankEvaluator
+from pokertools.evaluators import BadugiEvaluator, RankEvaluator
 
 from gameframe.poker.bases import Limit, PokerGame
 from gameframe.poker.params import (BettingStage, BoardDealingStage, DrawStage, FixedLimit, HoleDealingStage, NoLimit,
@@ -124,6 +124,30 @@ class NLO5Game(NLHGame):
 
 
 @final
+class FLO6Game(FLHGame):
+    """FLO6Game is the class for Fixed-Limit 6-Card Omaha Hold'em games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(6, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
+
+
+@final
+class PLO6Game(PLHGame):
+    """PLO6Game is the class for Pot-Limit 6-Card Omaha Hold'em games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(6, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
+
+
+@final
+class NLO6Game(NLHGame):
+    """NLO6Game is the class for No-Limit 6-Card Omaha Hold'em games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(6, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
+
+
+@final
 class FLGGame(FLHGame):
     """FLGGame is the class for Fixed-Limit Greek Hold'em games."""
 
@@ -207,6 +231,42 @@ class PLD5Game(D5Game):
 @final
 class NLD5Game(D5Game):
     """NLD5Game is the class for No-Limit 5-Card Draw games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(NoLimit(), ante, blinds, starting_stacks)
+
+
+class BadugiGame(PokerGame):
+    """BadugiGame is the class for Badugi games."""
+
+    @retain_iter
+    def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        max_delta = max(ante, max(blinds))
+
+        super().__init__((
+            HoleDealingStage(4, False), BettingStage(max_delta),
+            DrawStage(), BettingStage(max_delta),
+            DrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+            DrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+        ), limit, BadugiEvaluator(), StdDeck(), ante, blinds, starting_stacks)
+
+
+class FLBadugiGame(BadugiGame):
+    """FLBadugiGame is the class for Fixed-Limit Badugi games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(FixedLimit(), ante, blinds, starting_stacks)
+
+
+class PLBadugiGame(BadugiGame):
+    """PLBadugiGame is the class for Pot-Limit Badugi games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(PotLimit(), ante, blinds, starting_stacks)
+
+
+class NLBadugiGame(BadugiGame):
+    """NLBadugiGame is the class for No-Limit Badugi games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(NoLimit(), ante, blinds, starting_stacks)
