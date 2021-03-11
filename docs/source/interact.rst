@@ -38,7 +38,7 @@ can be accessed. It represents the current player to act.
    # Create a no-limit Texas Hold'em game.
    game = NLTGame(0, (1, 2), (200, 200, 200))
 
-   # Get the current actor (either the nature or one of the players).
+   # Get the current actor (either None, the nature or one of the players).
    game.actor
 
 
@@ -79,7 +79,7 @@ Actions in poker can be applied by calling the corresponding methods:
    player.check_call()
    # Min-bet/raise.
    player.bet_raise()
-   # Bet 30.
+   # Bet/raise 30.
    player.bet_raise(30)
    # Show hand if necessary to win the pot.
    player.showdown()
@@ -117,7 +117,7 @@ Whether each action can be applied can also be queried through the corresponding
    # True if the nature can deal cards to the board, else False.
    nature.can_deal_board()
    # True if the nature can deal the specified cards to the board, else False.
-   nature.deal_board(parse_cards('KsKcKh'))
+   nature.can_deal_board(parse_cards('KsKcKh'))
 
    # Print the number of cards to be dealt to the board.
    print(nature.board_deal_count)
@@ -143,13 +143,14 @@ Whether each action can be applied can also be queried through the corresponding
    player.min_bet_raise
 
 
-Note that can_showdown(), can_showdown(False), can_showdown(True) always returns the same value. They were just added
+Note that can_showdown(), can_showdown(False), can_showdown(True) are basically the same things. They were just added
 for the symmetry with actions.
 
 The following code demonstrates interacting with No-Limit Texas Hold'em games.
 
 .. literalinclude:: examples/dwan_ivey.py
    :language: python
+
 
 The result of this poker game is as follows:
 
@@ -162,12 +163,14 @@ The result of this poker game is as follows:
    PokerPlayer(0, 1109500, 7h6h)
    Board: Jc3d5c4hJh
 
+
 Note that the pot is zero, as it is distributed back to the winning player.
 
 The following code demonstrates interacting with Pot-Limit Omaha Hold'em games.
 
 .. literalinclude:: examples/antonius_isildur.py
    :language: python
+
 
 The result of this poker game is as follows:
 
@@ -179,10 +182,12 @@ The result of this poker game is as follows:
    PokerPlayer(0.00, 0.00)
    Board: 4s5c2h5h9c
 
+
 The following code demonstrates interacting with No-Limit Short-Deck Hold'em games.
 
 .. literalinclude:: examples/xuan_phua.py
    :language: python
+
 
 The result of this poker game is as follows:
 
@@ -198,11 +203,16 @@ The result of this poker game is as follows:
    PokerPlayer(0, 198000)
    Board: 9h6cKcJhTs
 
+
 All poker games can be interacted in an alternative way, using parsers. The following game is equivalent to the game
 between Xuan and Phua shown just above.
 
 .. literalinclude:: examples/xuan_phua_parser.py
    :language: python
+
+
+Although not shown above, the command for drawing cards as in draw games is 'd <FROM CARDS> <TO CARDS>'. In commands
+involving cards, if the cards are not specified, random cards will be selected from the deck.
 
 
 Interacting with Tic Tac Toe games
@@ -245,10 +255,12 @@ The game result is as follows:
    O X O
    Winner: None
 
+
 You can also use the parser, as demonstrated below:
 
 .. literalinclude:: examples/ttt_parser.py
    :language: python
+
 
 The game result is as follows:
 
@@ -259,6 +271,7 @@ The game result is as follows:
    X    X    None
    None None None
    Winner: O
+
 
 Note that each poker player has a string representation of either 'X' or 'O'.
 
@@ -291,11 +304,13 @@ This is a sample game.
 .. literalinclude:: examples/rps.py
    :language: python
 
+
 This code results in the following:
 
 .. code-block:: console
 
    Hands: RPSHand.ROCK RPSHand.PAPER
    Winner: Second
+
 
 For more information, you can look at the gameframe API documentations.
