@@ -100,48 +100,48 @@ class NLOGame(NLHGame):
 
 
 @final
-class FLO5Game(FLHGame):
-    """FLO5Game is the class for Fixed-Limit 5-Card Omaha Hold'em games."""
+class FLFCOGame(FLHGame):
+    """FLFCOGame is the class for Fixed-Limit 5-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(5, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class PLO5Game(PLHGame):
-    """PLO5Game is the class for Pot-Limit 5-Card Omaha Hold'em games."""
+class PLFCOGame(PLHGame):
+    """PLFCOGame is the class for Pot-Limit 5-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(5, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class NLO5Game(NLHGame):
-    """NLO5Game is the class for No-Limit 5-Card Omaha Hold'em games."""
+class NLFCOGame(NLHGame):
+    """NLFCOGame is the class for No-Limit 5-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(5, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class FLO6Game(FLHGame):
-    """FLO6Game is the class for Fixed-Limit 6-Card Omaha Hold'em games."""
+class FLSCOGame(FLHGame):
+    """FLSCOGame is the class for Fixed-Limit 6-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(6, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class PLO6Game(PLHGame):
-    """PLO6Game is the class for Pot-Limit 6-Card Omaha Hold'em games."""
+class PLSCOGame(PLHGame):
+    """PLSCOGame is the class for Pot-Limit 6-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(6, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class NLO6Game(NLHGame):
-    """NLO6Game is the class for No-Limit 6-Card Omaha Hold'em games."""
+class NLSCOGame(NLHGame):
+    """NLSCOGame is the class for No-Limit 6-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(6, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)

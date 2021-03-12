@@ -1,6 +1,10 @@
-from gameframe.poker import (FLBGame, FLD5Game, FLGGame, FLO5Game, FLO6Game, FLOGame, FLSGame, FLTGame, KuhnGame,
-                             NLBGame, NLD5Game, NLGGame, NLO5Game, NLO6Game, NLOGame, NLSGame, NLTGame,
-                             PLBGame, PLD5Game, PLGGame, PLO5Game, PLO6Game, PLOGame, PLSGame, PLTGame)
+from gameframe.poker import (FLBGame, FLCGame, FLFCDGame, FLGGame, FLFCOGame, FLSCOGame, FLOGame, FLSDLB27Game, FLSGame,
+                             FLTDLB27Game, FLTGame,
+                             KuhnGame,
+                             NLBGame, NLCGame, NLFCDGame, NLGGame, NLFCOGame, NLSCOGame, NLOGame, NLSDLB27Game, NLSGame,
+                             NLTDLB27Game, NLTGame,
+                             PLBGame, PLCGame, PLFCDGame, PLGGame, PLFCOGame, PLSCOGame, PLOGame, PLSDLB27Game, PLSGame,
+                             PLTDLB27Game, PLTGame)
 from gameframe.rps import RPSGame
 from gameframe.ttt import TTTGame
 
@@ -28,22 +32,31 @@ plo_game = PLOGame(ante, blinds, starting_stacks)
 nlo_game = NLOGame(ante, blinds, starting_stacks)
 
 # Create a Fixed-Limit 5-Card Omaha Hold'em game
-flo5_game = FLO5Game(ante, blinds, starting_stacks)
+flfco_game = FLFCOGame(ante, blinds, starting_stacks)
 
 # Create a Pot-Limit 5-Card Omaha Hold'em game
-plo5_game = PLO5Game(ante, blinds, starting_stacks)
+plfco_game = PLFCOGame(ante, blinds, starting_stacks)
 
 # Create a No-Limit 5-Card Omaha Hold'em game
-nlo5_game = NLO5Game(ante, blinds, starting_stacks)
+nlfco_game = NLFCOGame(ante, blinds, starting_stacks)
 
 # Create a Fixed-Limit 6-Card Omaha Hold'em game
-flo6_game = FLO6Game(ante, blinds, starting_stacks)
+flsco_game = FLSCOGame(ante, blinds, starting_stacks)
 
 # Create a Pot-Limit 6-Card Omaha Hold'em game
-plo6_game = PLO6Game(ante, blinds, starting_stacks)
+plsco_game = PLSCOGame(ante, blinds, starting_stacks)
 
 # Create a No-Limit 6-Card Omaha Hold'em game
-nlo6_game = NLO6Game(ante, blinds, starting_stacks)
+nlsco_game = NLSCOGame(ante, blinds, starting_stacks)
+
+# Create a Fixed-Limit Courchevel game
+flc_game = FLCGame(ante, blinds, starting_stacks)
+
+# Create a Pot-Limit Courchevel game
+plc_game = PLCGame(ante, blinds, starting_stacks)
+
+# Create a No-Limit Courchevel game
+nlc_game = NLCGame(ante, blinds, starting_stacks)
 
 # Create a Fixed-Limit Greek Hold'em game
 flg_game = FLGGame(ante, blinds, starting_stacks)
@@ -64,13 +77,13 @@ pls_game = PLSGame(ante, button_blind, starting_stacks)
 nls_game = NLSGame(ante, button_blind, starting_stacks)
 
 # Create a Fixed-Limit 5-Card Draw game
-fld5_game = FLD5Game(ante, blinds, starting_stacks)
+flfcd_game = FLFCDGame(ante, blinds, starting_stacks)
 
 # Create a Pot-Limit 5-Card Draw game
-pld5_game = PLD5Game(ante, blinds, starting_stacks)
+plfcd_game = PLFCDGame(ante, blinds, starting_stacks)
 
 # Create a No-Limit 5-Card Draw game
-nld5_game = NLD5Game(ante, blinds, starting_stacks)
+nlfcd_game = NLFCDGame(ante, blinds, starting_stacks)
 
 # Create a Fixed-Limit Badugi game
 flb_game = FLBGame(ante, blinds, starting_stacks)
@@ -80,6 +93,24 @@ plb_game = PLBGame(ante, blinds, starting_stacks)
 
 # Create a No-Limit Badugi game
 nlb_game = NLBGame(ante, blinds, starting_stacks)
+
+# Create a Fixed-Limit 2-to-7 Single Draw Lowball game
+flsdlb27_game = FLSDLB27Game(ante, blinds, starting_stacks)
+
+# Create a Pot-Limit 2-to-7 Single Draw Lowball game
+plsdlb27_game = PLSDLB27Game(ante, blinds, starting_stacks)
+
+# Create a No-Limit 2-to-7 Single Draw Lowball game
+nlsdlb27_game = NLSDLB27Game(ante, blinds, starting_stacks)
+
+# Create a Fixed-Limit 2-to-7 Triple Draw Lowball game
+fltdlb27_game = FLTDLB27Game(ante, blinds, starting_stacks)
+
+# Create a Pot-Limit 2-to-7 Triple Draw Lowball game
+pltdlb27_game = PLTDLB27Game(ante, blinds, starting_stacks)
+
+# Create a No-Limit 2-to-7 Triple Draw Lowball game
+nltdlb27_game = NLTDLB27Game(ante, blinds, starting_stacks)
 
 # Create a Kuhn Poker game
 kuhn_game = KuhnGame()
