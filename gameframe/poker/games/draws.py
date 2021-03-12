@@ -16,8 +16,10 @@ class FiveCardDraw(Poker):
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         max_delta = max(ante, max(blinds))
 
-        super().__init__((HoleDealingStage(5, False), BettingStage(max_delta), DiscardDrawStage(), BettingStage(max_delta)),
-                         limit, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(
+            (HoleDealingStage(5, False), BettingStage(max_delta), DiscardDrawStage(), BettingStage(max_delta)),
+            limit, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks,
+        )
 
 
 @final
@@ -90,8 +92,9 @@ class SingleDrawLowball27(Poker):
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         max_delta = max(ante, max(blinds))
 
-        super().__init__((HoleDealingStage(5, False), BettingStage(max_delta), DiscardDrawStage(), BettingStage(max_delta)),
-                         limit, Lowball27Evaluator(), StandardDeck(), ante, blinds, starting_stacks)
+        super().__init__(
+            (HoleDealingStage(5, False), BettingStage(max_delta), DiscardDrawStage(), BettingStage(max_delta)),
+            limit, Lowball27Evaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
