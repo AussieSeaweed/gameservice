@@ -4,7 +4,7 @@ from typing import final
 from auxiliary import ilen, retain_iter
 from pokertools import (Card, Deck, Evaluator, GreekEvaluator, OmahaEvaluator, Rank, ShortDeck, ShortEvaluator, StdDeck,
                         StdEvaluator, Suit)
-from pokertools.evaluators import BadugiEvaluator, RankEvaluator
+from pokertools.evaluators import BadugiEvaluator, LB27Evaluator, RankEvaluator
 
 from gameframe.poker.bases import Limit, PokerGame
 from gameframe.poker.params import (BettingStage, BoardDealingStage, DrawStage, FixedLimit, HoleDealingStage, NoLimit,
@@ -147,6 +147,45 @@ class NLO6Game(NLHGame):
         super().__init__(6, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
 
 
+class CGame(PokerGame):
+    """CGame is the class for Courchevel games."""
+
+    @retain_iter
+    def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        max_delta = max(ante, max(blinds))
+
+        super().__init__((
+            HoleDealingStage(5, False), BoardDealingStage(1), BettingStage(max_delta),
+            BoardDealingStage(2), BettingStage(max_delta),
+            BoardDealingStage(1), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+            BoardDealingStage(1), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+        ), limit, OmahaEvaluator(), StdDeck(), ante, blinds, starting_stacks)
+
+
+@final
+class FLCGame(CGame):
+    """FLCGame is the class for Fixed-Limit Courchevel games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(FixedLimit(), ante, blinds, starting_stacks)
+
+
+@final
+class PLCGame(CGame):
+    """PLCGame is the class for Pot-Limit Courchevel games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(PotLimit(), ante, blinds, starting_stacks)
+
+
+@final
+class NLCGame(CGame):
+    """NLCGame is the class for No-Limit Courchevel games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(NoLimit(), ante, blinds, starting_stacks)
+
+
 @final
 class FLGGame(FLHGame):
     """FLGGame is the class for Fixed-Limit Greek Hold'em games."""
@@ -201,8 +240,8 @@ class NLSGame(NLHGame):
                          starting_stacks)
 
 
-class D5Game(PokerGame):
-    """D5Game is the base class for all 5-Card Draw games."""
+class FCDGame(PokerGame):
+    """FCDGame is the base class for all Five-Card Draw games."""
 
     @retain_iter
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -213,31 +252,31 @@ class D5Game(PokerGame):
 
 
 @final
-class FLD5Game(D5Game):
-    """FLD5Game is the class for Fixed-Limit 5-Card Draw games."""
+class FLFCDGame(FCDGame):
+    """FLFCDGame is the class for Fixed-Limit Five-Card Draw games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(FixedLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class PLD5Game(D5Game):
-    """PLD5Game is the class for Pot-Limit 5-Card Draw games."""
+class PLFCDGame(FCDGame):
+    """PLFCDGame is the class for Pot-Limit Five-Card Draw games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(PotLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class NLD5Game(D5Game):
-    """NLD5Game is the class for No-Limit 5-Card Draw games."""
+class NLFCDGame(FCDGame):
+    """NLFDGame is the class for No-Limit Five-Card Draw games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(NoLimit(), ante, blinds, starting_stacks)
 
 
-class BadugiGame(PokerGame):
-    """BadugiGame is the class for Badugi games."""
+class BGame(PokerGame):
+    """BGame is the class for Badugi games."""
 
     @retain_iter
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -252,24 +291,98 @@ class BadugiGame(PokerGame):
 
 
 @final
-class FLBadugiGame(BadugiGame):
-    """FLBadugiGame is the class for Fixed-Limit Badugi games."""
+class FLBGame(BGame):
+    """FLBGame is the class for Fixed-Limit Badugi games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(FixedLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class PLBadugiGame(BadugiGame):
-    """PLBadugiGame is the class for Pot-Limit Badugi games."""
+class PLBGame(BGame):
+    """PLBGame is the class for Pot-Limit Badugi games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(PotLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class NLBadugiGame(BadugiGame):
-    """NLBadugiGame is the class for No-Limit Badugi games."""
+class NLBGame(BGame):
+    """NLBGame is the class for No-Limit Badugi games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(NoLimit(), ante, blinds, starting_stacks)
+
+
+class SDLB27Game(PokerGame):
+    """SDLB27Game is the class for 2-7 Single Draw Lowball games."""
+
+    @retain_iter
+    def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        max_delta = max(ante, max(blinds))
+
+        super().__init__((HoleDealingStage(5, False), BettingStage(max_delta), DrawStage(), BettingStage(max_delta)),
+                         limit, LB27Evaluator(), StdDeck(), ante, blinds, starting_stacks)
+
+
+@final
+class FLSDLB27Game(SDLB27Game):
+    """FLSDLB27Game is the class for Fixed-Limit 2-7 Single Draw Lowball games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(FixedLimit(), ante, blinds, starting_stacks)
+
+
+@final
+class PLSDLB27Game(SDLB27Game):
+    """PLSDLB27Game is the class for Pot-Limit 2-7 Single Draw Lowball games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(PotLimit(), ante, blinds, starting_stacks)
+
+
+@final
+class NLSDLB27Game(SDLB27Game):
+    """NLSDLB27Game is the class for No-Limit 2-7 Single Draw Lowball games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(NoLimit(), ante, blinds, starting_stacks)
+
+
+class TDLB27Game(PokerGame):
+    """TDLB27Game is the class for 2-7 Triple Draw Lowball games."""
+
+    @retain_iter
+    def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        max_delta = max(ante, max(blinds))
+
+        super().__init__((
+            HoleDealingStage(5, False), BettingStage(max_delta),
+            DrawStage(), BettingStage(max_delta),
+            DrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+            DrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+        ), limit, LB27Evaluator(), StdDeck(), ante, blinds, starting_stacks)
+
+
+@final
+class FLTDLB27Game(SDLB27Game):
+    """FLTDLB27Game is the class for Fixed-Limit 2-7 Triple Draw Lowball games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(FixedLimit(), ante, blinds, starting_stacks)
+
+
+@final
+class PLTDLB27Game(SDLB27Game):
+    """PLTDLB27Game is the class for Pot-Limit 2-7 Triple Draw Lowball games."""
+
+    def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
+        super().__init__(PotLimit(), ante, blinds, starting_stacks)
+
+
+@final
+class NLTDLB27Game(SDLB27Game):
+    """NLTDLB27Game is the class for No-Limit 2-7 Triple Draw Lowball games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(NoLimit(), ante, blinds, starting_stacks)

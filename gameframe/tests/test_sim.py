@@ -9,9 +9,9 @@ from pokertools import parse_cards
 
 from gameframe.exceptions import ActionException
 from gameframe.game import _G
-from gameframe.poker import (BetRaiseAmountException, BettingStage, BoardDealingStage, FLBadugiGame, FLGGame,
-                             HoleDealingStage,
-                             KuhnGame, NLD5Game, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer, parse_poker)
+from gameframe.poker import (BetRaiseAmountException, BettingStage, BoardDealingStage, FLBGame, FLGGame,
+                             HoleDealingStage, KuhnGame, NLFCDGame, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer,
+                             parse_poker)
 from gameframe.poker.params import _ShowdownStage
 from gameframe.ttt import TTTGame, parse_ttt
 
@@ -765,10 +765,10 @@ class FLGSimTestCase(TestCase, SimTestCaseMixin[FLGGame]):
         self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise, 20)
 
 
-class NLD5SimTestCase(TestCase, SimTestCaseMixin[NLD5Game]):
+class NLFDSimTestCase(TestCase, SimTestCaseMixin[NLFCDGame]):
     def test_terminality(self) -> None:
-        self.assertTrue(parse_poker(NLD5Game(0, (5, 10), (1000, 1000)), ('dh 0', 'dh 1', 'f')).terminal)
-        self.assertTrue(parse_poker(NLD5Game(0, (5, 10), (1000, 1000, 1000, 1000)), (
+        self.assertTrue(parse_poker(NLFCDGame(0, (5, 10), (1000, 1000)), ('dh 0', 'dh 1', 'f')).terminal)
+        self.assertTrue(parse_poker(NLFCDGame(0, (5, 10), (1000, 1000, 1000, 1000)), (
             'dh 0 AsAdAcAhKd', 'dh 1 4s4d4c5h5d', 'dh 2 2s2d2c3h3d', 'dh 3 Th8h9cJsQd',
             'cc', 'cc', 'f', 'cc',
             'd 4c4d4s 5c5sKc', 'd 3h3d', 'd',
@@ -777,12 +777,12 @@ class NLD5SimTestCase(TestCase, SimTestCaseMixin[NLD5Game]):
         )).terminal)
 
 
-class FLBadugiSimTestCase(TestCase, SimTestCaseMixin[NLD5Game]):
+class FLBadugiSimTestCase(TestCase, SimTestCaseMixin[NLFCDGame]):
     def test_terminality(self) -> None:
-        self.assertTrue(parse_poker(FLBadugiGame(0, (5, 10), (1000, 1000, 1000)), (
+        self.assertTrue(parse_poker(FLBGame(0, (5, 10), (1000, 1000, 1000)), (
             'dh 0', 'dh 1', 'dh 2', 'f', 'f',
         )).terminal)
-        self.assertTrue(parse_poker(FLBadugiGame(0, (5, 10), (1000, 1000, 1000, 1000)), (
+        self.assertTrue(parse_poker(FLBGame(0, (5, 10), (1000, 1000, 1000, 1000)), (
             'dh 0 AsAdAcAh', 'dh 1 4s4d4c5h', 'dh 2 2s2d3h3d', 'dh 3 Th8h9cJs',
             'cc', 'cc', 'f', 'br', 'cc', 'cc',
             'd 4c4d4s 5c5sKc', 'd 3h3d', 'd',
@@ -793,7 +793,7 @@ class FLBadugiSimTestCase(TestCase, SimTestCaseMixin[NLD5Game]):
             'cc', 'cc', 'br', 'cc', 'cc',
             's', 's', 's',
         )).terminal)
-        self.assertTrue(parse_poker(FLBadugiGame(0, (5, 10), (20, 20, 20, 25)), (
+        self.assertTrue(parse_poker(FLBGame(0, (5, 10), (20, 20, 20, 25)), (
             'dh 0 AsAdAcAh', 'dh 1 4s4d4c5h', 'dh 2 2s2d3h3d', 'dh 3 Th8h9cJs',
             'cc', 'cc', 'f', 'br', 'cc', 'cc',
             'd 4c4d4s 5c5sKc', 'd 3h3d', 'd',

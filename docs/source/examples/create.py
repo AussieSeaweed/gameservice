@@ -1,6 +1,6 @@
-from gameframe.poker import (FLBadugiGame, FLD5Game, FLGGame, FLO5Game, FLO6Game, FLOGame, FLSGame, FLTGame, KuhnGame,
-                             NLBadugiGame, NLD5Game, NLGGame, NLO5Game, NLO6Game, NLOGame, NLSGame, NLTGame,
-                             PLBadugiGame, PLD5Game, PLGGame, PLO5Game, PLO6Game, PLOGame, PLSGame, PLTGame)
+from gameframe.poker import (FLBGame, FLD5Game, FLGGame, FLO5Game, FLO6Game, FLOGame, FLSGame, FLTGame, KuhnGame,
+                             NLBGame, NLD5Game, NLGGame, NLO5Game, NLO6Game, NLOGame, NLSGame, NLTGame,
+                             PLBGame, PLD5Game, PLGGame, PLO5Game, PLO6Game, PLOGame, PLSGame, PLTGame)
 from gameframe.rps import RPSGame
 from gameframe.ttt import TTTGame
 
@@ -73,13 +73,13 @@ pld5_game = PLD5Game(ante, blinds, starting_stacks)
 nld5_game = NLD5Game(ante, blinds, starting_stacks)
 
 # Create a Fixed-Limit Badugi game
-flb_game = FLBadugiGame(ante, blinds, starting_stacks)
+flb_game = FLBGame(ante, blinds, starting_stacks)
 
 # Create a Pot-Limit Badugi game
-plb_game = PLBadugiGame(ante, blinds, starting_stacks)
+plb_game = PLBGame(ante, blinds, starting_stacks)
 
 # Create a No-Limit Badugi game
-nlb_game = NLBadugiGame(ante, blinds, starting_stacks)
+nlb_game = NLBGame(ante, blinds, starting_stacks)
 
 # Create a Kuhn Poker game
 kuhn_game = KuhnGame()
