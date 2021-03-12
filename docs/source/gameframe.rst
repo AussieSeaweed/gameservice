@@ -5,8 +5,8 @@ GameFrame API
    :maxdepth: 1
 
    gameframe.game
-   gameframe.seq
+   gameframe.sequential
    gameframe.poker
-   gameframe.ttt
-   gameframe.rps
+   gameframe.tictactoe
+   gameframe.rockpaperscissors
    gameframe.exceptions
