@@ -6,7 +6,7 @@ from enum import Enum, auto
 from random import sample
 from typing import Final, Optional, Union, cast, final, overload
 
-from auxiliary import default, ilen, iter_equal, retain_iter
+from auxiliary import default, iter_equal
 from pokertools import Card, Deck, Evaluator, Hand, HoleCard
 
 from gameframe.exceptions import ActionException, ParameterException
@@ -311,7 +311,6 @@ class PokerPlayer:
         else:
             return True
 
-    @retain_iter
     def discard_draw(self, discards: Iterable[Card] = (), draws: Optional[Iterable[Card]] = None) -> None:
         """Discards and draws the cards.
 
@@ -322,7 +321,8 @@ class PokerPlayer:
         from gameframe.poker._actions import DiscardDrawAction
 
         if draws is None:
-            draws = sample(tuple(self.__game._deck), ilen(discards))
+            discards = tuple(discards)
+            draws = sample(tuple(self.__game._deck), len(discards))
 
         DiscardDrawAction(self.__game, self, discards, draws).act()
 

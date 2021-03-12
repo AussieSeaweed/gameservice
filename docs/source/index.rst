@@ -70,12 +70,12 @@ Although GameFrame is entirely written in Python, it should be fast enough for m
 =================================  ===================
               Game                  Speed (# games/s)
 ---------------------------------  -------------------
- 6-Max No-Limit Texas Hold'em             ~1000
- 6-Max No-Limit Greek Hold'em             ~600
- 6-Max No-Limit Omaha Hold'em             ~200
- Heads-Up No-Limit Texas Hold'em          ~5000
- Heads-Up No-Limit Greek Hold'em          ~3000
- Heads-Up No-Limit Omaha Hold'em          ~1000
+ 6-Max No-Limit Texas Hold'em             ~500
+ 6-Max No-Limit Greek Hold'em             ~300
+ 6-Max No-Limit Omaha Hold'em             ~100
+ Heads-Up No-Limit Texas Hold'em          ~2000
+ Heads-Up No-Limit Greek Hold'em          ~1500
+ Heads-Up No-Limit Omaha Hold'em          ~500
  Tic Tac Toe                              ~10000
  Rock Paper Scissors                      ~100000
 =================================  ===================

@@ -42,7 +42,7 @@ class NoLimitTexasHoldEmTestCase(TestCase, MonteCarloTestCaseMixin[NoLimitTexasH
 
     ANTE = 1
     BLINDS = 1, 2
-    PLAYER_COUNT = 6
+    PLAYER_COUNT = 2
     MIN_STACK = 0
     MAX_STACK = 20
 
@@ -84,7 +84,7 @@ class NoLimitTexasHoldEmTestCase(TestCase, MonteCarloTestCaseMixin[NoLimitTexasH
 
     def create_game(self) -> NoLimitTexasHoldEm:
         return NoLimitTexasHoldEm(
-            self.ANTE, self.BLINDS, (randint(self.MIN_STACK, self.MAX_STACK) for _ in range(self.PLAYER_COUNT)),
+            self.ANTE, self.BLINDS, tuple(randint(self.MIN_STACK, self.MAX_STACK) for _ in range(self.PLAYER_COUNT)),
         )
 
 

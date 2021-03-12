@@ -2,8 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from typing import cast
 
-from auxiliary import after
-from math2.misc import bind
+from auxiliary import after, bind
 from pokertools import Card, HoleCard
 
 from gameframe.exceptions import ActionException

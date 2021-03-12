@@ -2,8 +2,7 @@ from abc import ABC
 from enum import Enum, auto
 from typing import Optional, cast
 
-from auxiliary.funcs import after
-from math2.misc import bind
+from auxiliary import after, bind
 
 from gameframe.poker.bases import Limit, Poker, PokerNature, PokerPlayer, Stage
 
