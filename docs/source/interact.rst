@@ -12,10 +12,10 @@ All games implemented in gameframe share some attributes.
 
 .. code-block:: python
 
-   from gameframe.poker import NLTGame
+   from gameframe.poker import NoLimitTexasHoldEm
 
    # Create a no-limit Texas Hold'em game.
-   game = NLTGame(0, (1, 2), (200, 200, 200))
+   game = NoLimitTexasHoldEm(0, (1, 2), (200, 200, 200))
 
    # Get the nature.
    game.nature
@@ -33,10 +33,10 @@ can be accessed. It represents the current player to act.
 
 .. code-block:: python
 
-   from gameframe.poker import NLTGame
+   from gameframe.poker import NoLimitTexasHoldEm
 
    # Create a no-limit Texas Hold'em game.
-   game = NLTGame(0, (1, 2), (200, 200, 200))
+   game = NoLimitTexasHoldEm(0, (1, 2), (200, 200, 200))
 
    # Get the current actor (either None, the nature or one of the players).
    game.actor
@@ -54,10 +54,10 @@ Actions in poker can be applied by calling the corresponding methods:
 
    from pokertools import parse_cards
 
-   from gameframe.poker import NLTGame
+   from gameframe.poker import NoLimitTexasHoldEm
 
    # Create a no-limit Texas Hold'em game.
-   game = NLTGame(0, (1, 2), (200, 200, 200))
+   game = NoLimitTexasHoldEm(0, (1, 2), (200, 200, 200))
 
    # Get the nature.
    nature = game.nature
@@ -95,9 +95,9 @@ Whether each action can be applied can also be queried through the corresponding
 
    from pokertools import parse_cards
 
-   from gameframe.poker import NLTGame
+   from gameframe.poker import NoLimitTexasHoldEm
 
-   game = NLTGame(0, (1, 2), (200, 200, 200))
+   game = NoLimitTexasHoldEm(0, (1, 2), (200, 200, 200))
 
    nature = game.nature
    player = game.players[0]
@@ -223,9 +223,9 @@ games.
 
 .. code-block:: python
 
-   from gameframe.ttt import TTTGame
+   from gameframe.tictactoe import TicTacToe
 
-   game = TTTGame()
+   game = TicTacToe()
 
    player = game.players[0]
 
@@ -242,7 +242,7 @@ games.
 
 The code below demonstrates a sample tic tac toe game.
 
-.. literalinclude:: examples/ttt.py
+.. literalinclude:: examples/tictactoe.py
    :language: python
 
 The game result is as follows:
@@ -258,7 +258,7 @@ The game result is as follows:
 
 You can also use the parser, as demonstrated below:
 
-.. literalinclude:: examples/ttt_parser.py
+.. literalinclude:: examples/tictactoe_parser.py
    :language: python
 
 
@@ -283,17 +283,17 @@ Rock Paper Scissors game is the simplest game implemented on GameFrame. The foll
 
 .. code-block:: python
 
-   from gameframe.rps import RPSGame, RPSHand
+   from gameframe.rockpaperscissors import RockPaperScissors, RockPaperScissorsHand
 
-   game = RPSGame()
+   game = RockPaperScissors()
    player = game.players[0]
 
    # Throw the specified hand.
-   player.throw(RPSHand.ROCK)
+   player.throw(RockPaperScissorsHand.ROCK)
    # True if the player can throw any hand.
    player.can_throw()
    # True if the player can throw the specified hand.
-   player.can_throw(RPSHand.SCISSORS)
+   player.can_throw(RockPaperScissorsHand.SCISSORS)
 
    # Gets the winner of the game (either None or one of the players).
    game.winner
@@ -301,7 +301,7 @@ Rock Paper Scissors game is the simplest game implemented on GameFrame. The foll
 
 This is a sample game.
 
-.. literalinclude:: examples/rps.py
+.. literalinclude:: examples/rockpaperscissors.py
    :language: python
 
 
@@ -309,7 +309,7 @@ This code results in the following:
 
 .. code-block:: console
 
-   Hands: RPSHand.ROCK RPSHand.PAPER
+   Hands: RockPaperScissorsHand.ROCK RockPaperScissorsHand.PAPER
    Winner: Second
 
 

@@ -6,9 +6,9 @@ Video: https://www.youtube.com/watch?v=UMBm66Id2AA
 """
 from pokertools import parse_cards
 
-from gameframe.poker import PLOGame
+from gameframe.poker import PotLimitOmahaHoldEm
 
-game = PLOGame(0, (50000, 100000), (125945025, 67847350))
+game = PotLimitOmahaHoldEm(0, (50000, 100000), (125945025, 67847350))
 antonius, isildur = game.players
 
 # Pre-flop

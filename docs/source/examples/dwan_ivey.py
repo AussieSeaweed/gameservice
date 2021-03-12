@@ -4,9 +4,9 @@ Video: https://www.youtube.com/watch?v=GnxFohpljqM
 """
 from pokertools import parse_cards
 
-from gameframe.poker import NLTGame
+from gameframe.poker import NoLimitTexasHoldEm
 
-game = NLTGame(500, (1000, 2000), (1125600, 2000000, 553500))  # Antonius's stack is unknown
+game = NoLimitTexasHoldEm(500, (1000, 2000), (1125600, 2000000, 553500))  # Antonius's stack is unknown
 ivey, antonius, dwan = game.players
 
 # Pre-flop

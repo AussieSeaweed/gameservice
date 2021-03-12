@@ -9,8 +9,8 @@ from gameframe.poker.bases import Limit, Poker
 from gameframe.poker.parameters import BettingStage, BoardDealingStage, FixedLimit, HoleDealingStage, NoLimit, PotLimit
 
 
-class HGame(Poker):
-    """HGame is the class for Hold'em games."""
+class HoldEm(Poker):
+    """HoldEm is the class for Hold'em games."""
 
     @retain_iter
     def __init__(self, hole_card_count: int, limit: Limit, evaluator: Evaluator, deck: Deck,
@@ -25,24 +25,24 @@ class HGame(Poker):
         ), limit, evaluator, deck, ante, blinds, starting_stacks)
 
 
-class FLHGame(HGame):
-    """FLHGame is the class for Fixed-Limit Hold'em games."""
+class FixedLimitHoldEm(HoldEm):
+    """FixedLimitHoldEm is the class for Fixed-Limit Hold'em games."""
 
     def __init__(self, hole_card_count: int, evaluator: Evaluator, deck: Deck,
                  ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(hole_card_count, FixedLimit(), evaluator, deck, ante, blinds, starting_stacks)
 
 
-class PLHGame(HGame):
-    """PLHGame is the class for Pot-Limit Hold'em games."""
+class PotLimitHoldEm(HoldEm):
+    """PotLimitHoldEm is the class for Pot-Limit Hold'em games."""
 
     def __init__(self, hole_card_count: int, evaluator: Evaluator, deck: Deck,
                  ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(hole_card_count, PotLimit(), evaluator, deck, ante, blinds, starting_stacks)
 
 
-class NLHGame(HGame):
-    """NLHGame is the class for No-Limit Hold'em games."""
+class NoLimitHoldEm(HoldEm):
+    """NoLimitHoldEm is the class for No-Limit Hold'em games."""
 
     def __init__(self, hole_card_count: int, evaluator: Evaluator, deck: Deck,
                  ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -50,103 +50,103 @@ class NLHGame(HGame):
 
 
 @final
-class FLTGame(FLHGame):
-    """FLTGame is the class for Fixed-Limit Texas Hold'em games."""
+class FixedLimitTexasHoldEm(FixedLimitHoldEm):
+    """FixedLimitTexasHoldEm is the class for Fixed-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(2, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class PLTGame(PLHGame):
-    """PLTGame is the class for Pot-Limit Texas Hold'em games."""
+class PotLimitTexasHoldEm(PotLimitHoldEm):
+    """PotLimitTexasHoldEm is the class for Pot-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(2, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class NLTGame(NLHGame):
-    """NLTGame is the class for No-Limit Texas Hold'em games."""
+class NoLimitTexasHoldEm(NoLimitHoldEm):
+    """NoLimitTexasHoldEm is the class for No-Limit Texas Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(2, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class FLOGame(FLHGame):
-    """FLOGame is the class for Fixed-Limit Omaha Hold'em games."""
+class FixedLimitOmahaHoldEm(FixedLimitHoldEm):
+    """FixedLimitOmahaHoldEm is the class for Fixed-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(4, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class PLOGame(PLHGame):
-    """PLOGame is the class for Pot-Limit Omaha Hold'em games."""
+class PotLimitOmahaHoldEm(PotLimitHoldEm):
+    """PotLimitOmahaHoldEm is the class for Pot-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(4, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class NLOGame(NLHGame):
-    """NLOGame is the class for No-Limit Omaha Hold'em games."""
+class NoLimitOmahaHoldEm(NoLimitHoldEm):
+    """NoLimitOmahaHoldEm is the class for No-Limit Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(4, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class FLFCOGame(FLHGame):
-    """FLFCOGame is the class for Fixed-Limit 5-Card Omaha Hold'em games."""
+class FixedLimitFiveCardOmahaHoldEm(FixedLimitHoldEm):
+    """FixedLimitFiveCardOmahaHoldEm is the class for Fixed-Limit 5-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(5, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class PLFCOGame(PLHGame):
-    """PLFCOGame is the class for Pot-Limit 5-Card Omaha Hold'em games."""
+class PotLimitFiveCardOmahaHoldEm(PotLimitHoldEm):
+    """PotLimitFiveCardOmahaHoldEm is the class for Pot-Limit 5-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(5, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class NLFCOGame(NLHGame):
-    """NLFCOGame is the class for No-Limit 5-Card Omaha Hold'em games."""
+class NoLimitFiveCardOmahaHoldEm(NoLimitHoldEm):
+    """NoLimitFiveCardOmahaHoldEm is the class for No-Limit 5-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(5, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class FLSCOGame(FLHGame):
-    """FLSCOGame is the class for Fixed-Limit 6-Card Omaha Hold'em games."""
+class FixedLimitSixCardOmahaHoldEm(FixedLimitHoldEm):
+    """FixedLimitSixCardOmahaHoldEm is the class for Fixed-Limit 6-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(6, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class PLSCOGame(PLHGame):
-    """PLSCOGame is the class for Pot-Limit 6-Card Omaha Hold'em games."""
+class PotLimitSixCardOmahaHoldEm(PotLimitHoldEm):
+    """PotLimitSixCardOmahaHoldEm is the class for Pot-Limit 6-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(6, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class NLSCOGame(NLHGame):
-    """NLSCOGame is the class for No-Limit 6-Card Omaha Hold'em games."""
+class NoLimitSixCardOmahaHoldEm(NoLimitHoldEm):
+    """NoLimitSixCardOmahaHoldEm is the class for No-Limit 6-Card Omaha Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(6, OmahaEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
-class CGame(Poker):
-    """CGame is the class for Courchevel games."""
+class Courchevel(Poker):
+    """Courchevel is the class for Courchevel games."""
 
     @retain_iter
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -161,56 +161,56 @@ class CGame(Poker):
 
 
 @final
-class FLCGame(CGame):
-    """FLCGame is the class for Fixed-Limit Courchevel games."""
+class FixedLimitCourchevel(Courchevel):
+    """FixedLimitCourchevel is the class for Fixed-Limit Courchevel games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(FixedLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class PLCGame(CGame):
-    """PLCGame is the class for Pot-Limit Courchevel games."""
+class PotLimitCourchevel(Courchevel):
+    """PotLimitCourchevel is the class for Pot-Limit Courchevel games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(PotLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class NLCGame(CGame):
-    """NLCGame is the class for No-Limit Courchevel games."""
+class NoLimitCourchevel(Courchevel):
+    """NoLimitCourchevel is the class for No-Limit Courchevel games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(NoLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class FLGGame(FLHGame):
-    """FLGGame is the class for Fixed-Limit Greek Hold'em games."""
+class FixedLimitGreekHoldEm(FixedLimitHoldEm):
+    """FixedLimitGreekHoldEm is the class for Fixed-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(2, GreekEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class PLGGame(PLHGame):
-    """PLGGame is the class for Pot-Limit Greek Hold'em games."""
+class PotLimitGreekHoldEm(PotLimitHoldEm):
+    """PotLimitGreekHoldEm is the class for Pot-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(2, GreekEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class NLGGame(NLHGame):
-    """NLGGame is the class for No-Limit Greek Hold'em games."""
+class NoLimitGreekHoldEm(NoLimitHoldEm):
+    """NoLimitGreekHoldEm is the class for No-Limit Greek Hold'em games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(2, GreekEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
 @final
-class FLSGame(FLHGame):
-    """FLSGame is the class for Fixed-Limit Short-Deck Hold'em games."""
+class FixedLimitShortHoldEm(FixedLimitHoldEm):
+    """FixedLimitShortHoldEm is the class for Fixed-Limit Short-Deck Hold'em games."""
 
     @retain_iter
     def __init__(self, ante: int, button_blind: int, starting_stacks: Iterable[int]):
@@ -219,8 +219,8 @@ class FLSGame(FLHGame):
 
 
 @final
-class PLSGame(PLHGame):
-    """PLSGame is the class for Pot-Limit Short-Deck Hold'em games."""
+class PotLimitShortHoldEm(PotLimitHoldEm):
+    """PotLimitShortHoldEm is the class for Pot-Limit Short-Deck Hold'em games."""
 
     @retain_iter
     def __init__(self, ante: int, button_blind: int, starting_stacks: Iterable[int]):
@@ -229,8 +229,8 @@ class PLSGame(PLHGame):
 
 
 @final
-class NLSGame(NLHGame):
-    """NLSGame is the class for No-Limit Short-Deck Hold'em games."""
+class NoLimitShortHoldEm(NoLimitHoldEm):
+    """NoLimitShortHoldEm is the class for No-Limit Short-Deck Hold'em games."""
 
     @retain_iter
     def __init__(self, ante: int, button_blind: int, starting_stacks: Iterable[int]):

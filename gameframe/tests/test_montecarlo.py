@@ -6,7 +6,7 @@ from unittest import TestCase, main
 from auxiliary import next_or_none
 
 from gameframe.game import _G
-from gameframe.poker import NLTGame, PokerNature, PokerPlayer, parse_poker
+from gameframe.poker import NoLimitTexasHoldEm, PokerNature, PokerPlayer, parse_poker
 from gameframe.rockpaperscissors import RockPaperScissors, RockPaperScissorsHand
 from gameframe.tictactoe import TicTacToe, TicTacToePlayer
 
@@ -37,7 +37,7 @@ class MonteCarloTestCaseMixin(Generic[_G], ABC):
         pass
 
 
-class NoLimitTexasHoldEmTestCase(TestCase, MonteCarloTestCaseMixin[NLTGame]):
+class NoLimitTexasHoldEmTestCase(TestCase, MonteCarloTestCaseMixin[NoLimitTexasHoldEm]):
     MONTE_CARLO_TEST_COUNT = 1000
 
     ANTE = 1
@@ -46,7 +46,7 @@ class NoLimitTexasHoldEmTestCase(TestCase, MonteCarloTestCaseMixin[NLTGame]):
     MIN_STACK = 0
     MAX_STACK = 20
 
-    def verify(self, game: NLTGame) -> None:
+    def verify(self, game: NoLimitTexasHoldEm) -> None:
         super().verify(game)
 
         if game.terminal:
@@ -56,7 +56,7 @@ class NoLimitTexasHoldEmTestCase(TestCase, MonteCarloTestCaseMixin[NLTGame]):
         self.assertEqual(game.pot + sum(player.bet + player.stack for player in game.players),
                          sum(player.starting_stack for player in game.players))
 
-    def act(self, game: NLTGame) -> None:
+    def act(self, game: NoLimitTexasHoldEm) -> None:
         if isinstance(game.actor, PokerNature):
             if game.actor.can_deal_hole():
                 for player in game.players:
@@ -82,8 +82,8 @@ class NoLimitTexasHoldEmTestCase(TestCase, MonteCarloTestCaseMixin[NLTGame]):
 
             parse_poker(game, (choice(actions),))
 
-    def create_game(self) -> NLTGame:
-        return NLTGame(
+    def create_game(self) -> NoLimitTexasHoldEm:
+        return NoLimitTexasHoldEm(
             self.ANTE, self.BLINDS, (randint(self.MIN_STACK, self.MAX_STACK) for _ in range(self.PLAYER_COUNT)),
         )
 

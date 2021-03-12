@@ -6,12 +6,11 @@ from pokertools import (BadugiEvaluator, Card, Deck, Lowball27Evaluator, Rank, R
                         StandardEvaluator, Suit)
 
 from gameframe.poker.bases import Limit, Poker
-from gameframe.poker.parameters import (BettingStage, DrawStage, FixedLimit, HoleDealingStage,
-                                        NoLimit, PotLimit)
+from gameframe.poker.parameters import BettingStage, DrawStage, FixedLimit, HoleDealingStage, NoLimit, PotLimit
 
 
-class FCDGame(Poker):
-    """FCDGame is the base class for all Five-Card Draw games."""
+class FiveCardDraw(Poker):
+    """FiveCardDraw is the base class for all Five-Card Draw games."""
 
     @retain_iter
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -22,31 +21,31 @@ class FCDGame(Poker):
 
 
 @final
-class FLFCDGame(FCDGame):
-    """FLFCDGame is the class for Fixed-Limit Five-Card Draw games."""
+class FixedLimitFiveCardDraw(FiveCardDraw):
+    """FixedLimitFiveCardDraw is the class for Fixed-Limit Five-Card Draw games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(FixedLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class PLFCDGame(FCDGame):
-    """PLFCDGame is the class for Pot-Limit Five-Card Draw games."""
+class PotLimitFiveCardDraw(FiveCardDraw):
+    """PotLimitFiveCardDraw is the class for Pot-Limit Five-Card Draw games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(PotLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class NLFCDGame(FCDGame):
-    """NLFDGame is the class for No-Limit Five-Card Draw games."""
+class NoLimitFiveCardDraw(FiveCardDraw):
+    """NoLimitFiveCardDraw is the class for No-Limit Five-Card Draw games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(NoLimit(), ante, blinds, starting_stacks)
 
 
-class BGame(Poker):
-    """BGame is the class for Badugi games."""
+class Badugi(Poker):
+    """Badugi is the class for Badugi games."""
 
     @retain_iter
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -61,31 +60,31 @@ class BGame(Poker):
 
 
 @final
-class FLBGame(BGame):
-    """FLBGame is the class for Fixed-Limit Badugi games."""
+class FixedLimitBadugi(Badugi):
+    """FixedLimitBadugi is the class for Fixed-Limit Badugi games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(FixedLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class PLBGame(BGame):
-    """PLBGame is the class for Pot-Limit Badugi games."""
+class PotLimitBadugi(Badugi):
+    """PotLimitBadugi is the class for Pot-Limit Badugi games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(PotLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class NLBGame(BGame):
-    """NLBGame is the class for No-Limit Badugi games."""
+class NoLimitBadugi(Badugi):
+    """NoLimitBadugi is the class for No-Limit Badugi games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(NoLimit(), ante, blinds, starting_stacks)
 
 
-class SDLB27Game(Poker):
-    """SDLB27Game is the class for 2-7 Single Draw Lowball games."""
+class SingleDrawLowball27(Poker):
+    """SingleDrawLowball27 is the class for 2-7 Single Draw Lowball games."""
 
     @retain_iter
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -96,31 +95,31 @@ class SDLB27Game(Poker):
 
 
 @final
-class FLSDLB27Game(SDLB27Game):
-    """FLSDLB27Game is the class for Fixed-Limit 2-7 Single Draw Lowball games."""
+class FixedLimitSingleDrawLowball27(SingleDrawLowball27):
+    """FixedLimitSingleDrawLowball27 is the class for Fixed-Limit 2-7 Single Draw Lowball games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(FixedLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class PLSDLB27Game(SDLB27Game):
-    """PLSDLB27Game is the class for Pot-Limit 2-7 Single Draw Lowball games."""
+class PotLimitSingleDrawLowball27(SingleDrawLowball27):
+    """PotLimitSingleDrawLowball27 is the class for Pot-Limit 2-7 Single Draw Lowball games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(PotLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class NLSDLB27Game(SDLB27Game):
-    """NLSDLB27Game is the class for No-Limit 2-7 Single Draw Lowball games."""
+class NoLimitSingleDrawLowball27(SingleDrawLowball27):
+    """NoLimitSingleDrawLowball27 is the class for No-Limit 2-7 Single Draw Lowball games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(NoLimit(), ante, blinds, starting_stacks)
 
 
-class TDLB27Game(Poker):
-    """TDLB27Game is the class for 2-7 Triple Draw Lowball games."""
+class TripleDrawLowball27(Poker):
+    """TripleDrawLowball27 is the class for 2-7 Triple Draw Lowball games."""
 
     @retain_iter
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
@@ -135,32 +134,32 @@ class TDLB27Game(Poker):
 
 
 @final
-class FLTDLB27Game(SDLB27Game):
-    """FLTDLB27Game is the class for Fixed-Limit 2-7 Triple Draw Lowball games."""
+class FixedLimitTripleDrawLowball27(SingleDrawLowball27):
+    """FixedLimitTripleDrawLowball27 is the class for Fixed-Limit 2-7 Triple Draw Lowball games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(FixedLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class PLTDLB27Game(SDLB27Game):
-    """PLTDLB27Game is the class for Pot-Limit 2-7 Triple Draw Lowball games."""
+class PotLimitTripleDrawLowball27(SingleDrawLowball27):
+    """PotLimitTripleDrawLowball27 is the class for Pot-Limit 2-7 Triple Draw Lowball games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(PotLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class NLTDLB27Game(SDLB27Game):
-    """NLTDLB27Game is the class for No-Limit 2-7 Triple Draw Lowball games."""
+class NoLimitTripleDrawLowball27(SingleDrawLowball27):
+    """NoLimitTripleDrawLowball27 is the class for No-Limit 2-7 Triple Draw Lowball games."""
 
     def __init__(self, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         super().__init__(NoLimit(), ante, blinds, starting_stacks)
 
 
 @final
-class KuhnGame(Poker):
-    """KuhnGame is the class for Kuhn Poker games."""
+class KuhnPoker(Poker):
+    """KuhnPoker is the class for Kuhn Poker games."""
 
     def __init__(self) -> None:
         super().__init__((HoleDealingStage(1, False), BettingStage(1)), FixedLimit(), RankEvaluator(), Deck(

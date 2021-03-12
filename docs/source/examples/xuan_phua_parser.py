@@ -2,9 +2,9 @@
 
 Video: https://www.youtube.com/watch?v=QlgCcphLjaQ
 """
-from gameframe.poker import NLSGame, parse_poker
+from gameframe.poker import NoLimitShortHoldEm, parse_poker
 
-game = NLSGame(3000, 3000, (495000, 232000, 362000, 403000, 301000, 204000))
+game = NoLimitShortHoldEm(3000, 3000, (495000, 232000, 362000, 403000, 301000, 204000))
 badziakouski, zhong, xuan, jun, phua, koon = game.players
 
 parse_poker(game, (
