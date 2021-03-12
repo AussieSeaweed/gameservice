@@ -397,11 +397,13 @@ class Poker(SequentialGame[PokerNature, PokerPlayer]):
        The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    @retain_iter
     def __init__(self, stages: Iterable[Stage], limit: Limit, evaluator: Evaluator, deck: Deck,
-                 ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        super().__init__(actor := PokerNature(self), (PokerPlayer(self, stack) for stack in starting_stacks), actor)
+                 ante: int, blinds: Iterable[int], stacks: Iterable[int]):
+        super().__init__(actor := PokerNature(self), (PokerPlayer(self, stack) for stack in stacks), actor)
         from gameframe.poker.parameters import _ShowdownStage
+
+        self.ante: Final = ante
+        self.blinds: Final = tuple(blinds)
 
         self._stages = tuple(stages) + (_ShowdownStage(),)
         self._stage = self._stages[0]
@@ -413,18 +415,18 @@ class Poker(SequentialGame[PokerNature, PokerPlayer]):
         self._pot = 0
         self._board = list[Card]()
 
-        self._aggressor = self.players[0] if len(self.players) == 2 else self.players[ilen(blinds) - 1]
+        self._aggressor = self.players[0] if len(self.players) == 2 else self.players[len(self.blinds) - 1]
         self._max_delta = 0
         self._bet_raise_count = 0
 
         if len(self.players) < 2:
             raise ParameterException('Poker needs at least 2 players')
-        elif not iter_equal(blinds, sorted(blinds)):
+        elif not iter_equal(self.blinds, sorted(self.blinds)):
             raise ParameterException('Blinds have to be sorted')
-        elif ilen(blinds) > len(self.players):
+        elif len(self.blinds) > len(self.players):
             raise ParameterException('There are more blinds than players')
 
-        self._tax(ante, blinds)
+        self._tax()
 
         if not self._stage._skippable(self):
             self._stage._open(self)
@@ -453,14 +455,14 @@ class Poker(SequentialGame[PokerNature, PokerPlayer]):
         """
         return self._pot
 
-    def _tax(self, ante: int, blinds: Iterable[int]) -> None:
+    def _tax(self) -> None:
         for player in self.players:
-            cur_ante = min(ante, player._stack)
+            cur_ante = min(self.ante, player._stack)
 
             player._stack -= cur_ante
             self._pot += cur_ante
 
-        for player, blind in zip(self.players, reversed(tuple(blinds)) if len(self.players) == 2 else blinds):
+        for player, blind in zip(self.players, reversed(tuple(self.blinds)) if len(self.players) == 2 else self.blinds):
             blind = min(blind, player._stack)
 
             player._stack -= blind
