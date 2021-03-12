@@ -6,8 +6,8 @@ from gameframe.exceptions import ActionException
 from gameframe.game import Game, _A, _Action, _N, _P
 
 
-class SeqGame(Game[_N, _P], ABC):
-    """SeqGame is the abstract generic base class for all sequential games.
+class SequentialGame(Game[_N, _P], ABC):
+    """SequentialGame is the abstract generic base class for all sequential games.
 
        In sequential games, only one actor can act at a time and is stored in the actor property. If a sequential game
        is terminal, its actor attribute must be set to None to denote such.
@@ -32,10 +32,10 @@ class SeqGame(Game[_N, _P], ABC):
         return self._actor
 
 
-_SG = TypeVar('_SG', bound=SeqGame[Any, Any])
+_SG = TypeVar('_SG', bound=SequentialGame[Any, Any])
 
 
-class _SeqAction(_Action[_SG, _A], ABC):
+class _SequentialAction(_Action[_SG, _A], ABC):
     @property
     @abstractmethod
     def next_actor(self) -> Any:

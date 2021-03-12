@@ -8,14 +8,14 @@ from pokertools import Card, HoleCard
 
 from gameframe.exceptions import ActionException
 from gameframe.game import _A
-from gameframe.poker.bases import PokerGame, PokerNature, PokerPlayer
+from gameframe.poker.bases import Poker, PokerNature, PokerPlayer
 from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, PlayerException
-from gameframe.poker.params import (BettingStage, BoardDealingStage, DealingStage, DrawStage, HoleDealingStage,
-                                    _ShowdownStage)
-from gameframe.seq import _SeqAction
+from gameframe.poker.parameters import (BettingStage, BoardDealingStage, DealingStage, DrawStage, HoleDealingStage,
+                                        _ShowdownStage)
+from gameframe.sequential import _SequentialAction
 
 
-class PokerAction(_SeqAction[PokerGame, _A], ABC):
+class PokerAction(_SequentialAction[Poker, _A], ABC):
     def act(self) -> None:
         super().act()
 
@@ -76,7 +76,7 @@ class PokerAction(_SeqAction[PokerGame, _A], ABC):
 
 
 class DealingAction(PokerAction[PokerNature], ABC):
-    def __init__(self, game: PokerGame, actor: PokerNature, cards: Iterable[Card]):
+    def __init__(self, game: Poker, actor: PokerNature, cards: Iterable[Card]):
         super().__init__(game, actor)
 
         self.cards = tuple(cards)
@@ -107,7 +107,7 @@ class DealingAction(PokerAction[PokerNature], ABC):
 
 
 class HoleDealingAction(DealingAction):
-    def __init__(self, game: PokerGame, actor: PokerNature, player: PokerPlayer, cards: Iterable[Card]):
+    def __init__(self, game: Poker, actor: PokerNature, player: PokerPlayer, cards: Iterable[Card]):
         super().__init__(game, actor, cards)
 
         self.player = player
@@ -184,7 +184,7 @@ class CheckCallAction(BettingAction):
 
 
 class BetRaiseAction(BettingAction):
-    def __init__(self, game: PokerGame, actor: PokerPlayer, amount: int):
+    def __init__(self, game: Poker, actor: PokerPlayer, amount: int):
         super().__init__(game, actor)
 
         self.amount = amount
@@ -214,7 +214,7 @@ class BetRaiseAction(BettingAction):
 
 
 class DrawAction(PokerAction[PokerPlayer]):
-    def __init__(self, game: PokerGame, actor: PokerPlayer, froms: Iterable[Card], tos: Iterable[Card]):
+    def __init__(self, game: Poker, actor: PokerPlayer, froms: Iterable[Card], tos: Iterable[Card]):
         super().__init__(game, actor)
 
         self.froms = tuple(froms)
@@ -252,7 +252,7 @@ class DrawAction(PokerAction[PokerPlayer]):
 
 
 class ShowdownAction(PokerAction[PokerPlayer]):
-    def __init__(self, game: PokerGame, actor: PokerPlayer, force: bool) -> None:
+    def __init__(self, game: Poker, actor: PokerPlayer, force: bool) -> None:
         super().__init__(game, actor)
 
         self.force = force

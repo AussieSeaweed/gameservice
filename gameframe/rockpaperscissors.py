@@ -10,21 +10,21 @@ from gameframe.game import Game, _Action
 
 
 @final
-class RPSPlayer:
-    """RPSPlayer is the class for rock paper scissors players."""
+class RockPaperScissorsPlayer:
+    """RockPaperScissorsPlayer is the class for rock paper scissors players."""
 
-    def __init__(self, game: RPSGame) -> None:
+    def __init__(self, game: RockPaperScissors) -> None:
         self.__game = game
-        self._hand: Optional[RPSHand] = None
+        self._hand: Optional[RockPaperScissorsHand] = None
 
     @property
-    def hand(self) -> Optional[RPSHand]:
+    def hand(self) -> Optional[RockPaperScissorsHand]:
         """
         :return: The hand of this rock paper scissors player.
         """
         return self._hand
 
-    def throw(self, hand: RPSHand) -> None:
+    def throw(self, hand: RockPaperScissorsHand) -> None:
         """Throws the specified hand.
 
         :param hand: The hand to be thrown.
@@ -32,14 +32,14 @@ class RPSPlayer:
         """
         _ThrowAction(self.__game, self, hand).act()
 
-    def can_throw(self, hand: Optional[RPSHand] = None) -> bool:
+    def can_throw(self, hand: Optional[RockPaperScissorsHand] = None) -> bool:
         """Determines if this rock paper scissors player can throw a hand.
 
         :param hand: The hand to be thrown.
         :return: True if this rock paper scissors player can throw a hand, else False.
         """
         try:
-            _ThrowAction(self.__game, self, default(hand, next(iter(RPSHand)))).verify()
+            _ThrowAction(self.__game, self, default(hand, next(iter(RockPaperScissorsHand)))).verify()
         except ActionException:
             return False
         else:
@@ -47,18 +47,18 @@ class RPSPlayer:
 
 
 @final
-class RPSGame(Game[None, RPSPlayer]):
-    """RPSGame is the class for rock paper scissors games."""
+class RockPaperScissors(Game[None, RockPaperScissorsPlayer]):
+    """RockPaperScissors is the class for rock paper scissors games."""
 
     def __init__(self) -> None:
-        super().__init__(None, (RPSPlayer(self), RPSPlayer(self)))
+        super().__init__(None, (RockPaperScissorsPlayer(self), RockPaperScissorsPlayer(self)))
 
     @property
     def terminal(self) -> bool:
         return all(player._hand is not None for player in self.players)
 
     @property
-    def winner(self) -> Optional[RPSPlayer]:
+    def winner(self) -> Optional[RockPaperScissorsPlayer]:
         """
         :return: The winning player of this rock paper scissors game if there is one, else None.
         """
@@ -69,21 +69,21 @@ class RPSGame(Game[None, RPSPlayer]):
 
 
 @final
-class RPSHand(OrderedEnum):
-    """RPSHand is the enum for rock paper scissors hands."""
+class RockPaperScissorsHand(OrderedEnum):
+    """RockPaperScissorsHand is the enum for rock paper scissors hands."""
     ROCK = auto()
     PAPER = auto()
     SCISSORS = auto()
 
     def __lt__(self, other: Any) -> bool:
-        if isinstance(other, RPSHand):
+        if isinstance(other, RockPaperScissorsHand):
             return (self.index + 1) % 3 == other.index
         else:
             return NotImplemented
 
 
-class _ThrowAction(_Action[RPSGame, RPSPlayer]):
-    def __init__(self, game: RPSGame, actor: RPSPlayer, hand: RPSHand):
+class _ThrowAction(_Action[RockPaperScissors, RockPaperScissorsPlayer]):
+    def __init__(self, game: RockPaperScissors, actor: RockPaperScissorsPlayer, hand: RockPaperScissorsHand):
         super().__init__(game, actor)
 
         self.hand = hand
@@ -91,7 +91,7 @@ class _ThrowAction(_Action[RPSGame, RPSPlayer]):
     def verify(self) -> None:
         super().verify()
 
-        if not isinstance(self.hand, RPSHand):
+        if not isinstance(self.hand, RockPaperScissorsHand):
             raise TypeError('The hand must be of type Hand')
         elif self.actor._hand is not None:
             raise ActionException('The player has already played a hand')

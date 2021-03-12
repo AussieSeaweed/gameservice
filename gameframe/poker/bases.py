@@ -9,16 +9,16 @@ from typing import Final, Optional, Union, cast, final, overload
 from auxiliary import default, ilen, iter_equal, retain_iter
 from pokertools import Card, Deck, Evaluator, Hand, HoleCard
 
-from gameframe.exceptions import ActionException, ParamException
+from gameframe.exceptions import ActionException, ParameterException
 from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, PlayerException
-from gameframe.seq import SeqGame
+from gameframe.sequential import SequentialGame
 
 
 @final
 class PokerNature:
     """PokerNature is the class for poker natures."""
 
-    def __init__(self, game: PokerGame):
+    def __init__(self, game: Poker):
         self.__game = game
 
     def __repr__(self) -> str:
@@ -36,7 +36,7 @@ class PokerNature:
         """
         :return: The number of hole cards to deal to a player.
         """
-        from gameframe.poker.params import HoleDealingStage
+        from gameframe.poker.parameters import HoleDealingStage
 
         if self.can_deal_hole():
             return cast(HoleDealingStage, self.__game._stage)._card_count
@@ -48,7 +48,7 @@ class PokerNature:
         """
         :return: The number of cards to deal to the board.
         """
-        from gameframe.poker.params import BoardDealingStage
+        from gameframe.poker.parameters import BoardDealingStage
 
         if self.can_deal_board():
             return cast(BoardDealingStage, self.__game._stage)._card_count
@@ -136,7 +136,7 @@ class PokerNature:
 class PokerPlayer:
     """PokerPlayer is the class for poker players."""
 
-    def __init__(self, game: PokerGame, stack: int):
+    def __init__(self, game: Poker, stack: int):
         self.__game = game
         self.starting_stack: Final = stack
 
@@ -387,8 +387,8 @@ class PokerPlayer:
         SHOWN = auto()
 
 
-class PokerGame(SeqGame[PokerNature, PokerPlayer]):
-    """PokerGame is the abstract base class for all poker games.
+class Poker(SequentialGame[PokerNature, PokerPlayer]):
+    """Poker is the abstract base class for all poker games.
 
        When a PokerGame instance is created, its deck, evaluator, limit, and streets are also created through the
        invocations of corresponding create methods, which should be overridden by the subclasses. Also, every subclass
@@ -400,9 +400,8 @@ class PokerGame(SeqGame[PokerNature, PokerPlayer]):
     @retain_iter
     def __init__(self, stages: Iterable[Stage], limit: Limit, evaluator: Evaluator, deck: Deck,
                  ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
-        from gameframe.poker.params import _ShowdownStage
-
         super().__init__(actor := PokerNature(self), (PokerPlayer(self, stack) for stack in starting_stacks), actor)
+        from gameframe.poker.parameters import _ShowdownStage
 
         self._stages = tuple(stages) + (_ShowdownStage(),)
         self._stage = self._stages[0]
@@ -419,11 +418,11 @@ class PokerGame(SeqGame[PokerNature, PokerPlayer]):
         self._bet_raise_count = 0
 
         if len(self.players) < 2:
-            raise ParamException('Poker needs at least 2 players')
+            raise ParameterException('Poker needs at least 2 players')
         elif not iter_equal(blinds, sorted(blinds)):
-            raise ParamException('Blinds have to be sorted')
+            raise ParameterException('Blinds have to be sorted')
         elif ilen(blinds) > len(self.players):
-            raise ParamException('There are more blinds than players')
+            raise ParameterException('There are more blinds than players')
 
         self._tax(ante, blinds)
 
@@ -481,20 +480,20 @@ class PokerGame(SeqGame[PokerNature, PokerPlayer]):
 class Stage(ABC):
     """Stage is the abstract base class for all stages."""
 
-    def _skippable(self, game: PokerGame) -> bool:
+    def _skippable(self, game: Poker) -> bool:
         return sum(not player.mucked for player in game.players) == 1
 
-    def _open(self, game: PokerGame) -> None:
+    def _open(self, game: Poker) -> None:
         game._actor = self._opener(game)
 
-    def _close(self, game: PokerGame) -> None:
+    def _close(self, game: Poker) -> None:
         pass
 
-    def _update(self, game: PokerGame) -> None:
+    def _update(self, game: Poker) -> None:
         pass
 
     @abstractmethod
-    def _opener(self, game: PokerGame) -> Union[PokerNature, PokerPlayer]:
+    def _opener(self, game: Poker) -> Union[PokerNature, PokerPlayer]:
         pass
 
 
@@ -504,9 +503,9 @@ class Limit(ABC):
     _max_count: Optional[int]
 
     @classmethod
-    def _min_amount(cls, game: PokerGame) -> int:
+    def _min_amount(cls, game: Poker) -> int:
         return min(max(player._bet for player in game.players) + game._max_delta, cast(PokerPlayer, game._actor)._total)
 
     @abstractmethod
-    def _max_amount(self, game: PokerGame) -> int:
+    def _max_amount(self, game: Poker) -> int:
         pass

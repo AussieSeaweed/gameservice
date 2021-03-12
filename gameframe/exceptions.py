@@ -11,6 +11,6 @@ class ActionException(GameFrameException):
     pass
 
 
-class ParamException(GameFrameException):
-    """ParamException is the exception class raised when the game parameter is invalid."""
+class ParameterException(GameFrameException):
+    """ParameterException is the exception class raised when the game parameter is invalid."""
     pass

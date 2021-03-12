@@ -3,10 +3,10 @@ from collections.abc import Iterable
 
 from pokertools import parse_cards
 
-from gameframe.poker.bases import PokerGame, PokerPlayer
+from gameframe.poker.bases import Poker, PokerPlayer
 
 
-def parse_poker(game: PokerGame, tokens: Iterable[str]) -> PokerGame:
+def parse_poker(game: Poker, tokens: Iterable[str]) -> Poker:
     """Parses the tokens as actions and applies them the supplied poker game.
 
     :param game: The poker game to be applied on.

@@ -1,7 +1,7 @@
 """This is a sample tic tac toe game resulting in a tie."""
-from gameframe.ttt import TTTGame
+from gameframe.tictactoe import TicTacToe
 
-game = TTTGame()
+game = TicTacToe()
 x, y = game.players
 
 x.mark(1, 1)

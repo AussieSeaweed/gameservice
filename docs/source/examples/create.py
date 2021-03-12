@@ -3,8 +3,8 @@ from gameframe.poker import (FLBGame, FLCGame, FLFCDGame, FLGGame, FLFCOGame, FL
                              NLSCOGame, NLOGame, NLSDLB27Game, NLSGame, NLTDLB27Game, NLTGame, PLBGame, PLCGame,
                              PLFCDGame, PLGGame, PLFCOGame, PLSCOGame, PLOGame, PLSDLB27Game, PLSGame, PLTDLB27Game,
                              PLTGame)
-from gameframe.rps import RPSGame
-from gameframe.ttt import TTTGame
+from gameframe.rockpaperscissors import RockPaperScissors
+from gameframe.tictactoe import TicTacToe
 
 ante = 1
 blinds = 1, 2
@@ -114,7 +114,7 @@ nltdlb27_game = NLTDLB27Game(ante, blinds, starting_stacks)
 kuhn_game = KuhnGame()
 
 # Create a tic tac toe game
-ttt_game = TTTGame()
+ttt_game = TicTacToe()
 
 # Create a rock paper scissors game
-rps_game = RPSGame()
+rps_game = RockPaperScissors()

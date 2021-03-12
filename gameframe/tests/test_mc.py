@@ -7,15 +7,15 @@ from auxiliary import next_or_none
 
 from gameframe.game import _G
 from gameframe.poker import NLTGame, PokerNature, PokerPlayer, parse_poker
-from gameframe.rps import RPSGame, RPSHand
-from gameframe.ttt import TTTGame, TTTPlayer
+from gameframe.rockpaperscissors import RockPaperScissors, RockPaperScissorsHand
+from gameframe.tictactoe import TicTacToe, TicTacToePlayer
 
 
-class MCTestCaseMixin(Generic[_G], ABC):
-    MC_TEST_COUNT: int
+class MonteCarloTestCaseMixin(Generic[_G], ABC):
+    MONTE_CARLO_TEST_COUNT: int
 
     def test_monte_carlo(self) -> None:
-        for i in range(self.MC_TEST_COUNT):
+        for i in range(self.MONTE_CARLO_TEST_COUNT):
             game = self.create_game()
 
             self.verify(game)
@@ -37,8 +37,8 @@ class MCTestCaseMixin(Generic[_G], ABC):
         pass
 
 
-class NLTMCTestCase(TestCase, MCTestCaseMixin[NLTGame]):
-    MC_TEST_COUNT = 1000
+class NoLimitTexasHoldEmTestCase(TestCase, MonteCarloTestCaseMixin[NLTGame]):
+    MONTE_CARLO_TEST_COUNT = 1000
 
     ANTE = 1
     BLINDS = 1, 2
@@ -88,33 +88,33 @@ class NLTMCTestCase(TestCase, MCTestCaseMixin[NLTGame]):
         )
 
 
-class TTTMCTestCase(TestCase, MCTestCaseMixin[TTTGame]):
-    MC_TEST_COUNT = 10000
+class TicTacToeMonteCarloTestCase(TestCase, MonteCarloTestCaseMixin[TicTacToe]):
+    MONTE_CARLO_TEST_COUNT = 10000
 
-    def create_game(self) -> TTTGame:
-        return TTTGame()
+    def create_game(self) -> TicTacToe:
+        return TicTacToe()
 
-    def act(self, game: TTTGame) -> None:
-        cast(TTTPlayer, game.actor).mark(*choice(tuple(game.empty_coords)))
+    def act(self, game: TicTacToe) -> None:
+        cast(TicTacToePlayer, game.actor).mark(*choice(tuple(game.empty_coords)))
 
-    def verify(self, game: TTTGame) -> None:
+    def verify(self, game: TicTacToe) -> None:
         if game.terminal:
             self.assertTrue(next_or_none(game.empty_coords) is None or game.winner is not None)
         else:
             self.assertTrue(next_or_none(game.empty_coords) is not None and game.winner is None)
 
 
-class RPSMCTestCase(TestCase, MCTestCaseMixin[RPSGame]):
-    MC_TEST_COUNT = 100000
+class RockPaperScissorsMonteCarloTestCase(TestCase, MonteCarloTestCaseMixin[RockPaperScissors]):
+    MONTE_CARLO_TEST_COUNT = 100000
 
-    def create_game(self) -> RPSGame:
-        return RPSGame()
+    def create_game(self) -> RockPaperScissors:
+        return RockPaperScissors()
 
-    def act(self, game: RPSGame) -> None:
+    def act(self, game: RockPaperScissors) -> None:
         for player in game.players:
-            player.throw(choice(tuple(RPSHand)))
+            player.throw(choice(tuple(RockPaperScissorsHand)))
 
-    def verify(self, game: RPSGame) -> None:
+    def verify(self, game: RockPaperScissors) -> None:
         if game.terminal:
             if game.winner is game.players[0]:
                 self.assertGreater(game.players[0].hand, game.players[1].hand)

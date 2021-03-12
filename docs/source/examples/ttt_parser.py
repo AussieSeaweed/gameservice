@@ -1,9 +1,9 @@
 """This is a sample tic tac toe game resulting in the first player winning."""
-from gameframe.ttt import TTTGame, parse_ttt
+from gameframe.tictactoe import TicTacToe, parse_tic_tac_toe
 
-game = TTTGame()
+game = TicTacToe()
 
-parse_ttt(game, (
+parse_tic_tac_toe(game, (
     (0, 0),
     (1, 0),
     (0, 1),

@@ -52,7 +52,8 @@ The following games are supported in GameFrame...
          - Fixed-Limit 2-to-7 Triple Draw Lowball
          - Pot-Limit 2-to-7 Triple Draw Lowball
          - No-Limit 2-to-7 Triple Draw Lowball
-   - Kuhn Poker
+   - Miscellaneous
+      - Kuhn Poker
 - Tic Tac Toe
 - Rock Paper Scissors
 

@@ -4,23 +4,23 @@ from random import sample
 from typing import Generic, cast
 from unittest import TestCase, main
 
-from auxiliary import ExtTestCase
+from auxiliary import ExtendedTestCase
 from pokertools import parse_cards
 
 from gameframe.exceptions import ActionException
 from gameframe.game import _G
 from gameframe.poker import (BetRaiseAmountException, BettingStage, BoardDealingStage, FLBGame, FLGGame,
-                             HoleDealingStage, KuhnGame, NLFCDGame, NLSGame, NLTGame, PLOGame, PokerGame, PokerPlayer,
+                             HoleDealingStage, KuhnGame, NLFCDGame, NLSGame, NLTGame, PLOGame, Poker, PokerPlayer,
                              parse_poker)
-from gameframe.poker.params import _ShowdownStage
-from gameframe.ttt import TTTGame, parse_ttt
+from gameframe.poker.parameters import _ShowdownStage
+from gameframe.tictactoe import TicTacToe, parse_tic_tac_toe
 
 
-class SimTestCaseMixin(Generic[_G], ABC):
+class SimulationTestCaseMixin(Generic[_G], ABC):
     pass
 
 
-class NLTSimTestCase(ExtTestCase, SimTestCaseMixin[NLTGame]):
+class NoLimitTexasHoldEmSimulationTestCase(ExtendedTestCase, SimulationTestCaseMixin[NLTGame]):
     def test_not_betting_stage(self) -> None:
         self.assertRaises(ActionException, parse_poker(NLTGame(1, (1, 2), (200, 100)), (
             'dh 0 QdQh', 'dh 1 AhAd', 'cc', 'cc',
@@ -581,7 +581,7 @@ class NLTSimTestCase(ExtTestCase, SimTestCaseMixin[NLTGame]):
         self.assertIterableEqual((player.shown for player in game.players), (True, False, True))
         self.assertIterableEqual((player.mucked for player in game.players), (False, True, False))
 
-    def test_nlt_cans(self) -> None:
+    def test_cans(self) -> None:
         game = NLTGame(1, (1, 2), (100, 100, 100))
         commands = (
             'dh 0 AhTh', 'dh 1 AsTs', 'dh 2 AcTc', 'br 6', 'f', 'cc',
@@ -594,7 +594,7 @@ class NLTSimTestCase(ExtTestCase, SimTestCaseMixin[NLTGame]):
             parse_poker(game, (command,))
             self.verify(game)
 
-    def verify(self, game: PokerGame) -> None:
+    def verify(self, game: Poker) -> None:
         for player in game.players:
             if isinstance(game._stage, BettingStage) and player.bet < max(player.bet for player in game.players) \
                     and game.actor is player:
@@ -661,7 +661,7 @@ class NLTSimTestCase(ExtTestCase, SimTestCaseMixin[NLTGame]):
             self.assertEqual(game.pot, 0)
 
 
-class PLOSimTestCase(ExtTestCase, SimTestCaseMixin[PLOGame]):
+class PotLimitOmahaHoldEmSimulationTestCase(ExtendedTestCase, SimulationTestCaseMixin[PLOGame]):
     def test_max_bet_raise(self) -> None:
         game = PLOGame(0, (1, 2), (100, 100))
 
@@ -706,8 +706,8 @@ class PLOSimTestCase(ExtTestCase, SimTestCaseMixin[PLOGame]):
         self.assertIterableEqual((player.mucked for player in game.players), (False, True))
 
 
-class NLSSimTestCase(ExtTestCase, SimTestCaseMixin[NLSGame]):
-    def test_pre_flop_trans(self) -> None:
+class NoLimitShortHoldEmTestCase(ExtendedTestCase, SimulationTestCaseMixin[NLSGame]):
+    def test_pre_flop(self) -> None:
         for game in (
                 parse_poker(NLSGame(3000, 3000, (495000, 232000, 362000, 403000, 301000, 204000)), (
                         'dh 0 Th8h', 'dh 1 QsJd', 'dh 2 QhQd', 'dh 3 8d7c', 'dh 4 KhKs', 'dh 5 8c7h',
@@ -737,7 +737,7 @@ class NLSSimTestCase(ExtTestCase, SimTestCaseMixin[NLSGame]):
         self.assertIterableEqual((player.mucked for player in game.players), (True, True, False, True, False, True))
 
 
-class FLGSimTestCase(TestCase, SimTestCaseMixin[FLGGame]):
+class FixedLimitGreekSimulationTestCase(TestCase, SimulationTestCaseMixin[FLGGame]):
     def test_bet_raise_count(self) -> None:
         game = parse_poker(FLGGame(0, (5, 10), (1000, 1000)), ('dh 0', 'dh 1', 'br 20', 'br 30', 'br 40'))
 
@@ -765,7 +765,7 @@ class FLGSimTestCase(TestCase, SimTestCaseMixin[FLGGame]):
         self.assertEqual(cast(PokerPlayer, game.actor).max_bet_raise, 20)
 
 
-class NLFDSimTestCase(TestCase, SimTestCaseMixin[NLFCDGame]):
+class NoLimitFiveCardDrawSimulationTestCase(TestCase, SimulationTestCaseMixin[NLFCDGame]):
     def test_terminality(self) -> None:
         self.assertTrue(parse_poker(NLFCDGame(0, (5, 10), (1000, 1000)), ('dh 0', 'dh 1', 'f')).terminal)
         self.assertTrue(parse_poker(NLFCDGame(0, (5, 10), (1000, 1000, 1000, 1000)), (
@@ -777,7 +777,7 @@ class NLFDSimTestCase(TestCase, SimTestCaseMixin[NLFCDGame]):
         )).terminal)
 
 
-class FLBadugiSimTestCase(TestCase, SimTestCaseMixin[NLFCDGame]):
+class FixedLimitBadugiSimulationTestCase(TestCase, SimulationTestCaseMixin[FLBGame]):
     def test_terminality(self) -> None:
         self.assertTrue(parse_poker(FLBGame(0, (5, 10), (1000, 1000, 1000)), (
             'dh 0', 'dh 1', 'dh 2', 'f', 'f',
@@ -803,8 +803,8 @@ class FLBadugiSimTestCase(TestCase, SimTestCaseMixin[NLFCDGame]):
         )).terminal)
 
 
-class KuhnSimTestCase(TestCase, SimTestCaseMixin[KuhnGame]):
-    def test_terminals(self) -> None:
+class KuhnPokerSimulationTestCase(TestCase, SimulationTestCaseMixin[KuhnGame]):
+    def test_terminality(self) -> None:
         for game in (
                 parse_poker(KuhnGame(), ('dh 0', 'dh 1', 'cc', 'cc', 's', 's')),
                 parse_poker(KuhnGame(), ('dh 0', 'dh 1', 'cc', 'br', 'f')),
@@ -815,43 +815,49 @@ class KuhnSimTestCase(TestCase, SimTestCaseMixin[KuhnGame]):
             self.assertTrue(game.terminal)
 
 
-class TTTSimTestCase(TestCase, SimTestCaseMixin[TTTGame]):
+class TicTacToeSimulationTestCase(TestCase, SimulationTestCaseMixin[TicTacToe]):
     def test_draws(self) -> None:
         for game in (
-                parse_ttt(TTTGame(), ((1, 1), (0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2))),
-                parse_ttt(TTTGame(), ((0, 0), (0, 2), (2, 0), (2, 2), (1, 2), (1, 0), (0, 1), (1, 1), (2, 1))),
-                parse_ttt(TTTGame(), ((0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (1, 1), (2, 0), (2, 2), (2, 1))),
-                parse_ttt(TTTGame(), ((0, 1), (0, 0), (1, 1), (0, 2), (1, 2), (1, 0), (2, 0), (2, 1), (2, 2))),
-                parse_ttt(TTTGame(), ((1, 1), (0, 2), (2, 2), (0, 0), (0, 1), (2, 1), (1, 0), (1, 2), (2, 0))),
+                parse_tic_tac_toe(TicTacToe(),
+                                  ((1, 1), (0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2))),
+                parse_tic_tac_toe(TicTacToe(),
+                                  ((0, 0), (0, 2), (2, 0), (2, 2), (1, 2), (1, 0), (0, 1), (1, 1), (2, 1))),
+                parse_tic_tac_toe(TicTacToe(),
+                                  ((0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (1, 1), (2, 0), (2, 2), (2, 1))),
+                parse_tic_tac_toe(TicTacToe(),
+                                  ((0, 1), (0, 0), (1, 1), (0, 2), (1, 2), (1, 0), (2, 0), (2, 1), (2, 2))),
+                parse_tic_tac_toe(TicTacToe(),
+                                  ((1, 1), (0, 2), (2, 2), (0, 0), (0, 1), (2, 1), (1, 0), (1, 2), (2, 0))),
         ):
             self.assertIsNone(game.winner)
 
     def test_losses(self) -> None:
         for game in (
-                parse_ttt(TTTGame(), ((2, 2), (0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0))),
-                parse_ttt(TTTGame(), ((1, 1), (0, 2), (1, 2), (1, 0), (2, 2), (0, 0), (0, 1), (2, 0))),
-                parse_ttt(TTTGame(), ((1, 1), (0, 1), (2, 0), (2, 2), (2, 1), (0, 2), (0, 0), (1, 2))),
-                parse_ttt(TTTGame(), ((0, 0), (1, 0), (0, 1), (1, 1), (2, 2), (1, 2))),
-                parse_ttt(TTTGame(), ((0, 1), (2, 0), (1, 1), (2, 1), (0, 2), (2, 2))),
+                parse_tic_tac_toe(TicTacToe(), ((2, 2), (0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0))),
+                parse_tic_tac_toe(TicTacToe(), ((1, 1), (0, 2), (1, 2), (1, 0), (2, 2), (0, 0), (0, 1), (2, 0))),
+                parse_tic_tac_toe(TicTacToe(), ((1, 1), (0, 1), (2, 0), (2, 2), (2, 1), (0, 2), (0, 0), (1, 2))),
+                parse_tic_tac_toe(TicTacToe(), ((0, 0), (1, 0), (0, 1), (1, 1), (2, 2), (1, 2))),
+                parse_tic_tac_toe(TicTacToe(), ((0, 1), (2, 0), (1, 1), (2, 1), (0, 2), (2, 2))),
         ):
             self.assertIs(game.players[1], game.winner)
 
     def test_wins(self) -> None:
         for game in (
-                parse_ttt(TTTGame(), ((0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0))),
-                parse_ttt(TTTGame(), ((1, 1), (0, 2), (0, 1), (1, 2), (2, 1))),
-                parse_ttt(TTTGame(), ((1, 1), (0, 1), (2, 0), (0, 2), (0, 0), (1, 0), (2, 2))),
-                parse_ttt(TTTGame(), ((1, 1), (0, 1), (2, 0), (2, 2), (0, 2))),
-                parse_ttt(TTTGame(), ((0, 0), (1, 0), (0, 1), (1, 1), (0, 2))),
+                parse_tic_tac_toe(TicTacToe(), ((0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0))),
+                parse_tic_tac_toe(TicTacToe(), ((1, 1), (0, 2), (0, 1), (1, 2), (2, 1))),
+                parse_tic_tac_toe(TicTacToe(), ((1, 1), (0, 1), (2, 0), (0, 2), (0, 0), (1, 0), (2, 2))),
+                parse_tic_tac_toe(TicTacToe(), ((1, 1), (0, 1), (2, 0), (2, 2), (0, 2))),
+                parse_tic_tac_toe(TicTacToe(), ((0, 0), (1, 0), (0, 1), (1, 1), (0, 2))),
         ):
             self.assertIs(game.players[0], game.winner)
 
     def test_illegal_actions(self) -> None:
-        self.assertRaises(ActionException, parse_ttt, parse_ttt(TTTGame(), ((0, 0),)), ((0, 0),))
-        self.assertRaises(ActionException, parse_ttt, parse_ttt(TTTGame(), ((0, 0), (0, 1))), ((0, 0),))
-        self.assertRaises(ActionException, parse_ttt, TTTGame(), ((3, 3),))
-        self.assertRaises(ActionException, parse_ttt, TTTGame(), ((-1, -1),))
-        self.assertRaises(ActionException, parse_ttt(TTTGame(), ((0, 0),)).players[0].mark, 0, 1)
+        self.assertRaises(ActionException, parse_tic_tac_toe, parse_tic_tac_toe(TicTacToe(), ((0, 0),)), ((0, 0),))
+        self.assertRaises(ActionException, parse_tic_tac_toe, parse_tic_tac_toe(TicTacToe(), ((0, 0), (0, 1))),
+                          ((0, 0),))
+        self.assertRaises(ActionException, parse_tic_tac_toe, TicTacToe(), ((3, 3),))
+        self.assertRaises(ActionException, parse_tic_tac_toe, TicTacToe(), ((-1, -1),))
+        self.assertRaises(ActionException, parse_tic_tac_toe(TicTacToe(), ((0, 0),)).players[0].mark, 0, 1)
 
 
 if __name__ == '__main__':

@@ -6,14 +6,14 @@ from typing import Optional, cast, final, overload
 from auxiliary import next_or_none
 
 from gameframe.exceptions import ActionException
-from gameframe.seq import SeqGame, _SeqAction
+from gameframe.sequential import SequentialGame, _SequentialAction
 
 
 @final
-class TTTPlayer:
-    """TTTPlayer is the class for tic tac toe players."""
+class TicTacToePlayer:
+    """TicTacToePlayer is the class for tic tac toe players."""
 
-    def __init__(self, game: TTTGame):
+    def __init__(self, game: TicTacToe):
         self.__game = game
 
     def __repr__(self) -> str:
@@ -55,18 +55,18 @@ class TTTPlayer:
 
 
 @final
-class TTTGame(SeqGame[None, TTTPlayer]):
-    """TTTGame is the class for tic tac toe games."""
+class TicTacToe(SequentialGame[None, TicTacToePlayer]):
+    """TicTacToe is the class for tic tac toe games."""
 
     def __init__(self) -> None:
-        super().__init__(None, players := (TTTPlayer(self), TTTPlayer(self)), players[0])
+        super().__init__(None, players := (TicTacToePlayer(self), TicTacToePlayer(self)), players[0])
 
-        self._board: list[list[Optional[TTTPlayer]]] = [[None, None, None],
-                                                        [None, None, None],
-                                                        [None, None, None]]
+        self._board: list[list[Optional[TicTacToePlayer]]] = [[None, None, None],
+                                                              [None, None, None],
+                                                              [None, None, None]]
 
     @property
-    def board(self) -> Sequence[Sequence[Optional[TTTPlayer]]]:
+    def board(self) -> Sequence[Sequence[Optional[TicTacToePlayer]]]:
         """
         :return: The board of this tic tac toe game.
         """
@@ -80,7 +80,7 @@ class TTTGame(SeqGame[None, TTTPlayer]):
         return ((r, c) for r in range(3) for c in range(3) if self._board[r][c] is None)
 
     @property
-    def winner(self) -> Optional[TTTPlayer]:
+    def winner(self) -> Optional[TicTacToePlayer]:
         """
         :return: The winning player of the tic tac toe game if there is one, else None.
         """
@@ -97,14 +97,14 @@ class TTTGame(SeqGame[None, TTTPlayer]):
         return None
 
 
-class _MarkAction(_SeqAction[TTTGame, TTTPlayer]):
-    def __init__(self, game: TTTGame, actor: TTTPlayer, r: int, c: int):
+class _MarkAction(_SequentialAction[TicTacToe, TicTacToePlayer]):
+    def __init__(self, game: TicTacToe, actor: TicTacToePlayer, r: int, c: int):
         super().__init__(game, actor)
 
         self.r, self.c = r, c
 
     @property
-    def next_actor(self) -> Optional[TTTPlayer]:
+    def next_actor(self) -> Optional[TicTacToePlayer]:
         if next_or_none(self.game.empty_coords) is not None and self.game.winner is None:
             return self.game.players[self.game.players[0] is self.actor]
         else:
@@ -124,7 +124,7 @@ class _MarkAction(_SeqAction[TTTGame, TTTPlayer]):
         self.game._board[self.r][self.c] = self.actor
 
 
-def parse_ttt(game: TTTGame, coords: Iterable[Sequence[int]]) -> TTTGame:
+def parse_tic_tac_toe(game: TicTacToe, coords: Iterable[Sequence[int]]) -> TicTacToe:
     """Parses the coords as mark actions and applies them the supplied tic tac toe game.
 
     :param game: The tic tac toe game to be applied on.
@@ -132,6 +132,6 @@ def parse_ttt(game: TTTGame, coords: Iterable[Sequence[int]]) -> TTTGame:
     :return: None.
     """
     for r, c in coords:
-        cast(TTTPlayer, game._actor).mark(r, c)
+        cast(TicTacToePlayer, game._actor).mark(r, c)
 
     return game
