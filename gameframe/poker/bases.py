@@ -312,45 +312,45 @@ class PokerPlayer:
             return True
 
     @retain_iter
-    def draw(self, froms: Iterable[Card] = (), tos: Optional[Iterable[Card]] = None) -> None:
-        """Draws the cards.
+    def discard_draw(self, discards: Iterable[Card] = (), draws: Optional[Iterable[Card]] = None) -> None:
+        """Discards and draws the cards.
 
-        :param froms: The cards to be drawn from the player.
-        :param tos: The optional cards to be drawn to the player.
+        :param discards: The cards to be drawn from the player.
+        :param draws: The optional cards to be drawn to the player.
         :return: None.
         """
-        from gameframe.poker._actions import DrawAction
+        from gameframe.poker._actions import DiscardDrawAction
 
-        if tos is None:
-            tos = sample(tuple(self.__game._deck), ilen(froms))
+        if draws is None:
+            draws = sample(tuple(self.__game._deck), ilen(discards))
 
-        DrawAction(self.__game, self, froms, tos).act()
+        DiscardDrawAction(self.__game, self, discards, draws).act()
 
     @overload
-    def can_draw(self) -> bool:
+    def can_discard_draw(self) -> bool:
         ...
 
     @overload
-    def can_draw(self, froms: Iterable[Card]) -> bool:
+    def can_discard_draw(self, discards: Iterable[Card]) -> bool:
         ...
 
     @overload
-    def can_draw(self, froms: Iterable[Card], tos: Iterable[Card]) -> bool:
+    def can_discard_draw(self, discards: Iterable[Card], draws: Iterable[Card]) -> bool:
         ...
 
-    def can_draw(self, froms: Iterable[Card] = (), tos: Optional[Iterable[Card]] = None) -> bool:
-        """Determines if the player can draw the cards.
+    def can_discard_draw(self, discards: Iterable[Card] = (), draws: Optional[Iterable[Card]] = None) -> bool:
+        """Determines if the player can discard and draw the cards.
 
-        :param froms: The cards to be drawn from the player.
-        :param tos: The optional cards to be drawn to the player.
+        :param discards: The cards to be drawn from the player.
+        :param draws: The optional cards to be drawn to the player.
         :return: True if the player can draw, else False.
         """
-        from gameframe.poker._actions import DrawAction
+        from gameframe.poker._actions import DiscardDrawAction
 
         try:
-            DrawAction(self.__game, self, froms, default(tos, ())).verify()
+            DiscardDrawAction(self.__game, self, discards, default(draws, ())).verify()
         except CardCountException:
-            return tos is None
+            return draws is None
         except ActionException:
             return False
         else:

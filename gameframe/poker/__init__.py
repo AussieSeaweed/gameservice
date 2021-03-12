@@ -13,7 +13,7 @@ from gameframe.poker.games import (Badugi, Courchevel, FiveCardDraw, FixedLimitB
                                    PotLimitOmahaHoldEm, PotLimitShortHoldEm, PotLimitSingleDrawLowball27,
                                    PotLimitSixCardOmahaHoldEm, PotLimitTexasHoldEm, PotLimitTripleDrawLowball27,
                                    SingleDrawLowball27, TripleDrawLowball27)
-from gameframe.poker.parameters import (BettingStage, BoardDealingStage, DealingStage, DrawStage, FixedLimit,
+from gameframe.poker.parameters import (BettingStage, BoardDealingStage, DealingStage, DiscardDrawStage, FixedLimit,
                                         HoleDealingStage, NoLimit, PotLimit)
 from gameframe.poker.utils import parse_poker
 
@@ -29,4 +29,4 @@ __all__ = ('Limit', 'Poker', 'PokerNature', 'PokerPlayer', 'Stage', 'BetRaiseAmo
            'PotLimitGreekHoldEm', 'PotLimitHoldEm', 'PotLimitOmahaHoldEm', 'PotLimitSixCardOmahaHoldEm',
            'PotLimitSingleDrawLowball27', 'PotLimitShortHoldEm', 'PotLimitTripleDrawLowball27', 'PotLimitTexasHoldEm',
            'SingleDrawLowball27', 'TripleDrawLowball27', 'BettingStage', 'BoardDealingStage', 'DealingStage',
-           'DrawStage', 'FixedLimit', 'HoleDealingStage', 'NoLimit', 'PotLimit', 'parse_poker')
+           'DiscardDrawStage', 'FixedLimit', 'HoleDealingStage', 'NoLimit', 'PotLimit', 'parse_poker')

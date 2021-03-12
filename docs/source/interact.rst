@@ -87,6 +87,12 @@ Actions in poker can be applied by calling the corresponding methods:
    player.showdown(False)
    # Show hand even if the player loses anyway
    player.showdown(True)
+   # Stand pat.
+   player.discard_draw()
+   # Discard the specified cards and draw random cards.
+   player.discard_draw(parse_cards('KsKcKh'))
+   # Discard the specified cards and draw the specified cards.
+   player.discard_draw(parse_cards('KsKcKh'), parse_cards('AsAcAh'))
 
 
 Whether each action can be applied can also be queried through the corresponding methods:
@@ -136,6 +142,12 @@ Whether each action can be applied can also be queried through the corresponding
    player.can_showdown(False)
    # True if the player can showdown while force showing, else False.
    player.can_showdown(True)
+   # True if the player can stand pat, else False.
+   player.can_discard_draw()
+   # True if the player can discard the specified cards and draw random cards, else False.
+   player.can_discard_draw(parse_cards('KsKcKh'))
+   # True if the player can discard the specified cards and draw the specified cards, else False.
+   player.can_discard_draw(parse_cards('KsKcKh'), parse_cards('AsAcAh'))
 
    # The maximum bet/raise amount.
    player.max_bet_raise
@@ -143,7 +155,7 @@ Whether each action can be applied can also be queried through the corresponding
    player.min_bet_raise
 
 
-Note that can_showdown(), can_showdown(False), can_showdown(True) are basically the same things. They were just added
+Note that can_showdown(), can_showdown(False) and can_showdown(True) are basically the same things. They were just added
 for the symmetry with actions.
 
 The following code demonstrates interacting with No-Limit Texas Hold'em games.

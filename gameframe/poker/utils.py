@@ -21,8 +21,8 @@ def parse_poker(game: Poker, tokens: Iterable[str]) -> Poker:
                 game._actor.check_call()
             elif token == 'f':
                 game._actor.fold()
-            elif match := re.fullmatch(r'd( (?P<froms>\w*))?( (?P<tos>\w*))?', token):
-                game._actor.draw(
+            elif match := re.fullmatch(r'dd( (?P<froms>\w*))?( (?P<tos>\w*))?', token):
+                game._actor.discard_draw(
                     () if (cards := match.group('froms')) is None else parse_cards(cards),
                     None if (cards := match.group('tos')) is None else parse_cards(cards),
                 )

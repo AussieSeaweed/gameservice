@@ -801,7 +801,7 @@ class NoLimitFiveCardDrawSimulationTestCase(TestCase, SimulationTestCaseMixin[No
         self.assertTrue(parse_poker(NoLimitFiveCardDraw(0, (5, 10), (1000, 1000, 1000, 1000)), (
             'dh 0 AsAdAcAhKd', 'dh 1 4s4d4c5h5d', 'dh 2 2s2d2c3h3d', 'dh 3 Th8h9cJsQd',
             'cc', 'cc', 'f', 'cc',
-            'd 4c4d4s 5c5sKc', 'd 3h3d', 'd',
+            'dd 4c4d4s 5c5sKc', 'dd 3h3d', 'dd',
             'br 100', 'cc', 'cc',
             's', 's', 's',
         )).terminal)
@@ -815,20 +815,20 @@ class FixedLimitBadugiSimulationTestCase(TestCase, SimulationTestCaseMixin[Fixed
         self.assertTrue(parse_poker(FixedLimitBadugi(0, (5, 10), (1000, 1000, 1000, 1000)), (
             'dh 0 AsAdAcAh', 'dh 1 4s4d4c5h', 'dh 2 2s2d3h3d', 'dh 3 Th8h9cJs',
             'cc', 'cc', 'f', 'br', 'cc', 'cc',
-            'd 4c4d4s 5c5sKc', 'd 3h3d', 'd',
+            'dd 4c4d4s 5c5sKc', 'dd 3h3d', 'dd',
             'br', 'cc', 'cc',
-            'd', 'd', 'd',
+            'dd', 'dd', 'dd',
             'cc', 'br', 'cc', 'cc',
-            'd', 'd', 'd',
+            'dd', 'dd', 'dd',
             'cc', 'cc', 'br', 'cc', 'cc',
             's', 's', 's',
         )).terminal)
         self.assertTrue(parse_poker(FixedLimitBadugi(0, (5, 10), (20, 20, 20, 25)), (
             'dh 0 AsAdAcAh', 'dh 1 4s4d4c5h', 'dh 2 2s2d3h3d', 'dh 3 Th8h9cJs',
             'cc', 'cc', 'f', 'br', 'cc', 'cc',
-            'd 4c4d4s 5c5sKc', 'd 3h3d', 'd',
-            'd', 'd', 'd',
-            'd', 'd', 'd',
+            'dd 4c4d4s 5c5sKc', 'dd 3h3d', 'dd',
+            'dd', 'dd', 'dd',
+            'dd', 'dd', 'dd',
             's', 's', 's',
         )).terminal)
 

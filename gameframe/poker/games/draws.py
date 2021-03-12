@@ -6,7 +6,7 @@ from pokertools import (BadugiEvaluator, Card, Deck, Lowball27Evaluator, Rank, R
                         StandardEvaluator, Suit)
 
 from gameframe.poker.bases import Limit, Poker
-from gameframe.poker.parameters import BettingStage, DrawStage, FixedLimit, HoleDealingStage, NoLimit, PotLimit
+from gameframe.poker.parameters import BettingStage, DiscardDrawStage, FixedLimit, HoleDealingStage, NoLimit, PotLimit
 
 
 class FiveCardDraw(Poker):
@@ -16,7 +16,7 @@ class FiveCardDraw(Poker):
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         max_delta = max(ante, max(blinds))
 
-        super().__init__((HoleDealingStage(5, False), BettingStage(max_delta), DrawStage(), BettingStage(max_delta)),
+        super().__init__((HoleDealingStage(5, False), BettingStage(max_delta), DiscardDrawStage(), BettingStage(max_delta)),
                          limit, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
@@ -53,9 +53,9 @@ class Badugi(Poker):
 
         super().__init__((
             HoleDealingStage(4, False), BettingStage(max_delta),
-            DrawStage(), BettingStage(max_delta),
-            DrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
-            DrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+            DiscardDrawStage(), BettingStage(max_delta),
+            DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+            DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
         ), limit, BadugiEvaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
@@ -90,7 +90,7 @@ class SingleDrawLowball27(Poker):
     def __init__(self, limit: Limit, ante: int, blinds: Iterable[int], starting_stacks: Iterable[int]):
         max_delta = max(ante, max(blinds))
 
-        super().__init__((HoleDealingStage(5, False), BettingStage(max_delta), DrawStage(), BettingStage(max_delta)),
+        super().__init__((HoleDealingStage(5, False), BettingStage(max_delta), DiscardDrawStage(), BettingStage(max_delta)),
                          limit, Lowball27Evaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 
@@ -127,9 +127,9 @@ class TripleDrawLowball27(Poker):
 
         super().__init__((
             HoleDealingStage(5, False), BettingStage(max_delta),
-            DrawStage(), BettingStage(max_delta),
-            DrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
-            DrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+            DiscardDrawStage(), BettingStage(max_delta),
+            DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+            DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
         ), limit, Lowball27Evaluator(), StandardDeck(), ante, blinds, starting_stacks)
 
 

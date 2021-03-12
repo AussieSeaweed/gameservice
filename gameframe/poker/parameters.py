@@ -93,8 +93,8 @@ class BettingStage(Stage, ABC):
         FINAL = auto()
 
 
-class DrawStage(Stage):
-    """DrawStage is the class for draw stages."""
+class DiscardDrawStage(Stage):
+    """DiscardDrawStage is the class for discard and draw stages."""
 
     def __init__(self) -> None:
         self.__opened = False
