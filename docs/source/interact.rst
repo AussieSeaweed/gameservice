@@ -223,7 +223,7 @@ between Xuan and Phua shown just above.
    :language: python
 
 
-Although not shown above, the command for drawing cards as in draw games is 'd <FROM CARDS> <TO CARDS>'. In commands
+Although not shown above, the command for drawing cards as in draw games is 'dd <FROM CARDS> <TO CARDS>'. In commands
 involving cards, if the cards are not specified, random cards will be selected from the deck.
 
 
