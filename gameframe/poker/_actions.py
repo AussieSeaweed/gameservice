@@ -10,7 +10,8 @@ from gameframe.exceptions import ActionException
 from gameframe.game import _A
 from gameframe.poker.bases import Poker, PokerNature, PokerPlayer
 from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, PlayerException
-from gameframe.poker.parameters import (BettingStage, BoardDealingStage, DealingStage, DiscardDrawStage, HoleDealingStage,
+from gameframe.poker.parameters import (BettingStage, BoardDealingStage, DealingStage, DiscardDrawStage,
+                                        HoleDealingStage,
                                         _ShowdownStage)
 from gameframe.sequential import _SequentialAction
 
@@ -23,11 +24,12 @@ class PokerAction(_SequentialAction[Poker, _A], ABC):
             self.game._stage._close(self.game)
 
             try:
-                self.game._stage = after(self.game._stages, self.game._stage)
+                stage = after(self.game._stages, self.game._stage)
 
-                while self.game._stage._skippable(self.game):
-                    self.game._stage = after(self.game._stages, self.game._stage)
+                while stage._skippable(self.game):
+                    stage = after(self.game._stages, stage)
                 else:
+                    self.game._stage = stage
                     self.game._stage._open(self.game)
             except ValueError:
                 self.game._reset()
