@@ -1,10 +1,8 @@
 from gameframe.poker import (FLBGame, FLCGame, FLFCDGame, FLGGame, FLFCOGame, FLSCOGame, FLOGame, FLSDLB27Game, FLSGame,
-                             FLTDLB27Game, FLTGame,
-                             KuhnGame,
-                             NLBGame, NLCGame, NLFCDGame, NLGGame, NLFCOGame, NLSCOGame, NLOGame, NLSDLB27Game, NLSGame,
-                             NLTDLB27Game, NLTGame,
-                             PLBGame, PLCGame, PLFCDGame, PLGGame, PLFCOGame, PLSCOGame, PLOGame, PLSDLB27Game, PLSGame,
-                             PLTDLB27Game, PLTGame)
+                             FLTDLB27Game, FLTGame, KuhnGame, NLBGame, NLCGame, NLFCDGame, NLGGame, NLFCOGame,
+                             NLSCOGame, NLOGame, NLSDLB27Game, NLSGame, NLTDLB27Game, NLTGame, PLBGame, PLCGame,
+                             PLFCDGame, PLGGame, PLFCOGame, PLSCOGame, PLOGame, PLSDLB27Game, PLSGame, PLTDLB27Game,
+                             PLTGame)
 from gameframe.rps import RPSGame
 from gameframe.ttt import TTTGame
 
