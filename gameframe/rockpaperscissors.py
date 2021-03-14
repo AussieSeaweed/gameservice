@@ -55,10 +55,6 @@ class RockPaperScissors(Game[None, RockPaperScissorsPlayer]):
         super().__init__(None, (RockPaperScissorsPlayer(self), RockPaperScissorsPlayer(self)))
 
     @property
-    def terminal(self) -> bool:
-        return all(player._hand is not None for player in self.players)
-
-    @property
     def winner(self) -> Optional[RockPaperScissorsPlayer]:
         """
         :return: The winning player of this rock paper scissors game if there is one, else None.
@@ -67,6 +63,10 @@ class RockPaperScissors(Game[None, RockPaperScissorsPlayer]):
             return max(self.players, key=lambda player: get(player._hand))
         else:
             return None
+
+    @property
+    def terminal(self) -> bool:
+        return all(player._hand is not None for player in self.players)
 
 
 @final

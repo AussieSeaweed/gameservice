@@ -21,9 +21,6 @@ class PokerNature:
     def __init__(self, game: Poker):
         self.__game = game
 
-    def __repr__(self) -> str:
-        return 'PokerNature'
-
     @property
     def dealable_players(self) -> Iterator[PokerPlayer]:
         """
@@ -131,6 +128,9 @@ class PokerNature:
         else:
             return True
 
+    def __repr__(self) -> str:
+        return 'PokerNature'
+
 
 @final
 class PokerPlayer:
@@ -144,12 +144,6 @@ class PokerPlayer:
         self._bet = 0
         self._hole = list[HoleCard]()
         self._status = self._Status.DEFAULT
-
-    def __repr__(self) -> str:
-        if self.mucked:
-            return f'PokerPlayer({self._bet}, {self._stack})'
-        else:
-            return f'PokerPlayer({self._bet}, {self._stack}, ' + ''.join(map(str, self.hole)) + ')'
 
     @property
     def stack(self) -> int:
@@ -380,6 +374,12 @@ class PokerPlayer:
             return False
         else:
             return True
+
+    def __repr__(self) -> str:
+        if self.mucked:
+            return f'PokerPlayer({self._bet}, {self._stack})'
+        else:
+            return f'PokerPlayer({self._bet}, {self._stack}, ' + ''.join(map(str, self.hole)) + ')'
 
     class _Status(Enum):
         DEFAULT = auto()

@@ -13,9 +13,6 @@ class DealingStage(Stage, ABC):
     def __init__(self, card_count: int):
         self._card_count = card_count
 
-    def _opener(self, game: Poker) -> PokerNature:
-        return game.nature
-
     def _card_target(self, game: Poker) -> int:
         count = 0
 
@@ -24,6 +21,9 @@ class DealingStage(Stage, ABC):
                 count += stage._card_count
 
         return count
+
+    def _opener(self, game: Poker) -> PokerNature:
+        return game.nature
 
 
 class HoleDealingStage(DealingStage):

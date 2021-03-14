@@ -16,26 +16,6 @@ from gameframe.sequential import _SequentialAction
 
 
 class PokerAction(_SequentialAction[Poker, _A], ABC):
-    def act(self) -> None:
-        super().act()
-
-        if self.game._stage._skippable(self.game):
-            self.game._stage._close(self.game)
-
-            try:
-                self.game._stage = after(self.game._stages, self.game._stage)
-
-                while self.game._stage._skippable(self.game):
-                    self.game._stage = after(self.game._stages, self.game._stage)
-                else:
-                    self.game._stage._open(self.game)
-            except ValueError:
-                self.game._reset()
-                self.distribute()
-                self.game._actor = None
-        else:
-            self.game._stage._update(self.game)
-
     def distribute(self) -> None:
         players = [player for player in self.game.players if not player.mucked]
 
@@ -74,6 +54,26 @@ class PokerAction(_SequentialAction[Poker, _A], ABC):
 
         return side_pot
 
+    def act(self) -> None:
+        super().act()
+
+        if self.game._stage._skippable(self.game):
+            self.game._stage._close(self.game)
+
+            try:
+                self.game._stage = after(self.game._stages, self.game._stage)
+
+                while self.game._stage._skippable(self.game):
+                    self.game._stage = after(self.game._stages, self.game._stage)
+                else:
+                    self.game._stage._open(self.game)
+            except ValueError:
+                self.game._reset()
+                self.distribute()
+                self.game._actor = None
+        else:
+            self.game._stage._update(self.game)
+
 
 class DealingAction(PokerAction[PokerNature], ABC):
     def __init__(self, game: Poker, actor: PokerNature, cards: Iterable[Card]):
@@ -84,6 +84,10 @@ class DealingAction(PokerAction[PokerNature], ABC):
     @property
     def next_actor(self) -> PokerNature:
         return self.game.nature
+
+    @abstractmethod
+    def deal(self) -> None:
+        pass
 
     def verify(self) -> None:
         super().verify()
@@ -101,16 +105,17 @@ class DealingAction(PokerAction[PokerNature], ABC):
         self.game._deck.draw(self.cards)
         self.deal()
 
-    @abstractmethod
-    def deal(self) -> None:
-        pass
-
 
 class HoleDealingAction(DealingAction):
     def __init__(self, game: Poker, actor: PokerNature, player: PokerPlayer, cards: Iterable[Card]):
         super().__init__(game, actor, cards)
 
         self.player = player
+
+    def deal(self) -> None:
+        status = cast(HoleDealingStage, self.game._stage)._status
+
+        self.player._hole.extend(HoleCard(card, status) for card in self.cards)
 
     def verify(self) -> None:
         if not isinstance(self.player, PokerPlayer):
@@ -124,13 +129,11 @@ class HoleDealingAction(DealingAction):
 
         super().verify()
 
-    def deal(self) -> None:
-        status = cast(HoleDealingStage, self.game._stage)._status
-
-        self.player._hole.extend(HoleCard(card, status) for card in self.cards)
-
 
 class BoardDealingAction(DealingAction):
+    def deal(self) -> None:
+        self.game._board.extend(self.cards)
+
     def verify(self) -> None:
         if not isinstance(self.game._stage, BoardDealingStage):
             raise ActionException('Board card dealing not allowed')
@@ -138,9 +141,6 @@ class BoardDealingAction(DealingAction):
             raise ActionException('The board already has enough cards')
 
         super().verify()
-
-    def deal(self) -> None:
-        self.game._board.extend(self.cards)
 
 
 class BettingAction(PokerAction[PokerPlayer], ABC):

@@ -20,16 +20,16 @@ class SequentialGame(Game[_N, _P], ABC):
 
     @property
     @final
-    def terminal(self) -> bool:
-        return self._actor is None
-
-    @property
-    @final
     def actor(self) -> Optional[Union[_N, _P]]:
         """
         :return: The actor of this sequential game.
         """
         return self._actor
+
+    @property
+    @final
+    def terminal(self) -> bool:
+        return self._actor is None
 
 
 _SG = TypeVar('_SG', bound=SequentialGame[Any, Any])

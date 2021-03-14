@@ -16,9 +16,6 @@ class TicTacToePlayer:
     def __init__(self, game: TicTacToe):
         self.__game = game
 
-    def __repr__(self) -> str:
-        return 'O' if self.__game.players[0] is self else 'X'
-
     def mark(self, r: int, c: int) -> None:
         """Marks the cell of the board at the coordinates.
 
@@ -52,6 +49,9 @@ class TicTacToePlayer:
             return False
         else:
             return True
+
+    def __repr__(self) -> str:
+        return 'O' if self.__game.players[0] is self else 'X'
 
 
 @final
