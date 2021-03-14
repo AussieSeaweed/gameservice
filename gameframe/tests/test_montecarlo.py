@@ -3,7 +3,7 @@ from random import choice, randint, sample
 from typing import Generic, cast
 from unittest import TestCase, main
 
-from auxiliary import next_or_none
+from math2.utils import next_or_none
 
 from gameframe.game import _G
 from gameframe.poker import NoLimitTexasHoldEm, PokerNature, PokerPlayer, parse_poker

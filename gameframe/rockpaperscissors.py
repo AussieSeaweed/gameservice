@@ -3,7 +3,8 @@ from __future__ import annotations
 from enum import auto
 from typing import Any, Optional, final
 
-from auxiliary import OrderedEnum, default, get
+from math2.enums import OrderedEnum
+from math2.utils import default, get
 
 from gameframe.exceptions import ActionException
 from gameframe.game import Game, _Action

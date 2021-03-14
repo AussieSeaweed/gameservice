@@ -6,7 +6,7 @@ from enum import Enum, auto
 from random import sample
 from typing import Final, Optional, Union, cast, final, overload
 
-from auxiliary import default, iter_equal
+from math2.utils import default, iter_equal
 from pokertools import Card, Deck, Evaluator, Hand, HoleCard
 
 from gameframe.exceptions import ActionException, ParameterException
@@ -397,8 +397,12 @@ class Poker(SequentialGame[PokerNature, PokerPlayer]):
        The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self, stages: Iterable[Stage], limit: Limit, evaluator: Evaluator, deck: Deck,
-                 ante: int, blinds: Iterable[int], stacks: Iterable[int]):
+    def __init__(
+            self,
+            stages: Iterable[Stage],
+            limit: Limit, evaluator: Evaluator, deck: Deck,
+            ante: int, blinds: Iterable[int], stacks: Iterable[int],
+    ):
         super().__init__(actor := PokerNature(self), (PokerPlayer(self, stack) for stack in stacks), actor)
         from gameframe.poker.parameters import _ShowdownStage
 

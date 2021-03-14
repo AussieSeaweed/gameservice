@@ -4,7 +4,7 @@ from random import sample
 from typing import Generic, cast
 from unittest import TestCase, main
 
-from auxiliary import ExtendedTestCase
+from math2.tests import ExtendedTestCase
 from pokertools import parse_cards
 
 from gameframe.exceptions import ActionException

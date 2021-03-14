@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from typing import cast
 
-from auxiliary import after, bind
+from math2.utils import after, bind
 from pokertools import Card, HoleCard
 
 from gameframe.exceptions import ActionException
@@ -23,12 +23,11 @@ class PokerAction(_SequentialAction[Poker, _A], ABC):
             self.game._stage._close(self.game)
 
             try:
-                stage = after(self.game._stages, self.game._stage)
+                self.game._stage = after(self.game._stages, self.game._stage)
 
-                while stage._skippable(self.game):
-                    stage = after(self.game._stages, stage)
+                while self.game._stage._skippable(self.game):
+                    self.game._stage = after(self.game._stages, self.game._stage)
                 else:
-                    self.game._stage = stage
                     self.game._stage._open(self.game)
             except ValueError:
                 self.game._reset()

@@ -2,7 +2,7 @@ from abc import ABC
 from enum import Enum, auto
 from typing import Optional, cast
 
-from auxiliary import after, bind
+from math2.utils import after, bind
 
 from gameframe.poker.bases import Limit, Poker, PokerNature, PokerPlayer, Stage
 
@@ -95,11 +95,19 @@ class BettingStage(Stage, ABC):
 class DiscardDrawStage(Stage):
     """DiscardDrawStage is the class for discard and draw stages."""
 
+    def __init__(self) -> None:
+        self.__opened = False
+
     def _skippable(self, game: Poker) -> bool:
-        return super()._skippable(game) or (game._stage is self and game._actor is self._opener(game))
+        return super()._skippable(game) or (self.__opened and game._actor is self._opener(game))
 
     def _opener(self, game: Poker) -> PokerPlayer:
         return next(player for player in game.players if not player.mucked)
+
+    def _open(self, game: Poker) -> None:
+        super()._open(game)
+
+        self.__opened = True
 
 
 class _ShowdownStage(Stage):
