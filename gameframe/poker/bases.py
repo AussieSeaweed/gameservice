@@ -6,7 +6,7 @@ from enum import Enum, auto
 from random import sample
 from typing import Final, Optional, Union, cast, final, overload
 
-from math2.utils import default, iter_equal
+from auxiliary import default, iter_equal
 from pokertools import Card, Deck, Evaluator, Hand, HoleCard
 
 from gameframe.exceptions import ActionException, ParameterException

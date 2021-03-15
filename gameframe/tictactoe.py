@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Iterator, Sequence
 from typing import Optional, cast, final, overload
 
-from math2.utils import next_or_none
+from auxiliary import next_or_none
 
 from gameframe.exceptions import ActionException
 from gameframe.sequential import SequentialGame, _SequentialAction
