@@ -400,8 +400,12 @@ class Poker(SequentialGame[PokerNature, PokerPlayer]):
     def __init__(
             self,
             stages: Iterable[Stage],
-            limit: Limit, evaluator: Evaluator, deck: Deck,
-            ante: int, blinds: Iterable[int], stacks: Iterable[int],
+            limit: Limit,
+            evaluator: Evaluator,
+            deck: Deck,
+            ante: int,
+            blinds: Iterable[int],
+            stacks: Iterable[int],
     ):
         super().__init__(actor := PokerNature(self), (PokerPlayer(self, stack) for stack in stacks), actor)
         from gameframe.poker.parameters import _ShowdownStage

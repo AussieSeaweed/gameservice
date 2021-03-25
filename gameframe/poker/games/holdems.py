@@ -11,8 +11,16 @@ from gameframe.poker.parameters import BettingStage, BoardDealingStage, FixedLim
 class HoldEm(Poker):
     """HoldEm is the class for Hold'em games."""
 
-    def __init__(self, hole_card_count: int, limit: Limit, evaluator: Evaluator, deck: Deck,
-                 ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
+    def __init__(
+            self,
+            hole_card_count: int,
+            limit: Limit,
+            evaluator: Evaluator,
+            deck: Deck,
+            ante: int,
+            blinds: Sequence[int],
+            starting_stacks: Sequence[int],
+    ):
         max_delta = max(ante, max(blinds))
 
         super().__init__((
@@ -26,24 +34,45 @@ class HoldEm(Poker):
 class FixedLimitHoldEm(HoldEm):
     """FixedLimitHoldEm is the class for Fixed-Limit Hold'em games."""
 
-    def __init__(self, hole_card_count: int, evaluator: Evaluator, deck: Deck,
-                 ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
+    def __init__(
+            self,
+            hole_card_count: int,
+            evaluator: Evaluator,
+            deck: Deck,
+            ante: int,
+            blinds: Sequence[int],
+            starting_stacks: Sequence[int],
+    ):
         super().__init__(hole_card_count, FixedLimit(), evaluator, deck, ante, blinds, starting_stacks)
 
 
 class PotLimitHoldEm(HoldEm):
     """PotLimitHoldEm is the class for Pot-Limit Hold'em games."""
 
-    def __init__(self, hole_card_count: int, evaluator: Evaluator, deck: Deck,
-                 ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
+    def __init__(
+            self,
+            hole_card_count: int,
+            evaluator: Evaluator,
+            deck: Deck,
+            ante: int,
+            blinds: Sequence[int],
+            starting_stacks: Sequence[int],
+    ):
         super().__init__(hole_card_count, PotLimit(), evaluator, deck, ante, blinds, starting_stacks)
 
 
 class NoLimitHoldEm(HoldEm):
     """NoLimitHoldEm is the class for No-Limit Hold'em games."""
 
-    def __init__(self, hole_card_count: int, evaluator: Evaluator, deck: Deck,
-                 ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
+    def __init__(
+            self,
+            hole_card_count: int,
+            evaluator: Evaluator,
+            deck: Deck,
+            ante: int,
+            blinds: Sequence[int],
+            starting_stacks: Sequence[int],
+    ):
         super().__init__(hole_card_count, NoLimit(), evaluator, deck, ante, blinds, starting_stacks)
 
 

@@ -15,8 +15,8 @@ class FiveCardDraw(Poker):
         max_delta = max(ante, max(blinds))
 
         super().__init__(
-            (HoleDealingStage(5, False), BettingStage(max_delta), DiscardDrawStage(), BettingStage(max_delta)),
-            limit, StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks,
+            (HoleDealingStage(5, False), BettingStage(max_delta), DiscardDrawStage(), BettingStage(max_delta)), limit,
+            StandardEvaluator(), StandardDeck(), ante, blinds, starting_stacks,
         )
 
 
@@ -89,8 +89,9 @@ class SingleDrawLowball27(Poker):
         max_delta = max(ante, max(blinds))
 
         super().__init__(
-            (HoleDealingStage(5, False), BettingStage(max_delta), DiscardDrawStage(), BettingStage(max_delta)),
-            limit, Lowball27Evaluator(), StandardDeck(), ante, blinds, starting_stacks)
+            (HoleDealingStage(5, False), BettingStage(max_delta), DiscardDrawStage(), BettingStage(max_delta)), limit,
+            Lowball27Evaluator(), StandardDeck(), ante, blinds, starting_stacks,
+        )
 
 
 @final

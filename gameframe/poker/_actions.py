@@ -10,8 +10,7 @@ from gameframe.game import _A
 from gameframe.poker.bases import Poker, PokerNature, PokerPlayer
 from gameframe.poker.exceptions import BetRaiseAmountException, CardCountException, PlayerException
 from gameframe.poker.parameters import (BettingStage, BoardDealingStage, DealingStage, DiscardDrawStage,
-                                        HoleDealingStage,
-                                        _ShowdownStage)
+                                        HoleDealingStage, _ShowdownStage)
 from gameframe.sequential import _SequentialAction
 
 
