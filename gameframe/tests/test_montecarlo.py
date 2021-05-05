@@ -90,41 +90,5 @@ class NoLimitTexasHoldEmTestCase(TestCase, MonteCarloTestCaseMixin[NoLimitTexasH
         )
 
 
-class TicTacToeMonteCarloTestCase(TestCase, MonteCarloTestCaseMixin[TicTacToe]):
-    MONTE_CARLO_TEST_COUNT = 10000
-
-    def create_game(self) -> TicTacToe:
-        return TicTacToe()
-
-    def act(self, game: TicTacToe) -> None:
-        cast(TicTacToePlayer, game.actor).mark(*choice(tuple(game.empty_coords)))
-
-    def verify(self, game: TicTacToe) -> None:
-        if game.terminal:
-            self.assertTrue(next_or_none(game.empty_coords) is None or game.winner is not None)
-        else:
-            self.assertTrue(next_or_none(game.empty_coords) is not None and game.winner is None)
-
-
-class RockPaperScissorsMonteCarloTestCase(TestCase, MonteCarloTestCaseMixin[RockPaperScissors]):
-    MONTE_CARLO_TEST_COUNT = 100000
-
-    def create_game(self) -> RockPaperScissors:
-        return RockPaperScissors()
-
-    def act(self, game: RockPaperScissors) -> None:
-        for player in game.players:
-            player.throw(choice(tuple(RockPaperScissorsHand)))
-
-    def verify(self, game: RockPaperScissors) -> None:
-        if game.terminal:
-            if game.winner is game.players[0]:
-                self.assertGreater(game.players[0].hand, game.players[1].hand)
-            elif game.winner is game.players[1]:
-                self.assertLess(game.players[0].hand, game.players[1].hand)
-            else:
-                self.assertEqual(game.players[0].hand, game.players[1].hand)
-
-
 if __name__ == '__main__':
     main()
