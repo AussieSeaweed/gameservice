@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator, Sequence
-from typing import Optional, cast, final
+from random import choice
+from typing import Optional, cast, final, overload
 
 from auxiliary import next_or_none
 
 from gameframe.exceptions import GameFrameValueError
-from gameframe.sequential import SequentialGame, SequentialActor
+from gameframe.sequential import SequentialActor, SequentialGame, _SequentialAction
 
 
 @final
@@ -30,7 +31,7 @@ class TicTacToe(SequentialGame['TicTacToe', 'TicTacToeNature', 'TicTacToePlayer'
         return self._board
 
     @property
-    def empty_coords(self) -> Iterator[tuple[int, int]]:
+    def empty_coordinates(self) -> Iterator[tuple[int, int]]:
         """
         :return: The list of the empty coordinates of the board.
         """
@@ -69,27 +70,70 @@ class TicTacToePlayer(SequentialActor[TicTacToe, TicTacToeNature, 'TicTacToePlay
     def __init__(self, game: TicTacToe):
         self._game = game
 
-    def mark(self, r: int, c: int) -> None:
-        """Marks the cell of the board at the coordinates.
+    @overload
+    def mark(self) -> None: ...
+
+    @overload
+    def mark(self, r: int, c: int) -> None: ...
+
+    def mark(self, r: Optional[int] = None, c: Optional[int] = None) -> None:
+        """Marks the cell of the board at the optionally specified coordinates.
+
+           If the row and column numbers are not supplied, they are randomly determined among empty cells.
 
         :param r: The row number of the cell.
         :param c: The column number of the cell.
         :return: None.
         """
-        if not (0 <= r < 3 and 0 <= c < 3):
-            raise GameFrameValueError('The coordinates are out of bounds')
-        elif self.game.board[r][c] is not None:
-            raise GameFrameValueError('The cell is not empty')
+        _MarkAction(self, r, c).act()
 
-        self.game._board[r][c] = self
+    @overload
+    def can_mark(self) -> bool: ...
 
-        if next_or_none(self.game.empty_coords) is not None and self.game.winner is None:
-            self.game._actor = self.game.players[self.game.players[0] is self]
-        else:
-            self.game._actor = None
+    @overload
+    def can_mark(self, r: int, c: int) -> bool: ...
+
+    def can_mark(self, r: Optional[int] = None, c: Optional[int] = None) -> bool:
+        """Determines if the cell of the board at the coordinates can be marked.
+
+        :param r: The optional row number of the cell.
+        :param c: The optional column number of the cell.
+        :return: True if the cell can be marked, else False.
+        """
+        return _MarkAction(self, r, c).can_act()
 
     def __repr__(self) -> str:
         return 'O' if self.game.players[0] is self else 'X'
+
+
+class _MarkAction(_SequentialAction[TicTacToePlayer]):
+    def __init__(self, actor: TicTacToePlayer, r: Optional[int] = None, c: Optional[int] = None):
+        self.r, self.c = r, c
+        self.actor = actor
+
+    def verify(self) -> None:
+        super().verify()
+
+        if self.r is not None and self.c is not None:
+            if not (0 <= self.r < 3 and 0 <= self.c < 3):
+                raise GameFrameValueError('The coordinates must be within bounds (from 0 to 3 inclusive)')
+            elif self.actor.game._board[self.r][self.c] is not None:
+                raise GameFrameValueError('The cell to be marked must be empty')
+
+    def apply(self) -> None:
+        game = self.actor.game
+
+        if self.r is not None and self.c is not None:
+            r, c = self.r, self.c
+        else:
+            r, c = choice(tuple(game.empty_coordinates))
+
+        game._board[r][c] = self.actor
+
+        if next_or_none(game.empty_coordinates) is not None and game.winner is None:
+            game._actor = game.players[game.players[0] is self.actor]
+        else:
+            game._actor = None
 
 
 def parse_tic_tac_toe(game: TicTacToe, coords: Iterable[Sequence[int]]) -> TicTacToe:

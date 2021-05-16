@@ -4,11 +4,11 @@ from abc import ABC, abstractmethod
 from typing import Optional, TypeVar, final
 
 from gameframe.exceptions import GameFrameValueError
-from gameframe.game import Game, GameInterface, ActorInterface, Actor
+from gameframe.game import Actor, BaseActor, BaseGame, Game, _Action
 
 
-class SequentialGameInterface(GameInterface, ABC):
-    """SequentialGameInterface is the interface for all sequential games.
+class BaseSequentialGame(BaseGame, ABC):
+    """BaseSequentialGame is the base abstract class for all sequential games.
 
        In sequential games, only one actor can act at a time and is stored in the actor property. If a sequential game
        is terminal, its actor attribute must be set to None to denote such.
@@ -16,44 +16,52 @@ class SequentialGameInterface(GameInterface, ABC):
 
     @property
     @abstractmethod
-    def actor(self) -> Optional[SequentialActorInterface]:
+    def actor(self) -> Optional[BaseSequentialActor]:
         """Returns the current actor of this sequential game.
 
         :return: The current actor of this sequential game.
         """
         ...
 
+    @property
     @final
-    def is_terminal(self) -> bool:
+    def terminal(self) -> bool:
         return self.actor is None
 
 
-class SequentialActorInterface(ActorInterface, ABC):
-    """SequentialActorInterface is the interface for all sequential actors."""
-    ...
+class BaseSequentialActor(BaseActor, ABC):
+    """BaseSequentialActor is the base abstract class for all sequential actors."""
+
+    @property
+    @abstractmethod
+    def game(self) -> BaseSequentialGame: ...
 
 
-_G = TypeVar('_G', bound=SequentialGameInterface)
-_N = TypeVar('_N', bound=SequentialActorInterface)
-_P = TypeVar('_P', bound=SequentialActorInterface)
+_G = TypeVar('_G', bound=BaseSequentialGame)
+_N = TypeVar('_N', bound=BaseSequentialActor)
+_P = TypeVar('_P', bound=BaseSequentialActor)
+_A = TypeVar('_A', bound=BaseSequentialActor)
 
 
-class SequentialGame(Game[_G, _N, _P], SequentialGameInterface, ABC):
-    """SequentialGame is the abstract generic base class for all sequential games."""
+class SequentialGame(Game[_G, _N, _P], BaseSequentialGame, ABC):
+    """SequentialGame is the abstract class for all sequential games."""
 
-    _actor: Optional[SequentialActorInterface]
+    _actor: Optional[BaseSequentialActor]
 
     @property
     @final
-    def actor(self) -> Optional[SequentialActorInterface]:
+    def actor(self) -> Optional[BaseSequentialActor]:
         return self._actor
 
 
-class SequentialActor(Actor[_G, _N, _P], SequentialActorInterface, ABC):
-    """SequentialActor is the abstract generic base class for all sequential actors."""
+class SequentialActor(Actor[_G, _N, _P], BaseSequentialActor, ABC):
+    """SequentialActor is the abstract class for all sequential actors."""
+    ...
 
-    def _act(self) -> None:
-        super()._act()
 
-        if self.game.actor is not self:
+class _SequentialAction(_Action[_A], ABC):
+    def verify(self) -> None:
+        super().verify()
+
+        if self.actor.game.actor is not self.actor:
             raise GameFrameValueError('The actor is not in turn')

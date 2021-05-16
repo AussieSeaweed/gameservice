@@ -1,11 +1,8 @@
-from unittest import TestCase
+from abc import ABC
 
-from gameframe.tests.utilities import MonteCarloTestCaseMixin
-
-
-class PokerTestMixin(MonteCarloTestCaseMixin[Poker]):
-    pass
+from gameframe.poker import Poker
+from gameframe.tests import GameFrameTestCaseMixin
 
 
-class NoLimitHoldEmTest(PokerTestMixin, TestCase):
-    pass
+class PokerTestMixin(GameFrameTestCaseMixin[Poker], ABC):
+    ...

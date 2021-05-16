@@ -4,21 +4,103 @@ from unittest import TestCase
 
 from auxiliary import next_or_none
 
-from gameframe.tests.utilities import MonteCarloTestCaseMixin
-from gameframe.tictactoe import TicTacToe, TicTacToePlayer
+from gameframe.exceptions import GameFrameValueError
+from gameframe.tests import GameFrameTestCaseMixin
+from gameframe.tictactoe import TicTacToe, TicTacToePlayer, parse_tic_tac_toe
 
 
-class TicTacToeTest(MonteCarloTestCaseMixin[TicTacToe], TestCase):
-    monte_carlo_test_count = 10000
+class TicTacToeTest(GameFrameTestCaseMixin[TicTacToe], TestCase):
+    monte_carlo_test_count = 1000
+    speed_test_time = 1
+
+    def test_draws(self) -> None:
+        for game in (
+                parse_tic_tac_toe(
+                    TicTacToe(),
+                    ((1, 1), (0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2)),
+                ),
+                parse_tic_tac_toe(
+                    TicTacToe(),
+                    ((0, 0), (0, 2), (2, 0), (2, 2), (1, 2), (1, 0), (0, 1), (1, 1), (2, 1)),
+                ),
+                parse_tic_tac_toe(
+                    TicTacToe(),
+                    ((0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (1, 1), (2, 0), (2, 2), (2, 1)),
+                ),
+                parse_tic_tac_toe(
+                    TicTacToe(),
+                    ((0, 1), (0, 0), (1, 1), (0, 2), (1, 2), (1, 0), (2, 0), (2, 1), (2, 2)),
+                ),
+                parse_tic_tac_toe(
+                    TicTacToe(),
+                    ((1, 1), (0, 2), (2, 2), (0, 0), (0, 1), (2, 1), (1, 0), (1, 2), (2, 0)),
+                ),
+        ):
+            self.assertIsNone(game.winner)
+
+    def test_losses(self) -> None:
+        for game in (
+                parse_tic_tac_toe(TicTacToe(), ((2, 2), (0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0))),
+                parse_tic_tac_toe(TicTacToe(), ((1, 1), (0, 2), (1, 2), (1, 0), (2, 2), (0, 0), (0, 1), (2, 0))),
+                parse_tic_tac_toe(TicTacToe(), ((1, 1), (0, 1), (2, 0), (2, 2), (2, 1), (0, 2), (0, 0), (1, 2))),
+                parse_tic_tac_toe(TicTacToe(), ((0, 0), (1, 0), (0, 1), (1, 1), (2, 2), (1, 2))),
+                parse_tic_tac_toe(TicTacToe(), ((0, 1), (2, 0), (1, 1), (2, 1), (0, 2), (2, 2))),
+        ):
+            self.assertIs(game.players[1], game.winner)
+
+    def test_wins(self) -> None:
+        for game in (
+                parse_tic_tac_toe(TicTacToe(), ((0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0))),
+                parse_tic_tac_toe(TicTacToe(), ((1, 1), (0, 2), (0, 1), (1, 2), (2, 1))),
+                parse_tic_tac_toe(TicTacToe(), ((1, 1), (0, 1), (2, 0), (0, 2), (0, 0), (1, 0), (2, 2))),
+                parse_tic_tac_toe(TicTacToe(), ((1, 1), (0, 1), (2, 0), (2, 2), (0, 2))),
+                parse_tic_tac_toe(TicTacToe(), ((0, 0), (1, 0), (0, 1), (1, 1), (0, 2))),
+        ):
+            self.assertIs(game.players[0], game.winner)
+
+    def test_illegal_actions(self) -> None:
+        self.assertRaises(GameFrameValueError, parse_tic_tac_toe, parse_tic_tac_toe(TicTacToe(), ((0, 0),)), ((0, 0),))
+        self.assertRaises(
+            GameFrameValueError,
+            parse_tic_tac_toe,
+            parse_tic_tac_toe(TicTacToe(), ((0, 0), (0, 1))),
+            ((0, 0),),
+        )
+        self.assertRaises(GameFrameValueError, parse_tic_tac_toe, TicTacToe(), ((3, 3),))
+        self.assertRaises(GameFrameValueError, parse_tic_tac_toe, TicTacToe(), ((-1, -1),))
+        self.assertRaises(GameFrameValueError, parse_tic_tac_toe(TicTacToe(), ((0, 0),)).players[0].mark, 0, 1)
 
     def create_game(self) -> TicTacToe:
         return TicTacToe()
 
     def act(self, game: TicTacToe) -> None:
-        cast(TicTacToePlayer, game.actor).mark(*choice(tuple(game.empty_coords)))
+        cast(TicTacToePlayer, game.actor).mark(*choice(tuple(game.empty_coordinates)))
 
     def verify(self, game: TicTacToe) -> None:
-        if game.is_terminal():
-            self.assertTrue(next_or_none(game.empty_coords) is None or game.winner is not None)
+        if game.terminal:
+            self.assertTrue(next_or_none(game.empty_coordinates) is None or game.winner is not None)
+
+            self.assertFalse(game.players[0].can_mark())
+            self.assertFalse(game.players[1].can_mark())
+
+            for r in range(3):
+                for c in range(3):
+                    self.assertFalse(game.players[0].can_mark(r, c))
+                    self.assertFalse(game.players[1].can_mark(r, c))
         else:
-            self.assertFalse(next_or_none(game.empty_coords) is None or game.winner is not None)
+            self.assertFalse(next_or_none(game.empty_coordinates) is None or game.winner is not None)
+
+            actor = cast(TicTacToePlayer, game.actor)
+            non_actor = game.players[1 if game.players[0] is actor else 0]
+
+            self.assertTrue(actor.can_mark())
+            self.assertFalse(non_actor.can_mark())
+
+            for r in range(3):
+                for c in range(3):
+                    if game.board[r][c] is None:
+                        self.assertTrue(actor.can_mark(r, c))
+                    else:
+                        self.assertFalse(actor.can_mark(r, c))
+
+                    self.assertFalse(non_actor.can_mark(r, c))

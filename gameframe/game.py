@@ -1,21 +1,21 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Sequence, MutableSequence
-from typing import TypeVar, Generic, final
+from collections.abc import MutableSequence, Sequence
+from typing import Generic, TypeVar, final
 
-from gameframe.exceptions import GameFrameValueError
+from gameframe.exceptions import GameFrameError, GameFrameValueError
 
 
-class GameInterface(ABC):
-    """GameInterface is the interface for all games.
+class BaseGame(ABC):
+    """BaseGame is the base abstract class for all games.
 
        Every game has to define its nature and players.
     """
 
     @property
     @abstractmethod
-    def nature(self) -> ActorInterface:
+    def nature(self) -> BaseActor:
         """Returns the nature of this game.
 
         :return: The nature of this game.
@@ -24,15 +24,16 @@ class GameInterface(ABC):
 
     @property
     @abstractmethod
-    def players(self) -> Sequence[ActorInterface]:
+    def players(self) -> Sequence[BaseActor]:
         """Returns the players of this game.
 
         :return: The players of this game.
         """
         ...
 
+    @property
     @abstractmethod
-    def is_terminal(self) -> bool:
+    def terminal(self) -> bool:
         """Returns the terminal status of this game.
 
         :return: True if this game is terminal, else False.
@@ -40,12 +41,12 @@ class GameInterface(ABC):
         ...
 
 
-class ActorInterface(ABC):
-    """ActorInterface is the interface for all games."""
+class BaseActor(ABC):
+    """BaseActor is the base abstract class for all games."""
 
     @property
     @abstractmethod
-    def game(self) -> GameInterface:
+    def game(self) -> BaseGame:
         """Returns the game of this actor.
 
         :return: The game of this actor.
@@ -53,13 +54,14 @@ class ActorInterface(ABC):
         ...
 
 
-_G = TypeVar('_G', bound=GameInterface)
-_N = TypeVar('_N', bound=ActorInterface)
-_P = TypeVar('_P', bound=ActorInterface)
+_G = TypeVar('_G', bound=BaseGame)
+_N = TypeVar('_N', bound=BaseActor)
+_P = TypeVar('_P', bound=BaseActor)
+_A = TypeVar('_A', bound=BaseActor)
 
 
-class Game(GameInterface, Generic[_G, _N, _P], ABC):
-    """Game is the abstract generic base class for all games."""
+class Game(BaseGame, Generic[_G, _N, _P], ABC):
+    """Game is the abstract class for all games."""
 
     _nature: _N
     _players: MutableSequence[_P]
@@ -75,8 +77,8 @@ class Game(GameInterface, Generic[_G, _N, _P], ABC):
         return self._players
 
 
-class Actor(ActorInterface, Generic[_G, _N, _P], ABC):
-    """Actor is the abstract base class for all actors."""
+class Actor(BaseActor, Generic[_G, _N, _P], ABC):
+    """Actor is the abstract class for all actors."""
 
     _game: _G
 
@@ -85,6 +87,26 @@ class Actor(ActorInterface, Generic[_G, _N, _P], ABC):
     def game(self) -> _G:
         return self._game
 
-    def _act(self) -> None:
-        if self.game.is_terminal():
+
+class _Action(Generic[_A], ABC):
+    actor: _A
+
+    def act(self) -> None:
+        self.verify()
+        self.apply()
+
+    def can_act(self) -> bool:
+        try:
+            self.verify()
+        except GameFrameError:
+            return False
+        else:
+            return True
+
+    def verify(self) -> None:
+        if self.actor.game.terminal:
             raise GameFrameValueError('Actions cannot be applied to terminal games')
+
+    @abstractmethod
+    def apply(self) -> None:
+        pass
