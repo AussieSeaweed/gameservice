@@ -103,7 +103,7 @@ You can contribute on `Github <https://github.com/AussieSeaweed/gameframe>`_.
 
 License
 -------
-`MIT <https://choosealicense.com/licenses/mit/>`_
+`GNU GPLv3 <https://choosealicense.com/licenses/gpl-3.0/>`_
 
 
 Indices and tables

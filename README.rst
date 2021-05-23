@@ -62,4 +62,4 @@ The full documentation is available at `Read the Docs <https://gameframe.readthe
 
 License
 -------
-`MIT <https://choosealicense.com/licenses/mit/>`_
+`GNU GPLv3 <https://choosealicense.com/licenses/gpl-3.0/>`_

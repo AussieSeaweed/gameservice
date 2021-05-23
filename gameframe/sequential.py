@@ -10,8 +10,8 @@ from gameframe.game import Actor, BaseActor, BaseGame, Game, _Action
 class BaseSequentialGame(BaseGame, ABC):
     """BaseSequentialGame is the base abstract class for all sequential games.
 
-       In sequential games, only one actor can act at a time and is stored in the actor property. If a sequential game
-       is terminal, its actor attribute must be set to None to denote such.
+    In sequential games, only one actor can act at a time and is stored in the actor property. If a sequential game is
+    terminal, its actor attribute must be set to None to denote such.
     """
 
     @property

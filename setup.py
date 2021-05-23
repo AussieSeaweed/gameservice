@@ -5,7 +5,7 @@ with open('README.rst', 'r') as long_description_file:
 
 setup(
     name='gameframe',
-    version='0.0.4.dev8',
+    version='0.0.4.dev9',
     author='Juho Kim',
     author_email='juho-kim@outlook.com',
     description='A Python package for various game implementations',
@@ -15,7 +15,7 @@ setup(
     packages=find_packages(),
     package_data={'gameframe': ('py.typed',)},
     classifiers=(
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',

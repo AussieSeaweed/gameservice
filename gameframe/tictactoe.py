@@ -25,21 +25,24 @@ class TicTacToe(SequentialGame['TicTacToe', 'TicTacToeNature', 'TicTacToePlayer'
 
     @property
     def board(self) -> Sequence[Sequence[Optional[TicTacToePlayer]]]:
-        """
+        """Returns the board of this tic tac toe game.
+
         :return: The board of this tic tac toe game.
         """
         return self._board
 
     @property
     def empty_coordinates(self) -> Iterator[tuple[int, int]]:
-        """
+        """Returns the empty coordinates of the board of this tic tac toe game.
+
         :return: The list of the empty coordinates of the board.
         """
         return ((r, c) for r in range(3) for c in range(3) if self.board[r][c] is None)
 
     @property
     def winner(self) -> Optional[TicTacToePlayer]:
-        """
+        """Returns the winner of this tic tac toe game.
+
         :return: The winning player of the tic tac toe game if there is one, else None.
         """
         for i in range(3):
@@ -79,7 +82,7 @@ class TicTacToePlayer(SequentialActor[TicTacToe, TicTacToeNature, 'TicTacToePlay
     def mark(self, r: Optional[int] = None, c: Optional[int] = None) -> None:
         """Marks the cell of the board at the optionally specified coordinates.
 
-           If the row and column numbers are not supplied, they are randomly determined among empty cells.
+        If the row and column numbers are not supplied, they are randomly determined among empty cells.
 
         :param r: The row number of the cell.
         :param c: The column number of the cell.
@@ -123,12 +126,10 @@ class _MarkAction(_SequentialAction[TicTacToePlayer]):
     def apply(self) -> None:
         game = self.actor.game
 
-        if self.r is not None and self.c is not None:
-            r, c = self.r, self.c
-        else:
-            r, c = choice(tuple(game.empty_coordinates))
+        if self.r is None or self.c is None:
+            self.r, self.c = choice(tuple(game.empty_coordinates))
 
-        game._board[r][c] = self.actor
+        game._board[self.r][self.c] = self.actor
 
         if next_or_none(game.empty_coordinates) is not None and game.winner is None:
             game._actor = game.players[game.players[0] is self.actor]

@@ -65,7 +65,7 @@ class RockPaperScissorsPlayer(Actor[RockPaperScissors, RockPaperScissorsNature, 
     def throw(self, hand: Optional[RockPaperScissorsHand] = None) -> None:
         """Throws the optionally specified hand.
 
-           If the hand is not specified, a random rock paper scissors hand is thrown.
+        If the hand is not specified, a random rock paper scissors hand is thrown.
 
         :param hand: The optional hand to be thrown.
         :return: None.
@@ -104,7 +104,7 @@ class _ThrowAction(_Action[RockPaperScissorsPlayer]):
     def verify(self) -> None:
         super().verify()
 
-        if self.actor._hand is not None:
+        if self.actor.hand is not None:
             raise GameFrameValueError('The player must not have played a hand previously')
 
     def apply(self) -> None:

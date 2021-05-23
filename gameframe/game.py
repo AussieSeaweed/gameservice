@@ -10,7 +10,7 @@ from gameframe.exceptions import GameFrameError, GameFrameValueError
 class BaseGame(ABC):
     """BaseGame is the base abstract class for all games.
 
-       Every game has to define its nature and players.
+    Every game has to define its nature and players.
     """
 
     @property
@@ -109,4 +109,4 @@ class _Action(Generic[_A], ABC):
 
     @abstractmethod
     def apply(self) -> None:
-        pass
+        ...
