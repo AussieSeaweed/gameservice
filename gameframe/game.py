@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import MutableSequence, Sequence
-from typing import Generic, TypeVar, final
+from collections.abc import Iterable, Sequence
+from typing import Generic, TypeVar, cast, final
 
-from gameframe.exceptions import GameFrameError, GameFrameValueError
+from gameframe.exceptions import GameFrameError
 
 
 class BaseGame(ABC):
@@ -60,11 +60,12 @@ _P = TypeVar('_P', bound=BaseActor)
 _A = TypeVar('_A', bound=BaseActor)
 
 
-class Game(BaseGame, Generic[_G, _N, _P], ABC):
+class Game(BaseGame, Generic[_N, _P], ABC):
     """Game is the abstract class for all games."""
 
-    _nature: _N
-    _players: MutableSequence[_P]
+    def __init__(self, nature: _N, players: Iterable[_P]):
+        self._nature = nature
+        self._players = list(players)
 
     @property
     @final
@@ -77,10 +78,11 @@ class Game(BaseGame, Generic[_G, _N, _P], ABC):
         return self._players
 
 
-class Actor(BaseActor, Generic[_G, _N, _P], ABC):
-    """Actor is the abstract class for all actors."""
+class Actor(BaseActor, Generic[_G]):
+    """Actor is the class for actors."""
 
-    _game: _G
+    def __init__(self, game: _G):
+        self._game = game
 
     @property
     @final
@@ -88,8 +90,13 @@ class Actor(BaseActor, Generic[_G, _N, _P], ABC):
         return self._game
 
 
-class _Action(Generic[_A], ABC):
-    actor: _A
+class _Action(Generic[_G, _A]):
+    def __init__(self, actor: _A):
+        self.actor = actor
+
+    @property
+    def game(self) -> _G:
+        return cast(_G, self.actor.game)
 
     def act(self) -> None:
         self.verify()
@@ -104,9 +111,8 @@ class _Action(Generic[_A], ABC):
             return True
 
     def verify(self) -> None:
-        if self.actor.game.terminal:
-            raise GameFrameValueError('Actions cannot be applied to terminal games')
+        if self.game.terminal:
+            raise GameFrameError('Actions cannot be applied to terminal games')
 
-    @abstractmethod
     def apply(self) -> None:
         ...

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar, final
+from collections.abc import Iterable
+from typing import Optional, TypeVar, Union, final
 
-from gameframe.exceptions import GameFrameValueError
-from gameframe.game import Actor, BaseActor, BaseGame, Game, _Action
+from gameframe.exceptions import GameFrameError
+from gameframe.game import BaseActor, BaseGame, Game, _A, _Action, _N, _P
 
 
 class BaseSequentialGame(BaseGame, ABC):
@@ -16,7 +17,7 @@ class BaseSequentialGame(BaseGame, ABC):
 
     @property
     @abstractmethod
-    def actor(self) -> Optional[BaseSequentialActor]:
+    def actor(self) -> Optional[BaseActor]:
         """Returns the current actor of this sequential game.
 
         :return: The current actor of this sequential game.
@@ -29,39 +30,31 @@ class BaseSequentialGame(BaseGame, ABC):
         return self.actor is None
 
 
-class BaseSequentialActor(BaseActor, ABC):
-    """BaseSequentialActor is the base abstract class for all sequential actors."""
-
-    @property
-    @abstractmethod
-    def game(self) -> BaseSequentialGame: ...
-
-
 _G = TypeVar('_G', bound=BaseSequentialGame)
-_N = TypeVar('_N', bound=BaseSequentialActor)
-_P = TypeVar('_P', bound=BaseSequentialActor)
-_A = TypeVar('_A', bound=BaseSequentialActor)
 
 
-class SequentialGame(Game[_G, _N, _P], BaseSequentialGame, ABC):
+class SequentialGame(Game[_N, _P], BaseSequentialGame, ABC):
     """SequentialGame is the abstract class for all sequential games."""
 
-    _actor: Optional[BaseSequentialActor]
+    def __init__(self, initial_actor_index: Optional[int], nature: _N, players: Iterable[_P]):
+        super().__init__(nature, players)
+
+        self._actor: Optional[Union[_N, _P]]
+
+        if initial_actor_index is None:
+            self._actor = self.nature
+        else:
+            self._actor = self.players[initial_actor_index]
 
     @property
     @final
-    def actor(self) -> Optional[BaseSequentialActor]:
+    def actor(self) -> Optional[Union[_N, _P]]:
         return self._actor
 
 
-class SequentialActor(Actor[_G, _N, _P], BaseSequentialActor, ABC):
-    """SequentialActor is the abstract class for all sequential actors."""
-    ...
-
-
-class _SequentialAction(_Action[_A], ABC):
+class _SequentialAction(_Action[_G, _A]):
     def verify(self) -> None:
         super().verify()
 
-        if self.actor.game.actor is not self.actor:
-            raise GameFrameValueError('The actor is not in turn')
+        if self.game.actor is not self.actor:
+            raise GameFrameError('The actor is not in turn')

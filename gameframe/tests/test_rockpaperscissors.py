@@ -13,8 +13,7 @@ class RockPaperScissorsTest(GameFrameTestCaseMixin[RockPaperScissors], TestCase)
         return RockPaperScissors()
 
     def act(self, game: RockPaperScissors) -> None:
-        player = choice([player for player in game.players if player.hand is None])
-
+        player = choice(tuple(player for player in game.players if player.hand is None))
         player.throw(choice(tuple(RockPaperScissorsHand)))
 
     def verify(self, game: RockPaperScissors) -> None:

@@ -4,7 +4,7 @@ from unittest import TestCase
 
 from auxiliary import next_or_none
 
-from gameframe.exceptions import GameFrameValueError
+from gameframe.exceptions import GameFrameError
 from gameframe.tests import GameFrameTestCaseMixin
 from gameframe.tictactoe import TicTacToe, TicTacToePlayer, parse_tic_tac_toe
 
@@ -59,16 +59,16 @@ class TicTacToeTest(GameFrameTestCaseMixin[TicTacToe], TestCase):
             self.assertIs(game.players[0], game.winner)
 
     def test_illegal_actions(self) -> None:
-        self.assertRaises(GameFrameValueError, parse_tic_tac_toe, parse_tic_tac_toe(TicTacToe(), ((0, 0),)), ((0, 0),))
+        self.assertRaises(GameFrameError, parse_tic_tac_toe, parse_tic_tac_toe(TicTacToe(), ((0, 0),)), ((0, 0),))
         self.assertRaises(
-            GameFrameValueError,
+            GameFrameError,
             parse_tic_tac_toe,
             parse_tic_tac_toe(TicTacToe(), ((0, 0), (0, 1))),
             ((0, 0),),
         )
-        self.assertRaises(GameFrameValueError, parse_tic_tac_toe, TicTacToe(), ((3, 3),))
-        self.assertRaises(GameFrameValueError, parse_tic_tac_toe, TicTacToe(), ((-1, -1),))
-        self.assertRaises(GameFrameValueError, parse_tic_tac_toe(TicTacToe(), ((0, 0),)).players[0].mark, 0, 1)
+        self.assertRaises(GameFrameError, parse_tic_tac_toe, TicTacToe(), ((3, 3),))
+        self.assertRaises(GameFrameError, parse_tic_tac_toe, TicTacToe(), ((-1, -1),))
+        self.assertRaises(GameFrameError, parse_tic_tac_toe(TicTacToe(), ((0, 0),)).players[0].mark, 0, 1)
 
     def create_game(self) -> TicTacToe:
         return TicTacToe()

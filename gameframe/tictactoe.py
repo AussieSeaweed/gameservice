@@ -6,22 +6,23 @@ from typing import Optional, cast, final, overload
 
 from auxiliary import next_or_none
 
-from gameframe.exceptions import GameFrameValueError
-from gameframe.sequential import SequentialActor, SequentialGame, _SequentialAction
+from gameframe.exceptions import GameFrameError
+from gameframe.game import Actor, BaseActor
+from gameframe.sequential import SequentialGame, _SequentialAction
 
 
 @final
-class TicTacToe(SequentialGame['TicTacToe', 'TicTacToeNature', 'TicTacToePlayer']):
+class TicTacToe(SequentialGame[BaseActor, 'TicTacToePlayer']):
     """TicTacToe is the class for tic tac toe games."""
 
     def __init__(self) -> None:
-        self._board: list[list[Optional[TicTacToePlayer]]] = [[None, None, None],
-                                                              [None, None, None],
-                                                              [None, None, None]]
+        super().__init__(0, Actor(self), (TicTacToePlayer(self), TicTacToePlayer(self)))
 
-        self._nature = TicTacToeNature(self)
-        self._players = [TicTacToePlayer(self), TicTacToePlayer(self)]
-        self._actor = self.players[0]
+        self._board: list[list[Optional[TicTacToePlayer]]] = [
+            [None, None, None],
+            [None, None, None],
+            [None, None, None],
+        ]
 
     @property
     def board(self) -> Sequence[Sequence[Optional[TicTacToePlayer]]]:
@@ -59,19 +60,8 @@ class TicTacToe(SequentialGame['TicTacToe', 'TicTacToeNature', 'TicTacToePlayer'
 
 
 @final
-class TicTacToeNature(SequentialActor[TicTacToe, 'TicTacToeNature', 'TicTacToePlayer']):
-    """TicTacToeNature is the class for tic tac toe natures."""
-
-    def __init__(self, game: TicTacToe):
-        self._game = game
-
-
-@final
-class TicTacToePlayer(SequentialActor[TicTacToe, TicTacToeNature, 'TicTacToePlayer']):
+class TicTacToePlayer(Actor[TicTacToe]):
     """TicTacToePlayer is the class for tic tac toe players."""
-
-    def __init__(self, game: TicTacToe):
-        self._game = game
 
     @overload
     def mark(self) -> None: ...
@@ -88,7 +78,7 @@ class TicTacToePlayer(SequentialActor[TicTacToe, TicTacToeNature, 'TicTacToePlay
         :param c: The column number of the cell.
         :return: None.
         """
-        _MarkAction(self, r, c).act()
+        _MarkAction(r, c, self).act()
 
     @overload
     def can_mark(self) -> bool: ...
@@ -103,38 +93,39 @@ class TicTacToePlayer(SequentialActor[TicTacToe, TicTacToeNature, 'TicTacToePlay
         :param c: The optional column number of the cell.
         :return: True if the cell can be marked, else False.
         """
-        return _MarkAction(self, r, c).can_act()
+        return _MarkAction(r, c, self).can_act()
 
     def __repr__(self) -> str:
         return 'O' if self.game.players[0] is self else 'X'
 
 
-class _MarkAction(_SequentialAction[TicTacToePlayer]):
-    def __init__(self, actor: TicTacToePlayer, r: Optional[int] = None, c: Optional[int] = None):
+class _MarkAction(_SequentialAction[TicTacToe, TicTacToePlayer]):
+    def __init__(self, r: Optional[int], c: Optional[int], actor: TicTacToePlayer):
+        super().__init__(actor)
+
         self.r, self.c = r, c
-        self.actor = actor
 
     def verify(self) -> None:
         super().verify()
 
         if self.r is not None and self.c is not None:
             if not (0 <= self.r < 3 and 0 <= self.c < 3):
-                raise GameFrameValueError('The coordinates must be within bounds (from 0 to 3 inclusive)')
-            elif self.actor.game._board[self.r][self.c] is not None:
-                raise GameFrameValueError('The cell to be marked must be empty')
+                raise GameFrameError('The coordinates must be within bounds (from 0 to 3 inclusive)')
+            elif self.game.board[self.r][self.c] is not None:
+                raise GameFrameError('The cell to be marked must be empty')
 
     def apply(self) -> None:
-        game = self.actor.game
+        super().apply()
 
         if self.r is None or self.c is None:
-            self.r, self.c = choice(tuple(game.empty_coordinates))
+            self.r, self.c = choice(tuple(self.game.empty_coordinates))
 
-        game._board[self.r][self.c] = self.actor
+        self.game._board[self.r][self.c] = self.actor
 
-        if next_or_none(game.empty_coordinates) is not None and game.winner is None:
-            game._actor = game.players[game.players[0] is self.actor]
+        if next_or_none(self.game.empty_coordinates) is not None and self.game.winner is None:
+            self.game._actor = self.game.players[self.game.players[0] is self.actor]
         else:
-            game._actor = None
+            self.game._actor = None
 
 
 def parse_tic_tac_toe(game: TicTacToe, coords: Iterable[Sequence[int]]) -> TicTacToe:

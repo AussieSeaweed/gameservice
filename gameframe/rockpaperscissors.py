@@ -4,19 +4,18 @@ from enum import auto
 from random import choice
 from typing import Optional, final
 
-from auxiliary import OrderedEnum, default
+from auxiliary import OrderedEnum, get
 
-from gameframe.exceptions import GameFrameValueError
-from gameframe.game import Actor, Game, _Action
+from gameframe.exceptions import GameFrameError
+from gameframe.game import Actor, BaseActor, Game, _Action
 
 
 @final
-class RockPaperScissors(Game['RockPaperScissors', 'RockPaperScissorsNature', 'RockPaperScissorsPlayer']):
+class RockPaperScissors(Game[BaseActor, 'RockPaperScissorsPlayer']):
     """RockPaperScissors is the class for rock paper scissors games."""
 
     def __init__(self) -> None:
-        self._nature = RockPaperScissorsNature(self)
-        self._players = [RockPaperScissorsPlayer(self), RockPaperScissorsPlayer(self)]
+        super().__init__(Actor(self), (RockPaperScissorsPlayer(self), RockPaperScissorsPlayer(self)))
 
     @property
     def winner(self) -> Optional[RockPaperScissorsPlayer]:
@@ -24,14 +23,10 @@ class RockPaperScissors(Game['RockPaperScissors', 'RockPaperScissorsNature', 'Ro
 
         :return: The winning player of this rock paper scissors game if there is one, else None.
         """
-        h0, h1 = (player.hand for player in self.players)
-
-        if h0 is None or h1 is None or h0 == h1:
+        if self.players[0].hand is None or self.players[1].hand is None or self.players[0].hand == self.players[1].hand:
             return None
-        elif h0 < h1:
-            return self.players[1]
         else:
-            return self.players[0]
+            return max(self.players, key=lambda player: get(player.hand))
 
     @property
     def terminal(self) -> bool:
@@ -39,20 +34,13 @@ class RockPaperScissors(Game['RockPaperScissors', 'RockPaperScissorsNature', 'Ro
 
 
 @final
-class RockPaperScissorsNature(Actor[RockPaperScissors, 'RockPaperScissorsNature', 'RockPaperScissorsPlayer']):
-    """RockPaperScissorsNature is the class for rock paper scissors natures."""
-
-    def __init__(self, game: RockPaperScissors):
-        self._game = game
-
-
-@final
-class RockPaperScissorsPlayer(Actor[RockPaperScissors, RockPaperScissorsNature, 'RockPaperScissorsPlayer']):
+class RockPaperScissorsPlayer(Actor[RockPaperScissors]):
     """RockPaperScissorsPlayer is the class for rock paper scissors players."""
 
     def __init__(self, game: RockPaperScissors):
+        super().__init__(game)
+
         self._hand: Optional[RockPaperScissorsHand] = None
-        self._game = game
 
     @property
     def hand(self) -> Optional[RockPaperScissorsHand]:
@@ -70,7 +58,7 @@ class RockPaperScissorsPlayer(Actor[RockPaperScissors, RockPaperScissorsNature, 
         :param hand: The optional hand to be thrown.
         :return: None.
         """
-        _ThrowAction(self, hand).act()
+        _ThrowAction(hand, self).act()
 
     def can_throw(self, hand: Optional[RockPaperScissorsHand] = None) -> bool:
         """Determines if this rock paper scissors player can throw a hand.
@@ -78,7 +66,7 @@ class RockPaperScissorsPlayer(Actor[RockPaperScissors, RockPaperScissorsNature, 
         :param hand: The optional hand to be thrown.
         :return: True if this rock paper scissors player can throw a hand, else False.
         """
-        return _ThrowAction(self, hand).can_act()
+        return _ThrowAction(hand, self).can_act()
 
 
 @final
@@ -96,16 +84,22 @@ class RockPaperScissorsHand(OrderedEnum):
             return NotImplemented
 
 
-class _ThrowAction(_Action[RockPaperScissorsPlayer]):
-    def __init__(self, actor: RockPaperScissorsPlayer, hand: Optional[RockPaperScissorsHand] = None):
+class _ThrowAction(_Action[RockPaperScissors, RockPaperScissorsPlayer]):
+    def __init__(self, hand: Optional[RockPaperScissorsHand], actor: RockPaperScissorsPlayer):
+        super().__init__(actor)
+
         self.hand = hand
-        self.actor = actor
 
     def verify(self) -> None:
         super().verify()
 
         if self.actor.hand is not None:
-            raise GameFrameValueError('The player must not have played a hand previously')
+            raise GameFrameError('The player must not have played a hand previously')
 
     def apply(self) -> None:
-        self.actor._hand = default(self.hand, choice(tuple(RockPaperScissorsHand)))
+        super().apply()
+
+        if self.hand is None:
+            self.hand = choice(tuple(RockPaperScissorsHand))
+
+        self.actor._hand = self.hand
