@@ -12,7 +12,6 @@ from gameframe.game import Actor
 from gameframe.sequential import SequentialGame
 
 
-@final
 class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
     """Poker is the abstract base class for all poker games.
 
@@ -23,17 +22,26 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
     """
 
-    def __init__(self, configuration: Configuration):
-        super().__init__(None, PokerNature(self), (PokerPlayer(self) for _ in range(configuration.player_count)))
+    def __init__(
+            self,
+            stages: Sequence[Stage],
+            evaluators: Sequence[Evaluator],
+            deck: Deck,
+            limit: Limit,
+            ante: int,
+            blinds: Sequence[int],
+            starting_stacks: Sequence[int],
+    ):
+        super().__init__(None, PokerNature(self), (PokerPlayer(self) for _ in range(len(starting_stacks))))
 
-        self.ante: Final = configuration.ante
-        self.blinds: Final = tuple(configuration.blinds)
-        self.starting_stacks: Final = tuple(configuration.starting_stacks)
-        self.stages: Final = tuple(configuration.stages)
-        self.limit: Final = configuration.limit
-        self.evaluators: Final = tuple(configuration.evaluators)
+        self.stages: Final = tuple(stages)
+        self.evaluators: Final = tuple(evaluators)
+        self.limit: Final = limit
+        self.ante: Final = ante
+        self.blinds: Final = tuple(blinds)
+        self.starting_stacks: Final = tuple(starting_stacks)
 
-        self._deck = configuration.create_deck()
+        self._deck = deck
         self._stage = self.stages[0]
 
         if len(self.starting_stacks) < 2:
@@ -567,33 +575,6 @@ class SidePot:
     def __init__(self, players: Iterable[PokerPlayer], amount: int):
         self.players: Final = tuple(players)
         self.amount: Final = amount
-
-
-class Configuration(ABC):
-    """Configuration is the abstract class for all poker configurations."""
-
-    ante: int
-    blinds: Sequence[int]
-    starting_stacks: Sequence[int]
-    stages: Sequence[Stage]
-    limit: Limit
-    evaluators: Sequence[Evaluator]
-
-    @property
-    def player_count(self) -> int:
-        """Returns the number of poker players in the poker game.
-
-        :return: The number of poker players.
-        """
-        return len(self.starting_stacks)
-
-    @abstractmethod
-    def create_deck(self) -> Deck:
-        """Creates a deck.
-
-        :return: The created deck.
-        """
-        ...
 
 
 class Stage(ABC):

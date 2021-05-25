@@ -1,10 +1,11 @@
-from typing import cast
+from typing import cast, final
 
 from auxiliary import bind
 
 from gameframe.poker.bases import Limit, Poker, PokerPlayer
 
 
+@final
 class FixedLimit(Limit):
     """FixedLimit is the class for fixed-limits."""
 
@@ -14,6 +15,7 @@ class FixedLimit(Limit):
         return self._min_amount(game)
 
 
+@final
 class PotLimit(Limit):
     """PotLimit is the class for pot-limits."""
 
@@ -26,6 +28,7 @@ class PotLimit(Limit):
         return bind(max(bets) + game.pot + sum(bets) + max(bets) - actor.bet, self._min_amount(game), actor.total)
 
 
+@final
 class NoLimit(Limit):
     """NoLimit is the class for no-limits."""
 

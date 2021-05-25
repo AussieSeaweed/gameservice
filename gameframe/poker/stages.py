@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import final
 
 from auxiliary import after, rotated
 
@@ -11,6 +12,7 @@ class DealingStage(Stage, ABC):
     ...
 
 
+@final
 class HoleDealingStage(DealingStage):
     """HoleDealingStage is the class for hole card dealing stages."""
 
@@ -23,6 +25,7 @@ class HoleDealingStage(DealingStage):
                or all(len(player.hole) == self._deal_target(game) for player in game.players if player.active)
 
 
+@final
 class BoardDealingStage(DealingStage):
     """BoardDealingStage is the class for board card dealing stages."""
 
@@ -47,7 +50,8 @@ class QueuedStage(Stage):
         game._queue.clear()
 
 
-class BettingStage(Stage, ABC):
+@final
+class BettingStage(QueuedStage, ABC):
     """BettingStage is the class for betting stages."""
 
     def __init__(self, initial_max_delta: int):
@@ -78,7 +82,8 @@ class BettingStage(Stage, ABC):
         _collect(game)
 
 
-class DiscardDrawStage(Stage):
+@final
+class DiscardDrawStage(QueuedStage):
     """DiscardDrawStage is the class for discard and draw stages."""
 
     def _open(self, game: Poker) -> None:
@@ -91,7 +96,8 @@ class DiscardDrawStage(Stage):
         game._queue = list(rotated(players, players.index(opener)))[1:]
 
 
-class ShowdownStage(Stage):
+@final
+class ShowdownStage(QueuedStage):
     def _open(self, game: Poker) -> None:
         super()._open(game)
 
