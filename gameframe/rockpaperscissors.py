@@ -23,7 +23,7 @@ class RockPaperScissors(Game[BaseActor, 'RockPaperScissorsPlayer']):
 
         :return: The winning player of this rock paper scissors game if there is one, else None.
         """
-        if self.players[0].hand is None or self.players[1].hand is None or self.players[0].hand == self.players[1].hand:
+        if not self.terminal or self.players[0].hand == self.players[1].hand:
             return None
         else:
             return max(self.players, key=lambda player: get(player.hand))
