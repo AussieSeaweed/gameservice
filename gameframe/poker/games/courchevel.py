@@ -16,15 +16,10 @@ class Courchevel(Poker):
 
         super().__init__(
             (
-                HoleDealingStage(5, False),
-                BoardDealingStage(1),
-                BettingStage(max_delta),
-                BoardDealingStage(2),
-                BettingStage(max_delta),
-                BoardDealingStage(1),
-                BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
-                BoardDealingStage(1),
-                BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+                HoleDealingStage(5, False), BoardDealingStage(1), BettingStage(max_delta),
+                BoardDealingStage(2), BettingStage(max_delta),
+                BoardDealingStage(1), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+                BoardDealingStage(1), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
                 ShowdownStage(),
             ),
             (OmahaEvaluator(),),

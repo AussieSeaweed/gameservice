@@ -61,7 +61,11 @@ _A = TypeVar('_A', bound=BaseActor)
 
 
 class Game(BaseGame, Generic[_N, _P], ABC):
-    """Game is the abstract class for all games."""
+    """Game is the abstract class for all games.
+
+    :param nature: The nature of this game.
+    :param players: The players of this game.
+    """
 
     def __init__(self, nature: _N, players: Iterable[_P]):
         self._nature = nature
@@ -79,7 +83,10 @@ class Game(BaseGame, Generic[_N, _P], ABC):
 
 
 class Actor(BaseActor, Generic[_G]):
-    """Actor is the class for actors."""
+    """Actor is the class for actors.
+
+    :param game: The game of this actor.
+    """
 
     def __init__(self, game: _G):
         self._game = game

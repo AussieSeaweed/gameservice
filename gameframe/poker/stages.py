@@ -9,7 +9,11 @@ from gameframe.poker.utilities import _collect
 
 class DealingStage(Stage, ABC):
     """DealingStage is the class for dealing stages."""
-    ...
+
+    def _open(self, game: Poker) -> None:
+        super()._open(game)
+
+        game._actor = game.nature
 
 
 @final
@@ -42,7 +46,7 @@ class QueuedStage(Stage):
     _deal_count = 0
 
     def _done(self, game: Poker) -> bool:
-        return super()._done(game) or (game.stage is not self and not game._queue)
+        return super()._done(game) or (game.stage is self and not game._queue)
 
     def _close(self, game: Poker) -> None:
         super()._close(game)
@@ -103,7 +107,7 @@ class ShowdownStage(QueuedStage):
 
         players = tuple(player for player in game.players if player.active)
 
-        if game._aggressor is None or all(player.mucked or player._stack == 0 for player in game.players):
+        if game._aggressor is None or all(player.mucked or player.stack == 0 for player in game.players):
             opener = next(player for player in game.players if player.active)
         else:
             opener = game._aggressor

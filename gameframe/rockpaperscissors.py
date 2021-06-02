@@ -35,7 +35,10 @@ class RockPaperScissors(Game[BaseActor, 'RockPaperScissorsPlayer']):
 
 @final
 class RockPaperScissorsPlayer(Actor[RockPaperScissors]):
-    """RockPaperScissorsPlayer is the class for rock paper scissors players."""
+    """RockPaperScissorsPlayer is the class for rock paper scissors players.
+
+    :param game: The game of this rock paper scissors actor.
+    """
 
     def __init__(self, game: RockPaperScissors):
         super().__init__(game)
@@ -71,7 +74,10 @@ class RockPaperScissorsPlayer(Actor[RockPaperScissors]):
 
 @final
 class RockPaperScissorsHand(OrderedEnum):
-    """RockPaperScissorsHand is the enum class for rock paper scissors hands."""
+    """RockPaperScissorsHand is the enum class for rock paper scissors hands.
+
+    The rock paper scissors hand can be compared to each other according to the rock paper scissors rules.
+    """
 
     ROCK = auto()
     PAPER = auto()

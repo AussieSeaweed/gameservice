@@ -27,8 +27,10 @@ def parse_poker(game: Poker, tokens: Iterable[str]) -> Poker:
                     () if (cards := match.group('discarded_cards')) is None else parse_cards(cards),
                     None if (cards := match.group('drawn_cards')) is None else parse_cards(cards),
                 )
-            elif match := re.fullmatch(r's( (?P<force>[0|1]))?', token):
-                game.actor.showdown(False if (force := match.group('force')) is None else bool(force))
+            elif match := re.fullmatch(r's( (?P<forced_status>[0|1]))?', token):
+                game.actor.showdown(
+                    None if (forced_status := match.group('forced_status')) is None else bool(forced_status),
+                )
             else:
                 raise ValueError('Invalid command')
         else:
@@ -77,13 +79,16 @@ def _update(game: Poker) -> None:
 def _distribute(game: Poker) -> None:
     _collect(game)
 
-    for side_pot in game.side_pots:
+    for side_pot in game._side_pots:
         amounts = [side_pot.amount // len(game.evaluators)] * len(game.evaluators)
         amounts[0] += side_pot.amount % len(game.evaluators)
 
         for amount, evaluator in zip(amounts, game.evaluators):
-            hand = max(player._hand(evaluator) for player in side_pot.players)
-            players = tuple(player for player in side_pot.players if player._hand(evaluator) == hand)
+            if len(side_pot.players) == 1:
+                players = side_pot.players
+            else:
+                hand = max(player._hand(evaluator) for player in side_pot.players)
+                players = tuple(player for player in side_pot.players if player._hand(evaluator) == hand)
 
             rewards = [amount // len(players)] * len(players)
             rewards[0] += amount % len(players)

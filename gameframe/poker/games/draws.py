@@ -18,10 +18,8 @@ class FiveCardDraw(Poker):
 
         super().__init__(
             (
-                HoleDealingStage(5, False),
-                BettingStage(max_delta),
-                DiscardDrawStage(),
-                BettingStage(max_delta),
+                HoleDealingStage(5, False), BettingStage(max_delta),
+                DiscardDrawStage(), BettingStage(max_delta),
                 ShowdownStage(),
             ),
             (StandardEvaluator(),),
@@ -65,14 +63,10 @@ class Badugi(Poker):
 
         super().__init__(
             (
-                HoleDealingStage(4, False),
-                BettingStage(max_delta),
-                DiscardDrawStage(),
-                BettingStage(max_delta),
-                DiscardDrawStage(),
-                BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
-                DiscardDrawStage(),
-                BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+                HoleDealingStage(4, False), BettingStage(max_delta),
+                DiscardDrawStage(), BettingStage(max_delta),
+                DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+                DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
                 ShowdownStage(),
             ),
             (BadugiEvaluator(),),
@@ -116,10 +110,8 @@ class SingleDrawLowball27(Poker):
 
         super().__init__(
             (
-                HoleDealingStage(5, False),
-                BettingStage(max_delta),
-                DiscardDrawStage(),
-                BettingStage(max_delta),
+                HoleDealingStage(5, False), BettingStage(max_delta),
+                DiscardDrawStage(), BettingStage(max_delta),
                 ShowdownStage(),
             ),
             (Lowball27Evaluator(),),
@@ -163,14 +155,10 @@ class TripleDrawLowball27(Poker):
 
         super().__init__(
             (
-                HoleDealingStage(5, False),
-                BettingStage(max_delta),
-                DiscardDrawStage(),
-                BettingStage(max_delta),
-                DiscardDrawStage(),
-                BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
-                DiscardDrawStage(),
-                BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+                HoleDealingStage(5, False), BettingStage(max_delta),
+                DiscardDrawStage(), BettingStage(max_delta),
+                DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
+                DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
                 ShowdownStage(),
             ),
             (Lowball27Evaluator(),),

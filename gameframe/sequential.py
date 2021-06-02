@@ -34,7 +34,12 @@ _G = TypeVar('_G', bound=BaseSequentialGame)
 
 
 class SequentialGame(Game[_N, _P], BaseSequentialGame, ABC):
-    """SequentialGame is the abstract class for all sequential games."""
+    """SequentialGame is the abstract class for all sequential games.
+
+    :param initial_actor_index: The initial actor index. If it is None, the initial actor is set to the nature.
+    :param nature: The nature of this game.
+    :param players: The players of this game.
+    """
 
     def __init__(self, initial_actor_index: Optional[int], nature: _N, players: Iterable[_P]):
         super().__init__(nature, players)

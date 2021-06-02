@@ -63,6 +63,9 @@ class TicTacToe(SequentialGame[BaseActor, 'TicTacToePlayer']):
 class TicTacToePlayer(Actor[TicTacToe]):
     """TicTacToePlayer is the class for tic tac toe players."""
 
+    def __repr__(self) -> str:
+        return 'O' if self.game.players[0] is self else 'X'
+
     @overload
     def mark(self) -> None: ...
 
@@ -94,9 +97,6 @@ class TicTacToePlayer(Actor[TicTacToe]):
         :return: True if the cell can be marked, else False.
         """
         return _MarkAction(r, c, self).can_act()
-
-    def __repr__(self) -> str:
-        return 'O' if self.game.players[0] is self else 'X'
 
 
 class _MarkAction(_SequentialAction[TicTacToe, TicTacToePlayer]):

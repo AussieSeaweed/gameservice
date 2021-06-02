@@ -87,7 +87,7 @@ class HoleDealingAction(DealingAction):
         if self.player is None:
             self.player = next(self.actor.dealable_players)
 
-        self.player._hole.extend(HoleCard(card, cast(HoleDealingStage, self.game.stage)._status) for card in cards)
+        self.player._hole.extend(HoleCard(cast(HoleDealingStage, self.game.stage)._status, card) for card in cards)
 
 
 class BoardDealingAction(DealingAction):
@@ -167,8 +167,10 @@ class BetRaiseAction(BettingAction):
         self.actor._stack -= self.amount - self.actor.bet
         self.actor._bet = self.amount
 
-        players = tuple(player for player in self.game.players if player._relevant)
-        self.game._queue = list(rotated(players, players.index(self.actor)))[1:]
+        players = [
+            player for player in rotated(self.game.players, self.game.players.index(self.actor)) if player._relevant
+        ]
+        self.game._queue = players[1:] if players and players[0] is self.actor else players
 
 
 class DiscardDrawAction(PokerAction[PokerPlayer]):
@@ -212,7 +214,7 @@ class DiscardDrawAction(PokerAction[PokerPlayer]):
 
         for discarded_card, drawn_card in zip(self.discarded_cards, self.drawn_cards):
             index = self.actor.hole.index(discarded_card)
-            self.actor._hole[index] = HoleCard(drawn_card, self.actor.hole[index].status)
+            self.actor._hole[index] = HoleCard(self.actor.hole[index].status, drawn_card)
 
 
 class ShowdownAction(PokerAction[PokerPlayer]):

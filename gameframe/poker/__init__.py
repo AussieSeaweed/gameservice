@@ -1,4 +1,4 @@
-from gameframe.poker.bases import Limit, Poker, PokerNature, PokerPlayer, SidePot, Stage
+from gameframe.poker.bases import Limit, Poker, PokerNature, PokerPlayer, Stage
 from gameframe.poker.games import (
     Badugi, Courchevel, FiveCardDraw, FiveCardOmahaHoldEm, FixedLimitBadugi, FixedLimitCourchevel,
     FixedLimitFiveCardDraw, FixedLimitFiveCardOmahaHoldEm, FixedLimitGreekHoldEm, FixedLimitOmahaHoldEm,
@@ -18,7 +18,7 @@ from gameframe.poker.stages import (
 from gameframe.poker.utilities import parse_poker
 
 __all__ = (
-    'Limit', 'Poker', 'PokerNature', 'PokerPlayer', 'SidePot', 'Stage', 'Badugi', 'Courchevel', 'FiveCardDraw',
+    'Limit', 'Poker', 'PokerNature', 'PokerPlayer', 'Stage', 'Badugi', 'Courchevel', 'FiveCardDraw',
     'FiveCardOmahaHoldEm', 'FixedLimitBadugi', 'FixedLimitCourchevel', 'FixedLimitFiveCardDraw',
     'FixedLimitFiveCardOmahaHoldEm', 'FixedLimitGreekHoldEm', 'FixedLimitOmahaHoldEm', 'FixedLimitShortDeckHoldEm',
     'FixedLimitSingleDrawLowball27', 'FixedLimitSixCardOmahaHoldEm', 'FixedLimitTexasHoldEm',

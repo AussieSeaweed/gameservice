@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Iterable, Iterator, Sequence, Set
+from collections.abc import Iterable, Iterator, Sequence
+from itertools import zip_longest
 from typing import Final, Optional, cast, final, overload
 
 from auxiliary import iter_equal
@@ -20,6 +21,14 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
     should override the ante, blinds, and starting_stacks properties accordingly.
 
     The number of players, denoted by the length of the starting_stacks property, must be greater than or equal to 2.
+
+    :param stages: The stages of this poker game.
+    :param evaluators: The evaluators of this poker game.
+    :param deck: The deck of this poker game.
+    :param limit: The limit of this poker game.
+    :param ante: The ante of this poker game.
+    :param blinds: The blinds of this poker game.
+    :param starting_stacks: The starting stacks of this poker game.
     """
 
     def __init__(
@@ -35,11 +44,17 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
         super().__init__(None, PokerNature(self), (PokerPlayer(self) for _ in range(len(starting_stacks))))
 
         self.stages: Final = tuple(stages)
+        '''The stages of this poker game.'''
         self.evaluators: Final = tuple(evaluators)
+        '''The evaluators of this poker game.'''
         self.limit: Final = limit
+        '''The limit of this poker game.'''
         self.ante: Final = ante
+        '''The ante of this poker game.'''
         self.blinds: Final = tuple(blinds)
+        '''The blinds of this poker game.'''
         self.starting_stacks: Final = tuple(starting_stacks)
+        '''The starting stacks of this poker game.'''
 
         self._deck = deck
         self._stage = self.stages[0]
@@ -52,6 +67,8 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
             raise GameFrameError('Number of blinds must be less than or equal to the number of players')
         elif not self.stages:
             raise GameFrameError('Number of stages must be at least 1')
+        elif any(value < 0 for value in (self.ante,) + self.blinds + self.starting_stacks):
+            raise GameFrameError('All numerical values must be positive')
 
         self._pot = 0
         self._board = list[Card]()
@@ -63,7 +80,8 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
         self._setup()
 
     @property
-    def deck(self) -> Set[Card]:
+    @final
+    def deck(self) -> Sequence[Card]:
         """Returns the deck of this poker game.
 
         :return: The deck of this poker game.
@@ -71,6 +89,7 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
         return self._deck
 
     @property
+    @final
     def stage(self) -> Stage:
         """Returns the stage of this poker game.
 
@@ -79,6 +98,7 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
         return self._stage
 
     @property
+    @final
     def pot(self) -> int:
         """Returns the pot of this poker game.
 
@@ -87,6 +107,7 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
         return self._pot
 
     @property
+    @final
     def board(self) -> Sequence[Card]:
         """Returns the board of this poker game.
 
@@ -98,33 +119,48 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
         return self._board
 
     @property
-    def side_pots(self) -> Iterator[SidePot]:
+    @final
+    def side_pots(self) -> Iterator[int]:
         """Returns the side pots of this poker game.
 
         :return: The side pots of this poker game.
         """
-        players = sorted(self.players, key=lambda player: player.starting_stack)
+        return (side_pot.amount for side_pot in self._side_pots)
+
+    @property
+    def _side_pots(self) -> Sequence[_SidePot]:
+        players = sorted(self.players, key=lambda player: player.put)
+        side_pots = []
         pot = 0
         prev = 0
 
         while pot < self.pot:
-            cur = min(-player.payoff for player in players)
+            cur = min(player.put for player in players)
             amount = len(players) * (cur - prev)
-            players = players[1:]
 
-            yield SidePot((player for player in players if player.active), amount)
+            side_pots.append(_SidePot((player for player in players if player.active), amount))
 
+            players.pop(0)
             pot += amount
             prev = cur
 
+        return side_pots
+
     def _setup(self) -> None:
-        for i, (stack, player) in enumerate(zip(self.starting_stacks, self.players)):
+        for i, (blind, stack, player) in enumerate(zip_longest(
+                reversed(self.blinds) if len(self.players) == 2 else self.blinds,
+                self.starting_stacks,
+                self.players,
+                fillvalue=0,
+        )):
             ante = min(self.ante, stack)
-            blind = min(0 if i not in self.blinds else self.blinds[i], stack - ante)
+            blind = max(min(blind, stack - ante), 0)
 
             self._pot += ante
-            player._bet += blind
-            player._stack -= ante + blind
+            player._bet = blind
+            player._stack = stack - ante - blind
+
+        self._aggressor = max(self.players, key=lambda player: player.bet)
 
         self.stage._open(self)
 
@@ -132,6 +168,9 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
 @final
 class PokerNature(Actor[Poker]):
     """PokerNature is the class for poker natures."""
+
+    def __repr__(self) -> str:
+        return 'PokerNature'
 
     @property
     def dealable_players(self) -> Iterator[PokerPlayer]:
@@ -147,7 +186,6 @@ class PokerNature(Actor[Poker]):
 
         :return: The number of hole cards to deal to a player.
         """
-
         return self.game.stage._deal_count if self.can_deal_hole() else None
 
     @property
@@ -156,7 +194,6 @@ class PokerNature(Actor[Poker]):
 
         :return: The number of cards to deal to the board.
         """
-
         return self.game.stage._deal_count if self.can_deal_board() else None
 
     @overload
@@ -224,9 +261,6 @@ class PokerNature(Actor[Poker]):
 
         return BoardDealingAction(cards, self).can_act()
 
-    def __repr__(self) -> str:
-        return 'PokerNature'
-
 
 @final
 class PokerPlayer(Actor[Poker]):
@@ -239,6 +273,12 @@ class PokerPlayer(Actor[Poker]):
         self._stack = 0
         self._hole = list[HoleCard]()
         self._status: Optional[bool] = None
+
+    def __repr__(self) -> str:
+        if self.mucked:
+            return f'PokerPlayer({self.bet}, {self.stack})'
+        else:
+            return f'PokerPlayer({self.bet}, {self.stack}, ' + ''.join(map(str, self.hole)) + ')'
 
     @property
     def bet(self) -> int:
@@ -265,7 +305,7 @@ class PokerPlayer(Actor[Poker]):
         if self._status is None:
             return self._hole
         else:
-            return tuple(HoleCard(card, self._status) for card in self.hole)
+            return tuple(HoleCard(self._status, card) for card in self._hole)
 
     @property
     def starting_stack(self) -> int:
@@ -298,27 +338,17 @@ class PokerPlayer(Actor[Poker]):
         if self.mucked or len(active_players) < 2:
             return 0
         else:
-            return min(self.total, sorted(player.total for player in active_players)[-2])
-
-    @property
-    def payoff(self) -> int:
-        """Returns the payoff of this poker player.
-
-        If the player made money, the payoff will be a positive quantity, and vice versa.
-
-        :return: The payoff of this poker player.
-        """
-        return self.starting_stack - self.total
+            return min(self.starting_stack, sorted(player.starting_stack for player in active_players)[-2])
 
     @property
     def put(self) -> int:
         """Returns the amount put by this poker player.
 
-        If the player made money, the payoff will be a negative quantity, and vice versa.
+        If the player made money, the put will be a negative quantity.
 
         :return: The amount put by this poker player.
         """
-        return self.total - self.starting_stack
+        return self.starting_stack - self.stack
 
     @property
     def hands(self) -> Iterator[Hand]:
@@ -408,7 +438,7 @@ class PokerPlayer(Actor[Poker]):
 
     @property
     def _relevant(self) -> bool:
-        return self.active and self.effective_stack > 0
+        return self.active and self.put < self.effective_stack
 
     def fold(self) -> None:
         """Folds the poker player's hand.
@@ -561,17 +591,8 @@ class PokerPlayer(Actor[Poker]):
     def _hand(self, evaluator: Evaluator) -> Hand:
         return evaluator.hand(self.hole, self.game.board)
 
-    def __repr__(self) -> str:
-        if self.mucked:
-            return f'PokerPlayer({self.bet}, {self.stack})'
-        else:
-            return f'PokerPlayer({self.bet}, {self.stack}, ' + ''.join(map(str, self.hole)) + ')'
 
-
-@final
-class SidePot:
-    """SidePot is the class for side pots."""
-
+class _SidePot:
     def __init__(self, players: Iterable[PokerPlayer], amount: int):
         self.players: Final = tuple(players)
         self.amount: Final = amount
