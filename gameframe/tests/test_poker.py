@@ -8,12 +8,11 @@ from auxiliary import ExtendedTestCase
 from pokertools import parse_cards
 
 from gameframe.exceptions import GameFrameError
-from gameframe.poker import BettingStage, BoardDealingStage, FixedLimitBadugi, FixedLimitGreekHoldEm, HoleDealingStage, \
-    KuhnPoker, \
-    NoLimitFiveCardDraw, NoLimitShortDeckHoldEm, NoLimitTexasHoldEm, Poker, \
-    PokerPlayer, \
-    PotLimitOmahaHoldEm, ShowdownStage, \
-    parse_poker
+from gameframe.poker import (
+    BettingStage, BoardDealingStage, FixedLimitBadugi, FixedLimitGreekHoldEm, HoleDealingStage, KuhnPoker,
+    NoLimitFiveCardDraw, NoLimitShortDeckHoldEm, NoLimitTexasHoldEm, Poker, PokerPlayer, PotLimitOmahaHoldEm,
+    ShowdownStage, parse_poker,
+)
 from gameframe.tests import GameFrameTestCaseMixin
 
 

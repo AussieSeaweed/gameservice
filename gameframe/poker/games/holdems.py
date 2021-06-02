@@ -27,7 +27,7 @@ class HoldEm(Poker):
 
         super().__init__(
             (
-                HoleDealingStage(hole_card_count, False), BettingStage(max_delta),
+                HoleDealingStage(False, hole_card_count), BettingStage(max_delta),
                 BoardDealingStage(3), BettingStage(max_delta),
                 BoardDealingStage(1), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
                 BoardDealingStage(1), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),

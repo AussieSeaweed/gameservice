@@ -8,7 +8,13 @@ from gameframe.poker.utilities import _collect
 
 
 class DealingStage(Stage, ABC):
-    """DealingStage is the class for dealing stages."""
+    """DealingStage is the class for dealing stages.
+
+    :param deal_count: The number of cards to deal.
+    """
+
+    def __init__(self, deal_count: int):
+        self._deal_count = deal_count
 
     def _open(self, game: Poker) -> None:
         super()._open(game)
@@ -18,10 +24,15 @@ class DealingStage(Stage, ABC):
 
 @final
 class HoleDealingStage(DealingStage):
-    """HoleDealingStage is the class for hole card dealing stages."""
+    """HoleDealingStage is the class for hole card dealing stages.
 
-    def __init__(self, deal_count: int, status: bool):
-        self._deal_count = deal_count
+    :param status: The status of the hole cards being dealt. True if the dealing is made face-up, False otherwise.
+    :param deal_count: The number of hole cards to deal.
+    """
+
+    def __init__(self, status: bool, deal_count: int):
+        super().__init__(deal_count)
+
         self._status = status
 
     def _done(self, game: Poker) -> bool:
@@ -32,9 +43,6 @@ class HoleDealingStage(DealingStage):
 @final
 class BoardDealingStage(DealingStage):
     """BoardDealingStage is the class for board card dealing stages."""
-
-    def __init__(self, deal_count: int):
-        self._deal_count = deal_count
 
     def _done(self, game: Poker) -> bool:
         return super()._done(game) or len(game.board) == self._deal_target(game)
@@ -56,7 +64,10 @@ class QueuedStage(Stage):
 
 @final
 class BettingStage(QueuedStage, ABC):
-    """BettingStage is the class for betting stages."""
+    """BettingStage is the class for betting stages.
+
+    :param initial_max_delta: The initial min-raise amount.
+    """
 
     def __init__(self, initial_max_delta: int):
         self.__initial_max_delta = initial_max_delta

@@ -264,7 +264,10 @@ class PokerNature(Actor[Poker]):
 
 @final
 class PokerPlayer(Actor[Poker]):
-    """PokerPlayer is the class for poker players."""
+    """PokerPlayer is the class for poker players.
+
+    :param game: The game of this poker player.
+    """
 
     def __init__(self, game: Poker):
         super().__init__(game)

@@ -18,7 +18,7 @@ class FiveCardDraw(Poker):
 
         super().__init__(
             (
-                HoleDealingStage(5, False), BettingStage(max_delta),
+                HoleDealingStage(False, 5), BettingStage(max_delta),
                 DiscardDrawStage(), BettingStage(max_delta),
                 ShowdownStage(),
             ),
@@ -63,7 +63,7 @@ class Badugi(Poker):
 
         super().__init__(
             (
-                HoleDealingStage(4, False), BettingStage(max_delta),
+                HoleDealingStage(False, 4), BettingStage(max_delta),
                 DiscardDrawStage(), BettingStage(max_delta),
                 DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
                 DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
@@ -110,7 +110,7 @@ class SingleDrawLowball27(Poker):
 
         super().__init__(
             (
-                HoleDealingStage(5, False), BettingStage(max_delta),
+                HoleDealingStage(False, 5), BettingStage(max_delta),
                 DiscardDrawStage(), BettingStage(max_delta),
                 ShowdownStage(),
             ),
@@ -155,7 +155,7 @@ class TripleDrawLowball27(Poker):
 
         super().__init__(
             (
-                HoleDealingStage(5, False), BettingStage(max_delta),
+                HoleDealingStage(False, 5), BettingStage(max_delta),
                 DiscardDrawStage(), BettingStage(max_delta),
                 DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
                 DiscardDrawStage(), BettingStage(2 * max_delta if isinstance(limit, FixedLimit) else max_delta),
@@ -201,7 +201,7 @@ class KuhnPoker(Poker):
     def __init__(self) -> None:
         super().__init__(
             (
-                HoleDealingStage(1, False),
+                HoleDealingStage(False, 1),
                 BettingStage(1),
                 ShowdownStage(),
             ),
