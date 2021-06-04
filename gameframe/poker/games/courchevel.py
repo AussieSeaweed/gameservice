@@ -12,7 +12,7 @@ class Courchevel(Poker):
     """Courchevel is the class for Courchevel games."""
 
     def __init__(self, limit: Limit, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
-        max_delta = max(ante, max(blinds))
+        max_delta = max(ante, max(blinds, default=0))
 
         super().__init__(
             (

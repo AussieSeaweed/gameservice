@@ -1,6 +1,6 @@
 from random import choice
 from typing import cast
-from unittest import TestCase
+from unittest import TestCase, main
 
 from auxiliary import next_or_none
 
@@ -10,8 +10,8 @@ from gameframe.tictactoe import TicTacToe, TicTacToePlayer, parse_tic_tac_toe
 
 
 class TicTacToeTest(GameFrameTestCaseMixin[TicTacToe], TestCase):
-    monte_carlo_test_count = 1000
-    speed_test_time = 1
+    MONTE_CARLO_TEST_COUNT = 1000
+    SPEED_TEST_TIME = 1
 
     def test_draws(self) -> None:
         for game in (
@@ -104,3 +104,7 @@ class TicTacToeTest(GameFrameTestCaseMixin[TicTacToe], TestCase):
                         self.assertFalse(actor.can_mark(r, c))
 
                     self.assertFalse(non_actor.can_mark(r, c))
+
+
+if __name__ == '__main__':
+    main()

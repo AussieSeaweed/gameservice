@@ -23,7 +23,7 @@ class HoldEm(Poker):
             blinds: Sequence[int],
             starting_stacks: Sequence[int],
     ):
-        max_delta = max(ante, max(blinds))
+        max_delta = max(ante, max(blinds, default=0))
 
         super().__init__(
             (

@@ -181,20 +181,12 @@ class PokerNature(Actor[Poker]):
         return filter(self.can_deal_hole, self.game.players)
 
     @property
-    def hole_deal_count(self) -> Optional[int]:
-        """Returns the number of hole cards that can be dealt.
+    def deal_count(self) -> int:
+        """Returns the number of cards that can be dealt.
 
-        :return: The number of hole cards to deal to a player.
+        :return: The number of cards to deal.
         """
-        return self.game.stage._deal_count if self.can_deal_hole() else None
-
-    @property
-    def board_deal_count(self) -> Optional[int]:
-        """Returns the number of board cards that can be dealt.
-
-        :return: The number of cards to deal to the board.
-        """
-        return self.game.stage._deal_count if self.can_deal_board() else None
+        return self.game.stage._deal_count
 
     @overload
     def deal_hole(self) -> None: ...
@@ -351,7 +343,7 @@ class PokerPlayer(Actor[Poker]):
 
         :return: The amount put by this poker player.
         """
-        return self.starting_stack - self.stack
+        return self.starting_stack - self.total
 
     @property
     def hands(self) -> Iterator[Hand]:
@@ -441,7 +433,11 @@ class PokerPlayer(Actor[Poker]):
 
     @property
     def _relevant(self) -> bool:
-        return self.active and self.put < self.effective_stack
+        return self.active and self._lost < self.effective_stack
+
+    @property
+    def _lost(self) -> int:
+        return self.starting_stack - self.stack
 
     def fold(self) -> None:
         """Folds the poker player's hand.

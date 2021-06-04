@@ -14,7 +14,7 @@ class FiveCardDraw(Poker):
     """FiveCardDraw is the base class for all Five-Card Draw games."""
 
     def __init__(self, limit: Limit, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
-        max_delta = max(ante, max(blinds))
+        max_delta = max(ante, max(blinds, default=0))
 
         super().__init__(
             (
@@ -59,7 +59,7 @@ class Badugi(Poker):
     """Badugi is the class for Badugi games."""
 
     def __init__(self, limit: Limit, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
-        max_delta = max(ante, max(blinds))
+        max_delta = max(ante, max(blinds, default=0))
 
         super().__init__(
             (
@@ -106,7 +106,7 @@ class SingleDrawLowball27(Poker):
     """SingleDrawLowball27 is the class for 2-7 Single Draw Lowball games."""
 
     def __init__(self, limit: Limit, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
-        max_delta = max(ante, max(blinds))
+        max_delta = max(ante, max(blinds, default=0))
 
         super().__init__(
             (
@@ -151,7 +151,7 @@ class TripleDrawLowball27(Poker):
     """TripleDrawLowball27 is the class for 2-7 Triple Draw Lowball games."""
 
     def __init__(self, limit: Limit, ante: int, blinds: Sequence[int], starting_stacks: Sequence[int]):
-        max_delta = max(ante, max(blinds))
+        max_delta = max(ante, max(blinds, default=0))
 
         super().__init__(
             (

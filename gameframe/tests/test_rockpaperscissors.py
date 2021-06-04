@@ -1,13 +1,13 @@
 from random import choice
-from unittest import TestCase
+from unittest import TestCase, main
 
 from gameframe.rockpaperscissors import RockPaperScissors, RockPaperScissorsHand
 from gameframe.tests import GameFrameTestCaseMixin
 
 
 class RockPaperScissorsTest(GameFrameTestCaseMixin[RockPaperScissors], TestCase):
-    monte_carlo_test_count = 10000
-    speed_test_time = 1
+    MONTE_CARLO_TEST_COUNT = 10000
+    SPEED_TEST_TIME = 1
 
     def create_game(self) -> RockPaperScissors:
         return RockPaperScissors()
@@ -40,3 +40,7 @@ class RockPaperScissorsTest(GameFrameTestCaseMixin[RockPaperScissors], TestCase)
                     self.assertTrue(player.can_throw(hand))
                 else:
                     self.assertFalse(player.can_throw(hand))
+
+
+if __name__ == '__main__':
+    main()
