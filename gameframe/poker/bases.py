@@ -160,7 +160,7 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
             player._bet = blind
             player._stack = stack - ante - blind
 
-        self._aggressor = max(self.players, key=lambda player: player.bet)
+        self._aggressor = max(self.players, key=lambda player_: player_.bet)
 
         self.stage._open(self)
 
@@ -337,13 +337,11 @@ class PokerPlayer(Actor[Poker]):
 
     @property
     def put(self) -> int:
-        """Returns the amount put by this poker player.
-
-        If the player made money, the put will be a negative quantity.
+        """Returns the amount put into the pot by this poker player.
 
         :return: The amount put by this poker player.
         """
-        return self.starting_stack - self.total
+        return max(self.starting_stack - self.total, 0)
 
     @property
     def hands(self) -> Iterator[Hand]:
