@@ -19,8 +19,8 @@ All games implemented in gameframe share some attributes.
 
    # Get the nature.
    game.nature
-   # Get the first player.
-   game.players[0]
+   # Get the players.
+   game.players
    # True if the game is terminal, else False.
    game.terminal
 
@@ -108,6 +108,35 @@ Whether each action can be applied can also be queried through the corresponding
    nature = game.nature
    player = game.players[0]
 
+   # The stages of the game.
+   game.stages
+   # The evaluators of the game.
+   game.evaluators
+   # The limit of the game.
+   game.limit
+   # The ante of the game.
+   game.ante
+   # The blinds of the game.
+   game.blinds
+   # The starting stacks of the game.
+   game.starting_stacks
+
+   # The deck of the game.
+   game.deck
+   # The current stage of the game.
+   game.stage
+   # The pot of the game.
+   game.pot
+   # The board of the game.
+   game.board
+   # The side pots of the game.
+   game.side_pots
+
+   # An iterator of players that can be dealt hole cards.
+   nature.dealable_players
+   # The number of cards to be dealt to the board or the number of hole cards to be dealt to each player .
+   nature.deal_count
+
    # True if the nature can deal hole cards to any player, else False.
    nature.can_deal_hole()
    # True if the nature can deal hole cards to the specified player, else False.
@@ -115,18 +144,42 @@ Whether each action can be applied can also be queried through the corresponding
    # True if the nature can deal the specified hole cards to the specified player, else False.
    nature.can_deal_hole(player, parse_cards('Ac2d'))
 
-   # Get the number of hole cards to be dealt to each player.
-   nature.hole_deal_count
-   # Get an iterator of players that can be dealt hole cards.
-   nature.dealable_players
-
    # True if the nature can deal cards to the board, else False.
    nature.can_deal_board()
    # True if the nature can deal the specified cards to the board, else False.
    nature.can_deal_board(parse_cards('KsKcKh'))
 
-   # Get the number of cards to be dealt to the board.
-   nature.board_deal_count
+   # The bet of the player.
+   player.bet
+   # The stack of the player.
+   player.stack
+   # The hole cards of the player.
+   player.hole
+   # The starting stack of the player.
+   player.starting_stack
+   # The total amount the player has in front.
+   player.total
+   # The effective stack of the player.
+   player.effective_stack
+   # The amount put into the pot by the player.
+   player.put
+   # An iterator of the hands of the player.
+   player.hands
+   # True if the player has mucked, else False.
+   player.mucked
+   # True if the player has shown, else False.
+   player.shown
+   # True if the player is in the hand, else False.
+   player.active
+
+   # The check/call amount.
+   player.check_call_amount
+   # The maximum bet/raise amount.
+   player.max_bet_raise_amount
+   # The minimum bet/raise amount.
+   player.min_bet_raise_amount
+   # True if the player has to showdown to attempt to win the pot.
+   player.showdown_necessary
 
    # True if the player can fold, else False.
    player.can_fold()
@@ -148,11 +201,6 @@ Whether each action can be applied can also be queried through the corresponding
    player.can_discard_draw(parse_cards('KsKcKh'))
    # True if the player can discard the specified cards and draw the specified cards, else False.
    player.can_discard_draw(parse_cards('KsKcKh'), parse_cards('AsAcAh'))
-
-   # The maximum bet/raise amount.
-   player.max_bet_raise
-   # The minimum bet/raise amount.
-   player.min_bet_raise
 
 
 Note that can_showdown(), can_showdown(False) and can_showdown(True) are basically the same things. They were just added
@@ -248,7 +296,11 @@ games.
    # True if the player can mark the corresponding coordinate.
    player.can_mark(0, 0)
 
-   # Gets the winner of the game (either None or one of the players).
+   # The board of the game.
+   game.board
+   # An iterator of empty coordinates of the game.
+   game.empty_coordinates
+   # The winner of the game (either None or one of the players).
    game.winner
 
 
@@ -307,8 +359,10 @@ Rock Paper Scissors game is the simplest game implemented on GameFrame. The foll
    # True if the player can throw the specified hand.
    player.can_throw(RockPaperScissorsHand.SCISSORS)
 
-   # Gets the winner of the game (either None or one of the players).
+   # The winner of the game (either None or one of the players).
    game.winner
+   # The hand of the player.
+   player.hand
 
 
 This is a sample game.

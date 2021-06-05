@@ -2,9 +2,9 @@
 
 Video: https://www.youtube.com/watch?v=QlgCcphLjaQ
 """
-from gameframe.poker import NoLimitShortHoldEm, parse_poker
+from gameframe.poker import NoLimitShortDeckHoldEm, parse_poker
 
-game = NoLimitShortHoldEm(3000, 3000, (495000, 232000, 362000, 403000, 301000, 204000))
+game = NoLimitShortDeckHoldEm(3000, 3000, (495000, 232000, 362000, 403000, 301000, 204000))
 badziakouski, zhong, xuan, jun, phua, koon = game.players
 
 parse_poker(game, (

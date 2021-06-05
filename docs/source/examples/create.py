@@ -1,12 +1,12 @@
 from gameframe.poker import (FixedLimitBadugi, FixedLimitCourchevel, FixedLimitFiveCardDraw,
                              FixedLimitFiveCardOmahaHoldEm, FixedLimitGreekHoldEm, FixedLimitOmahaHoldEm,
-                             FixedLimitShortHoldEm, FixedLimitSingleDrawLowball27, FixedLimitSixCardOmahaHoldEm,
+                             FixedLimitShortDeckHoldEm, FixedLimitSingleDrawLowball27, FixedLimitSixCardOmahaHoldEm,
                              FixedLimitTexasHoldEm, FixedLimitTripleDrawLowball27, KuhnPoker, NoLimitBadugi,
                              NoLimitCourchevel, NoLimitFiveCardDraw, NoLimitFiveCardOmahaHoldEm, NoLimitGreekHoldEm,
-                             NoLimitOmahaHoldEm, NoLimitShortHoldEm, NoLimitSingleDrawLowball27,
+                             NoLimitOmahaHoldEm, NoLimitShortDeckHoldEm, NoLimitSingleDrawLowball27,
                              NoLimitSixCardOmahaHoldEm, NoLimitTexasHoldEm, NoLimitTripleDrawLowball27, PotLimitBadugi,
                              PotLimitCourchevel, PotLimitFiveCardDraw, PotLimitFiveCardOmahaHoldEm, PotLimitGreekHoldEm,
-                             PotLimitOmahaHoldEm, PotLimitShortHoldEm, PotLimitSingleDrawLowball27,
+                             PotLimitOmahaHoldEm, PotLimitShortDeckHoldEm, PotLimitSingleDrawLowball27,
                              PotLimitSixCardOmahaHoldEm, PotLimitTexasHoldEm, PotLimitTripleDrawLowball27)
 from gameframe.rockpaperscissors import RockPaperScissors
 from gameframe.tictactoe import TicTacToe
@@ -71,13 +71,13 @@ plg = PotLimitGreekHoldEm(ante, blinds, starting_stacks)
 nlg = NoLimitGreekHoldEm(ante, blinds, starting_stacks)
 
 # Create a Fixed-Limit Short-Deck Hold'em game
-fls = FixedLimitShortHoldEm(ante, button_blind, starting_stacks)
+fls = FixedLimitShortDeckHoldEm(ante, button_blind, starting_stacks)
 
 # Create a Pot-Limit Short-Deck Hold'em game
-pls = PotLimitShortHoldEm(ante, button_blind, starting_stacks)
+pls = PotLimitShortDeckHoldEm(ante, button_blind, starting_stacks)
 
 # Create a No-Limit Short-Deck Hold'em game
-nls = NoLimitShortHoldEm(ante, button_blind, starting_stacks)
+nls = NoLimitShortDeckHoldEm(ante, button_blind, starting_stacks)
 
 # Create a Fixed-Limit 5-Card Draw game
 flfcd = FixedLimitFiveCardDraw(ante, blinds, starting_stacks)

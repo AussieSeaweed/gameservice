@@ -76,6 +76,7 @@ Although GameFrame is entirely written in Python, it should be fast enough for m
  Heads-Up No-Limit Texas Hold'em          ~2000
  Heads-Up No-Limit Greek Hold'em          ~1500
  Heads-Up No-Limit Omaha Hold'em          ~500
+ Kuhn Poker                               ~5000
  Tic Tac Toe                              ~10000
  Rock Paper Scissors                      ~100000
 =================================  ===================

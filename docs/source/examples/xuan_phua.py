@@ -4,9 +4,9 @@ Video: https://www.youtube.com/watch?v=QlgCcphLjaQ
 """
 from pokertools import parse_cards
 
-from gameframe.poker import NoLimitShortHoldEm
+from gameframe.poker import NoLimitShortDeckHoldEm
 
-game = NoLimitShortHoldEm(3000, 3000, (495000, 232000, 362000, 403000, 301000, 204000))
+game = NoLimitShortDeckHoldEm(3000, 3000, (495000, 232000, 362000, 403000, 301000, 204000))
 badziakouski, zhong, xuan, jun, phua, koon = game.players
 
 # Pre-flop
