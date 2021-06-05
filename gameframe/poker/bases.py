@@ -203,13 +203,16 @@ class PokerNature(Actor[Poker]):
             raise GameFrameError('The nature cannot deal board cards')
 
     @overload
-    def deal_hole(self) -> None: ...
+    def deal_hole(self) -> None:
+        ...
 
     @overload
-    def deal_hole(self, player: PokerPlayer) -> None: ...
+    def deal_hole(self, player: PokerPlayer) -> None:
+        ...
 
     @overload
-    def deal_hole(self, player: PokerPlayer, cards: Iterable[Card]) -> None: ...
+    def deal_hole(self, player: PokerPlayer, cards: Iterable[Card]) -> None:
+        ...
 
     def deal_hole(self, player: Optional[PokerPlayer] = None, cards: Optional[Iterable[Card]] = None) -> None:
         """Deals the optionally supplied hole cards to the optionally specified player.
@@ -226,13 +229,16 @@ class PokerNature(Actor[Poker]):
         HoleDealingAction(player, cards, self).act()
 
     @overload
-    def can_deal_hole(self) -> bool: ...
+    def can_deal_hole(self) -> bool:
+        ...
 
     @overload
-    def can_deal_hole(self, player: PokerPlayer) -> bool: ...
+    def can_deal_hole(self, player: PokerPlayer) -> bool:
+        ...
 
     @overload
-    def can_deal_hole(self, player: PokerPlayer, cards: Iterable[Card]) -> bool: ...
+    def can_deal_hole(self, player: PokerPlayer, cards: Iterable[Card]) -> bool:
+        ...
 
     def can_deal_hole(self, player: Optional[PokerPlayer] = None, cards: Optional[Iterable[Card]] = None) -> bool:
         """Determines if the optionally specified hole cards can be dealt to the optionally supplied player.
