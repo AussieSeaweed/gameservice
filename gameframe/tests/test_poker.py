@@ -20,9 +20,9 @@ class PokerTestMixin(GameFrameTestCaseMixin[Poker], ABC):
         if isinstance(game.actor, PokerNature):
             if game.actor.can_deal_hole():
                 for player in game.players:
-                    game.nature.deal_hole(player, sample(game.deck, game.actor.deal_count))
+                    game.nature.deal_hole(player, sample(game.deck, game.actor.hole_deal_count))
             elif game.actor.can_deal_board():
-                game.nature.deal_board(sample(game.deck, game.actor.deal_count))
+                game.nature.deal_board(sample(game.deck, game.actor.board_deal_count))
             else:
                 raise AssertionError('Poker Nature cannot act')
         elif isinstance(game.actor, PokerPlayer):
@@ -62,12 +62,12 @@ class PokerTestMixin(GameFrameTestCaseMixin[Poker], ABC):
         if game.nature.can_deal_hole():
             for player in game.players:
                 if game.nature.can_deal_hole(player):
-                    assert game.nature.can_deal_hole(player, sample(game.deck, game.nature.deal_count))
-                    assert not game.nature.can_deal_hole(player, sample(game.deck, game.nature.deal_count + 1))
+                    assert game.nature.can_deal_hole(player, sample(game.deck, game.nature.hole_deal_count))
+                    assert not game.nature.can_deal_hole(player, sample(game.deck, game.nature.hole_deal_count + 1))
 
         if game.nature.can_deal_board():
-            assert game.nature.can_deal_board(sample(game.deck, game.nature.deal_count))
-            assert not game.nature.can_deal_board(sample(game.deck, game.nature.deal_count + 1))
+            assert game.nature.can_deal_board(sample(game.deck, game.nature.board_deal_count))
+            assert not game.nature.can_deal_board(sample(game.deck, game.nature.board_deal_count + 1))
 
     @staticmethod
     def verify_player(player: PokerPlayer, game: Poker) -> None:

@@ -134,8 +134,10 @@ Whether each action can be applied can also be queried through the corresponding
 
    # An iterator of players that can be dealt hole cards.
    nature.dealable_players
-   # The number of cards to be dealt to the board or the number of hole cards to be dealt to each player .
-   nature.deal_count
+   # The number of hole cards to be dealt to each player.
+   nature.hole_deal_count
+   # The number of cards to be dealt to the board.
+   nature.board_deal_count
 
    # True if the nature can deal hole cards to any player, else False.
    nature.can_deal_hole()

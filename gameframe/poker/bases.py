@@ -181,12 +181,26 @@ class PokerNature(Actor[Poker]):
         return filter(self.can_deal_hole, self.game.players)
 
     @property
-    def deal_count(self) -> int:
-        """Returns the number of cards that can be dealt.
+    def hole_deal_count(self) -> int:
+        """Returns the number of hole cards that can be dealt to each player.
+
+        :return: The number of hole cards to deal.
+        """
+        if self.can_deal_hole():
+            return self.game.stage._deal_count
+        else:
+            raise GameFrameError('The nature cannot deal hole cards')
+
+    @property
+    def board_deal_count(self) -> int:
+        """Returns the number of cards that can be dealt to the board.
 
         :return: The number of cards to deal.
         """
-        return self.game.stage._deal_count
+        if self.can_deal_board():
+            return self.game.stage._deal_count
+        else:
+            raise GameFrameError('The nature cannot deal board cards')
 
     @overload
     def deal_hole(self) -> None: ...
@@ -389,7 +403,10 @@ class PokerPlayer(Actor[Poker]):
 
         :return: The check/call amount.
         """
-        return min(self.stack, max(player.bet for player in self.game.players) - self.bet)
+        if self.can_check_call():
+            return min(self.stack, max(player.bet for player in self.game.players) - self.bet)
+        else:
+            raise GameFrameError('The player cannot check/call')
 
     @property
     def min_bet_raise_amount(self) -> int:
@@ -399,7 +416,10 @@ class PokerPlayer(Actor[Poker]):
 
         :return: The minimum bet/raise amount.
         """
-        return self.game.limit._min_amount(self.game)
+        if self.can_bet_raise():
+            return self.game.limit._min_amount(self.game)
+        else:
+            raise GameFrameError('The player cannot bet/raise')
 
     @property
     def max_bet_raise_amount(self) -> int:
@@ -409,7 +429,10 @@ class PokerPlayer(Actor[Poker]):
 
         :return: The maximum bet/raise amount.
         """
-        return self.game.limit._max_amount(self.game)
+        if self.can_bet_raise():
+            return self.game.limit._max_amount(self.game)
+        else:
+            raise GameFrameError('The player cannot bet/raise')
 
     @property
     def showdown_necessary(self) -> bool:
