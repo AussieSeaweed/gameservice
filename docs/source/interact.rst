@@ -220,11 +220,11 @@ The result of this poker game is as follows:
 
 .. code-block:: console
 
-   Pot: 0
+   Pot: 1109500
    Players:
-   PokerPlayer(0, 572100, Ac2d)
-   PokerPlayer(0, 1997500)
-   PokerPlayer(0, 1109500, 7h6h)
+   Ivey: PokerPlayer(0, 572100, Ac2d)
+   Antonius: PokerPlayer(0, 1997500)
+   Dwan: PokerPlayer(0, 1109500, 7h6h)
    Board: Jc3d5c4hJh
 
 
@@ -240,10 +240,10 @@ The result of this poker game is as follows:
 
 .. code-block:: console
 
-   Pot: 0
+   Pot: 135694700
    Players:
-   PokerPlayer(0, 193792375, Ah3sKsKh)
-   PokerPlayer(0.00, 0.00)
+   Antonius: PokerPlayer(0, 193792375, Ah3sKsKh)
+   Isildur: PokerPlayer(0, 0)
    Board: 4s5c2h5h9c
 
 
@@ -257,14 +257,14 @@ The result of this poker game is as follows:
 
 .. code-block:: console
 
-   Pot: 0
+   Pot: 623000
    Players:
-   PokerPlayer(0, 489000)
-   PokerPlayer(0, 226000)
-   PokerPlayer(0, 684000, QhQd)
-   PokerPlayer(0, 400000)
-   PokerPlayer(0, 0, KhKs)
-   PokerPlayer(0, 198000)
+   Badziakouski: PokerPlayer(0, 489000)
+   Zhong: PokerPlayer(0, 226000)
+   Xuan: PokerPlayer(0, 684000, QhQd)
+   Jun: PokerPlayer(0, 400000)
+   Phua: PokerPlayer(0, 0, KhKs)
+   Koon: PokerPlayer(0, 198000)
    Board: 9h6cKcJhTs
 
 
@@ -275,8 +275,29 @@ between Xuan and Phua shown just above.
    :language: python
 
 
-Although not shown above, the command for drawing cards as in draw games is 'dd <FROM CARDS> <TO CARDS>'. In commands
-involving cards, if the cards are not specified, random cards will be selected from the deck.
+The following code demonstrates interacting with Triple Draw 2 to 7 Lowball games.
+
+.. literalinclude:: examples/yockey_arieh.py
+   :language: python
+
+
+The result of this poker game is as follows:
+
+.. code-block:: console
+
+   Pot: 2510000
+   Players:
+   Yockey: PokerPlayer(0, 0, 7h6c4c3d2c)
+   Hui: PokerPlayer(0, 4190000)
+   Esposito: PokerPlayer(0, 5910000)
+   Arieh: PokerPlayer(0, 12095000, 2h4d7c5c3c)
+   Board:
+
+
+The following game is equivalent to the game between Yockey and Arieh shown just above.
+
+.. literalinclude:: examples/yockey_arieh_parser.py
+   :language: python
 
 
 Interacting with Tic Tac Toe games
