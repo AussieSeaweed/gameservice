@@ -41,6 +41,8 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
             blinds: Sequence[int],
             starting_stacks: Sequence[int],
     ):
+        from gameframe.poker import ShowdownStage
+
         super().__init__(None, PokerNature(self), (PokerPlayer(self) for _ in range(len(starting_stacks))))
 
         self.stages: Final = tuple(stages)
@@ -67,8 +69,12 @@ class Poker(SequentialGame['PokerNature', 'PokerPlayer'], ABC):
             raise GameFrameError('Number of blinds must be less than or equal to the number of players')
         elif not self.stages:
             raise GameFrameError('Number of stages must be at least 1')
+        elif not isinstance(self.stages[-1], ShowdownStage):
+            raise GameFrameError('The final stage must be a showdown stage')
         elif any(value < 0 for value in (self.ante,) + self.blinds + self.starting_stacks):
             raise GameFrameError('All numerical values must be positive')
+        elif not self.evaluators:
+            raise GameFrameError('Number of evaluators must be at least 1')
 
         self._pot = 0
         self._board = list[Card]()
@@ -178,7 +184,10 @@ class PokerNature(Actor[Poker]):
 
         :return: The players that can be dealt.
         """
-        return filter(self.can_deal_hole, self.game.players)
+        if self.can_deal_hole():
+            return filter(self.can_deal_hole, self.game.players)
+        else:
+            raise GameFrameError('The nature cannot deal hole cards')
 
     @property
     def hole_deal_count(self) -> int:
@@ -448,15 +457,18 @@ class PokerPlayer(Actor[Poker]):
 
         :return: True if the showdown is necessary, else False.
         """
-        staked = [True] * len(self.game.evaluators)
+        if self.can_showdown():
+            staked = [True] * len(self.game.evaluators)
 
-        for player in self.game.players:
-            if player.shown:
-                for i, (actor_hand, player_hand) in enumerate(zip(self.hands, player.hands)):
-                    if player_hand > actor_hand and player.put >= self.put:
-                        staked[i] = False
+            for player in self.game.players:
+                if player.shown:
+                    for i, (actor_hand, player_hand) in enumerate(zip(self.hands, player.hands)):
+                        if player_hand > actor_hand and player.put >= self.put:
+                            staked[i] = False
 
-        return any(staked)
+            return any(staked)
+        else:
+            raise GameFrameError('The player cannot showdown')
 
     @property
     def _relevant(self) -> bool:

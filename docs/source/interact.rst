@@ -167,6 +167,8 @@ Whether each action can be applied can also be queried through the corresponding
    player.put
    # An iterator of the hands of the player.
    player.hands
+   # Most poker games only have one evaluator. Get the first hand.
+   next(player.hands)
    # True if the player has mucked, else False.
    player.mucked
    # True if the player has shown, else False.
