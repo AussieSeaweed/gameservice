@@ -17,7 +17,7 @@ class RockPaperScissorsGame(Game):
 
         :return: The winning player of this rock paper scissors game if there is one, else None.
         """
-        if not self.is_terminal() or self.players[0]._hand == self.players[1]._hand:
+        if not self.is_terminal() or self.players[0]._hand is self.players[1]._hand:
             return None
         else:
             return max(self.players, key=RockPaperScissorsPlayer.hand.fget)

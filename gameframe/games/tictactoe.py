@@ -46,6 +46,17 @@ class TicTacToeGame(SequentialGame):
 
         return None
 
+    def mark(self, *coordinates):
+        """Parses the coordinates (tuples of two integers) as mark actions and applies them to this tic tac toe game.
+
+        :param coordinates: The coordinates to mark.
+        :return: This game.
+        """
+        for r, c in coordinates:
+            self.actor.mark(r, c)
+
+        return self
+
 
 class TicTacToePlayer(Actor):
     """TicTacToePlayer is the class for tic tac toe players."""
@@ -106,20 +117,9 @@ class _MarkAction(_SequentialAction):
         super().verify()
 
         if self.r is not None and self.c is not None:
-            if not (0 <= self.r < 3 and 0 <= self.c < 3):
+            if not isinstance(self.r, int) or not isinstance(self.c, int):
+                raise GameFrameError('The coordinates must be of type integer')
+            elif not (0 <= self.r < 3 and 0 <= self.c < 3):
                 raise GameFrameError('The coordinates must be within bounds (from 0 to 3 inclusive)')
             elif self.game._board[self.r][self.c] is not None:
                 raise GameFrameError('The cell to be marked must be empty')
-
-
-def parse_tic_tac_toe(game, coords):
-    """Parses the coords as mark actions and applies them the supplied tic tac toe game.
-
-    :param game: The tic tac toe game to be applied on.
-    :param coords: The coordinates to mark.
-    :return: None.
-    """
-    for r, c in coords:
-        game.actor.mark(r, c)
-
-    return game

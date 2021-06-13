@@ -1,4 +1,3 @@
-from random import choice
 from unittest import TestCase, main
 
 from gameframe.games.rockpaperscissors import RockPaperScissorsGame, RockPaperScissorsHand
@@ -13,8 +12,7 @@ class RockPaperScissorsTest(GameFrameTestCaseMixin, TestCase):
         return RockPaperScissorsGame()
 
     def act(self, game):
-        player = choice(tuple(player for player in game.players if player.hand is None))
-        player.throw(choice(tuple(RockPaperScissorsHand)))
+        (game.players[0] if game.players[0].hand is None else game.players[1]).throw()
 
     def verify(self, game):
         if game.is_terminal():

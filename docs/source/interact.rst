@@ -1,5 +1,5 @@
-Interacting with Games
-======================
+Game Interactions
+=================
 
 In order to use the gameframe package in your project, you must first import it.
 
@@ -8,13 +8,16 @@ In order to use the gameframe package in your project, you must first import it.
    from gameframe import ...
 
 
+Interacting with Games
+---------------------------------
+
 All games implemented in gameframe share some attributes.
 
 .. code-block:: python
 
    from gameframe.games.tictactoe import TicTacToeGame
 
-   # Create a no-limit Texas Hold'em game.
+   # Create a game.
    game = TicTacToeGame()
 
    # Get the nature.
@@ -29,24 +32,71 @@ Currently, all implemented games have natures that are irrelevant to the gamepla
 poker, natures play a crucial role.
 
 
-Interacting with Sequential games
+Interacting with Sequential Games
 ---------------------------------
 
-Almost all games (currently except rock paper scissors) are sequential games. They have an extra actor attribute that
-can be accessed. It represents the current player to act.
+Sequential games have an extra actor attribute that can be accessed. It represents the current player to act.
 
 .. code-block:: python
 
    from gameframe.games.tictactoe import TicTacToeGame
 
-   # Create a no-limit Texas Hold'em game.
+   # Create a sequential game.
    game = TicTacToeGame()
 
    # Get the current actor (either None, the nature or one of the players).
    game.actor
 
 
-Interacting with Tic Tac Toe games
+Interacting with Rock Paper Scissors Games
+------------------------------------------
+
+Rock Paper Scissors game is the simplest game implemented on GameFrame. The following codes demonstrates how to use it.
+
+.. code-block:: python
+
+   from gameframe.games.rockpaperscissors import RockPaperScissorsGame, RockPaperScissorsHand
+
+   game = RockPaperScissorsGame()
+   player = game.players[0]
+
+   # Throw a random hand.
+   player.throw()
+   # Throw the specified hand.
+   player.throw(RockPaperScissorsHand.ROCK)
+   # True if the player can throw any hand.
+   player.can_throw()
+   # True if the player can throw the specified hand.
+   player.can_throw(RockPaperScissorsHand.SCISSORS)
+
+   # The winner of the game (either None or one of the players).
+   game.winner
+   # The hand of the player.
+   player.hand
+
+
+This is a sample game.
+
+.. code-block:: python
+
+   from gameframe.games.rockpaperscissors import RockPaperScissorsGame, RockPaperScissorsHand
+
+   game = RockPaperScissorsGame()
+   x, y = game.players
+
+   x.throw(RockPaperScissorsHand.ROCK)
+   y.throw(RockPaperScissorsHand.PAPER)
+
+
+This code results in the following:
+
+.. code-block:: console
+
+   Hands: RockPaperScissorsHand.ROCK RockPaperScissorsHand.PAPER
+   Winner: Second
+
+
+Interacting with Tic Tac Toe Games
 ----------------------------------
 
 This section will explain how to play tic tac toe games.
@@ -59,6 +109,8 @@ This section will explain how to play tic tac toe games.
 
    player = game.players[0]
 
+   # Mark a random empty coordinate.
+   player.mark()
    # Mark the coordinate.
    player.mark(1, 1)
    # True if the player can mark any coordinate.
@@ -76,8 +128,23 @@ This section will explain how to play tic tac toe games.
 
 The code below demonstrates a sample tic tac toe game.
 
-.. literalinclude:: examples/tictactoe.py
-   :language: python
+.. code-block:: python
+
+   from gameframe.games.tictactoe import TicTacToeGame
+
+   game = TicTacToeGame()
+   x, y = game.players
+
+   x.mark(1, 1)
+   y.mark(0, 0)
+   x.mark(2, 0)
+   y.mark(0, 2)
+   x.mark(0, 1)
+   y.mark(2, 1)
+   x.mark(1, 2)
+   y.mark(1, 0)
+   x.mark(2, 2)
+
 
 The game result is as follows:
 
@@ -90,10 +157,15 @@ The game result is as follows:
    Winner: None
 
 
-You can also use the parser, as demonstrated below:
+You can simplify this, as demonstrated below:
 
-.. literalinclude:: examples/tictactoe_parser.py
-   :language: python
+.. code-block:: python
+
+   from gameframe.games.tictactoe import TicTacToeGame
+
+   game = TicTacToeGame()
+
+   game.mark((0, 0), (1, 0), (0, 1), (1, 1), (0, 2))
 
 
 The game result is as follows:
@@ -108,45 +180,5 @@ The game result is as follows:
 
 
 Note that each poker player has a string representation of either 'X' or 'O'.
-
-
-Interacting with Rock Paper Scissors games
-------------------------------------------
-
-Rock Paper Scissors game is the simplest game implemented on GameFrame. The following codes demonstrates how to use it.
-
-.. code-block:: python
-
-   from gameframe.games.rockpaperscissors import RockPaperScissorsGame, RockPaperScissorsHand
-
-   game = RockPaperScissorsGame()
-   player = game.players[0]
-
-   # Throw the specified hand.
-   player.throw(RockPaperScissorsHand.ROCK)
-   # True if the player can throw any hand.
-   player.can_throw()
-   # True if the player can throw the specified hand.
-   player.can_throw(RockPaperScissorsHand.SCISSORS)
-
-   # The winner of the game (either None or one of the players).
-   game.winner
-   # The hand of the player.
-   player.hand
-
-
-This is a sample game.
-
-.. literalinclude:: examples/rockpaperscissors.py
-   :language: python
-
-
-This code results in the following:
-
-.. code-block:: console
-
-   Hands: RockPaperScissorsHand.ROCK RockPaperScissorsHand.PAPER
-   Winner: Second
-
 
 For more information, you can look at the gameframe API documentations.

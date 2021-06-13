@@ -33,6 +33,7 @@ Contributing
 ------------
 
 Current focuses of development are the following:
+
    - improve existing games' speed
    - implement more types of games
    - improve documentations
@@ -44,7 +45,6 @@ You can contribute on `Github <https://github.com/AussieSeaweed/gameframe>`_.
    :caption: Contents:
 
    install
-   create
    interact
    gameframe
 

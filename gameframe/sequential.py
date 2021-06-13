@@ -1,9 +1,6 @@
 """This module defines the base abstract classes for all elements of sequential games in GameFrame.
 
-Sequential games have an extra attribute of actor. It denotes the current actor to act in the game.
-If they are set to None, the sequential games will become terminal.
-
-All elements of sequential games in GameFrame should inherit from the above classes.
+All elements of sequential games in GameFrame should inherit from the classes defined here.
 """
 from abc import ABC
 

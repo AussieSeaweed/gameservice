@@ -1,5 +1,5 @@
-GameFrame API
-=============
+gameframe package
+=================
 
 .. toctree::
    :maxdepth: 4
