@@ -1,23 +1,23 @@
 from random import choice
 from unittest import TestCase, main
 
-from gameframe.rockpaperscissors import RockPaperScissors, RockPaperScissorsHand
+from gameframe.games.rockpaperscissors import RockPaperScissorsGame, RockPaperScissorsHand
 from gameframe.tests import GameFrameTestCaseMixin
 
 
-class RockPaperScissorsTest(GameFrameTestCaseMixin[RockPaperScissors], TestCase):
+class RockPaperScissorsTest(GameFrameTestCaseMixin, TestCase):
     MONTE_CARLO_TEST_COUNT = 10000
     SPEED_TEST_TIME = 1
 
-    def create_game(self) -> RockPaperScissors:
-        return RockPaperScissors()
+    def create_game(self):
+        return RockPaperScissorsGame()
 
-    def act(self, game: RockPaperScissors) -> None:
+    def act(self, game):
         player = choice(tuple(player for player in game.players if player.hand is None))
         player.throw(choice(tuple(RockPaperScissorsHand)))
 
-    def verify(self, game: RockPaperScissors) -> None:
-        if game.terminal:
+    def verify(self, game):
+        if game.is_terminal():
             self.assertTrue(game.players[0].hand is not None or game.players[1].hand is not None)
 
             if game.winner is game.players[0]:

@@ -1,7 +1,7 @@
 """This is a sample rock paper scissors game."""
-from gameframe.rockpaperscissors import RockPaperScissors, RockPaperScissorsHand
+from gameframe.games.rockpaperscissors import RockPaperScissorsGame, RockPaperScissorsHand
 
-game = RockPaperScissors()
+game = RockPaperScissorsGame()
 x, y = game.players
 
 x.throw(RockPaperScissorsHand.ROCK)

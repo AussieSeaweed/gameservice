@@ -1,8 +1,4 @@
-auxiliary
-mypy
-pokertools
 sphinx
-sphinx-autodoc-typehints
 sphinx-rtd-theme
 twine
 wheel
