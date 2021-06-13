@@ -1,9 +1,8 @@
 from random import choice
-from typing import cast
 from unittest import TestCase, main
 
 from gameframe import GameFrameError
-from gameframe.games.tictactoe import TicTacToeGame, TicTacToePlayer, parse_tic_tac_toe
+from gameframe.games.tictactoe import TicTacToeGame, parse_tic_tac_toe
 from gameframe.tests import GameFrameTestCaseMixin
 
 
@@ -72,7 +71,7 @@ class TicTacToeTest(GameFrameTestCaseMixin, TestCase):
         return TicTacToeGame()
 
     def act(self, game):
-        cast(TicTacToePlayer, game.actor).mark(*choice(game.empty_coordinates))
+        game.actor.mark(*choice(game.empty_coordinates))
 
     def verify(self, game):
         if game.is_terminal():
@@ -88,7 +87,7 @@ class TicTacToeTest(GameFrameTestCaseMixin, TestCase):
         else:
             self.assertTrue(game.empty_coordinates and game.winner is None)
 
-            actor = cast(TicTacToePlayer, game.actor)
+            actor = game.actor
             non_actor = game.players[1 if game.players[0] is actor else 0]
 
             self.assertTrue(actor.can_mark())
