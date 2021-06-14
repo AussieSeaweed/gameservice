@@ -96,9 +96,7 @@ class _MarkAction(_SequentialAction):
             raise ValueError('Either all or no row-column coordinates should be supplied')
 
         self.r = r
-        '''The optional row number of the cell to be marked.'''
         self.c = c
-        '''The optional column number of the cell to be marked.'''
 
     def act(self):
         super().act()

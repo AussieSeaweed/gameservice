@@ -1,5 +1,6 @@
 """This module defines various components of rock paper scissors games."""
 from enum import Enum
+from functools import cached_property
 from random import choice
 
 from gameframe import Actor, Game, GameFrameError, _Action
@@ -71,16 +72,20 @@ class RockPaperScissorsHand(Enum):
     The rock paper scissors hand can be compared to each other according to the rock paper scissors rules.
     """
 
-    ROCK = 0
+    ROCK = 'Rock'
     '''The rock hand.'''
-    PAPER = 1
+    PAPER = 'Paper'
     '''The paper hand.'''
-    SCISSORS = 2
+    SCISSORS = 'Scissors'
     '''The scissors hand.'''
+
+    @cached_property
+    def _index(self):
+        return tuple(RockPaperScissorsHand).index(self)
 
     def __lt__(self, other):
         if isinstance(other, RockPaperScissorsHand):
-            return (self.value + 1) % 3 == other.value
+            return (self._index + 1) % 3 == other._index
         else:
             return NotImplemented
 
