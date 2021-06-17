@@ -1,4 +1,4 @@
-"""This module defines the base abstract classes for all elements of sequential games in GameFrame.
+"""This module defines the abstract base classes for all elements of sequential games in GameFrame.
 
 All elements of sequential games in GameFrame should inherit from the classes defined here.
 """
@@ -9,7 +9,7 @@ from gameframe.game import Game, _Action
 
 
 class SequentialGame(Game, ABC):
-    """SequentialGame is the base abstract class for all sequential games.
+    """SequentialGame is the abstract base class for all sequential games.
 
     In sequential games, only one actor can act at a time and is stored in the actor property. If a sequential game is
     terminal, its actor attribute must be set to None to denote such.

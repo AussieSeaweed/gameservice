@@ -1,4 +1,4 @@
-"""This module defines the base abstract classes for all components of games in GameFrame.
+"""This module defines the abstract base classes for all components of games in GameFrame.
 
 These components are as follows:
 
@@ -14,7 +14,7 @@ from gameframe.exceptions import GameFrameError
 
 
 class Game(ABC):
-    """Game is the base abstract class for all games.
+    """Game is the abstract base class for all games.
 
     Every game has to define its nature and players.
 
