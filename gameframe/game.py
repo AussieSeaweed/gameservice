@@ -68,6 +68,14 @@ class Actor:
         """
         return self.__game
 
+    @property
+    def index(self):
+        """Returns the index of this actor.
+
+        :return: The index of this actor.
+        """
+        return self.game.players.index(self)
+
 
 class _Action(ABC):
     def __init__(self, actor):
