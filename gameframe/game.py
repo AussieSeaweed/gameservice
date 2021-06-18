@@ -4,7 +4,7 @@ These components are as follows:
 
 - Game
 - Actor
-- Action
+- Action (internal)
 
 All elements of games in GameFrame should inherit from the above classes.
 """
