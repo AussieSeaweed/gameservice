@@ -79,6 +79,7 @@ class _Action(ABC):
 
     def act(self):
         self.verify()
+        self.apply()
 
     def can_act(self):
         try:
@@ -93,3 +94,7 @@ class _Action(ABC):
             raise GameFrameError('The supplied actor must be a valid actor')
         elif self.game.is_terminal():
             raise GameFrameError('Actions can only be applied to non-terminal games')
+
+    @abstractmethod
+    def apply(self):
+        ...

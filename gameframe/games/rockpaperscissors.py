@@ -96,14 +96,6 @@ class _ThrowAction(_Action):
 
         self.hand = hand
 
-    def act(self):
-        super().act()
-
-        if self.hand is None:
-            self.hand = choice(tuple(RockPaperScissorsHand))
-
-        self.actor._hand = self.hand
-
     def verify(self):
         super().verify()
 
@@ -111,3 +103,9 @@ class _ThrowAction(_Action):
             raise GameFrameError('The hand to be thrown is not a valid rock paper scissors hand')
         elif self.actor._hand is not None:
             raise GameFrameError('The player must not have played a hand previously')
+
+    def apply(self):
+        if self.hand is None:
+            self.hand = choice(tuple(RockPaperScissorsHand))
+
+        self.actor._hand = self.hand

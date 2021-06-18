@@ -98,19 +98,6 @@ class _MarkAction(_SequentialAction):
         self.r = r
         self.c = c
 
-    def act(self):
-        super().act()
-
-        if self.r is None or self.c is None:
-            self.r, self.c = choice(self.game.empty_coordinates)
-
-        self.game._board[self.r][self.c] = self.actor
-
-        if self.game.empty_coordinates and self.game.winner is None:
-            self.game._actor = self.game.players[self.game.players[0] is self.actor]
-        else:
-            self.game._actor = None
-
     def verify(self):
         super().verify()
 
@@ -121,3 +108,14 @@ class _MarkAction(_SequentialAction):
                 raise GameFrameError('The coordinates must be within bounds (from 0 to 3 inclusive)')
             elif self.game._board[self.r][self.c] is not None:
                 raise GameFrameError('The cell to be marked must be empty')
+
+    def apply(self):
+        if self.r is None or self.c is None:
+            self.r, self.c = choice(self.game.empty_coordinates)
+
+        self.game._board[self.r][self.c] = self.actor
+
+        if self.game.empty_coordinates and self.game.winner is None:
+            self.game._actor = self.game.players[self.game.players[0] is self.actor]
+        else:
+            self.game._actor = None
