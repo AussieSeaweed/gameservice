@@ -70,11 +70,27 @@ class Actor:
 
     @property
     def index(self):
-        """Returns the index of this actor.
+        """Returns the optional index of this actor.
 
-        :return: The index of this actor.
+        If this actor is the nature, None is returned.
+
+        :return: The optional index of this actor.
         """
-        return self.game.players.index(self)
+        return None if self.is_nature() else self.game.players.index(self)
+
+    def is_nature(self):
+        """Returns whether or not if this actor is the nature.
+
+        :return: True if this actor is the nature, else False.
+        """
+        return self is self.game.nature
+
+    def is_player(self):
+        """Returns whether or not if this actor is one of the players.
+
+        :return: True if this actor is one of the players, else False.
+        """
+        return self is not self.game.nature
 
 
 class _Action(ABC):
