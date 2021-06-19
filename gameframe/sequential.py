@@ -54,5 +54,5 @@ class _SequentialAction(_Action, ABC):
     def verify(self):
         super().verify()
 
-        if self.game.actor is not self.actor:
+        if not self.game.actor.is_actor():
             raise GameFrameError('The actor must be in turn to act')
