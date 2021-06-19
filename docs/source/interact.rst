@@ -7,9 +7,8 @@ In order to use the gameframe package in your project, you must first import it.
 
    from gameframe import ...
 
-
 Interacting with Games
----------------------------------
+----------------------
 
 All games implemented in gameframe share some attributes.
 
@@ -27,10 +26,19 @@ All games implemented in gameframe share some attributes.
    # True if the game is terminal, else False.
    game.is_terminal()
 
+   actor = game.nature
+
+   # The game of this actor.
+   actor.game
+   # None if this actor is the nature, else the index of this player.
+   actor.index
+   # True if the actor is the nature, else False.
+   actor.is_nature()
+   # True if the actor is one of the players, else False.
+   actor.is_player()
 
 Currently, all implemented games have natures that are irrelevant to the gameplay. However, in some games, such as
 poker, natures play a crucial role.
-
 
 Interacting with Sequential Games
 ---------------------------------
@@ -47,6 +55,10 @@ Sequential games have an extra actor attribute that can be accessed. It represen
    # Get the current actor (either None, the nature or one of the players).
    game.actor
 
+   actor = game.players[0]
+
+   # True if this actor is in turn to act, else False.
+   actor.is_actor()
 
 Interacting with Rock Paper Scissors Games
 ------------------------------------------
@@ -74,7 +86,6 @@ Rock Paper Scissors game is the simplest game implemented on GameFrame. The foll
    # The hand of the player.
    player.hand
 
-
 This is a sample game.
 
 .. code-block:: python
@@ -87,14 +98,12 @@ This is a sample game.
    x.throw(RockPaperScissorsHand.ROCK)
    y.throw(RockPaperScissorsHand.PAPER)
 
-
 This code results in the following:
 
 .. code-block:: console
 
    Hands: RockPaperScissorsHand.ROCK RockPaperScissorsHand.PAPER
    Winner: Second
-
 
 Interacting with Tic Tac Toe Games
 ----------------------------------
@@ -125,7 +134,6 @@ This section will explain how to play tic tac toe games.
    # The winner of the game (either None or one of the players).
    game.winner
 
-
 The code below demonstrates a sample tic tac toe game.
 
 .. code-block:: python
@@ -145,7 +153,6 @@ The code below demonstrates a sample tic tac toe game.
    y.mark(1, 0)
    x.mark(2, 2)
 
-
 The game result is as follows:
 
 .. code-block:: console
@@ -155,7 +162,6 @@ The game result is as follows:
    X O O
    O X O
    Winner: None
-
 
 You can simplify this, as demonstrated below:
 
@@ -167,7 +173,6 @@ You can simplify this, as demonstrated below:
 
    game.mark((0, 0), (1, 0), (0, 1), (1, 1), (0, 2))
 
-
 The game result is as follows:
 
 .. code-block:: console
@@ -177,7 +182,6 @@ The game result is as follows:
    X    X    None
    None None None
    Winner: O
-
 
 Note that each poker player has a string representation of either 'X' or 'O'.
 

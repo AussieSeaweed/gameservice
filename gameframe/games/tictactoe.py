@@ -1,14 +1,15 @@
 """This module defines various components of tic tac toe games."""
 from random import choice
 
-from gameframe import Actor, GameFrameError, SequentialGame, _SequentialAction
+from gameframe.exceptions import GameFrameError
+from gameframe.sequential import SequentialActor, SequentialGame, _SequentialAction
 
 
 class TicTacToeGame(SequentialGame):
     """TicTacToeGame is the class for tic tac toe games."""
 
     def __init__(self):
-        super().__init__(0, Actor(self), (TicTacToePlayer(self), TicTacToePlayer(self)))
+        super().__init__(0, SequentialActor(self), (TicTacToePlayer(self), TicTacToePlayer(self)))
 
         self._board = [[None, None, None], [None, None, None], [None, None, None]]
 
@@ -58,7 +59,7 @@ class TicTacToeGame(SequentialGame):
         return self
 
 
-class TicTacToePlayer(Actor):
+class TicTacToePlayer(SequentialActor):
     """TicTacToePlayer is the class for tic tac toe players."""
 
     def __repr__(self):

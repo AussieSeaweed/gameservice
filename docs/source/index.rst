@@ -15,7 +15,6 @@ The following games are already implemented in GameFrame...
 
 In addition, many poker game variants are implemented on `PokerTools <https://pokertools.readthedocs.io/>`_ package.
 
-
 Speed
 -----
 
@@ -28,7 +27,6 @@ Although GameFrame is entirely written in Python, it should be fast enough for m
  Rock Paper Scissors                      ~100000
 =================================  ===================
 
-
 Contributing
 ------------
 
@@ -40,19 +38,18 @@ Current focuses of development are the following:
 
 You can contribute on `Github <https://github.com/AussieSeaweed/gameframe>`_.
 
+License
+-------
+
+`GNU GPLv3 <https://choosealicense.com/licenses/gpl-3.0/>`_
+
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
    install
    interact
-   gameframe
-
-
-License
--------
-`GNU GPLv3 <https://choosealicense.com/licenses/gpl-3.0/>`_
-
+   modules
 
 Indices and tables
 ==================

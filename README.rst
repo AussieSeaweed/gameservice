@@ -12,7 +12,7 @@ In addition, many poker game variants are implemented on `PokerTools <https://po
 
 The full documentation is available at `Read the Docs <https://gameframe.readthedocs.io/>`_.
 
-
 License
 -------
+
 `GNU GPLv3 <https://choosealicense.com/licenses/gpl-3.0/>`_

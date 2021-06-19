@@ -5,7 +5,7 @@ All elements of sequential games in GameFrame should inherit from the classes de
 from abc import ABC
 
 from gameframe.exceptions import GameFrameError
-from gameframe.game import Game, _Action
+from gameframe.game import Actor, Game, _Action
 
 
 class SequentialGame(Game, ABC):
@@ -34,6 +34,20 @@ class SequentialGame(Game, ABC):
 
     def is_terminal(self):
         return self.actor is None
+
+
+class SequentialActor(Actor):
+    """SequentialActor is the class for sequential actors.
+
+    Sequential actors can only act in turn.
+    """
+
+    def is_actor(self):
+        """Returns whether or not if this actor is in turn to act.
+
+        :return: True if this actor is in turn to act, else False.
+        """
+        return self is self.game.actor
 
 
 class _SequentialAction(_Action, ABC):

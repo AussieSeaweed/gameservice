@@ -2,7 +2,8 @@
 from enum import Enum
 from random import choice
 
-from gameframe import Actor, Game, GameFrameError, _Action
+from gameframe.exceptions import GameFrameError
+from gameframe.game import Actor, Game, _Action
 
 
 class RockPaperScissorsGame(Game):

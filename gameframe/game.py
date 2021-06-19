@@ -74,7 +74,7 @@ class Actor:
 
         If this actor is the nature, None is returned.
 
-        :return: The optional index of this actor.
+        :return: None if this actor is the nature, else the index of this player.
         """
         return None if self.is_nature() else self.game.players.index(self)
 

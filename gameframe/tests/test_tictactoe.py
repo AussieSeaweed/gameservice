@@ -1,6 +1,6 @@
 from unittest import TestCase, main
 
-from gameframe import GameFrameError
+from gameframe.exceptions import GameFrameError
 from gameframe.games.tictactoe import TicTacToeGame
 from gameframe.tests import GameFrameTestCaseMixin
 
