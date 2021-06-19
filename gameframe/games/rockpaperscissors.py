@@ -1,6 +1,5 @@
 """This module defines various components of rock paper scissors games."""
 from enum import Enum
-from functools import cached_property
 from random import choice
 
 from gameframe import Actor, Game, GameFrameError, _Action
@@ -79,7 +78,7 @@ class RockPaperScissorsHand(Enum):
     SCISSORS = 'Scissors'
     '''The scissors hand.'''
 
-    @cached_property
+    @property
     def _index(self):
         return tuple(RockPaperScissorsHand).index(self)
 
@@ -99,9 +98,11 @@ class _ThrowAction(_Action):
     def verify(self):
         super().verify()
 
-        if self.hand is not None and not isinstance(self.hand, RockPaperScissorsHand):
-            raise GameFrameError('The hand to be thrown is not a valid rock paper scissors hand')
-        elif self.actor._hand is not None:
+        if self.hand is not None:
+            if not isinstance(self.hand, RockPaperScissorsHand):
+                raise GameFrameError('The hand to be thrown is not a valid rock paper scissors hand')
+
+        if self.actor._hand is not None:
             raise GameFrameError('The player must not have played a hand previously')
 
     def apply(self):
