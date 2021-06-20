@@ -79,15 +79,15 @@ class RockPaperScissorsHand(Enum):
     SCISSORS = 'Scissors'
     '''The scissors hand.'''
 
-    @property
-    def _index(self):
-        return tuple(RockPaperScissorsHand).index(self)
-
     def __lt__(self, other):
         if isinstance(other, RockPaperScissorsHand):
             return (self._index + 1) % 3 == other._index
         else:
             return NotImplemented
+
+    @property
+    def _index(self):
+        return tuple(RockPaperScissorsHand).index(self)
 
 
 class _ThrowAction(_Action):
