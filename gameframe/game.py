@@ -115,7 +115,7 @@ class _Action(ABC):
 
     def verify(self):
         if not isinstance(self.actor, Actor):
-            raise GameFrameError('The supplied actor must be a valid actor')
+            raise TypeError('The supplied actor must of type Actor')
         elif self.game.is_terminal():
             raise GameFrameError('Actions can only be applied to non-terminal games')
 

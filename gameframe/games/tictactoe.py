@@ -104,7 +104,7 @@ class _MarkAction(_SequentialAction):
 
         if self.r is not None and self.c is not None:
             if not isinstance(self.r, int) or not isinstance(self.c, int):
-                raise GameFrameError('The coordinates must be of type integer')
+                raise TypeError('The coordinates must be of type integer')
             elif not (0 <= self.r < 3 and 0 <= self.c < 3):
                 raise GameFrameError('The coordinates must be within bounds (from 0 to 3 inclusive)')
             elif self.game._board[self.r][self.c] is not None:

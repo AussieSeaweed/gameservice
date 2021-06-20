@@ -101,7 +101,7 @@ class _ThrowAction(_Action):
 
         if self.hand is not None:
             if not isinstance(self.hand, RockPaperScissorsHand):
-                raise GameFrameError('The hand to be thrown is not a valid rock paper scissors hand')
+                raise TypeError('The hand to be thrown must be of type RockPaperScissorsHand')
 
         if self.actor._hand is not None:
             raise GameFrameError('The player must not have played a hand previously')
