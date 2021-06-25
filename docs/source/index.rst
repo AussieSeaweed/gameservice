@@ -23,7 +23,7 @@ Although GameFrame is entirely written in Python, it should be fast enough for m
 =================================  ===================
               Game                  Speed (# games/s)
 ---------------------------------  -------------------
- Tic Tac Toe                              ~10000
+ Tic Tac Toe                              ~15000
  Rock Paper Scissors                      ~100000
 =================================  ===================
 
