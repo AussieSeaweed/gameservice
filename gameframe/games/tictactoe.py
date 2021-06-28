@@ -1,4 +1,5 @@
 """This module defines various components of tic tac toe games."""
+from itertools import filterfalse, product
 from random import choice
 
 from gameframe.exceptions import GameFrameError
@@ -27,7 +28,7 @@ class TicTacToeGame(SequentialGame):
 
         :return: The list of the empty coordinates of the board.
         """
-        return tuple((r, c) for r in range(3) for c in range(3) if self._board[r][c] is None)
+        return tuple(filterfalse(self._get_cell, product(range(3), range(3))))
 
     @property
     def winner(self):
@@ -57,6 +58,9 @@ class TicTacToeGame(SequentialGame):
             self.actor.mark(r, c)
 
         return self
+
+    def _get_cell(self, coords):
+        return self._board[coords[0]][coords[1]]
 
 
 class TicTacToePlayer(SequentialActor):
