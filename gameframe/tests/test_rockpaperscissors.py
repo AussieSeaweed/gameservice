@@ -5,8 +5,7 @@ from gameframe.tests import GameFrameTestCaseMixin
 
 
 class RockPaperScissorsTest(GameFrameTestCaseMixin, TestCase):
-    MONTE_CARLO_TEST_COUNT = 10000
-    SPEED_TEST_TIME = 1
+    TEST_TIME = 1
 
     def create_game(self):
         return RockPaperScissorsGame()

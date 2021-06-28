@@ -6,8 +6,7 @@ from gameframe.tests import GameFrameTestCaseMixin
 
 
 class TicTacToeTest(GameFrameTestCaseMixin, TestCase):
-    MONTE_CARLO_TEST_COUNT = 1000
-    SPEED_TEST_TIME = 1
+    TEST_TIME = 1
 
     def test_draws(self):
         for game in (
