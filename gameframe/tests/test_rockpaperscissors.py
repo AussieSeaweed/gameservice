@@ -4,7 +4,7 @@ from gameframe.games.rockpaperscissors import RockPaperScissorsGame, RockPaperSc
 from gameframe.tests import GameFrameTestCaseMixin
 
 
-class RockPaperScissorsTest(GameFrameTestCaseMixin, TestCase):
+class RockPaperScissorsTestCase(GameFrameTestCaseMixin, TestCase):
     def create_game(self):
         return RockPaperScissorsGame()
 

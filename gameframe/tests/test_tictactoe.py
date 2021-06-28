@@ -5,7 +5,7 @@ from gameframe.games.tictactoe import TicTacToeGame
 from gameframe.tests import GameFrameTestCaseMixin
 
 
-class TicTacToeTest(GameFrameTestCaseMixin, TestCase):
+class TicTacToeTestCase(GameFrameTestCaseMixin, TestCase):
     def test_draws(self):
         for game in (
                 TicTacToeGame().mark((1, 1), (0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2)),
