@@ -90,7 +90,7 @@ class Actor:
 
         :return: True if this actor is one of the players, else False.
         """
-        return self is not self.game.nature
+        return self in self.game.players
 
 
 class _Action(ABC):
@@ -114,9 +114,7 @@ class _Action(ABC):
             return True
 
     def verify(self):
-        if not isinstance(self.actor, Actor):
-            raise TypeError('The supplied actor must of type Actor')
-        elif self.game.is_terminal():
+        if self.game.is_terminal():
             raise GameFrameError('Actions can only be applied to non-terminal games')
 
     @abstractmethod

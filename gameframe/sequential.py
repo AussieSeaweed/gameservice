@@ -22,7 +22,10 @@ class SequentialGame(Game, ABC):
     def __init__(self, initial_actor_index, nature, players):
         super().__init__(nature, players)
 
-        self._actor = self.nature if initial_actor_index is None else self.players[initial_actor_index]
+        if initial_actor_index is None:
+            self._actor = self.nature
+        else:
+            self._actor = self.players[initial_actor_index]
 
     @property
     def actor(self):
