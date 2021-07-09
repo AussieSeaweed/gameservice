@@ -26,7 +26,7 @@ class TicTacToeGame(SequentialGame):
     def empty_coordinates(self):
         """Returns the empty coordinates of the board of this tic tac toe game.
 
-        :return: The list of the empty coordinates of the board.
+        :return: The tuple of the empty coordinates of the board.
         """
         return tuple(filterfalse(self._get_cell, product(range(3), range(3))))
 
@@ -97,9 +97,6 @@ class _MarkAction(_SequentialAction):
     def __init__(self, r, c, actor):
         super().__init__(actor)
 
-        if (r is None) ^ (c is None):
-            raise ValueError('Either all or no row-column coordinates should be supplied')
-
         self.r = r
         self.c = c
 
@@ -113,6 +110,8 @@ class _MarkAction(_SequentialAction):
                 raise GameFrameError('The coordinates must be within bounds (from 0 to 3 inclusive)')
             elif self.game._board[self.r][self.c] is not None:
                 raise GameFrameError('The cell to be marked must be empty')
+        elif self.r is not None or self.c is not None:
+            raise ValueError('Either all or no row-column coordinates should be supplied')
 
     def apply(self):
         if self.r is None or self.c is None:
