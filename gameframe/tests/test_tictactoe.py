@@ -64,7 +64,7 @@ class TicTacToeTestCase(GameFrameTestCaseMixin, TestCase):
             self.assertTrue(game.empty_coordinates and game.winner is None)
 
             actor = game.actor
-            non_actor = game.players[1 if game.players[0] is actor else 0]
+            non_actor = game.players[game.players[0] is actor]
 
             self.assertTrue(actor.can_mark())
             self.assertFalse(non_actor.can_mark())
