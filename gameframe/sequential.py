@@ -14,18 +14,15 @@ class SequentialGame(Game, ABC):
     In sequential games, only one actor can act at a time and is stored in the actor property. If a sequential game is
     terminal, its actor attribute must be set to None to denote such.
 
-    :param initial_actor_index: The initial actor index. If it is None, the initial actor is set to the nature.
+    :param actor_index: The initial actor index. If it is None, the initial actor is set to the nature.
     :param nature: The nature of this game.
     :param players: The players of this game.
     """
 
-    def __init__(self, initial_actor_index, nature, players):
+    def __init__(self, actor_index, nature, players):
         super().__init__(nature, players)
 
-        if initial_actor_index is None:
-            self._actor = self.nature
-        else:
-            self._actor = self.players[initial_actor_index]
+        self._actor = self.nature if actor_index is None else self.players[actor_index]
 
     @property
     def actor(self):
