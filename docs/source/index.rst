@@ -49,7 +49,7 @@ License
 
    install
    interact
-   modules
+   gameframe
 
 Indices and tables
 ==================

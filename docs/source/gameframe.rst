@@ -1,16 +1,12 @@
-gameframe package
-=================
+GameFrame API
+==============
 
-Subpackages
------------
+Classes, functions, and variables in GameFrame are documented below. These classes contains core logic of games in
+GameFrame. They are highly customizable, allowing you to combine various derived classes to define and create custom
+games.
 
-.. toctree::
-   :maxdepth: 4
+Some example games are implemented inside the gameframe.games subpackage.
 
-   gameframe.games
-
-Submodules
-----------
 
 gameframe.exceptions module
 ---------------------------
@@ -20,6 +16,7 @@ gameframe.exceptions module
    :undoc-members:
    :show-inheritance:
 
+
 gameframe.game module
 ---------------------
 
@@ -27,6 +24,7 @@ gameframe.game module
    :members:
    :undoc-members:
    :show-inheritance:
+
 
 gameframe.sequential module
 ---------------------------
@@ -36,10 +34,20 @@ gameframe.sequential module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
 
-.. automodule:: gameframe
+gameframe.games.rockpaperscissors module
+----------------------------------------
+
+.. automodule:: gameframe.games.rockpaperscissors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+gameframe.games.tictactoe module
+--------------------------------
+
+.. automodule:: gameframe.games.tictactoe
    :members:
    :undoc-members:
    :show-inheritance:
