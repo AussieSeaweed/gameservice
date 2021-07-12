@@ -5,7 +5,7 @@ In order to use the gameframe package in your project, you must first import it.
 
 .. code-block:: python
 
-   from gameframe import ...
+   from gameframe import *
 
 Interacting with Games
 ----------------------
