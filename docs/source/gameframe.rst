@@ -7,7 +7,6 @@ games.
 
 Some example games are implemented inside the gameframe.games subpackage.
 
-
 gameframe.exceptions module
 ---------------------------
 
@@ -15,7 +14,6 @@ gameframe.exceptions module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 gameframe.game module
 ---------------------
@@ -25,7 +23,6 @@ gameframe.game module
    :undoc-members:
    :show-inheritance:
 
-
 gameframe.sequential module
 ---------------------------
 
@@ -34,7 +31,6 @@ gameframe.sequential module
    :undoc-members:
    :show-inheritance:
 
-
 gameframe.games.rockpaperscissors module
 ----------------------------------------
 
@@ -42,7 +38,6 @@ gameframe.games.rockpaperscissors module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 gameframe.games.tictactoe module
 --------------------------------
