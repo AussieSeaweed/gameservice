@@ -1,5 +1,5 @@
-GameFrame API
-==============
+GameFrame Package
+=================
 
 Classes, functions, and variables in GameFrame are documented below. These classes contains core logic of games in
 GameFrame. They are highly customizable, allowing you to combine various derived classes to define and create custom
