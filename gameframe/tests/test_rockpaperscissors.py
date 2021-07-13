@@ -1,6 +1,7 @@
+from itertools import filterfalse
 from unittest import TestCase, main
 
-from gameframe.games.rockpaperscissors import RockPaperScissorsGame, RockPaperScissorsHand
+from gameframe.games.rockpaperscissors import RockPaperScissorsGame, RockPaperScissorsHand, RockPaperScissorsPlayer
 from gameframe.tests import GameFrameTestCaseMixin
 
 
@@ -9,11 +10,11 @@ class RockPaperScissorsTestCase(GameFrameTestCaseMixin, TestCase):
         return RockPaperScissorsGame()
 
     def act(self, game):
-        (game.players[0] if game.players[0].hand is None else game.players[1]).throw()
+        next(filterfalse(RockPaperScissorsPlayer.hand.fget, game.players)).throw()
 
     def verify(self, game):
         if game.is_terminal():
-            self.assertTrue(game.players[0].hand is not None or game.players[1].hand is not None)
+            self.assertTrue(game.players[0].hand is not None and game.players[1].hand is not None)
 
             if game.winner is game.players[0]:
                 self.assertGreater(game.players[0].hand, game.players[1].hand)

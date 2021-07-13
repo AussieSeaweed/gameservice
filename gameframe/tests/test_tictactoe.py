@@ -1,5 +1,7 @@
 from unittest import TestCase, main
 
+from auxiliary import next_or_none
+
 from gameframe.exceptions import GameFrameError
 from gameframe.games.tictactoe import TicTacToeGame
 from gameframe.tests import GameFrameTestCaseMixin
@@ -51,7 +53,7 @@ class TicTacToeTestCase(GameFrameTestCaseMixin, TestCase):
 
     def verify(self, game):
         if game.is_terminal():
-            self.assertTrue(not game.empty_coordinates or game.winner is not None)
+            self.assertTrue(next_or_none(game.empty_coordinates) is None or game.winner is not None)
 
             self.assertFalse(game.players[0].can_mark())
             self.assertFalse(game.players[1].can_mark())
@@ -61,10 +63,10 @@ class TicTacToeTestCase(GameFrameTestCaseMixin, TestCase):
                     self.assertFalse(game.players[0].can_mark(r, c))
                     self.assertFalse(game.players[1].can_mark(r, c))
         else:
-            self.assertTrue(game.empty_coordinates and game.winner is None)
+            self.assertFalse(next_or_none(game.empty_coordinates) is None or game.winner is not None)
 
             actor = game.actor
-            non_actor = game.players[game.players[0] is actor]
+            non_actor = next(actor)
 
             self.assertTrue(actor.can_mark())
             self.assertFalse(non_actor.can_mark())

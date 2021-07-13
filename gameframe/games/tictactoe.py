@@ -2,6 +2,8 @@
 from itertools import filterfalse, product
 from random import choice
 
+from auxiliary import next_or_none
+
 from gameframe.exceptions import GameFrameError
 from gameframe.sequential import SequentialActor, SequentialGame, _SequentialAction
 
@@ -28,7 +30,7 @@ class TicTacToeGame(SequentialGame):
 
         :return: The tuple of the empty coordinates of the board.
         """
-        return tuple(filterfalse(self._get_cell, product(range(3), range(3))))
+        return filterfalse(self._get_cell, product(range(3), range(3)))
 
     @property
     def winner(self):
@@ -55,7 +57,7 @@ class TicTacToeGame(SequentialGame):
         :return: This game.
         """
         for r, c in coordinates:
-            self.actor.mark(r, c)
+            self._actor.mark(r, c)
 
         return self
 
@@ -67,7 +69,7 @@ class TicTacToePlayer(SequentialActor):
     """TicTacToePlayer is the class for tic tac toe players."""
 
     def __repr__(self):
-        return 'O' if self.game.players[0] is self else 'X'
+        return 'O' if self._game._players[0] is self else 'X'
 
     def mark(self, r=None, c=None):
         """Marks the cell of the board at the optionally specified coordinates.
@@ -108,18 +110,20 @@ class _MarkAction(_SequentialAction):
                 raise TypeError('The coordinates must be of type integer')
             elif not (0 <= self.r < 3 and 0 <= self.c < 3):
                 raise GameFrameError('The coordinates must be within bounds (from 0 to 3 inclusive)')
-            elif self.game._board[self.r][self.c] is not None:
+            elif self.actor._game._board[self.r][self.c] is not None:
                 raise GameFrameError('The cell to be marked must be empty')
         elif self.r is not None or self.c is not None:
             raise ValueError('Either all or no row-column coordinates should be supplied')
 
     def apply(self):
+        game = self.actor._game
+
         if self.r is None or self.c is None:
-            self.r, self.c = choice(self.game.empty_coordinates)
+            self.r, self.c = choice(tuple(game.empty_coordinates))
 
-        self.game._board[self.r][self.c] = self.actor
+        game._board[self.r][self.c] = self.actor
 
-        if self.game.empty_coordinates and self.game.winner is None:
-            self.game._actor = self.game.players[self.game.players[0] is self.actor]
+        if next_or_none(game.empty_coordinates) is not None and game.winner is None:
+            game._actor = next(self.actor)
         else:
-            self.game._actor = None
+            game._actor = None

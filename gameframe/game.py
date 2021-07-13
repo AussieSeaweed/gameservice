@@ -9,6 +9,7 @@ These components are as follows:
 All elements of games in GameFrame should inherit from the above classes.
 """
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
 
 from gameframe.exceptions import GameFrameError
 
@@ -23,8 +24,8 @@ class Game(ABC):
     """
 
     def __init__(self, nature, players):
-        self.__nature = nature
-        self.__players = tuple(players)
+        self._nature = nature
+        self._players = list(players)
 
     @property
     def nature(self):
@@ -32,7 +33,7 @@ class Game(ABC):
 
         :return: The nature of this game.
         """
-        return self.__nature
+        return self._nature
 
     @property
     def players(self):
@@ -40,7 +41,7 @@ class Game(ABC):
 
         :return: The players of this game.
         """
-        return self.__players
+        return tuple(self._players)
 
     @abstractmethod
     def is_terminal(self):
@@ -51,14 +52,17 @@ class Game(ABC):
         ...
 
 
-class Actor:
+class Actor(Iterator):
     """Actor is the class for actors.
 
     :param game: The game of this actor.
     """
 
     def __init__(self, game):
-        self.__game = game
+        self._game = game
+
+    def __next__(self):
+        return self._game._players[(self.index + 1) % len(self._game._players)]
 
     @property
     def game(self):
@@ -66,7 +70,7 @@ class Actor:
 
         :return: The game of this actor.
         """
-        return self.__game
+        return self._game
 
     @property
     def index(self):
@@ -76,30 +80,26 @@ class Actor:
 
         :return: None if this actor is the nature, else the index of this player.
         """
-        return None if self.is_nature() else self.game.players.index(self)
+        return None if self.is_nature() else self._game._players.index(self)
 
     def is_nature(self):
         """Returns whether or not if this actor is the nature.
 
         :return: True if this actor is the nature, else False.
         """
-        return self is self.game.nature
+        return self is self._game._nature
 
     def is_player(self):
         """Returns whether or not if this actor is one of the players.
 
         :return: True if this actor is one of the players, else False.
         """
-        return self in self.game.players
+        return self in self._game._players
 
 
 class _Action(ABC):
     def __init__(self, actor):
         self.actor = actor
-
-    @property
-    def game(self):
-        return self.actor.game
 
     def act(self):
         self.verify()
@@ -114,7 +114,7 @@ class _Action(ABC):
             return True
 
     def verify(self):
-        if self.game.is_terminal():
+        if self.actor._game.is_terminal():
             raise GameFrameError('Actions can only be applied to non-terminal games')
 
     @abstractmethod

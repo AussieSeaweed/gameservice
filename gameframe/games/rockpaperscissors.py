@@ -1,5 +1,4 @@
 """This module defines various components of rock paper scissors games."""
-from enum import Enum
 from random import choice
 
 from auxiliary import IndexedEnum
@@ -20,13 +19,13 @@ class RockPaperScissorsGame(Game):
 
         :return: The winning player of this rock paper scissors game if there is one, else None.
         """
-        if not self.is_terminal() or self.players[0]._hand is self.players[1]._hand:
+        if not self.is_terminal() or self._players[0]._hand is self._players[1]._hand:
             return None
         else:
-            return max(self.players, key=RockPaperScissorsPlayer.hand.fget)
+            return max(self._players, key=RockPaperScissorsPlayer.hand.fget)
 
     def is_terminal(self):
-        return self.players[0]._hand is not None and self.players[1]._hand is not None
+        return self._players[0]._hand is not None and self._players[1]._hand is not None
 
 
 class RockPaperScissorsPlayer(Actor):
@@ -105,7 +104,4 @@ class _ThrowAction(_Action):
             raise GameFrameError('The player must not have played a hand previously')
 
     def apply(self):
-        if self.hand is None:
-            self.hand = choice(tuple(RockPaperScissorsHand))
-
-        self.actor._hand = self.hand
+        self.actor._hand = choice(tuple(RockPaperScissorsHand)) if self.hand is None else self.hand
