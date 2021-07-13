@@ -1,3 +1,4 @@
+auxiliary
 sphinx
 sphinx-rtd-theme
 twine

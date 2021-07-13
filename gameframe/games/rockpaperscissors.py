@@ -2,6 +2,8 @@
 from enum import Enum
 from random import choice
 
+from auxiliary import IndexedEnum
+
 from gameframe.exceptions import GameFrameError
 from gameframe.game import Actor, Game, _Action
 
@@ -66,7 +68,7 @@ class RockPaperScissorsPlayer(Actor):
         return _ThrowAction(hand, self).can_act()
 
 
-class RockPaperScissorsHand(Enum):
+class RockPaperScissorsHand(IndexedEnum):
     """RockPaperScissorsHand is the enum class for rock paper scissors hands.
 
     The rock paper scissors hand can be compared to each other according to the rock paper scissors rules.
@@ -81,13 +83,9 @@ class RockPaperScissorsHand(Enum):
 
     def __lt__(self, other):
         if isinstance(other, RockPaperScissorsHand):
-            return (self._index + 1) % 3 == other._index
+            return (self.index + 1) % 3 == other.index
         else:
             return NotImplemented
-
-    @property
-    def _index(self):
-        return tuple(RockPaperScissorsHand).index(self)
 
 
 class _ThrowAction(_Action):
