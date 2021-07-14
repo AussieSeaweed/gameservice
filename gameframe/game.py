@@ -62,7 +62,7 @@ class Actor(Iterator):
         self._game = game
 
     def __next__(self):
-        return self.game.players[(self.index + 1) % len(self.game.players)]
+        return self.game.nature if self.is_nature() else self.game.players[(self.index + 1) % len(self.game.players)]
 
     @property
     def game(self):
