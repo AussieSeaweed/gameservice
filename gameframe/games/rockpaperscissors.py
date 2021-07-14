@@ -19,13 +19,13 @@ class RockPaperScissorsGame(Game):
 
         :return: The winning player of this rock paper scissors game if there is one, else None.
         """
-        if not self.is_terminal() or self._players[0]._hand is self._players[1]._hand:
+        if not self.is_terminal() or self.players[0].hand is self.players[1].hand:
             return None
         else:
-            return max(self._players, key=RockPaperScissorsPlayer.hand.fget)
+            return max(self.players, key=RockPaperScissorsPlayer.hand.fget)
 
     def is_terminal(self):
-        return self._players[0]._hand is not None and self._players[1]._hand is not None
+        return self.players[0].hand is not None and self.players[1].hand is not None
 
 
 class RockPaperScissorsPlayer(Actor):
@@ -100,7 +100,7 @@ class _ThrowAction(_Action):
             if not isinstance(self.hand, RockPaperScissorsHand):
                 raise TypeError('The hand to be thrown must be of type RockPaperScissorsHand')
 
-        if self.actor._hand is not None:
+        if self.actor.hand is not None:
             raise GameFrameError('The player must not have played a hand previously')
 
     def apply(self):

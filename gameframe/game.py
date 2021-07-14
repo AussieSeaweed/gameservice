@@ -62,7 +62,7 @@ class Actor(Iterator):
         self._game = game
 
     def __next__(self):
-        return self._game._players[(self.index + 1) % len(self._game._players)]
+        return self.game.players[(self.index + 1) % len(self.game.players)]
 
     @property
     def game(self):
@@ -80,21 +80,21 @@ class Actor(Iterator):
 
         :return: None if this actor is the nature, else the index of this player.
         """
-        return None if self.is_nature() else self._game._players.index(self)
+        return None if self.is_nature() else self.game.players.index(self)
 
     def is_nature(self):
         """Returns whether or not if this actor is the nature.
 
         :return: True if this actor is the nature, else False.
         """
-        return self is self._game._nature
+        return self is self.game.nature
 
     def is_player(self):
         """Returns whether or not if this actor is one of the players.
 
         :return: True if this actor is one of the players, else False.
         """
-        return self in self._game._players
+        return self in self.game.players
 
 
 class _Action(ABC):
@@ -114,7 +114,7 @@ class _Action(ABC):
             return True
 
     def verify(self):
-        if self.actor._game.is_terminal():
+        if self.actor.game.is_terminal():
             raise GameFrameError('Actions can only be applied to non-terminal games')
 
     @abstractmethod

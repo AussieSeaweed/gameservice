@@ -39,14 +39,14 @@ class TicTacToeGame(SequentialGame):
         :return: The winning player of the tic tac toe game if there is one, else None.
         """
         for i in range(3):
-            if self._board[i][0] is self._board[i][1] is self._board[i][2] is not None:
-                return self._board[i][0]
-            elif self._board[0][i] is self._board[1][i] is self._board[2][i] is not None:
-                return self._board[0][i]
+            if self.board[i][0] is self.board[i][1] is self.board[i][2] is not None:
+                return self.board[i][0]
+            elif self.board[0][i] is self.board[1][i] is self.board[2][i] is not None:
+                return self.board[0][i]
 
-        if self._board[1][1] is not None and (self._board[0][0] is self._board[1][1] is self._board[2][2]
-                                              or self._board[0][2] is self._board[1][1] is self._board[2][0]):
-            return self._board[1][1]
+        if self.board[1][1] is not None and (self.board[0][0] is self.board[1][1] is self.board[2][2]
+                                             or self.board[0][2] is self.board[1][1] is self.board[2][0]):
+            return self.board[1][1]
 
         return None
 
@@ -57,19 +57,19 @@ class TicTacToeGame(SequentialGame):
         :return: This game.
         """
         for r, c in coordinates:
-            self._actor.mark(r, c)
+            self.actor.mark(r, c)
 
         return self
 
     def _get_cell(self, coords):
-        return self._board[coords[0]][coords[1]]
+        return self.board[coords[0]][coords[1]]
 
 
 class TicTacToePlayer(SequentialActor):
     """TicTacToePlayer is the class for tic tac toe players."""
 
     def __repr__(self):
-        return 'O' if self._game._players[0] is self else 'X'
+        return 'O' if self.game.players[0] is self else 'X'
 
     def mark(self, r=None, c=None):
         """Marks the cell of the board at the optionally specified coordinates.
@@ -110,13 +110,13 @@ class _MarkAction(_SequentialAction):
                 raise TypeError('The coordinates must be of type integer')
             elif not (0 <= self.r < 3 and 0 <= self.c < 3):
                 raise GameFrameError('The coordinates must be within bounds (from 0 to 3 inclusive)')
-            elif self.actor._game._board[self.r][self.c] is not None:
+            elif self.actor.game.board[self.r][self.c] is not None:
                 raise GameFrameError('The cell to be marked must be empty')
         elif self.r is not None or self.c is not None:
             raise ValueError('Either all or no row-column coordinates should be supplied')
 
     def apply(self):
-        game = self.actor._game
+        game = self.actor.game
 
         if self.r is None or self.c is None:
             self.r, self.c = choice(tuple(game.empty_coordinates))

@@ -22,7 +22,7 @@ class SequentialGame(Game, ABC):
     def __init__(self, actor_index, nature, players):
         super().__init__(nature, players)
 
-        self._actor = self._nature if actor_index is None else self._players[actor_index]
+        self._actor = self.nature if actor_index is None else self.players[actor_index]
 
     @property
     def actor(self):
@@ -33,7 +33,7 @@ class SequentialGame(Game, ABC):
         return self._actor
 
     def is_terminal(self):
-        return self._actor is None
+        return self.actor is None
 
 
 class SequentialActor(Actor):
@@ -47,7 +47,7 @@ class SequentialActor(Actor):
 
         :return: True if this actor is in turn to act, else False.
         """
-        return self is self._game._actor
+        return self is self.game.actor
 
 
 class _SequentialAction(_Action, ABC):
