@@ -3,8 +3,8 @@ Example Games
 
 This section goes over some of the example games defined in the GameFrame package, which are as follows:
 
-- Rock paper scissors
-- Tic Tac Toe
+- Rock paper scissors: :class:`gameframe.games.rockpaperscissors.RockPaperScissorsGame`
+- Tic Tac Toe: :class:`gameframe.games.tictactoe.TicTacToeGame`
 
 Rock Paper Scissors Games
 -------------------------
@@ -41,9 +41,9 @@ rock paper scissors players, respectively.
 Rock paper scissors hands are represented by an enum class named
 :class:`gameframe.games.rockpaperscissors.RockPaperScissorsHand`. It has the following enum members:
 
-- :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsHand.ROCK`
-- :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsHand.PAPER`
-- :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsHand.SCISSORS`
+- Rock: :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsHand.ROCK`
+- Paper: :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsHand.PAPER`
+- Scissors: :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsHand.SCISSORS`
 
 The following code demonstrates interacting with rock paper scissor games.
 
