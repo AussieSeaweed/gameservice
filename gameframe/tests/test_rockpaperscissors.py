@@ -9,6 +9,51 @@ from gameframe.tests import GameFrameTestCaseMixin
 
 
 class RockPaperScissorsTestCase(GameFrameTestCaseMixin, TestCase):
+    def test_heads_up(self):
+        game = RockPaperScissorsGame()
+        game.players[0].throw(RockPaperScissorsHand.ROCK)
+        game.players[1].throw(RockPaperScissorsHand.SCISSORS)
+        self.assertIs(next(game.winners), game.players[0])
+
+        game = RockPaperScissorsGame()
+        game.players[0].throw(RockPaperScissorsHand.PAPER)
+        game.players[1].throw(RockPaperScissorsHand.SCISSORS)
+        self.assertIs(next(game.winners), game.players[1])
+
+        game = RockPaperScissorsGame()
+        game.players[0].throw(RockPaperScissorsHand.PAPER)
+        game.players[1].throw(RockPaperScissorsHand.PAPER)
+        self.assertIs(next_or_none(game.winners), None)
+
+    def test_non_heads_up(self):
+        game = RockPaperScissorsGame(3)
+
+        for player, hand_str in zip(game.players, ('Rock', 'Paper', 'Scissors')):
+            player.throw(RockPaperScissorsHand(hand_str))
+
+        self.assertSequenceEqual(tuple(game.winners), ())
+
+        game = RockPaperScissorsGame(4)
+
+        for player, hand_str in zip(game.players, ('Rock', 'Paper', 'Rock', 'Rock')):
+            player.throw(RockPaperScissorsHand(hand_str))
+
+        self.assertSequenceEqual(tuple(game.winners), (game.players[1],))
+
+        game = RockPaperScissorsGame(5)
+
+        for player, hand_str in zip(game.players, ('Rock', 'Paper', 'Scissors', 'Rock', 'Paper')):
+            player.throw(RockPaperScissorsHand(hand_str))
+
+        self.assertSequenceEqual(tuple(game.winners), ())
+
+        game = RockPaperScissorsGame(6)
+
+        for player, hand_str in zip(game.players, ('Paper', 'Paper', 'Rock', 'Rock', 'Paper', 'Paper')):
+            player.throw(RockPaperScissorsHand(hand_str))
+
+        self.assertSequenceEqual(tuple(game.winners), game.players[:2] + game.players[4:])
+
     def create_game(self):
         return RockPaperScissorsGame(randint(2, 5))
 
