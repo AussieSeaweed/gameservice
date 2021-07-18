@@ -35,9 +35,9 @@ players, respectively.
 Rock paper scissors hands are represented by an enum class called
 :class:`gameframe.games.rockpaperscissors.RockPaperScissorsHand`. It has the following enum members:
 
-- ROCK
-- PAPER
-- SCISSORS
+- :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsHand.ROCK`
+- :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsHand.PAPER`
+- :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsHand.SCISSORS`
 
 The following code demonstrates interacting with rock paper scissor games.
 
