@@ -48,7 +48,7 @@ License
    :maxdepth: 1
    :caption: Contents:
 
-   install
+   setup
    bases
    examples
    gameframe

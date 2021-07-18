@@ -1,12 +1,6 @@
 Base Game Classes
 =================
 
-In order to use the GameFrame package in your project, you must first import it.
-
-.. code-block:: python
-
-   from gameframe import *
-
 All games implemented in gameframe share some attributes. In general, there are two classes of games:
 
   - Non-sequential games
