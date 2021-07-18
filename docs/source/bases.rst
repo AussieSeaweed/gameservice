@@ -3,8 +3,8 @@ Base Game Classes
 
 All games implemented in gameframe share some attributes. In general, there are two classes of games:
 
-  - Non-sequential games: :class:`gameframe.game.Game`
-  - Sequential games: :class:`gameframe.sequential.SequentialGame`
+  - Non-sequential games: :mod:`gameframe.game`
+  - Sequential games: :mod:`gameframe.sequential`
 
 All games implemented on gameframe are of the above game types.
 

@@ -3,8 +3,8 @@ Example Games
 
 This section goes over some of the example games defined in the GameFrame package, which are as follows:
 
-- Rock paper scissors: :class:`gameframe.games.rockpaperscissors.RockPaperScissorsGame`
-- Tic Tac Toe: :class:`gameframe.games.tictactoe.TicTacToeGame`
+- Rock Paper Scissors: :mod:`gameframe.games.rockpaperscissors`
+- Tic Tac Toe: :mod:`gameframe.games.tictactoe`
 
 Rock Paper Scissors Games
 -------------------------
