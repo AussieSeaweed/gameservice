@@ -1,5 +1,8 @@
 from itertools import filterfalse
+from random import randint
 from unittest import TestCase, main
+
+from auxiliary import const, next_or_none
 
 from gameframe.games.rockpaperscissors import RockPaperScissorsGame, RockPaperScissorsHand, RockPaperScissorsPlayer
 from gameframe.tests import GameFrameTestCaseMixin
@@ -7,23 +10,27 @@ from gameframe.tests import GameFrameTestCaseMixin
 
 class RockPaperScissorsTestCase(GameFrameTestCaseMixin, TestCase):
     def create_game(self):
-        return RockPaperScissorsGame()
+        return RockPaperScissorsGame(randint(2, 5))
 
     def act(self, game):
         next(filterfalse(RockPaperScissorsPlayer.hand.fget, game.players)).throw()
 
     def verify(self, game):
         if game.is_terminal():
-            self.assertTrue(game.players[0].hand is not None and game.players[1].hand is not None)
+            self.assertTrue(all(map(RockPaperScissorsPlayer.hand.fget, game.players)))
 
-            if game.winner is game.players[0]:
-                self.assertGreater(game.players[0].hand, game.players[1].hand)
-            elif game.winner is game.players[1]:
-                self.assertLess(game.players[0].hand, game.players[1].hand)
+            winner = next_or_none(game.winners)
+
+            if winner is None:
+                self.assertTrue(
+                    const(map(RockPaperScissorsPlayer.hand.fget, game.players))
+                    or set(map(RockPaperScissorsPlayer.hand.fget, game.players)) == set(RockPaperScissorsHand),
+                )
             else:
-                self.assertEqual(game.players[0].hand, game.players[1].hand)
+                for player in game.players:
+                    self.assertLessEqual(player.hand, winner.hand)
         else:
-            self.assertTrue(game.players[0].hand is None or game.players[1].hand is None)
+            self.assertFalse(all(map(RockPaperScissorsPlayer.hand.fget, game.players)))
 
         for player in game.players:
             if player.hand is None:

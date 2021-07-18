@@ -1,7 +1,7 @@
 """This module defines various components of rock paper scissors games."""
 from random import choice
 
-from auxiliary import IndexedEnum
+from auxiliary import IndexedEnum, maxima
 
 from gameframe.exceptions import GameFrameError
 from gameframe.game import Actor, Game, _Action
@@ -10,22 +10,27 @@ from gameframe.game import Actor, Game, _Action
 class RockPaperScissorsGame(Game):
     """RockPaperScissorsGame is the class for rock paper scissors games."""
 
-    def __init__(self):
-        super().__init__(Actor(self), (RockPaperScissorsPlayer(self), RockPaperScissorsPlayer(self)))
+    def __init__(self, player_count=2):
+        if player_count < 2:
+            raise ValueError('Rock paper scissors games require 2 or more players')
+
+        super().__init__(Actor(self), (RockPaperScissorsPlayer(self) for _ in range(player_count)))
 
     @property
-    def winner(self):
+    def winners(self):
         """Determines the winner of this rock paper scissors game.
 
         :return: The winning player of this rock paper scissors game if there is one, else None.
         """
-        if not self.is_terminal() or self.players[0].hand is self.players[1].hand:
+        if not self.is_terminal():
             return None
+        elif len(set(map(RockPaperScissorsPlayer.hand.fget, self.players))) in (1, 3):
+            return iter(())
         else:
-            return max(self.players, key=RockPaperScissorsPlayer.hand.fget)
+            return maxima(self.players, key=RockPaperScissorsPlayer.hand.fget)
 
     def is_terminal(self):
-        return self.players[0].hand is not None and self.players[1].hand is not None
+        return all(map(RockPaperScissorsPlayer.hand.fget, self.players))
 
 
 class RockPaperScissorsPlayer(Actor):
