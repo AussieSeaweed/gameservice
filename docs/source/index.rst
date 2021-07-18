@@ -6,14 +6,15 @@
 GameFrame
 =========
 
-GameFrame is a Python package for various game implementations.
+GameFrame is a Python package for a general game framework.
 
-The following games are already implemented in GameFrame...
+It provides base classes for implementing simple games. In addition some example games are already implemented in
+GameFrame...
 
 - Tic Tac Toe
 - Rock Paper Scissors
 
-In addition, many poker game variants are implemented on `PokerTools <https://pokertools.readthedocs.io/>`_ package.
+Many poker game variants are also implemented on the `PokerTools <https://pokertools.readthedocs.io/>`_ package.
 
 Speed
 -----
@@ -48,7 +49,8 @@ License
    :caption: Contents:
 
    install
-   interact
+   bases
+   examples
    gameframe
 
 Indices and tables

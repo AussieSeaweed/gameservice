@@ -8,7 +8,7 @@ setup(
     version='0.0.4.dev37',
     author='Juho Kim',
     author_email='juho-kim@outlook.com',
-    description='A Python package for various game implementations',
+    description='A Python package for a general game framework.',
     long_description=long_description,
     long_description_content_type='text/x-rst',
     url='https://github.com/AussieSeaweed/gameframe',
