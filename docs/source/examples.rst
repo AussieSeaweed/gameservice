@@ -56,7 +56,7 @@ The following code demonstrates interacting with rock paper scissor games.
    game.players[0].throw(RockPaperScissorsHand.ROCK)
    game.players[1].throw(RockPaperScissorsHand.PAPER)
 
-   print(next(game.winners).index)  # 1 (The second player)
+   print(next(game.winners).index)  # 1 (The second player).
 
 Note that the attribute :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsGame.winners` is named with a plural
 symbol, as, when there are more than 3 players, the game might have multiple winners. When there are no winners, the
@@ -118,7 +118,7 @@ The code below demonstrates a sample tic tac toe game.
    y.mark(1, 0)
    x.mark(2, 2)
 
-   print(game.winner)  # None (A tied game)
+   print(game.winner)  # None (A tied game).
 
 By the end of the game, the board looks like the following:
 
@@ -138,7 +138,7 @@ A simpler way of interacting with tic tac toe exists, which uses :meth:`gamefram
 
    game.mark((0, 0), (1, 0), (0, 1), (1, 1), (0, 2))
 
-   print(game.winner.index)  # 0 (The first player)
+   print(game.winner.index)  # 0 (The first player).
 
 The game result is as follows:
 
