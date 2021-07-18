@@ -1,7 +1,7 @@
 Base Game Classes
 =================
 
-In order to use the gameframe package in your project, you must first import it.
+In order to use the GameFrame package in your project, you must first import it.
 
 .. code-block:: python
 
@@ -18,8 +18,8 @@ Non-sequential Games
 --------------------
 
 Non-sequential games are of type :class:`gameframe.game.Game`. The games contain actors (a nature, and players) that are
-of type :class:`gameframe.game.Actor`. They have the following attributes that can be accessed from the game and actor
-instances.
+of type :class:`gameframe.game.Actor`. They have the following attributes, properties, and methods that can be accessed
+from the game and actor instances.
 
 .. code-block:: python
 
@@ -60,7 +60,7 @@ sequential game instances. The same applies to sequential actors, which are of t
 :class:`gameframe.sequential.SequentialActor`.
 
 Sequential game instances have an extra attribute called :attr:`gameframe.sequential.SequentialGame.actor`. It
-represents the current player to act. This property is None when the game is terminal.
+represents the current player to act. This property is ``None`` when the game is terminal.
 
 .. code-block:: python
 

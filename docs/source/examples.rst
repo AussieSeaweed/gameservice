@@ -1,13 +1,19 @@
 Example Games
 =============
 
+This section goes over some of the example games defined in the GameFrame package, which are as follows:
+
+- Rock paper scissors
+- Tic Tac Toe
+
 Rock Paper Scissors Games
 -------------------------
 
-Rock Paper Scissors game is the simplest game implemented on GameFrame. The following codes demonstrates all the
-attributes, properties, and methods implemented by :class:`gameframe.games.rockpaperscissors.RockPaperScissorsGame` and
+Rock Paper Scissors game is the simplest game implemented on GameFrame. It is a non-sequential game. The following codes
+demonstrates all the attributes, properties, and methods implemented by
+:class:`gameframe.games.rockpaperscissors.RockPaperScissorsGame` and
 :class:`gameframe.games.rockpaperscissors.RockPaperScissorsPlayer`, which are classes of rock paper scissor games and
-players, respectively.
+rock paper scissors players, respectively.
 
 .. code-block:: python
 
@@ -32,7 +38,7 @@ players, respectively.
    # The hand of the player.
    player.hand
 
-Rock paper scissors hands are represented by an enum class called
+Rock paper scissors hands are represented by an enum class named
 :class:`gameframe.games.rockpaperscissors.RockPaperScissorsHand`. It has the following enum members:
 
 - :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsHand.ROCK`
@@ -53,7 +59,8 @@ The following code demonstrates interacting with rock paper scissor games.
    print(next(game.winners).index)  # 1 (The second player)
 
 Note that the attribute :attr:`gameframe.games.rockpaperscissors.RockPaperScissorsGame.winners` is named with a plural
-symbol, as, when there are more than 3 players, the game might have multiple winners.
+symbol, as, when there are more than 3 players, the game might have multiple winners. When there are no winners, the
+property returns an empty iterator.
 
 Here, nothing is passed to the constructor to the :class:`gameframe.games.rockpaperscissors.RockPaperScissorsGame`. In
 this case, the number of players are assumed to be 2.
@@ -141,7 +148,7 @@ The game result is as follows:
    X   X   .
    .   .   .
 
-Note that the winner is the first player.
+Note that the winner in the above game scenario is the first player.
 
 More Information
 ----------------

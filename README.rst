@@ -3,7 +3,7 @@ GameFrame
 
 GameFrame is a Python package for a general game framework.
 
-It provides base classes for implementing simple games. In addition some example games are already implemented in
+It provides base classes for implementing simple games. In addition, some example games are already implemented in
 GameFrame...
 
 - Tic Tac Toe
