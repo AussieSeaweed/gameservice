@@ -89,8 +89,8 @@ Below shows all possible member variables, properties, and methods of the relate
 
    # The board of the game.
    game.board
-   # A sequence of empty coordinates of the game.
-   game.empty_coordinates
+   # An iterator of the empty coordinates of the game.
+   game.empty_cell_locations
    # The winner of the game (either None or one of the players).
    game.winner
    # The loser of the game (either None or one of the players).

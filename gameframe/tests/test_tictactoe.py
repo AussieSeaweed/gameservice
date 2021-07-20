@@ -56,7 +56,7 @@ class TicTacToeTestCase(GameFrameTestCaseMixin, TestCase):
 
     def verify(self, game):
         if game.is_terminal():
-            self.assertTrue(next_or_none(game.empty_coordinates) is None or game.winner is not None)
+            self.assertTrue(next_or_none(game.empty_cell_locations) is None or game.winner is not None)
 
             self.assertFalse(game.players[0].can_mark())
             self.assertFalse(game.players[1].can_mark())
@@ -66,7 +66,7 @@ class TicTacToeTestCase(GameFrameTestCaseMixin, TestCase):
                     self.assertFalse(game.players[0].can_mark(r, c))
                     self.assertFalse(game.players[1].can_mark(r, c))
         else:
-            self.assertFalse(next_or_none(game.empty_coordinates) is None or game.winner is not None)
+            self.assertFalse(next_or_none(game.empty_cell_locations) is None or game.winner is not None)
 
             actor = game.actor
             non_actor = next(actor)

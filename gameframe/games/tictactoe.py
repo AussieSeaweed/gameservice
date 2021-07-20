@@ -25,10 +25,10 @@ class TicTacToeGame(SequentialGame):
         return tuple(map(tuple, self._board))
 
     @property
-    def empty_coordinates(self):
-        """Returns the empty coordinates of the board of this tic tac toe game.
+    def empty_cell_locations(self):
+        """Returns the empty cell locations of the board of this tic tac toe game.
 
-        :return: The tuple of the empty coordinates of the board.
+        :return: An iterator of the empty coordinates of the board.
         """
         return filterfalse(self._get_cell, product(range(3), range(3)))
 
@@ -127,11 +127,11 @@ class _MarkAction(_SequentialAction):
         game = self.actor.game
 
         if self.r is None or self.c is None:
-            self.r, self.c = choice(tuple(game.empty_coordinates))
+            self.r, self.c = choice(tuple(game.empty_cell_locations))
 
         game._board[self.r][self.c] = self.actor
 
-        if next_or_none(game.empty_coordinates) is not None and game.winner is None:
+        if next_or_none(game.empty_cell_locations) is not None and game.winner is None:
             game._actor = next(self.actor)
         else:
             game._actor = None

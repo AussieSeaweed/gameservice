@@ -103,11 +103,11 @@ class RockPaperScissorsHand(IndexedEnum):
     """
 
     ROCK = 'Rock'
-    '''The rock hand.'''
+    """The rock hand."""
     PAPER = 'Paper'
-    '''The paper hand.'''
+    """The paper hand."""
     SCISSORS = 'Scissors'
-    '''The scissors hand.'''
+    """The scissors hand."""
 
     def __lt__(self, other):
         if isinstance(other, RockPaperScissorsHand):
