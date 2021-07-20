@@ -21,8 +21,17 @@ rock paper scissors players, respectively.
 
    # Create a three player rock paper scissors game.
    game = RockPaperScissorsGame(3)
+
+   # The winners of the game (None if the game is not yet terminal).
+   game.winners
+   # The losers of the game (None if the game is not yet terminal).
+   game.losers
+
    # Get the first player.
    player = game.players[0]
+
+   # The hand of the player.
+   player.hand
 
    # Throw a random hand.
    player.throw()
@@ -32,11 +41,6 @@ rock paper scissors players, respectively.
    player.can_throw()
    # True if the player can throw the specified hand.
    player.can_throw(RockPaperScissorsHand.SCISSORS)
-
-   # The winner of the game (either None or one of the players).
-   game.winner
-   # The hand of the player.
-   player.hand
 
 Rock paper scissors hands are represented by an enum class named
 :class:`gameframe.games.rockpaperscissors.RockPaperScissorsHand`. It has the following enum members:
@@ -80,6 +84,13 @@ Below shows all possible member variables, properties, and methods of the relate
    # Create a tic tac toe game.
    game = TicTacToeGame()
 
+   # The board of the game.
+   game.board
+   # A sequence of empty coordinates of the game.
+   game.empty_coordinates
+   # The winner of the game (either None or one of the players).
+   game.winner
+
    # Get the first player.
    player = game.players[0]
 
@@ -91,13 +102,6 @@ Below shows all possible member variables, properties, and methods of the relate
    player.can_mark()
    # True if the player can mark the corresponding coordinate.
    player.can_mark(0, 0)
-
-   # The board of the game.
-   game.board
-   # A sequence of empty coordinates of the game.
-   game.empty_coordinates
-   # The winner of the game (either None or one of the players).
-   game.winner
 
 The code below demonstrates a sample tic tac toe game.
 
