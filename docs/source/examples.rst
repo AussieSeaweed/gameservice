@@ -93,6 +93,8 @@ Below shows all possible member variables, properties, and methods of the relate
    game.empty_coordinates
    # The winner of the game (either None or one of the players).
    game.winner
+   # The loser of the game (either None or one of the players).
+   game.loser
 
    # Mark the coordinates.
    game.mark((0, 0), (1, 0), (2, 0))

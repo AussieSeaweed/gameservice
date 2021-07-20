@@ -50,6 +50,14 @@ class TicTacToeGame(SequentialGame):
 
         return None
 
+    @property
+    def loser(self):
+        """Returns the loser of this tic tac toe game.
+
+        :return: The losing player of the tic tac toe game if there is one, else None.
+        """
+        return None if self.winner is None else next(self.winner)
+
     def mark(self, *coordinates):
         """Parses the coordinates (tuples of two integers) as mark actions and applies them to this tic tac toe game.
 

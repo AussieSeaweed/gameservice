@@ -17,6 +17,7 @@ class TicTacToeTestCase(GameFrameTestCaseMixin, TestCase):
                 TicTacToeGame().mark((1, 1), (0, 2), (2, 2), (0, 0), (0, 1), (2, 1), (1, 0), (1, 2), (2, 0)),
         ):
             self.assertIsNone(game.winner)
+            self.assertIsNone(game.loser)
 
     def test_losses(self):
         for game in (
@@ -27,6 +28,7 @@ class TicTacToeTestCase(GameFrameTestCaseMixin, TestCase):
                 TicTacToeGame().mark((0, 1), (2, 0), (1, 1), (2, 1), (0, 2), (2, 2)),
         ):
             self.assertIs(game.players[1], game.winner)
+            self.assertIs(game.players[0], game.loser)
 
     def test_wins(self):
         for game in (
@@ -37,6 +39,7 @@ class TicTacToeTestCase(GameFrameTestCaseMixin, TestCase):
                 TicTacToeGame().mark((0, 0), (1, 0), (0, 1), (1, 1), (0, 2)),
         ):
             self.assertIs(game.players[0], game.winner)
+            self.assertIs(game.players[1], game.loser)
 
     def test_illegal_actions(self):
         self.assertRaises(GameFrameError, TicTacToeGame().mark((0, 0)).mark, (0, 0))
