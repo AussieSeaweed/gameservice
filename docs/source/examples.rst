@@ -27,6 +27,9 @@ rock paper scissors players, respectively.
    # The losers of the game (None if the game is not yet terminal).
    game.losers
 
+   # Throw the hands.
+   game.throw(RockPaperScissorsHand.ROCK, RockPaperScissorsHand.SCISSORS)
+
    # Get the first player.
    player = game.players[0]
 
@@ -90,6 +93,9 @@ Below shows all possible member variables, properties, and methods of the relate
    game.empty_coordinates
    # The winner of the game (either None or one of the players).
    game.winner
+
+   # Mark the coordinates.
+   game.mark((0, 0), (1, 0), (2, 0))
 
    # Get the first player.
    player = game.players[0]

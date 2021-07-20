@@ -48,7 +48,7 @@ class RockPaperScissorsGame(Game):
         :param hands: The hands to throw.
         :return: This game.
         """
-        for player, hand in zip(self.players, hands):
+        for player, hand in zip(filter(RockPaperScissorsPlayer.can_throw, self.players), hands):
             player.throw(hand)
 
         return self
