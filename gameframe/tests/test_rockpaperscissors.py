@@ -10,53 +10,39 @@ from gameframe.tests import GameFrameTestCaseMixin
 
 class RockPaperScissorsTestCase(GameFrameTestCaseMixin, TestCase):
     def test_heads_up(self):
-        game = RockPaperScissorsGame()
-        game.players[0].throw(RockPaperScissorsHand.ROCK)
-        game.players[1].throw(RockPaperScissorsHand.SCISSORS)
+        game = RockPaperScissorsGame().throw(RockPaperScissorsHand.ROCK, RockPaperScissorsHand.SCISSORS)
         self.assertIs(next(game.winners), game.players[0])
         self.assertIs(next(game.losers), game.players[1])
 
-        game = RockPaperScissorsGame()
-        game.players[0].throw(RockPaperScissorsHand.PAPER)
-        game.players[1].throw(RockPaperScissorsHand.SCISSORS)
+        game = RockPaperScissorsGame().throw(RockPaperScissorsHand.PAPER, RockPaperScissorsHand.SCISSORS)
         self.assertIs(next(game.winners), game.players[1])
         self.assertIs(next(game.losers), game.players[0])
 
-        game = RockPaperScissorsGame()
-        game.players[0].throw(RockPaperScissorsHand.PAPER)
-        game.players[1].throw(RockPaperScissorsHand.PAPER)
+        game = RockPaperScissorsGame().throw(RockPaperScissorsHand.PAPER, RockPaperScissorsHand.PAPER)
         self.assertIs(next_or_none(game.winners), None)
         self.assertIs(next_or_none(game.losers), None)
 
     def test_non_heads_up(self):
-        game = RockPaperScissorsGame(3)
-
-        for player, hand_str in zip(game.players, ('Rock', 'Paper', 'Scissors')):
-            player.throw(RockPaperScissorsHand(hand_str))
+        game = RockPaperScissorsGame(3).throw(*map(RockPaperScissorsHand, ('Rock', 'Paper', 'Scissors')))
 
         self.assertSequenceEqual(tuple(game.winners), ())
         self.assertSequenceEqual(tuple(game.losers), ())
 
-        game = RockPaperScissorsGame(4)
-
-        for player, hand_str in zip(game.players, ('Rock', 'Paper', 'Rock', 'Rock')):
-            player.throw(RockPaperScissorsHand(hand_str))
+        game = RockPaperScissorsGame(4).throw(*map(RockPaperScissorsHand, ('Rock', 'Paper', 'Rock', 'Rock')))
 
         self.assertSequenceEqual(tuple(game.winners), (game.players[1],))
         self.assertSequenceEqual(tuple(game.losers), (game.players[0], *game.players[2:]))
 
-        game = RockPaperScissorsGame(5)
-
-        for player, hand_str in zip(game.players, ('Rock', 'Paper', 'Scissors', 'Rock', 'Paper')):
-            player.throw(RockPaperScissorsHand(hand_str))
+        game = RockPaperScissorsGame(5).throw(
+            *map(RockPaperScissorsHand, ('Rock', 'Paper', 'Scissors', 'Rock', 'Paper'))
+        )
 
         self.assertSequenceEqual(tuple(game.winners), ())
         self.assertSequenceEqual(tuple(game.losers), ())
 
-        game = RockPaperScissorsGame(6)
-
-        for player, hand_str in zip(game.players, ('Paper', 'Paper', 'Rock', 'Rock', 'Paper', 'Paper')):
-            player.throw(RockPaperScissorsHand(hand_str))
+        game = RockPaperScissorsGame(6).throw(
+            *map(RockPaperScissorsHand, ('Paper', 'Paper', 'Rock', 'Rock', 'Paper', 'Paper'))
+        )
 
         self.assertSequenceEqual(tuple(game.winners), game.players[:2] + game.players[4:])
         self.assertSequenceEqual(tuple(game.losers), game.players[2:4])

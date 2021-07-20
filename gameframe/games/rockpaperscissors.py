@@ -42,6 +42,17 @@ class RockPaperScissorsGame(Game):
         else:
             return minima(self.players, key=RockPaperScissorsPlayer.hand.fget)
 
+    def throw(self, *hands):
+        """Throws the given hands.
+
+        :param hands: The hands to throw.
+        :return: This game.
+        """
+        for player, hand in zip(self.players, hands):
+            player.throw(hand)
+
+        return self
+
     def is_terminal(self):
         return all(map(RockPaperScissorsPlayer.hand.fget, self.players))
 
