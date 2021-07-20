@@ -1,7 +1,7 @@
 """This module defines various components of rock paper scissors games."""
 from random import choice
 
-from auxiliary import IndexedEnum, maxima
+from auxiliary import IndexedEnum, maxima, minima
 
 from gameframe.exceptions import GameFrameError
 from gameframe.game import Actor, Game, _Action
@@ -20,7 +20,7 @@ class RockPaperScissorsGame(Game):
     def winners(self):
         """Determines the winner of this rock paper scissors game.
 
-        :return: The winning player of this rock paper scissors game if there is one, else None.
+        :return: The winning players if this game is terminal, else None.
         """
         if not self.is_terminal():
             return None
@@ -28,6 +28,19 @@ class RockPaperScissorsGame(Game):
             return iter(())
         else:
             return maxima(self.players, key=RockPaperScissorsPlayer.hand.fget)
+
+    @property
+    def losers(self):
+        """Determines the losers of this rock paper scissors game.
+
+        :return: The losing players if this game is terminal, else None.
+        """
+        if not self.is_terminal():
+            return None
+        elif len(set(map(RockPaperScissorsPlayer.hand.fget, self.players))) in (1, 3):
+            return iter(())
+        else:
+            return minima(self.players, key=RockPaperScissorsPlayer.hand.fget)
 
     def is_terminal(self):
         return all(map(RockPaperScissorsPlayer.hand.fget, self.players))
