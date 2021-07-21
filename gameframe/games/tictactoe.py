@@ -77,7 +77,7 @@ class TicTacToePlayer(SequentialActor):
     """TicTacToePlayer is the class for tic tac toe players."""
 
     def __repr__(self):
-        return 'O' if self.game.players[0] is self else 'X'
+        return 'X' if self.game.players[0] is self else 'O'
 
     def mark(self, r=None, c=None):
         """Marks the cell of the board at the optionally specified coordinates.

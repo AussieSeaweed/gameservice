@@ -136,9 +136,9 @@ By the end of the game, the board looks like the following:
 
 .. code-block:: console
 
-   X   O   X
-   X   O   O
    O   X   O
+   O   X   X
+   X   O   X
 
 A simpler way of interacting with tic tac toe exists, which uses :meth:`gameframe.games.tictactoe.TicTacToeGame.mark`.
 
@@ -156,8 +156,8 @@ The game result is as follows:
 
 .. code-block:: console
 
-   O   O   O
-   X   X   .
+   X   X   X
+   O   O   .
    .   .   .
 
 Note that the winner in the above game scenario is the first player.
